@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -116,14 +117,12 @@ function makeReference() {
     Math.random().toString(36).substring(2, 8).toUpperCase()
   );
 }
+;
+app.use(express.static(path.join(__dirname)));
 
 app.get("/", (req, res) => {
-  res.json({
-    name: "American Crest Bank Simulator API",
-    status: "online"
-  });
+  res.sendFile(path.join(__dirname, "index.html"));
 });
-
 app.get("/api/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");
