@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>American Crest Bank — Admin</title>
-
-<style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>American Crest Bank — Admin</title><style>
 *{box-sizing:border-box}
 
 body{
@@ -152,9 +147,10 @@ button{
 }
 
 .stat{
-  font-size:26px;
+  font-size:22px;
   font-weight:800;
   margin-top:8px;
+  word-break:break-word;
 }
 
 .section{
@@ -197,11 +193,30 @@ th{
   font-weight:700;
 }
 
-.active{background:#dff7e8;color:#14753c}
-.pending{background:#fff2cc;color:#876500}
-.suspended{background:#ffe0e3;color:#a31d2d}
-.success-badge{background:#dff7e8;color:#14753c}
-.declined{background:#ffe0e3;color:#a31d2d}
+.active{
+  background:#dff7e8;
+  color:#14753c;
+}
+
+.pending{
+  background:#fff2cc;
+  color:#876500;
+}
+
+.suspended{
+  background:#ffe0e3;
+  color:#a31d2d;
+}
+
+.success-badge{
+  background:#dff7e8;
+  color:#14753c;
+}
+
+.declined{
+  background:#ffe0e3;
+  color:#a31d2d;
+}
 
 .actions{
   display:flex;
@@ -218,6 +233,17 @@ th{
   padding:25px;
   text-align:center;
   color:#7a8598;
+}
+
+.balance-list{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.balance-item{
+  font-size:13px;
+  font-weight:700;
 }
 
 .modal{
@@ -294,6 +320,12 @@ th{
   display:block;
 }
 
+.small-note{
+  color:#748096;
+  font-size:12px;
+  margin-top:5px;
+}
+
 @media(max-width:900px){
   .grid{
     grid-template-columns:repeat(2,1fr);
@@ -313,438 +345,360 @@ th{
     padding:18px 12px 50px;
   }
 }
-</style>
-</head>
+</style></head><body><!-- LOGIN --><div id="loginScreen" class="login">  <div class="login-card"><h1>American Crest Bank</h1>
 
-<body>
+<p>Administrator Portal</p>
 
-<!-- LOGIN -->
-
-<div id="loginScreen" class="login">
-
-  <div class="login-card">
-
-    <h1>American Crest Bank</h1>
-
-    <p>
-      Administrator Portal
-    </p>
-
-    <div class="notice">
-      Authorized administrator access only.
-    </div>
-
-    <div id="loginError" class="error"></div>
-
-    <label>Email</label>
-    <input
-      id="adminEmail"
-      type="email"
-      placeholder="Administrator email"
-    >
-
-    <label>Password</label>
-    <input
-      id="adminPassword"
-      type="password"
-      placeholder="Administrator password"
-    >
-
-    <button
-      class="primary"
-      onclick="adminLogin()"
-    >
-      Sign in
-    </button>
-
-  </div>
-
+<div class="notice">
+  Authorized administrator access only.
 </div>
 
+<div id="loginError" class="error"></div>
 
-<!-- ADMIN -->
+<label>Email</label>
 
-<div id="adminApp" style="display:none">
+<input
+  id="adminEmail"
+  type="email"
+  placeholder="Administrator email"
+>
 
-<header>
+<label>Password</label>
 
-  <div class="logo">
+<input
+  id="adminPassword"
+  type="password"
+  placeholder="Administrator password"
+>
+
+<button
+  class="primary"
+  onclick="adminLogin()"
+>
+  Sign in
+</button>
+
+  </div></div><!-- ADMIN --><div id="adminApp" style="display:none"><header>  <div class="logo">
     American Crest Bank
     <span>Administrator Portal</span>
-  </div>
+  </div><button
+class="logout"
+onclick="logout()"
 
-  <button
-    class="logout"
-    onclick="logout()"
-  >
-    Sign out
-  </button>
+«»
 
-</header>
+Sign out
 
+  </button></header><div class="container">  <div class="tabs"><button
+  class="tab active-tab"
+  onclick="showPanel('dashboard',this)"
+>
+  Dashboard
+</button>
 
-<div class="container">
+<button
+  class="tab"
+  onclick="showPanel('customers',this)"
+>
+  Customers
+</button>
 
-  <div class="tabs">
+<button
+  class="tab"
+  onclick="showPanel('transfers',this)"
+>
+  Transfers
+</button>
 
-    <button
-      class="tab active-tab"
-      onclick="showPanel('dashboard',this)"
-    >
-      Dashboard
-    </button>
+<button
+  class="tab"
+  onclick="showPanel('support',this)"
+>
+  Support
+</button>
 
-    <button
-      class="tab"
-      onclick="showPanel('customers',this)"
-    >
-      Customers
-    </button>
+<button
+  class="tab"
+  onclick="showPanel('notifications',this)"
+>
+  Notifications
+</button>
 
-    <button
-      class="tab"
-      onclick="showPanel('transfers',this)"
-    >
-      Transfers
-    </button>
-
-    <button
-      class="tab"
-      onclick="showPanel('support',this)"
-    >
-      Support
-    </button>
-
-    <button
-      class="tab"
-      onclick="showPanel('notifications',this)"
-    >
-      Notifications
-    </button>
-
-  </div>
-
-
-  <!-- DASHBOARD -->
-
-  <section
+  </div>  <!-- DASHBOARD -->  <section
     id="dashboard"
     class="panel active-panel"
-  >
+  ><h2>Dashboard</h2>
 
-    <h2>Dashboard</h2>
+<div class="grid">
 
-    <div class="grid">
+  <div class="card">
 
-      <div class="card">
-        <div class="stat-title">
-          Customers
-        </div>
-        <div
-          id="customerCount"
-          class="stat"
-        >
-          —
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="stat-title">
-          Customer Balance
-        </div>
-        <div
-          id="balanceTotal"
-          class="stat"
-        >
-          —
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="stat-title">
-          Pending Transfers
-        </div>
-        <div
-          id="pendingCount"
-          class="stat"
-        >
-          —
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="stat-title">
-          Open Support
-        </div>
-        <div
-          id="supportCount"
-          class="stat"
-        >
-          —
-        </div>
-      </div>
-
+    <div class="stat-title">
+      Customers
     </div>
-
-  </section>
-
-
-  <!-- CUSTOMERS -->
-
-  <section
-    id="customers"
-    class="panel"
-  >
-
-    <h2>Customer Accounts</h2>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Customer</th>
-            <th>Email</th>
-            <th>Balance</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Actions</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="customerTable"></tbody>
-
-      </table>
-
-    </div>
-
-  </section>
-
-
-  <!-- TRANSFERS -->
-
-  <section
-    id="transfers"
-    class="panel"
-  >
-
-    <h2>Transfer Requests</h2>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Customer</th>
-            <th>Amount</th>
-            <th>Recipient</th>
-            <th>Reference</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="transferTable"></tbody>
-
-      </table>
-
-    </div>
-
-  </section>
-
-
-  <!-- SUPPORT -->
-
-  <section
-    id="support"
-    class="panel"
-  >
-
-    <h2>Customer Support</h2>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Customer</th>
-            <th>Subject</th>
-            <th>Message</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="supportTable"></tbody>
-
-      </table>
-
-    </div>
-
-  </section>
-
-
-  <!-- NOTIFICATIONS -->
-
-  <section
-    id="notifications"
-    class="panel"
-  >
-
-    <h2>Notifications</h2>
 
     <div
-      id="notificationList"
-      class="card"
+      id="customerCount"
+      class="stat"
     >
-      Loading...
+      —
     </div>
 
-  </section>
+  </div>
+
+
+  <div class="card">
+
+    <div class="stat-title">
+      Customer Balances
+    </div>
+
+    <div
+      id="balanceTotal"
+      class="stat"
+    >
+      —
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="stat-title">
+      Pending Transfers
+    </div>
+
+    <div
+      id="pendingCount"
+      class="stat"
+    >
+      —
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="stat-title">
+      Open Support
+    </div>
+
+    <div
+      id="supportCount"
+      class="stat"
+    >
+      —
+    </div>
+
+  </div>
 
 </div>
 
+  </section>  <!-- CUSTOMERS -->  <section
+    id="customers"
+    class="panel"
+  ><h2>Customer Accounts</h2>
+
+<div class="table-wrap">
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>Customer</th>
+        <th>Email</th>
+        <th>Balance</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+
+    </thead>
+
+    <tbody id="customerTable"></tbody>
+
+  </table>
+
 </div>
 
+  </section>  <!-- TRANSFERS -->  <section
+    id="transfers"
+    class="panel"
+  ><h2>Transfer Requests</h2>
 
-<!-- CREDIT MODAL -->
+<div class="table-wrap">
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>Customer</th>
+        <th>Amount</th>
+        <th>Currency</th>
+        <th>Recipient</th>
+        <th>Reference</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+
+    </thead>
+
+    <tbody id="transferTable"></tbody>
+
+  </table>
+
+</div>
+
+  </section>  <!-- SUPPORT -->  <section
+    id="support"
+    class="panel"
+  ><h2>Customer Support</h2>
+
+<div class="table-wrap">
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>Customer</th>
+        <th>Subject</th>
+        <th>Message</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+
+    </thead>
+
+    <tbody id="supportTable"></tbody>
+
+  </table>
+
+</div>
+
+  </section>  <!-- NOTIFICATIONS -->  <section
+    id="notifications"
+    class="panel"
+  ><h2>Notifications</h2>
 
 <div
+  id="notificationList"
+  class="card"
+>
+  Loading...
+</div>
+
+  </section></div></div><!-- CREDIT MODAL --><div
   id="creditModal"
   class="modal"
->
+>  <div class="modal-card"><div class="modal-head">
 
-  <div class="modal-card">
+  <h2>Add Funds</h2>
 
-    <div class="modal-head">
-
-      <h2>Add Funds</h2>
-
-      <button
-        class="close"
-        onclick="closeModal()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <p id="creditCustomerName"></p>
-
-    <div class="notice">
-      This control records a simulated account credit
-      for the banking demonstration.
-    </div>
-
-    <label>Currency</label>
-
-    <select id="creditCurrency">
-
-      <option value="USD">USD — US Dollar</option>
-      <option value="NGN">NGN — Nigerian Naira</option>
-      <option value="EUR">EUR — Euro</option>
-      <option value="GBP">GBP — British Pound</option>
-      <option value="CAD">CAD — Canadian Dollar</option>
-      <option value="AUD">AUD — Australian Dollar</option>
-      <option value="CHF">CHF — Swiss Franc</option>
-      <option value="JPY">JPY — Japanese Yen</option>
-      <option value="CNY">CNY — Chinese Yuan</option>
-      <option value="INR">INR — Indian Rupee</option>
-      <option value="IDR">IDR — Indonesian Rupiah</option>
-      <option value="MYR">MYR — Malaysian Ringgit</option>
-      <option value="SGD">SGD — Singapore Dollar</option>
-      <option value="AED">AED — UAE Dirham</option>
-      <option value="SAR">SAR — Saudi Riyal</option>
-
-    </select>
-
-    <label>Amount</label>
-
-    <input
-      id="creditAmount"
-      type="number"
-      min="0"
-      step="0.01"
-      placeholder="Enter amount"
-    >
-
-    <label>Note</label>
-
-    <input
-      id="creditNote"
-      placeholder="Reason for credit"
-    >
-
-    <button
-      class="primary"
-      style="width:100%"
-      onclick="creditCustomer()"
-    >
-      Add Funds
-    </button>
-
-  </div>
+  <button
+    class="close"
+    onclick="closeModal()"
+  >
+    ×
+  </button>
 
 </div>
 
+<p id="creditCustomerName"></p>
 
-<!-- REPLY MODAL -->
+<div class="notice">
+  This control records a simulated account credit
+  for the banking demonstration.
+</div>
 
-<div
+<label>Currency</label>
+
+<select id="creditCurrency">
+
+  <option value="USD">USD — US Dollar</option>
+  <option value="NGN">NGN — Nigerian Naira</option>
+  <option value="EUR">EUR — Euro</option>
+  <option value="GBP">GBP — British Pound</option>
+  <option value="CAD">CAD — Canadian Dollar</option>
+  <option value="AUD">AUD — Australian Dollar</option>
+  <option value="CHF">CHF — Swiss Franc</option>
+  <option value="JPY">JPY — Japanese Yen</option>
+  <option value="CNY">CNY — Chinese Yuan</option>
+  <option value="INR">INR — Indian Rupee</option>
+  <option value="IDR">IDR — Indonesian Rupiah</option>
+  <option value="MYR">MYR — Malaysian Ringgit</option>
+  <option value="SGD">SGD — Singapore Dollar</option>
+  <option value="AED">AED — UAE Dirham</option>
+  <option value="ZAR">ZAR — South African Rand</option>
+  <option value="KES">KES — Kenyan Shilling</option>
+  <option value="GHS">GHS — Ghanaian Cedi</option>
+
+</select>
+
+<label>Amount</label>
+
+<input
+  id="creditAmount"
+  type="number"
+  min="0"
+  step="0.01"
+  placeholder="Enter amount"
+>
+
+<label>Note</label>
+
+<input
+  id="creditNote"
+  placeholder="Reason for credit"
+>
+
+<button
+  class="primary"
+  style="width:100%"
+  onclick="creditCustomer()"
+>
+  Add Funds
+</button>
+
+  </div></div><!-- REPLY MODAL --><div
   id="replyModal"
   class="modal"
->
+>  <div class="modal-card"><div class="modal-head">
 
-  <div class="modal-card">
+  <h2>Reply to Customer</h2>
 
-    <div class="modal-head">
-
-      <h2>Reply to Customer</h2>
-
-      <button
-        class="close"
-        onclick="closeReplyModal()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <textarea
-      id="replyMessage"
-      placeholder="Write your response..."
-    ></textarea>
-
-    <button
-      class="primary"
-      style="width:100%"
-      onclick="sendReply()"
-    >
-      Send Response
-    </button>
-
-  </div>
+  <button
+    class="close"
+    onclick="closeReplyModal()"
+  >
+    ×
+  </button>
 
 </div>
 
+<textarea
+  id="replyMessage"
+  placeholder="Write your response..."
+></textarea>
 
-<script>
+<button
+  class="primary"
+  style="width:100%"
+  onclick="sendReply()"
+>
+  Send Response
+</button>
+
+  </div></div><script>
 
 const API = "";
 
 let token =
-  localStorage.getItem(
-    "acb_admin_token"
-  );
+  localStorage.getItem("acb_admin_token");
 
 let selectedCustomer = null;
 let selectedTicket = null;
@@ -754,24 +708,17 @@ let selectedTicket = null;
    API
 ========================= */
 
-async function api(
-  endpoint,
-  options = {}
-){
+async function api(endpoint, options = {}){
 
   options.headers =
     options.headers || {};
 
-  options.headers[
-    "Content-Type"
-  ] =
+  options.headers["Content-Type"] =
     "application/json";
 
   if(token){
 
-    options.headers[
-      "Authorization"
-    ] =
+    options.headers["Authorization"] =
       "Bearer " + token;
 
   }
@@ -785,8 +732,7 @@ async function api(
   let data = {};
 
   try{
-    data =
-      await response.json();
+    data = await response.json();
   }catch{}
 
   if(
@@ -813,7 +759,6 @@ async function api(
   }
 
   return data;
-
 }
 
 
@@ -825,33 +770,26 @@ async function adminLogin(){
 
   const email =
     document
-      .getElementById(
-        "adminEmail"
-      )
+      .getElementById("adminEmail")
       .value
       .trim();
 
   const password =
     document
-      .getElementById(
-        "adminPassword"
-      )
+      .getElementById("adminPassword")
       .value;
 
-  const error =
-    document.getElementById(
-      "loginError"
-    );
+  const loginError =
+    document.getElementById("loginError");
 
-  error.textContent = "";
+  loginError.textContent = "";
 
   if(!email || !password){
 
-    error.textContent =
+    loginError.textContent =
       "Enter your administrator email and password.";
 
     return;
-
   }
 
   try{
@@ -879,8 +817,7 @@ async function adminLogin(){
 
     }
 
-    token =
-      data.token;
+    token = data.token;
 
     localStorage.setItem(
       "acb_admin_token",
@@ -891,16 +828,9 @@ async function adminLogin(){
 
   }catch(error){
 
-    error =
+    loginError.textContent =
       error.message ||
       "Unable to sign in.";
-
-    document
-      .getElementById(
-        "loginError"
-      )
-      .textContent =
-      error;
 
   }
 
@@ -914,29 +844,18 @@ async function adminLogin(){
 function showAdmin(){
 
   document
-    .getElementById(
-      "loginScreen"
-    )
-    .style.display =
-    "none";
+    .getElementById("loginScreen")
+    .style.display = "none";
 
   document
-    .getElementById(
-      "adminApp"
-    )
-    .style.display =
-    "block";
+    .getElementById("adminApp")
+    .style.display = "block";
 
   loadDashboard();
-
   loadCustomers();
-
   loadTransfers();
-
   loadSupport();
-
   loadNotifications();
-
 }
 
 
@@ -953,7 +872,6 @@ function logout(){
   );
 
   location.reload();
-
 }
 
 
@@ -961,43 +879,27 @@ function logout(){
    PANELS
 ========================= */
 
-function showPanel(
-  id,
-  button
-){
+function showPanel(id, button){
 
   document
-    .querySelectorAll(
-      ".panel"
-    )
+    .querySelectorAll(".panel")
     .forEach(
       p =>
-        p.classList.remove(
-          "active-panel"
-        )
+        p.classList.remove("active-panel")
     );
 
   document
     .getElementById(id)
-    .classList.add(
-      "active-panel"
-    );
+    .classList.add("active-panel");
 
   document
-    .querySelectorAll(
-      ".tab"
-    )
+    .querySelectorAll(".tab")
     .forEach(
       b =>
-        b.classList.remove(
-          "active-tab"
-        )
+        b.classList.remove("active-tab")
     );
 
-  button.classList.add(
-    "active-tab"
-  );
-
+  button.classList.add("active-tab");
 }
 
 
@@ -1015,46 +917,99 @@ async function loadDashboard(){
       );
 
     document
-      .getElementById(
-        "customerCount"
-      )
+      .getElementById("customerCount")
       .textContent =
-      data.customers;
+      data.customers ?? 0;
+
+    const balances =
+      Array.isArray(data.balances)
+        ? data.balances
+        : [];
+
+    if(!balances.length){
+
+      document
+        .getElementById("balanceTotal")
+        .textContent =
+        "No funds";
+
+    }else{
+
+      document
+        .getElementById("balanceTotal")
+        .innerHTML =
+        balances
+          .map(
+            item =>
+              `<div class="balance-item">
+                ${escapeHtml(item.currency)}
+                ${Number(item.total || 0)
+                  .toLocaleString(
+                    undefined,
+                    {
+                      minimumFractionDigits:2
+                    }
+                  )}
+              </div>`
+          )
+          .join("");
+
+    }
 
     document
-      .getElementById(
-        "balanceTotal"
-      )
+      .getElementById("pendingCount")
       .textContent =
-      Number(
-        data.totalCustomerBalance
-      ).toLocaleString(
-        undefined,
-        {
-          minimumFractionDigits:2
-        }
-      );
+      data.pendingTransfers ?? 0;
 
     document
-      .getElementById(
-        "pendingCount"
-      )
+      .getElementById("supportCount")
       .textContent =
-      data.pendingTransfers;
-
-    document
-      .getElementById(
-        "supportCount"
-      )
-      .textContent =
-      data.openSupport;
+      data.openSupport ?? 0;
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Dashboard error:",
+      error
+    );
 
   }
 
+}
+
+
+/* =========================
+   CUSTOMER BALANCES
+========================= */
+
+function formatAccounts(accounts){
+
+  if(!Array.isArray(accounts) || !accounts.length){
+
+    return "No funds";
+  }
+
+  return `
+    <div class="balance-list">
+      ${
+        accounts
+          .map(
+            account =>
+              `<div class="balance-item">
+                ${escapeHtml(account.currency)}
+                ${Number(account.balance || 0)
+                  .toLocaleString(
+                    undefined,
+                    {
+                      minimumFractionDigits:2
+                    }
+                  )}
+              </div>`
+          )
+          .join("")
+      }
+    </div>
+  `;
 }
 
 
@@ -1093,98 +1048,94 @@ async function loadCustomers(){
         </tr>`;
 
       return;
-
     }
 
     body.innerHTML =
-      customers.map(
-        customer => {
+      customers
+        .map(
+          customer => {
 
-          const status =
-            customer.status;
+            const status =
+              customer.status;
 
-          return `
-          <tr>
+            return `
+              <tr>
 
-            <td>
-              <strong>
-                ${escapeHtml(
-                  customer.full_name
-                )}
-              </strong>
-            </td>
+                <td>
+                  <strong>
+                    ${escapeHtml(
+                      customer.full_name
+                    )}
+                  </strong>
+                </td>
 
-            <td>
-              ${escapeHtml(
-                customer.email
-              )}
-            </td>
+                <td>
+                  ${escapeHtml(
+                    customer.email
+                  )}
+                </td>
 
-            <td>
-              ${Number(
-                customer.balance
-              ).toLocaleString(
-                undefined,
-                {
-                  minimumFractionDigits:2
-                }
-              )}
-            </td>
+                <td>
+                  ${formatAccounts(
+                    customer.accounts
+                  )}
+                </td>
 
-            <td>
-              <span class="badge ${status}">
-                ${escapeHtml(status)}
-              </span>
-            </td>
+                <td>
+                  <span class="badge ${escapeHtml(status)}">
+                    ${escapeHtml(status)}
+                  </span>
+                </td>
 
-            <td>
-              ${new Date(
-                customer.created_at
-              ).toLocaleDateString()}
-            </td>
+                <td>
+                  ${new Date(
+                    customer.created_at
+                  ).toLocaleDateString()}
+                </td>
 
-            <td>
+                <td>
 
-              <div class="actions">
+                  <div class="actions">
 
-                <button
-                  class="primary"
-                  onclick='openCredit(${JSON.stringify(
-                    customer
-                  )})'
-                >
-                  Add Funds
-                </button>
+                    <button
+                      class="primary"
+                      onclick='openCredit(${JSON.stringify(
+                        customer
+                      )})'
+                    >
+                      Add Funds
+                    </button>
 
-                <button
-                  class="secondary"
-                  onclick="changeStatus(
-                    ${customer.id},
-                    'active'
-                  )"
-                >
-                  Activate
-                </button>
+                    <button
+                      class="secondary"
+                      onclick="changeStatus(
+                        ${customer.id},
+                        'active'
+                      )"
+                    >
+                      Activate
+                    </button>
 
-                <button
-                  class="danger"
-                  onclick="changeStatus(
-                    ${customer.id},
-                    'suspended'
-                  )"
-                >
-                  Suspend
-                </button>
+                    <button
+                      class="danger"
+                      onclick="changeStatus(
+                        ${customer.id},
+                        'suspended'
+                      )"
+                    >
+                      Suspend
+                    </button>
 
-              </div>
+                  </div>
 
-            </td>
+                </td>
 
-          </tr>
-          `;
+              </tr>
+            `;
 
-        }
-      ).join("");
+          }
+        )
+        .join("");
 
   }catch(error){
 
@@ -1208,56 +1159,71 @@ async function loadCustomers(){
 
 function openCredit(customer){
 
-  selectedCustomer =
-    customer;
+  selectedCustomer = customer;
 
   document
-    .getElementById(
-      "creditCustomerName"
-    )
+    .getElementById("creditCustomerName")
     .textContent =
-    customer.full_name +
-    " — Current balance: " +
-    Number(
-      customer.balance
-    ).toLocaleString();
+      customer.full_name +
+      " — " +
+      getCustomerBalanceText(
+        customer.accounts
+      );
 
   document
-    .getElementById(
-      "creditAmount"
-    )
+    .getElementById("creditAmount")
     .value = "";
 
   document
-    .getElementById(
-      "creditNote"
-    )
+    .getElementById("creditNote")
     .value =
-    "Administrator account credit";
+      "Administrator account funding";
 
   document
-    .getElementById(
-      "creditModal"
-    )
-    .classList.add(
-      "show"
-    );
+    .getElementById("creditModal")
+    .classList.add("show");
+}
 
+
+function getCustomerBalanceText(accounts){
+
+  if(!Array.isArray(accounts) || !accounts.length){
+
+    return "Current balance: No funds";
+  }
+
+  const text =
+    accounts
+      .map(
+        account =>
+          escapeHtml(account.currency) +
+          " " +
+          Number(account.balance || 0)
+            .toLocaleString(
+              undefined,
+              {
+                minimumFractionDigits:2
+              }
+            )
+      )
+      .join(" • ");
+
+  return "Current balance: " + text;
 }
 
 
 function closeModal(){
 
   document
-    .getElementById(
-      "creditModal"
-    )
-    .classList.remove(
-      "show"
-    );
-
+    .getElementById("creditModal")
+    .classList.remove("show");
 }
 
+
+/* =========================
+   ADD FUNDS
+   FIXED TO MATCH SERVER
+========================= */
 
 async function creditCustomer(){
 
@@ -1266,25 +1232,20 @@ async function creditCustomer(){
 
   const currency =
     document
-      .getElementById(
-        "creditCurrency"
-      )
-      .value;
+      .getElementById("creditCurrency")
+      .value
+      .toUpperCase();
 
   const amount =
     Number(
       document
-        .getElementById(
-          "creditAmount"
-        )
+        .getElementById("creditAmount")
         .value
     );
 
-  const note =
+  const description =
     document
-      .getElementById(
-        "creditNote"
-      )
+      .getElementById("creditNote")
       .value
       .trim();
 
@@ -1298,18 +1259,16 @@ async function creditCustomer(){
     );
 
     return;
-
   }
 
-  /*
-    The current server balance is a single
-    numeric balance. Therefore the currency
-    selected here is recorded in the note,
-    not converted automatically.
+  if(amount > 1000000000){
 
-    We do NOT pretend that this is a live
-    exchange-rate conversion.
-  */
+    alert(
+      "The amount is too large."
+    );
+
+    return;
+  }
 
   const confirmed =
     confirm(
@@ -1327,25 +1286,42 @@ async function creditCustomer(){
 
   try{
 
-    await api(
-      "/api/admin/customers/" +
-      selectedCustomer.id +
-      "/credit",
-      {
-        method:"POST",
-        body:JSON.stringify({
-          amount,
-          note:
-            "[" +
-            currency +
-            "] " +
-            note
-        })
-      }
-    );
+    /*
+      IMPORTANT:
+      The server endpoint is /funds,
+      not /credit.
+
+      The server expects:
+      amount
+      currency
+      description
+    */
+
+    const result =
+      await api(
+        "/api/admin/customers/" +
+        selectedCustomer.id +
+        "/funds",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+
+            amount,
+
+            currency,
+
+            description:
+              description ||
+              "Administrator account funding"
+
+          })
+        }
+      );
 
     alert(
-      "Account credit recorded successfully."
+      result.message ||
+      "Customer account funded successfully."
     );
 
     closeModal();
@@ -1357,7 +1333,8 @@ async function creditCustomer(){
   }catch(error){
 
     alert(
-      error.message
+      error.message ||
+      "Unable to add funds."
     );
 
   }
@@ -1392,6 +1369,7 @@ async function changeStatus(
       "/status",
       {
         method:"PATCH",
+
         body:JSON.stringify({
           status
         })
@@ -1426,7 +1404,7 @@ async function loadTransfers(){
 
   body.innerHTML =
     `<tr>
-      <td colspan="6" class="empty">
+      <td colspan="7" class="empty">
         Loading transfers...
       </td>
     </tr>`;
@@ -1442,103 +1420,119 @@ async function loadTransfers(){
 
       body.innerHTML =
         `<tr>
-          <td colspan="6" class="empty">
+          <td colspan="7" class="empty">
             No transfer requests.
           </td>
         </tr>`;
 
       return;
-
     }
 
     body.innerHTML =
-      transfers.map(
-        t => `
+      transfers
+        .map(
+          t => `
 
-        <tr>
+          <tr>
 
-          <td>
-            <strong>
-              ${escapeHtml(
-                t.full_name
+            <td>
+              <strong>
+                ${escapeHtml(
+                  t.full_name
+                )}
+              </strong>
+              <br>
+              <small>
+                ${escapeHtml(
+                  t.email
+                )}
+              </small>
+            </td>
+
+            <td>
+              ${Number(
+                t.amount || 0
+              ).toLocaleString(
+                undefined,
+                {
+                  minimumFractionDigits:2
+                }
               )}
-            </strong>
-            <br>
-            <small>
+            </td>
+
+            <td>
               ${escapeHtml(
-                t.email
+                t.currency || "—"
               )}
-            </small>
-          </td>
+            </td>
 
-          <td>
-            ${Number(
-              t.amount
-            ).toLocaleString()}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              t.recipient || "—"
-            )}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              t.reference
-            )}
-          </td>
-
-          <td>
-            <span class="badge ${
-              t.status === "successful"
-                ? "success-badge"
-                : t.status
-            }">
+            <td>
               ${escapeHtml(
-                t.status
+                t.recipient || "—"
               )}
-            </span>
-          </td>
+            </td>
 
-          <td>
+            <td>
+              ${escapeHtml(
+                t.reference
+              )}
+            </td>
 
-            <div class="actions">
+            <td>
 
-              <button
-                class="success"
-                onclick="updateTransfer(
-                  ${t.id},
-                  'successful'
-                )"
-              >
-                Approve
-              </button>
+              <span class="badge ${
+                t.status === "successful"
+                  ? "success-badge"
+                  : escapeHtml(t.status)
+              }">
 
-              <button
-                class="danger"
-                onclick="updateTransfer(
-                  ${t.id},
-                  'declined'
-                )"
-              >
-                Decline
-              </button>
+                ${escapeHtml(
+                  t.status
+                )}
 
-            </div>
+              </span>
 
-          </td>
+            </td>
 
-        </tr>
+            <td>
 
-        `
-      ).join("");
+              <div class="actions">
+
+                <button
+                  class="success"
+                  onclick="updateTransfer(
+                    ${t.id},
+                    'successful'
+                  )"
+                >
+                  Approve
+                </button>
+
+                <button
+                  class="danger"
+                  onclick="updateTransfer(
+                    ${t.id},
+                    'declined'
+                  )"
+                >
+                  Decline
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          `
+        )
+        .join("");
 
   }catch(error){
 
     body.innerHTML =
       `<tr>
-        <td colspan="6" class="empty">
+        <td colspan="7" class="empty">
           ${escapeHtml(
             error.message
           )}
@@ -1573,6 +1567,7 @@ async function updateTransfer(
       "/status",
       {
         method:"PATCH",
+
         body:JSON.stringify({
           status
         })
@@ -1629,68 +1624,77 @@ async function loadSupport(){
         </tr>`;
 
       return;
-
     }
 
     body.innerHTML =
-      tickets.map(
-        ticket => `
+      tickets
+        .map(
+          ticket => `
 
-        <tr>
+          <tr>
 
-          <td>
-            ${escapeHtml(
-              ticket.full_name
-            )}
-            <br>
-            <small>
+            <td>
+
               ${escapeHtml(
-                ticket.email
+                ticket.full_name
               )}
-            </small>
-          </td>
 
-          <td>
-            ${escapeHtml(
-              ticket.subject
-            )}
-          </td>
+              <br>
 
-          <td>
-            ${escapeHtml(
-              ticket.message
-            )}
-          </td>
+              <small>
+                ${escapeHtml(
+                  ticket.email
+                )}
+              </small>
 
-          <td>
-            <span class="badge ${
-              ticket.status === "answered"
-                ? "success-badge"
-                : "pending"
-            }">
+            </td>
+
+            <td>
               ${escapeHtml(
-                ticket.status
+                ticket.subject
               )}
-            </span>
-          </td>
+            </td>
 
-          <td>
+            <td>
+              ${escapeHtml(
+                ticket.message
+              )}
+            </td>
 
-            <button
-              class="primary"
-              onclick="openReply(
-                ${ticket.id}
-              )"
-            >
-              Reply
-            </button>
+            <td>
 
-          </td>
+              <span class="badge ${
+                ticket.status === "answered"
+                  ? "success-badge"
+                  : "pending"
+              }">
 
-        </tr>
+                ${escapeHtml(
+                  ticket.status
+                )}
 
-        `
-      ).join("");
+              </span>
+
+            </td>
+
+            <td>
+
+              <button
+                class="primary"
+                onclick="openReply(
+                  ${ticket.id}
+                )"
+              >
+                Reply
+              </button>
+
+            </td>
+
+          </tr>
+
+          `
+        )
+        .join("");
 
   }catch(error){
 
@@ -1712,40 +1716,25 @@ async function loadSupport(){
    REPLY
 ========================= */
 
-function openReply(
-  ticketId
-){
+function openReply(ticketId){
 
-  selectedTicket =
-    ticketId;
+  selectedTicket = ticketId;
 
   document
-    .getElementById(
-      "replyMessage"
-    )
+    .getElementById("replyMessage")
     .value = "";
 
   document
-    .getElementById(
-      "replyModal"
-    )
-    .classList.add(
-      "show"
-    );
-
+    .getElementById("replyModal")
+    .classList.add("show");
 }
 
 
 function closeReplyModal(){
 
   document
-    .getElementById(
-      "replyModal"
-    )
-    .classList.remove(
-      "show"
-    );
-
+    .getElementById("replyModal")
+    .classList.remove("show");
 }
 
 
@@ -1753,9 +1742,7 @@ async function sendReply(){
 
   const message =
     document
-      .getElementById(
-        "replyMessage"
-      )
+      .getElementById("replyMessage")
       .value
       .trim();
 
@@ -1766,7 +1753,15 @@ async function sendReply(){
     );
 
     return;
+  }
 
+  if(!selectedTicket){
+
+    alert(
+      "No support ticket selected."
+    );
+
+    return;
   }
 
   try{
@@ -1777,6 +1772,7 @@ async function sendReply(){
       "/reply",
       {
         method:"POST",
+
         body:JSON.stringify({
           message
         })
@@ -1828,61 +1824,64 @@ async function loadNotifications(){
         "No notifications.";
 
       return;
-
     }
 
     box.innerHTML =
-      notifications.map(
-        n => `
+      notifications
+        .map(
+          n => `
 
-        <div
-          style="
-            padding:14px 0;
-            border-bottom:1px solid #edf0f5;
-            opacity:${
-              n.is_read ? ".6" : "1"
-            };
-          "
-        >
+          <div
+            style="
+              padding:14px 0;
+              border-bottom:1px solid #edf0f5;
+              opacity:${
+                n.is_read ? ".6" : "1"
+              };
+            "
+          >
 
-          <strong>
-            ${escapeHtml(
-              n.title
-            )}
-          </strong>
+            <strong>
+              ${escapeHtml(
+                n.title
+              )}
+            </strong>
 
-          <p>
-            ${escapeHtml(
-              n.message
-            )}
-          </p>
+            <p>
+              ${escapeHtml(
+                n.message
+              )}
+            </p>
 
-          <small>
-            ${new Date(
-              n.created_at
-            ).toLocaleString()}
-          </small>
+            <small>
+              ${new Date(
+                n.created_at
+              ).toLocaleString()}
+            </small>
 
-          ${
-            !n.is_read
-            ?
-            `<br><br>
-             <button
-               class="secondary"
-               onclick="markNotification(
-                 ${n.id}
-               )"
-             >
-               Mark as read
-             </button>`
-            :
-            ""
-          }
+            ${
+              !n.is_read
+              ?
+              `<br><br>
 
-        </div>
+               <button
+                 class="secondary"
+                 onclick="markNotification(
+                   ${n.id}
+                 )"
+               >
+                 Mark as read
+               </button>`
 
-        `
-      ).join("");
+              :
+              ""
+            }
+
+          </div>
+
+          `
+        )
+        .join("");
 
   }catch(error){
 
@@ -1896,9 +1895,7 @@ async function loadNotifications(){
 }
 
 
-async function markNotification(
-  id
-){
+async function markNotification(id){
 
   try{
 
@@ -1911,7 +1908,7 @@ async function markNotification(
       }
     );
 
-    loadNotifications();
+    await loadNotifications();
 
   }catch(error){
 
@@ -1928,9 +1925,7 @@ async function markNotification(
    SECURITY
 ========================= */
 
-function escapeHtml(
-  value
-){
+function escapeHtml(value){
 
   return String(
     value ?? ""
@@ -1969,7 +1964,5 @@ if(token){
 
 }
 
-</script>
-
-</body>
+</script></body>
 </html>
