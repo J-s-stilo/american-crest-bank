@@ -1085,7 +1085,7 @@ app.get(
         await pool.query(
           `SELECT
              currency,
-             COALESCE(SUM(balance), 0) AS total
+             COALESCE(SUM(a.balance), 0) AS total
            FROM accounts a
            JOIN users u
              ON u.id = a.user_id
