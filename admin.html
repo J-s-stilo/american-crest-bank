@@ -3,17 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>American Crest Bank | Admin</title>
+<title>American Crest Bank | Banking Management Portal</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f3f6fa;
-  color:#182536;
-}
-button,input,select{font:inherit}
-button{cursor:pointer}
 
 :root{
   --navy:#071a35;
@@ -22,13 +15,30 @@ button{cursor:pointer}
   --green:#159447;
   --red:#d93434;
   --gold:#d6aa43;
+  --orange:#d88919;
   --muted:#718096;
   --border:#e0e6ee;
+  --light:#f3f6fa;
   --white:#fff;
   --shadow:0 10px 30px rgba(7,26,53,.09);
 }
 
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--light);
+  color:#182536;
+}
+
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
 /* LOGIN */
+
 .loginScreen{
   min-height:100vh;
   display:flex;
@@ -36,16 +46,18 @@ button{cursor:pointer}
   justify-content:center;
   padding:20px;
   background:
-    linear-gradient(135deg,rgba(4,19,39,.96),rgba(11,49,91,.94));
+    linear-gradient(135deg,rgba(4,19,39,.94),rgba(11,49,91,.88)),
+    url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1800&q=80")
+    center/cover;
 }
 
 .loginBox{
   width:100%;
-  max-width:430px;
+  max-width:440px;
   background:#fff;
-  border-radius:18px;
-  padding:32px;
-  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  border-radius:20px;
+  padding:34px;
+  box-shadow:0 25px 70px rgba(0,0,0,.3);
 }
 
 .logo{
@@ -93,16 +105,24 @@ button{cursor:pointer}
 }
 
 .field input,
-.field select{
+.field select,
+.field textarea{
   width:100%;
   border:1px solid var(--border);
   border-radius:8px;
   padding:13px;
   outline:none;
+  background:#fff;
+}
+
+.field textarea{
+  min-height:110px;
+  resize:vertical;
 }
 
 .field input:focus,
-.field select:focus{
+.field select:focus,
+.field textarea:focus{
   border-color:var(--blue);
 }
 
@@ -116,18 +136,12 @@ button{cursor:pointer}
 .primary{background:var(--blue);color:#fff}
 .dark{background:var(--navy);color:#fff}
 .outline{background:#fff;border:1px solid var(--border);color:var(--navy)}
+.green{background:var(--green);color:#fff}
+.red{background:var(--red);color:#fff}
 .full{width:100%}
 
-.demoNote{
-  background:#edf5ff;
-  color:#426487;
-  border-radius:8px;
-  padding:11px;
-  font-size:11px;
-  margin-bottom:16px;
-}
+/* APPLICATION */
 
-/* ADMIN */
 #adminApp{display:none}
 
 .sidebar{
@@ -135,16 +149,17 @@ button{cursor:pointer}
   left:0;
   top:0;
   bottom:0;
-  width:245px;
+  width:250px;
   background:var(--navy);
   color:#fff;
   padding:25px 17px;
+  z-index:20;
 }
 
 .sidebar .logo{color:#fff}
 
 .menu{
-  margin-top:35px;
+  margin-top:30px;
 }
 
 .menu button{
@@ -173,7 +188,7 @@ button{cursor:pointer}
 }
 
 .main{
-  margin-left:245px;
+  margin-left:250px;
   min-height:100vh;
 }
 
@@ -185,6 +200,9 @@ button{cursor:pointer}
   align-items:center;
   justify-content:space-between;
   padding:0 30px;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
 .top h2{
@@ -212,9 +230,42 @@ button{cursor:pointer}
 
 .content{
   padding:30px;
-  max-width:1400px;
+  max-width:1450px;
   margin:auto;
 }
+
+/* HERO */
+
+.portalHero{
+  min-height:220px;
+  border-radius:18px;
+  padding:35px;
+  color:#fff;
+  margin-bottom:22px;
+  background:
+    linear-gradient(90deg,rgba(4,19,39,.94),rgba(4,19,39,.55)),
+    url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=80")
+    center/cover;
+}
+
+.portalHero small{
+  color:#d9b65c;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+
+.portalHero h1{
+  font-size:35px;
+  margin:10px 0;
+}
+
+.portalHero p{
+  color:#d8e4f2;
+  max-width:650px;
+}
+
+/* STATS */
 
 .stats{
   display:grid;
@@ -238,6 +289,8 @@ button{cursor:pointer}
   margin-top:8px;
 }
 
+/* PANELS */
+
 .grid{
   display:grid;
   grid-template-columns:1.5fr 1fr;
@@ -257,6 +310,17 @@ button{cursor:pointer}
   margin-bottom:18px;
 }
 
+.notice{
+  padding:14px;
+  border-radius:9px;
+  background:#eef5ff;
+  color:#426487;
+  font-size:12px;
+  margin-bottom:18px;
+}
+
+/* TABLE */
+
 .tableWrap{
   overflow:auto;
 }
@@ -264,7 +328,7 @@ button{cursor:pointer}
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:650px;
+  min-width:700px;
 }
 
 th{
@@ -300,9 +364,15 @@ td{
   color:#926e17;
 }
 
+.failed,
 .suspended{
   background:#fdeaea;
   color:var(--red);
+}
+
+.success{
+  background:#e7f7ee;
+  color:var(--green);
 }
 
 .actions{
@@ -325,9 +395,47 @@ td{
   color:var(--blue);
 }
 
+/* CUSTOMER CARDS */
+
+.customerCards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-top:20px;
+}
+
+.customerCard{
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+
+.customerPhoto{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#e9eef5;
+  margin-bottom:12px;
+}
+
+.customerCard h3{
+  color:var(--navy);
+  font-size:16px;
+}
+
+.customerCard p{
+  color:var(--muted);
+  font-size:12px;
+  margin:4px 0;
+}
+
+/* SUPPORT */
+
 .ticket{
   border-bottom:1px solid #edf0f4;
-  padding:13px 0;
+  padding:15px 0;
 }
 
 .ticket:last-child{
@@ -346,10 +454,23 @@ td{
 
 .ticket small{
   color:var(--muted);
+  display:block;
+  margin-top:3px;
 }
 
+.replyBox{
+  margin-top:12px;
+  display:none;
+}
+
+.replyBox.show{
+  display:block;
+}
+
+/* AUDIT */
+
 .audit{
-  max-height:340px;
+  max-height:400px;
   overflow:auto;
 }
 
@@ -365,16 +486,8 @@ td{
   margin-top:3px;
 }
 
-.notice{
-  padding:14px;
-  border-radius:9px;
-  background:#eef5ff;
-  color:#426487;
-  font-size:12px;
-  margin-bottom:18px;
-}
-
 /* MODAL */
+
 .modal{
   display:none;
   position:fixed;
@@ -386,11 +499,13 @@ td{
   padding:20px;
 }
 
-.modal.show{display:flex}
+.modal.show{
+  display:flex;
+}
 
 .modalBox{
   width:100%;
-  max-width:520px;
+  max-width:570px;
   background:#fff;
   border-radius:16px;
   padding:25px;
@@ -409,15 +524,59 @@ td{
   color:#758297;
 }
 
+/* FUNDING */
+
+.fundingSummary{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:20px;
+}
+
+.fundingSummary small{
+  color:#b9c8da;
+}
+
+.fundingSummary h2{
+  margin-top:5px;
+  font-size:30px;
+}
+
+.formGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+/* TOAST */
+
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translate(-50%,120px);
+  background:#071a35;
+  color:#fff;
+  padding:13px 20px;
+  border-radius:8px;
+  font-size:13px;
+  transition:.3s;
+  z-index:300;
+}
+
 /* RESPONSIVE */
-@media(max-width:1000px){
+
+@media(max-width:1050px){
   .sidebar{width:205px}
   .main{margin-left:205px}
   .stats{grid-template-columns:1fr 1fr}
   .grid{grid-template-columns:1fr}
+  .customerCards{grid-template-columns:1fr 1fr}
 }
 
 @media(max-width:700px){
+
   .sidebar{
     position:relative;
     width:100%;
@@ -441,16 +600,36 @@ td{
     margin-top:10px;
   }
 
-  .main{margin-left:0}
+  .main{
+    margin-left:0;
+  }
 
   .top{
     padding:0 15px;
   }
 
-  .content{padding:18px}
+  .content{
+    padding:18px;
+  }
 
   .stats{
     grid-template-columns:1fr;
+  }
+
+  .customerCards{
+    grid-template-columns:1fr;
+  }
+
+  .formGrid{
+    grid-template-columns:1fr;
+  }
+
+  .portalHero{
+    padding:25px;
+  }
+
+  .portalHero h1{
+    font-size:27px;
   }
 }
 </style>
@@ -458,7 +637,8 @@ td{
 
 <body>
 
-<!-- ADMIN LOGIN -->
+<!-- LOGIN -->
+
 <section class="loginScreen" id="loginScreen">
 
   <div class="loginBox">
@@ -468,32 +648,37 @@ td{
       <span>AMERICAN CREST BANK</span>
     </div>
 
-    <h1>Administrator Portal</h1>
-    <p>Secure management interface for the American Crest Bank platform.</p>
+    <h1>Banking Management Portal</h1>
 
-    <div class="demoNote">
-      This is the local demonstration administrator interface.
-      The credentials below are for testing this front-end only.
-    </div>
+    <p>
+      Authorized administration and account management.
+    </p>
 
     <div class="field">
       <label>Administrator Username</label>
-      <input id="adminUser" type="text" placeholder="admin">
+      <input id="adminUser" type="text" placeholder="Administrator username">
     </div>
 
     <div class="field">
       <label>Password</label>
-      <input id="adminPass" type="password" placeholder="admin123">
+      <input id="adminPass" type="password" placeholder="Password">
     </div>
 
     <button class="btn primary full" onclick="adminLogin()">
       Sign In
     </button>
 
+    <p style="margin-top:15px;font-size:11px">
+      Administrator authentication should be connected to your secure backend.
+    </p>
+
   </div>
+
 </section>
 
+
 <!-- ADMIN APPLICATION -->
+
 <div id="adminApp">
 
   <aside class="sidebar">
@@ -504,6 +689,7 @@ td{
     </div>
 
     <div class="menu">
+
       <button class="active" onclick="showSection('overview',this)">
         ▦ Overview
       </button>
@@ -512,12 +698,16 @@ td{
         ◎ Customers
       </button>
 
+      <button onclick="showSection('funding',this)">
+        ＋ Account Funding
+      </button>
+
       <button onclick="showSection('transactions',this)">
         ↗ Transactions
       </button>
 
       <button onclick="showSection('support',this)">
-        ? Support
+        ? Support Center
       </button>
 
       <button onclick="showSection('audit',this)">
@@ -527,6 +717,7 @@ td{
       <button onclick="showSection('settings',this)">
         ⚙ Settings
       </button>
+
     </div>
 
     <button class="btn outline logout" onclick="adminLogout()">
@@ -535,31 +726,53 @@ td{
 
   </aside>
 
+
   <main class="main">
 
     <header class="top">
-      <h2 id="pageTitle">Overview</h2>
+
+      <h2 id="pageTitle">
+        Overview
+      </h2>
 
       <div class="adminUser">
-        <div class="avatar">AD</div>
+
+        <div class="avatar">
+          AD
+        </div>
+
         <div>
           <b>Administrator</b>
           <small style="display:block;color:#718096">
-            Authorized dashboard
+            Banking Management
           </small>
         </div>
+
       </div>
+
     </header>
+
 
     <div class="content">
 
+
       <!-- OVERVIEW -->
+
       <section id="overviewSection">
 
-        <div class="notice">
-          Administrative controls shown here are for the fictional American Crest Bank application.
-          Real financial transactions require a properly authorized backend and payment/banking provider.
+        <div class="portalHero">
+
+          <small>Banking Management</small>
+
+          <h1>Manage your banking platform</h1>
+
+          <p>
+            Manage customers, account balances, transaction records,
+            support requests and administrative activity from one place.
+          </p>
+
         </div>
+
 
         <div class="stats">
 
@@ -574,134 +787,299 @@ td{
           </div>
 
           <div class="stat">
-            <small>Support Requests</small>
-            <h2 id="ticketCount">0</h2>
+            <small>Pending Transactions</small>
+            <h2 id="pendingCount">0</h2>
           </div>
 
           <div class="stat">
-            <small>System Status</small>
-            <h2 style="color:#159447">Online</h2>
+            <small>Open Support</small>
+            <h2 id="ticketCount">0</h2>
           </div>
 
         </div>
 
+
         <div class="grid">
 
           <div class="panel">
+
             <h3>Recent Customers</h3>
+
             <div class="tableWrap">
+
               <table>
+
                 <thead>
                   <tr>
                     <th>Customer</th>
                     <th>Email</th>
+                    <th>Balance</th>
                     <th>Status</th>
-                    <th>Joined</th>
                   </tr>
                 </thead>
+
                 <tbody id="recentCustomers"></tbody>
+
               </table>
+
             </div>
+
           </div>
 
+
           <div class="panel">
-            <h3>System Activity</h3>
+
+            <h3>Recent Administrative Activity</h3>
+
             <div class="audit" id="overviewAudit"></div>
+
           </div>
 
         </div>
 
       </section>
 
+
       <!-- CUSTOMERS -->
+
       <section id="customersSection" style="display:none">
 
         <div class="panel">
 
           <h3>Customer Management</h3>
 
+          <div class="notice">
+            Select a customer to view their account information,
+            manage account status or open account funding controls.
+          </div>
+
           <div class="tableWrap">
+
             <table>
+
               <thead>
+
                 <tr>
-                  <th>Name</th>
+                  <th>Customer</th>
                   <th>Email</th>
                   <th>Account</th>
+                  <th>Balance</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
+
               </thead>
 
               <tbody id="customerTable"></tbody>
 
             </table>
+
           </div>
 
         </div>
 
+        <div class="customerCards" id="customerCards"></div>
+
       </section>
 
-      <!-- TRANSACTIONS -->
-      <section id="transactionsSection" style="display:none">
+
+      <!-- FUNDING -->
+
+      <section id="fundingSection" style="display:none">
 
         <div class="panel">
 
-          <h3>Transaction Records</h3>
+          <h3>Account Funding</h3>
 
           <div class="notice">
-            Transaction records displayed here are demonstration records.
+            Use this area to manage balances within your platform.
+            Every adjustment is recorded in the administrative history.
           </div>
 
-          <div class="tableWrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Direction</th>
-                </tr>
-              </thead>
+          <div class="field">
 
-              <tbody id="transactionTable"></tbody>
-            </table>
+            <label>Select Customer</label>
+
+            <select id="fundCustomer"
+                    onchange="updateFundingCustomer()">
+
+              <option value="">
+                Select a customer
+              </option>
+
+            </select>
+
+          </div>
+
+          <div id="fundingDetails" style="display:none">
+
+            <div class="fundingSummary">
+
+              <small>Current Account Balance</small>
+
+              <h2 id="fundCurrentBalance">
+                $0.00
+              </h2>
+
+              <div id="fundCustomerName"
+                   style="margin-top:5px">
+              </div>
+
+            </div>
+
+
+            <div class="formGrid">
+
+              <div class="field">
+
+                <label>Amount</label>
+
+                <input id="fundAmount"
+                       type="number"
+                       min="0"
+                       step="0.01"
+                       placeholder="0.00">
+
+              </div>
+
+
+              <div class="field">
+
+                <label>Currency</label>
+
+                <select id="fundCurrency">
+
+                  <option value="USD">USD — US Dollar</option>
+                  <option value="EUR">EUR — Euro</option>
+                  <option value="GBP">GBP — British Pound</option>
+                  <option value="NGN">NGN — Nigerian Naira</option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>Funding Description</label>
+
+              <input id="fundDescription"
+                     placeholder="Account funding">
+
+            </div>
+
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+
+              <button class="btn green"
+                      onclick="fundAccount()">
+                Add Funds
+              </button>
+
+              <button class="btn red"
+                      onclick="removeFunds()">
+                Remove Funds
+              </button>
+
+            </div>
+
           </div>
 
         </div>
 
       </section>
 
+
+      <!-- TRANSACTIONS -->
+
+      <section id="transactionsSection"
+               style="display:none">
+
+        <div class="panel">
+
+          <h3>Transaction Management</h3>
+
+          <div class="tableWrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Customer</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Currency</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="transactionTable"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
       <!-- SUPPORT -->
-      <section id="supportSection" style="display:none">
+
+      <section id="supportSection"
+               style="display:none">
 
         <div class="grid">
 
           <div class="panel">
 
-            <h3>Customer Support</h3>
+            <h3>Customer Support Center</h3>
 
             <div id="tickets"></div>
 
           </div>
 
+
           <div class="panel">
 
-            <h3>AI Support Configuration</h3>
+            <h3>Support Channels</h3>
 
-            <div class="field">
-              <label>Assistant Name</label>
-              <input id="assistantName" value="ACB Digital Assistant">
+            <div class="contactItem"
+                 style="padding:15px 0;border-bottom:1px solid #edf0f4">
+
+              <b>Email</b>
+
+              <p style="color:#718096;font-size:13px;margin-top:5px">
+                billioneleven@gmail.com
+              </p>
+
             </div>
 
-            <div class="field">
-              <label>Welcome Message</label>
-              <input id="assistantWelcome"
-                     value="Hello! How can I assist you today?">
+
+            <div style="padding:15px 0">
+
+              <b>WhatsApp</b>
+
+              <p style="color:#718096;font-size:13px;margin-top:5px">
+                +2347078448084
+              </p>
+
             </div>
 
-            <button class="btn primary" onclick="saveAssistant()">
-              Save Assistant Settings
-            </button>
+
+            <a
+              class="btn green"
+              href="https://wa.me/2347078448084"
+              target="_blank"
+              style="display:inline-block">
+              Open WhatsApp
+            </a>
 
           </div>
 
@@ -709,50 +1087,82 @@ td{
 
       </section>
 
+
       <!-- AUDIT -->
-      <section id="auditSection" style="display:none">
+
+      <section id="auditSection"
+               style="display:none">
 
         <div class="panel">
 
           <h3>Administrative Audit Log</h3>
 
-          <div class="notice">
-            Audit entries help administrators review actions performed inside the application.
-          </div>
-
-          <div class="audit" id="fullAudit"></div>
+          <div class="audit"
+               id="fullAudit"></div>
 
         </div>
 
       </section>
 
+
       <!-- SETTINGS -->
-      <section id="settingsSection" style="display:none">
+
+      <section id="settingsSection"
+               style="display:none">
 
         <div class="panel">
 
           <h3>Platform Settings</h3>
 
           <div class="field">
+
             <label>Bank Display Name</label>
-            <input value="American Crest Bank">
+
+            <input id="bankName"
+                   value="American Crest Bank">
+
           </div>
 
+
           <div class="field">
+
             <label>Customer Support Email</label>
-            <input type="email" value="support@americancrestbank.example">
+
+            <input id="supportEmail"
+                   type="email"
+                   value="billioneleven@gmail.com">
+
           </div>
+
 
           <div class="field">
-            <label>Support Availability</label>
-            <select>
-              <option>24/7</option>
-              <option>Business Hours</option>
-              <option>Custom</option>
-            </select>
+
+            <label>WhatsApp Support Number</label>
+
+            <input id="supportWhatsApp"
+                   value="+2347078448084">
+
           </div>
 
-          <button class="btn primary" onclick="saveSettings()">
+
+          <div class="field">
+
+            <label>Default Currency</label>
+
+            <select id="defaultCurrency">
+
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="NGN">NGN</option>
+
+            </select>
+
+          </div>
+
+
+          <button class="btn primary"
+                  onclick="saveSettings()">
             Save Settings
           </button>
 
@@ -761,119 +1171,133 @@ td{
       </section>
 
     </div>
+
   </main>
 
 </div>
 
+
 <!-- CUSTOMER MODAL -->
-<div class="modal" id="customerModal">
+
+<div class="modal"
+     id="customerModal">
 
   <div class="modalBox">
 
-    <button class="close" onclick="closeCustomer()">×</button>
+    <button class="close"
+            onclick="closeModal('customerModal')">
+      ×
+    </button>
 
     <h2 style="color:#071a35;margin-bottom:6px">
-      Customer Details
+      Customer Account
     </h2>
 
     <p id="customerDetails"
        style="color:#718096;font-size:13px;margin-bottom:20px">
     </p>
 
+
     <div class="field">
+
       <label>Account Status</label>
 
       <select id="customerStatus">
-        <option value="Active">Active</option>
-        <option value="Pending">Pending</option>
-        <option value="Suspended">Suspended</option>
+
+        <option value="Active">
+          Active
+        </option>
+
+        <option value="Pending">
+          Pending
+        </option>
+
+        <option value="Suspended">
+          Suspended
+        </option>
+
       </select>
+
     </div>
 
-    <button class="btn primary full" onclick="saveCustomerStatus()">
-      Save Status
+
+    <div class="field">
+
+      <label>Account Number</label>
+
+      <input id="customerAccountNumber">
+
+    </div>
+
+
+    <div class="field">
+
+      <label>Account Type</label>
+
+      <select id="customerAccountType">
+
+        <option>Personal Banking</option>
+        <option>Current Account</option>
+        <option>Savings Account</option>
+        <option>Premium Account</option>
+
+      </select>
+
+    </div>
+
+
+    <button class="btn primary full"
+            onclick="saveCustomer()">
+      Save Customer
     </button>
 
   </div>
 
 </div>
 
-<div id="toast"
-style="
-position:fixed;
-left:50%;
-bottom:25px;
-transform:translate(-50%,120px);
-background:#071a35;
-color:white;
-padding:13px 20px;
-border-radius:8px;
-font-size:13px;
-transition:.3s;
-z-index:300;
-">
-</div>
+
+<!-- TOAST -->
+
+<div id="toast"></div>
+
 
 <script>
 
-/* =========================
-   LOCAL DEMO DATA
-========================= */
+/* ================================
+   STORAGE
+================================ */
 
 let customers =
-JSON.parse(localStorage.getItem("acbCustomers")) || [
-  {
-    id:1,
-    name:"Demo Customer",
-    email:"customer@example.com",
-    account:"Premium Checking",
-    status:"Active",
-    joined:"Aug 25, 2026"
-  }
-];
-
-let tickets =
-JSON.parse(localStorage.getItem("acbTickets")) || [
-  {
-    id:1,
-    customer:"Demo Customer",
-    subject:"Account assistance",
-    status:"Open",
-    date:"Aug 25, 2026"
-  }
-];
-
-let audit =
-JSON.parse(localStorage.getItem("acbAudit")) || [
-  {
-    action:"Administrator portal initialized",
-    date:new Date().toLocaleString()
-  }
-];
+JSON.parse(localStorage.getItem("acbCustomers")) || [];
 
 let transactions =
-JSON.parse(localStorage.getItem("acbTransactions")) || [
-  {
-    name:"Salary Deposit",
-    date:"Aug 25, 2026",
-    amount:5000,
-    type:"in"
-  },
-  {
-    name:"Online Purchase",
-    date:"Aug 24, 2026",
-    amount:125,
-    type:"out"
-  }
-];
+JSON.parse(localStorage.getItem("acbTransactions")) || [];
+
+let tickets =
+JSON.parse(localStorage.getItem("acbTickets")) || [];
+
+let audit =
+JSON.parse(localStorage.getItem("acbAudit")) || [];
 
 let selectedCustomer=null;
+
+let toastTimer;
+
+
+/* ================================
+   STORAGE HELPERS
+================================ */
 
 function saveAll(){
 
   localStorage.setItem(
     "acbCustomers",
     JSON.stringify(customers)
+  );
+
+  localStorage.setItem(
+    "acbTransactions",
+    JSON.stringify(transactions)
   );
 
   localStorage.setItem(
@@ -885,16 +1309,12 @@ function saveAll(){
     "acbAudit",
     JSON.stringify(audit)
   );
-
-  localStorage.setItem(
-    "acbTransactions",
-    JSON.stringify(transactions)
-  );
 }
 
-/* =========================
-   ADMIN LOGIN
-========================= */
+
+/* ================================
+   LOGIN
+================================ */
 
 function adminLogin(){
 
@@ -905,52 +1325,68 @@ function adminLogin(){
     document.getElementById("adminPass").value;
 
   /*
-    Front-end demonstration credentials only.
-    A real production administrator account must be
-    authenticated by a secure backend.
+    Replace this with your secure backend
+    administrator authentication before production.
   */
 
   if(username==="admin" && password==="admin123"){
 
-    document.getElementById("loginScreen").style.display="none";
+    document.getElementById(
+      "loginScreen"
+    ).style.display="none";
 
-    document.getElementById("adminApp").style.display="block";
+    document.getElementById(
+      "adminApp"
+    ).style.display="block";
 
-    addAudit("Administrator signed in");
+    addAudit(
+      "Administrator signed in"
+    );
 
     refreshDashboard();
 
-    toast("Administrator access granted");
+    toast(
+      "Banking Management Portal opened"
+    );
 
   }else{
 
-    toast("Demo login: admin / admin123");
+    toast(
+      "Administrator credentials are incorrect"
+    );
 
   }
+
 }
+
 
 function adminLogout(){
 
-  addAudit("Administrator signed out");
+  addAudit(
+    "Administrator signed out"
+  );
 
-  document.getElementById("adminApp").style.display="none";
+  document.getElementById(
+    "adminApp"
+  ).style.display="none";
 
-  document.getElementById("loginScreen").style.display="flex";
-
-  document.getElementById("adminUser").value="";
-  document.getElementById("adminPass").value="";
+  document.getElementById(
+    "loginScreen"
+  ).style.display="flex";
 
 }
 
-/* =========================
+
+/* ================================
    NAVIGATION
-========================= */
+================================ */
 
 function showSection(section,button){
 
   const sections=[
     "overview",
     "customers",
+    "funding",
     "transactions",
     "support",
     "audit",
@@ -959,124 +1395,212 @@ function showSection(section,button){
 
   sections.forEach(function(s){
 
-    document.getElementById(s+"Section").style.display=
+    document.getElementById(
+      s+"Section"
+    ).style.display=
       s===section ? "block" : "none";
 
   });
 
-  document.querySelectorAll(".menu button")
-    .forEach(function(btn){
-      btn.classList.remove("active");
-    });
 
-  if(button)button.classList.add("active");
+  document.querySelectorAll(
+    ".menu button"
+  ).forEach(function(btn){
+
+    btn.classList.remove("active");
+
+  });
+
+
+  if(button){
+    button.classList.add("active");
+  }
+
 
   const titles={
+
     overview:"Overview",
     customers:"Customer Management",
-    transactions:"Transaction Records",
-    support:"Customer Support",
+    funding:"Account Funding",
+    transactions:"Transaction Management",
+    support:"Support Center",
     audit:"Audit Log",
     settings:"Settings"
+
   };
 
-  document.getElementById("pageTitle").textContent=
-    titles[section];
+
+  document.getElementById(
+    "pageTitle"
+  ).textContent=titles[section];
+
 
   refreshDashboard();
 
 }
 
-/* =========================
+
+/* ================================
    DASHBOARD
-========================= */
+================================ */
 
 function refreshDashboard(){
 
-  document.getElementById("customerCount").textContent=
-    customers.length;
+  document.getElementById(
+    "customerCount"
+  ).textContent=customers.length;
 
-  document.getElementById("activeCount").textContent=
-    customers.filter(c=>c.status==="Active").length;
 
-  document.getElementById("ticketCount").textContent=
-    tickets.filter(t=>t.status==="Open").length;
+  document.getElementById(
+    "activeCount"
+  ).textContent=
+    customers.filter(
+      c=>c.status==="Active"
+    ).length;
 
-  renderCustomers();
+
+  document.getElementById(
+    "pendingCount"
+  ).textContent=
+    transactions.filter(
+      t=>t.status==="Pending"
+    ).length;
+
+
+  document.getElementById(
+    "ticketCount"
+  ).textContent=
+    tickets.filter(
+      t=>t.status==="Open"
+    ).length;
+
+
   renderRecentCustomers();
+  renderCustomers();
+  renderCustomerCards();
+  renderFundingCustomers();
   renderTransactions();
   renderTickets();
   renderAudit();
 
 }
 
+
+/* ================================
+   CUSTOMERS
+================================ */
+
 function renderRecentCustomers(){
 
   const box=
-    document.getElementById("recentCustomers");
+    document.getElementById(
+      "recentCustomers"
+    );
 
   box.innerHTML="";
 
-  customers.slice(-5).reverse().forEach(function(c){
 
-    const tr=document.createElement("tr");
+  customers
+    .slice()
+    .reverse()
+    .slice(0,5)
+    .forEach(function(c){
 
-    tr.innerHTML=`
-      <td><b>${safe(c.name)}</b></td>
-      <td>${safe(c.email)}</td>
-      <td>
-        <span class="status ${statusClass(c.status)}">
-          ${safe(c.status)}
-        </span>
-      </td>
-      <td>${safe(c.joined)}</td>
-    `;
+      const tr=
+        document.createElement("tr");
 
-    box.appendChild(tr);
+      tr.innerHTML=`
 
-  });
+        <td>
+          <b>${safe(c.name)}</b>
+        </td>
+
+        <td>
+          ${safe(c.email)}
+        </td>
+
+        <td>
+          ${money(c.balance,c.currency)}
+        </td>
+
+        <td>
+          <span class="status ${
+            statusClass(c.status)
+          }">
+            ${safe(c.status)}
+          </span>
+        </td>
+
+      `;
+
+      box.appendChild(tr);
+
+    });
 
 }
+
 
 function renderCustomers(){
 
   const box=
-    document.getElementById("customerTable");
+    document.getElementById(
+      "customerTable"
+    );
 
   box.innerHTML="";
 
+
   customers.forEach(function(c){
 
-    const tr=document.createElement("tr");
+    const tr=
+      document.createElement("tr");
 
     tr.innerHTML=`
-      <td><b>${safe(c.name)}</b></td>
-
-      <td>${safe(c.email)}</td>
-
-      <td>${safe(c.account)}</td>
 
       <td>
-        <span class="status ${statusClass(c.status)}">
+        <b>${safe(c.name)}</b>
+      </td>
+
+      <td>
+        ${safe(c.email)}
+      </td>
+
+      <td>
+        ${safe(c.accountType || "Personal Banking")}
+      </td>
+
+      <td>
+        ${money(c.balance,c.currency)}
+      </td>
+
+      <td>
+        <span class="status ${
+          statusClass(c.status)
+        }">
           ${safe(c.status)}
         </span>
       </td>
 
       <td>
+
         <div class="actions">
 
-          <button class="smallBtn"
+          <button
+            class="smallBtn"
             onclick="viewCustomer(${c.id})">
             View
           </button>
 
-          <button class="smallBtn"
-            onclick="openSupport(${c.id})">
-            Support
+          <button
+            class="smallBtn"
+            onclick="prepareFunding(${c.id})">
+            Fund
           </button>
 
         </div>
+
       </td>
+
     `;
 
     box.appendChild(tr);
@@ -1084,106 +1608,624 @@ function renderCustomers(){
   });
 
 }
+
+
+function renderCustomerCards(){
+
+  const box=
+    document.getElementById(
+      "customerCards"
+    );
+
+  box.innerHTML="";
+
+
+  customers.forEach(function(c){
+
+    const card=
+      document.createElement("div");
+
+    card.className="customerCard";
+
+
+    const photo=
+      c.photo ||
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80";
+
+
+    card.innerHTML=`
+
+      <img
+        class="customerPhoto"
+        src="${photo}"
+        alt="Customer profile">
+
+      <h3>${safe(c.name)}</h3>
+
+      <p>${safe(c.email)}</p>
+
+      <p>
+        Account:
+        ${safe(c.accountNumber || "Not assigned")}
+      </p>
+
+      <p>
+        Balance:
+        <b>${money(c.balance,c.currency)}</b>
+      </p>
+
+      <br>
+
+      <button
+        class="btn primary"
+        onclick="viewCustomer(${c.id})">
+        Manage Account
+      </button>
+
+    `;
+
+    box.appendChild(card);
+
+  });
+
+}
+
 
 function statusClass(status){
 
   if(status==="Active")return"active";
+
   if(status==="Pending")return"pending";
+
   return"suspended";
 
 }
 
-/* =========================
-   CUSTOMER DETAILS
-========================= */
+
+/* ================================
+   CUSTOMER MODAL
+================================ */
 
 function viewCustomer(id){
 
   selectedCustomer=
-    customers.find(c=>c.id===id);
+    customers.find(
+      c=>c.id===id
+    );
 
   if(!selectedCustomer)return;
 
-  document.getElementById("customerDetails").innerHTML=
-    "<b>Name:</b> "+safe(selectedCustomer.name)+
-    "<br><b>Email:</b> "+safe(selectedCustomer.email)+
-    "<br><b>Account:</b> "+safe(selectedCustomer.account);
 
-  document.getElementById("customerStatus").value=
+  document.getElementById(
+    "customerDetails"
+  ).innerHTML=
+
+    "<b>Name:</b> "+
+    safe(selectedCustomer.name)+
+
+    "<br><b>Email:</b> "+
+    safe(selectedCustomer.email)+
+
+    "<br><b>Balance:</b> "+
+    money(
+      selectedCustomer.balance,
+      selectedCustomer.currency
+    );
+
+
+  document.getElementById(
+    "customerStatus"
+  ).value=
     selectedCustomer.status;
 
-  document.getElementById("customerModal")
-    .classList.add("show");
+
+  document.getElementById(
+    "customerAccountNumber"
+  ).value=
+    selectedCustomer.accountNumber || "";
+
+
+  document.getElementById(
+    "customerAccountType"
+  ).value=
+    selectedCustomer.accountType ||
+    "Personal Banking";
+
+
+  document.getElementById(
+    "customerModal"
+  ).classList.add("show");
 
 }
 
-function closeCustomer(){
 
-  document.getElementById("customerModal")
-    .classList.remove("show");
-
-}
-
-function saveCustomerStatus(){
+function saveCustomer(){
 
   if(!selectedCustomer)return;
 
-  const status=
-    document.getElementById("customerStatus").value;
 
-  selectedCustomer.status=status;
+  selectedCustomer.status=
+    document.getElementById(
+      "customerStatus"
+    ).value;
+
+
+  selectedCustomer.accountNumber=
+    document.getElementById(
+      "customerAccountNumber"
+    ).value.trim();
+
+
+  selectedCustomer.accountType=
+    document.getElementById(
+      "customerAccountType"
+    ).value;
+
 
   addAudit(
-    "Updated status for "+selectedCustomer.name+
-    " to "+status
+    "Updated account settings for "+
+    selectedCustomer.name
   );
+
 
   saveAll();
 
-  closeCustomer();
+  closeModal("customerModal");
 
   refreshDashboard();
 
-  toast("Customer status updated");
+  toast(
+    "Customer account updated"
+  );
 
 }
 
-/* =========================
+
+function closeModal(id){
+
+  document.getElementById(
+    id
+  ).classList.remove("show");
+
+}
+
+
+/* ================================
+   FUNDING
+================================ */
+
+function renderFundingCustomers(){
+
+  const select=
+    document.getElementById(
+      "fundCustomer"
+    );
+
+  if(!select)return;
+
+
+  const current=
+    select.value;
+
+
+  select.innerHTML=
+    '<option value="">Select a customer</option>';
+
+
+  customers.forEach(function(c){
+
+    const option=
+      document.createElement("option");
+
+    option.value=c.id;
+
+    option.textContent=
+      c.name+
+      " — "+
+      c.email;
+
+    select.appendChild(option);
+
+  });
+
+
+  if(current){
+    select.value=current;
+  }
+
+}
+
+
+function prepareFunding(id){
+
+  showSection(
+    "funding",
+    document.querySelectorAll(
+      ".menu button"
+    )[2]
+  );
+
+  document.getElementById(
+    "fundCustomer"
+  ).value=id;
+
+  updateFundingCustomer();
+
+}
+
+
+function updateFundingCustomer(){
+
+  const id=
+    Number(
+      document.getElementById(
+        "fundCustomer"
+      ).value
+    );
+
+
+  const customer=
+    customers.find(
+      c=>c.id===id
+    );
+
+
+  const details=
+    document.getElementById(
+      "fundingDetails"
+    );
+
+
+  if(!customer){
+
+    details.style.display="none";
+
+    return;
+
+  }
+
+
+  details.style.display="block";
+
+
+  document.getElementById(
+    "fundCurrentBalance"
+  ).textContent=
+    money(
+      customer.balance,
+      customer.currency
+    );
+
+
+  document.getElementById(
+    "fundCustomerName"
+  ).textContent=
+    customer.name+
+    " • "+
+    customer.email;
+
+}
+
+
+function fundAccount(){
+
+  const id=
+    Number(
+      document.getElementById(
+        "fundCustomer"
+      ).value
+    );
+
+
+  const amount=
+    Number(
+      document.getElementById(
+        "fundAmount"
+      ).value
+    );
+
+
+  const currency=
+    document.getElementById(
+      "fundCurrency"
+    ).value;
+
+
+  const description=
+    document.getElementById(
+      "fundDescription"
+    ).value.trim() ||
+    "Account funding";
+
+
+  const customer=
+    customers.find(
+      c=>c.id===id
+    );
+
+
+  if(!customer){
+
+    toast(
+      "Select a customer first"
+    );
+
+    return;
+
+  }
+
+
+  if(!Number.isFinite(amount) ||
+     amount<=0){
+
+    toast(
+      "Enter a valid amount"
+    );
+
+    return;
+
+  }
+
+
+  customer.currency=currency;
+
+  customer.balance=
+    Number(customer.balance || 0)+
+    amount;
+
+
+  transactions.unshift({
+
+    id:Date.now(),
+
+    customerId:customer.id,
+
+    customer:customer.name,
+
+    description:description,
+
+    amount:amount,
+
+    currency:currency,
+
+    type:"Credit",
+
+    status:"Successful",
+
+    date:new Date().toLocaleString()
+
+  });
+
+
+  addAudit(
+    "Added "+
+    money(amount,currency)+
+    " to "+customer.name+
+    " account"
+  );
+
+
+  saveAll();
+
+  document.getElementById(
+    "fundAmount"
+  ).value="";
+
+  document.getElementById(
+    "fundDescription"
+  ).value="";
+
+  refreshDashboard();
+
+  updateFundingCustomer();
+
+  toast(
+    "Account balance updated"
+  );
+
+}
+
+
+function removeFunds(){
+
+  const id=
+    Number(
+      document.getElementById(
+        "fundCustomer"
+      ).value
+    );
+
+
+  const amount=
+    Number(
+      document.getElementById(
+        "fundAmount"
+      ).value
+    );
+
+
+  const customer=
+    customers.find(
+      c=>c.id===id
+    );
+
+
+  if(!customer){
+
+    toast(
+      "Select a customer first"
+    );
+
+    return;
+
+  }
+
+
+  if(!Number.isFinite(amount) ||
+     amount<=0){
+
+    toast(
+      "Enter a valid amount"
+    );
+
+    return;
+
+  }
+
+
+  if(amount>
+     Number(customer.balance || 0)){
+
+    toast(
+      "Amount exceeds available balance"
+    );
+
+    return;
+
+  }
+
+
+  customer.balance=
+    Number(customer.balance || 0)-
+    amount;
+
+
+  transactions.unshift({
+
+    id:Date.now(),
+
+    customerId:customer.id,
+
+    customer:customer.name,
+
+    description:
+      "Administrative balance adjustment",
+
+    amount:amount,
+
+    currency:customer.currency || "USD",
+
+    type:"Debit",
+
+    status:"Successful",
+
+    date:new Date().toLocaleString()
+
+  });
+
+
+  addAudit(
+    "Removed "+
+    money(
+      amount,
+      customer.currency
+    )+
+    " from "+customer.name+
+    " account"
+  );
+
+
+  saveAll();
+
+  document.getElementById(
+    "fundAmount"
+  ).value="";
+
+  refreshDashboard();
+
+  updateFundingCustomer();
+
+  toast(
+    "Account balance updated"
+  );
+
+}
+
+
+/* ================================
    TRANSACTIONS
-========================= */
+================================ */
 
 function renderTransactions(){
 
   const box=
-    document.getElementById("transactionTable");
+    document.getElementById(
+      "transactionTable"
+    );
 
   box.innerHTML="";
 
+
   transactions.forEach(function(t){
 
-    const tr=document.createElement("tr");
+    const tr=
+      document.createElement("tr");
+
 
     tr.innerHTML=`
 
-      <td><b>${safe(t.name)}</b></td>
-
-      <td>${safe(t.date)}</td>
-
       <td>
-        <strong style="color:${t.type==="in"?"#159447":"#d93434"}">
-          ${t.type==="in"?"+":"-"}${
-            Number(t.amount).toLocaleString(
-              "en-US",
-              {
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
-              }
-            )
-          }
-        </strong>
+        <b>${safe(t.customer || "Account")}</b>
       </td>
 
-      <td>${t.type==="in"?"Credit":"Debit"}</td>
+      <td>
+        ${safe(t.description)}
+      </td>
+
+      <td>
+        ${money(t.amount,t.currency)}
+      </td>
+
+      <td>
+        ${safe(t.currency || "USD")}
+      </td>
+
+      <td>
+
+        <span class="status ${
+          transactionStatusClass(t.status)
+        }">
+
+          ${safe(t.status)}
+
+        </span>
+
+      </td>
+
+      <td>
+        ${safe(t.date)}
+      </td>
+
+      <td>
+
+        ${
+          t.status==="Pending"
+
+          ?
+
+          `
+          <button
+            class="smallBtn"
+            onclick="setTransactionStatus(${t.id},'Successful')">
+            Approve
+          </button>
+
+          <button
+            class="smallBtn"
+            onclick="setTransactionStatus(${t.id},'Failed')">
+            Decline
+          </button>
+          `
+
+          :
+
+          `<span style="color:#718096;font-size:11px">
+             Recorded
+           </span>`
+
+        }
+
+      </td>
 
     `;
 
@@ -1193,48 +2235,170 @@ function renderTransactions(){
 
 }
 
-/* =========================
+
+function transactionStatusClass(status){
+
+  if(status==="Successful")
+    return"success";
+
+  if(status==="Pending")
+    return"pending";
+
+  return"failed";
+
+}
+
+
+function setTransactionStatus(id,status){
+
+  const tx=
+    transactions.find(
+      t=>t.id===id
+    );
+
+
+  if(!tx)return;
+
+
+  tx.status=status;
+
+
+  addAudit(
+    "Transaction "+
+    tx.id+
+    " marked "+
+    status
+  );
+
+
+  saveAll();
+
+  refreshDashboard();
+
+  toast(
+    "Transaction status updated"
+  );
+
+}
+
+
+/* ================================
    SUPPORT
-========================= */
+================================ */
 
 function renderTickets(){
 
   const box=
-    document.getElementById("tickets");
+    document.getElementById(
+      "tickets"
+    );
 
   box.innerHTML="";
 
+
+  if(!tickets.length){
+
+    box.innerHTML=
+      '<p style="color:#718096;font-size:13px">No support requests.</p>';
+
+    return;
+
+  }
+
+
   tickets.forEach(function(t){
 
-    const div=document.createElement("div");
+    const div=
+      document.createElement("div");
 
     div.className="ticket";
+
 
     div.innerHTML=`
 
       <div class="ticketTop">
 
         <div>
-          <b>${safe(t.subject)}</b>
+
+          <b>
+            ${safe(t.subject)}
+          </b>
+
           <small>
-            ${safe(t.customer)} • ${safe(t.date)}
+            ${safe(t.customer)}
+            •
+            ${safe(t.date)}
           </small>
+
         </div>
 
         <span class="status ${
-          t.status==="Open"?"pending":"active"
+          t.status==="Open"
+            ?"pending"
+            :"success"
         }">
+
           ${safe(t.status)}
+
         </span>
 
       </div>
 
-      <div style="margin-top:9px">
 
-        <button class="smallBtn"
-          onclick="closeTicket(${t.id})">
-          ${t.status==="Open"?"Mark Resolved":"Resolved"}
+      ${
+        t.message
+        ?
+        `<p style="
+          color:#526174;
+          font-size:13px;
+          margin-top:10px">
+          ${safe(t.message)}
+        </p>`
+        :
+        ""
+      }
+
+
+      ${
+        t.reply
+        ?
+        `<div style="
+          background:#eef5ff;
+          padding:10px;
+          border-radius:8px;
+          margin-top:10px;
+          font-size:12px">
+          <b>Administrator reply:</b><br>
+          ${safe(t.reply)}
+        </div>`
+        :
+        ""
+      }
+
+
+      <div style="margin-top:10px">
+
+        <button
+          class="smallBtn"
+          onclick="replyTicket(${t.id})">
+          Reply
         </button>
+
+        ${
+          t.status==="Open"
+
+          ?
+
+          `<button
+             class="smallBtn"
+             onclick="resolveTicket(${t.id})">
+             Resolve
+           </button>`
+
+          :
+
+          ""
+        }
 
       </div>
 
@@ -1246,119 +2410,153 @@ function renderTickets(){
 
 }
 
-function openSupport(id){
 
-  const c=customers.find(x=>x.id===id);
+function replyTicket(id){
 
-  if(!c)return;
+  const ticket=
+    tickets.find(
+      t=>t.id===id
+    );
 
-  const ticket={
-    id:Date.now(),
-    customer:c.name,
-    subject:"Customer support request",
-    status:"Open",
-    date:new Date().toLocaleDateString(
-      "en-US",
-      {month:"short",day:"numeric",year:"numeric"}
-    )
-  };
-
-  tickets.unshift(ticket);
-
-  addAudit(
-    "Support request created for "+c.name
-  );
-
-  saveAll();
-  refreshDashboard();
-
-  showSection(
-    "support",
-    document.querySelectorAll(".menu button")[3]
-  );
-
-  toast("Support request opened");
-
-}
-
-function closeTicket(id){
-
-  const ticket=tickets.find(t=>t.id===id);
 
   if(!ticket)return;
 
-  ticket.status="Resolved";
+
+  const reply=
+    prompt(
+      "Enter your reply to the customer:"
+    );
+
+
+  if(reply===null)return;
+
+
+  if(!reply.trim()){
+
+    toast(
+      "Reply cannot be empty"
+    );
+
+    return;
+
+  }
+
+
+  ticket.reply=
+    reply.trim();
+
+
+  ticket.replyDate=
+    new Date().toLocaleString();
+
 
   addAudit(
-    "Support ticket resolved: "+ticket.subject
+    "Administrator replied to support request"
   );
+
 
   saveAll();
 
   refreshDashboard();
 
-  toast("Support ticket resolved");
-
-}
-
-function saveAssistant(){
-
-  const name=
-    document.getElementById("assistantName").value;
-
-  const welcome=
-    document.getElementById("assistantWelcome").value;
-
-  localStorage.setItem(
-    "acbAssistant",
-    JSON.stringify({name,welcome})
+  toast(
+    "Customer support reply saved"
   );
 
-  addAudit("AI support settings updated");
+}
 
-  toast("Assistant settings saved");
+
+function resolveTicket(id){
+
+  const ticket=
+    tickets.find(
+      t=>t.id===id
+    );
+
+
+  if(!ticket)return;
+
+
+  ticket.status="Resolved";
+
+
+  addAudit(
+    "Support request resolved"
+  );
+
+
+  saveAll();
+
+  refreshDashboard();
+
+  toast(
+    "Support request resolved"
+  );
 
 }
 
-/* =========================
+
+/* ================================
    AUDIT
-========================= */
+================================ */
 
 function addAudit(action){
 
   audit.unshift({
+
     action:action,
+
     date:new Date().toLocaleString()
+
   });
 
-  audit=audit.slice(0,100);
+
+  audit=
+    audit.slice(0,150);
+
 
   saveAll();
 
 }
 
+
 function renderAudit(){
 
-  const containers=[
-    document.getElementById("overviewAudit"),
-    document.getElementById("fullAudit")
+  const boxes=[
+
+    document.getElementById(
+      "overviewAudit"
+    ),
+
+    document.getElementById(
+      "fullAudit"
+    )
+
   ];
 
-  containers.forEach(function(box){
+
+  boxes.forEach(function(box){
 
     if(!box)return;
 
+
     box.innerHTML="";
+
 
     audit.forEach(function(a){
 
-      const item=document.createElement("div");
+      const item=
+        document.createElement("div");
 
       item.className="auditItem";
 
+
       item.innerHTML=
         safe(a.action)+
-        "<span>"+safe(a.date)+"</span>";
+        "<span>"+
+        safe(a.date)+
+        "</span>";
+
 
       box.appendChild(item);
 
@@ -1368,67 +2566,168 @@ function renderAudit(){
 
 }
 
-/* =========================
+
+/* ================================
    SETTINGS
-========================= */
+================================ */
 
 function saveSettings(){
 
-  addAudit("Platform settings saved");
+  const settings={
 
-  toast("Settings saved");
+    bankName:
+      document.getElementById(
+        "bankName"
+      ).value,
+
+    supportEmail:
+      document.getElementById(
+        "supportEmail"
+      ).value,
+
+    supportWhatsApp:
+      document.getElementById(
+        "supportWhatsApp"
+      ).value,
+
+    defaultCurrency:
+      document.getElementById(
+        "defaultCurrency"
+      ).value
+
+  };
+
+
+  localStorage.setItem(
+    "acbSettings",
+    JSON.stringify(settings)
+  );
+
+
+  addAudit(
+    "Platform settings updated"
+  );
+
+
+  toast(
+    "Settings saved"
+  );
 
 }
 
-/* =========================
+
+/* ================================
    HELPERS
-========================= */
+================================ */
+
+function money(amount,currency){
+
+  const symbols={
+
+    USD:"$",
+
+    EUR:"€",
+
+    GBP:"£",
+
+    NGN:"₦"
+
+  };
+
+
+  const symbol=
+    symbols[currency] ||
+    currency ||
+    "$";
+
+
+  return symbol+
+    Number(amount || 0)
+      .toLocaleString(
+        "en-US",
+        {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }
+      );
+
+}
+
 
 function safe(value){
 
-  return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  return String(
+    value ?? ""
+  )
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
 
 }
 
-let toastTimer;
 
 function toast(message){
 
-  const box=document.getElementById("toast");
+  const box=
+    document.getElementById(
+      "toast"
+    );
+
 
   box.textContent=message;
+
 
   box.style.transform=
     "translate(-50%,0)";
 
+
   clearTimeout(toastTimer);
 
-  toastTimer=setTimeout(function(){
 
-    box.style.transform=
-      "translate(-50%,120px)";
+  toastTimer=
+    setTimeout(function(){
 
-  },3000);
+      box.style.transform=
+        "translate(-50%,120px)";
+
+    },3000);
 
 }
 
-window.addEventListener("click",function(e){
 
-  const modal=
-    document.getElementById("customerModal");
+/* ================================
+   MODAL CLICK
+================================ */
 
-  if(e.target===modal){
+window.addEventListener(
+  "click",
+  function(e){
 
-    closeCustomer();
+    const modal=
+      document.getElementById(
+        "customerModal"
+      );
+
+
+    if(e.target===modal){
+
+      closeModal(
+        "customerModal"
+      );
+
+    }
 
   }
+);
 
-});
+
+/* ================================
+   STARTUP
+================================ */
+
+refreshDashboard();
 
 </script>
 
