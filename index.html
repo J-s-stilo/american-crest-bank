@@ -2,1035 +2,228 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>American Crest Bank — Online Banking</title>
-<meta name="description" content="American Crest Bank online banking customer portal.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>American Crest Bank — Online Banking Demo</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
 :root{
---navy:#071a35;
---navy2:#0d315d;
---blue:#1769e0;
---gold:#d6aa43;
---light:#f4f7fb;
---white:#fff;
---text:#182536;
---muted:#718096;
---green:#159447;
---red:#d93434;
---border:#e3e9f1;
+ --navy:#071a35;--navy2:#0d315d;--blue:#1769e0;--gold:#d6aa43;
+ --light:#f4f7fb;--white:#fff;--text:#182536;--muted:#718096;
+ --green:#159447;--red:#d93434;--border:#e3e9f1;
+}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
+button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}
+
+.demo{
+ background:#fff3cd;color:#725b13;text-align:center;padding:8px;
+ font-size:11px;font-weight:bold;letter-spacing:.3px
 }
 
-html{scroll-behavior:smooth}
+.top{background:#041327;color:#dbe7f5;padding:9px 5%;
+display:flex;justify-content:space-between;font-size:12px}
 
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:var(--light);
-color:var(--text);
-}
+header{background:white;position:sticky;top:0;z-index:20;
+box-shadow:0 2px 15px #0001}
 
-button,input{font:inherit}
-button{cursor:pointer}
-a{text-decoration:none;color:inherit}
+.nav{max-width:1200px;margin:auto;min-height:72px;padding:0 5%;
+display:flex;align-items:center;justify-content:space-between;gap:20px}
 
-.notice{
-background:#fff3cd;
-color:#725b13;
-text-align:center;
-padding:8px;
-font-size:11px;
-font-weight:bold;
-}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)}
+.mark{width:40px;height:40px;border-radius:50%;background:var(--navy);
+color:var(--gold);border:2px solid var(--gold);display:grid;place-items:center;font-size:12px}
 
-.top{
-background:#041327;
-color:#dbe7f5;
-padding:9px 5%;
-display:flex;
-justify-content:space-between;
-font-size:12px;
-}
-
-header{
-background:#fff;
-position:sticky;
-top:0;
-z-index:20;
-box-shadow:0 2px 15px #00000010;
-}
-
-.nav{
-max-width:1200px;
-margin:auto;
-min-height:72px;
-padding:0 5%;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:20px;
-}
-
-.logo{
-display:flex;
-align-items:center;
-gap:9px;
-font-weight:800;
-color:var(--navy);
-}
-
-.mark{
-width:40px;
-height:40px;
-border-radius:50%;
-background:var(--navy);
-color:var(--gold);
-border:2px solid var(--gold);
-display:grid;
-place-items:center;
-font-size:12px;
-}
-
-.links{
-display:flex;
-gap:24px;
-font-size:14px;
-font-weight:bold;
-}
-
-.actions{
-display:flex;
-gap:8px;
-}
-
-.btn{
-border:0;
-border-radius:8px;
-padding:12px 18px;
-font-weight:bold;
-}
-
-.primary{
-background:var(--blue);
-color:white;
-}
-
-.dark{
-background:var(--navy);
-color:white;
-}
-
-.outline{
-background:white;
-border:1px solid #d8e0eb;
-color:var(--navy);
-}
-
-/* HERO */
+.links{display:flex;gap:24px;font-size:14px;font-weight:bold}
+.actions{display:flex;gap:8px}
+.btn{border:0;border-radius:8px;padding:12px 18px;font-weight:bold}
+.primary{background:var(--blue);color:white}
+.dark{background:var(--navy);color:white}
+.outline{background:white;border:1px solid #d8e0eb;color:var(--navy)}
 
 .hero{
-min-height:600px;
-background:
-linear-gradient(90deg,#041327f5 10%,#041327df 48%,#04132755 100%),
-url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85");
-background-size:cover;
-background-position:center;
-color:white;
-display:flex;
-align-items:center;
-}
-
-.heroInner{
-max-width:1200px;
-width:90%;
-margin:auto;
-padding:75px 0;
-}
-
-.heroText{
-max-width:690px;
-}
-
-.eyebrow{
-color:#e0bc61;
-font-weight:bold;
-letter-spacing:2px;
-font-size:12px;
-margin-bottom:15px;
-}
-
-h1{
-font-size:clamp(38px,6vw,68px);
-line-height:1.05;
-margin-bottom:20px;
-}
-
-.hero p{
-font-size:18px;
-color:#d8e4f2;
-max-width:600px;
-margin-bottom:28px;
-line-height:1.6;
-}
-
-.heroButtons{
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-}
-
-/* VISUAL CARDS */
-
-.liveVisual{
-padding:55px 5%;
-background:white;
-}
-
-.visualGrid{
-max-width:1150px;
-margin:auto;
-display:grid;
-grid-template-columns:1.5fr 1fr;
-gap:20px;
-}
-
-.visualCard{
-height:290px;
-border-radius:18px;
-overflow:hidden;
-position:relative;
-background-size:cover;
-background-position:center;
-box-shadow:0 15px 40px #071a5318;
-}
-
-.visualCard.one{
-background-image:
-linear-gradient(0deg,#041327d9,transparent 70%),
-url("https://images.unsplash.com/photo-1556742111-a301076d9d18?auto=format&fit=crop&w=1200&q=85");
-}
-
-.visualCard.two{
-background-image:
-linear-gradient(0deg,#041327e6,transparent 75%),
-url("https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85");
-}
-
-.visualText{
-position:absolute;
-left:24px;
-bottom:22px;
-color:white;
-}
-
-.visualText h3{
-font-size:23px;
-margin-bottom:5px;
-}
-
-.visualText p{
-font-size:13px;
-color:#d9e4f2;
-}
-
-/* TRUST */
-
-.trust{
-background:#fff;
-padding:20px 5%;
-display:flex;
-justify-content:center;
-gap:45px;
-flex-wrap:wrap;
-color:#607080;
-font-size:13px;
-font-weight:bold;
-}
-
-/* SECTIONS */
-
-.section{
-padding:70px 5%;
-}
-
-.inner{
-max-width:1150px;
-margin:auto;
-}
-
-.head{
-text-align:center;
-max-width:700px;
-margin:0 auto 38px;
-}
-
-.head h2{
-font-size:35px;
-color:var(--navy);
-margin-bottom:10px;
-}
-
-.head p{
-color:var(--muted);
-line-height:1.6;
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:20px;
-}
-
-.card{
-background:#fff;
-padding:28px;
-border-radius:15px;
-box-shadow:0 12px 35px #071a5314;
-}
-
-.icon{
-width:50px;
-height:50px;
-border-radius:12px;
-background:#eaf2ff;
-color:var(--blue);
-display:grid;
-place-items:center;
-font-size:23px;
-margin-bottom:18px;
-}
-
-.card h3{
-color:var(--navy);
-margin-bottom:8px;
-}
-
-.card p{
-color:var(--muted);
-font-size:14px;
-line-height:1.6;
-}
-
-/* SECURITY */
-
-.security{
-background:var(--navy);
-color:white;
-}
-
-.security .head h2{
-color:white;
-}
-
-.security .head p{
-color:#bdcce0;
-}
-
-.securityGrid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px;
-}
-
-.securityBox{
-padding:24px;
-border:1px solid #ffffff20;
-border-radius:14px;
-background:#ffffff08;
-}
-
-.securityBox strong{
-display:block;
-margin-bottom:7px;
-}
-
-.securityBox span{
-font-size:13px;
-color:#bdcce0;
-line-height:1.5;
-}
-
-/* PROMOTIONS */
-
-.promoGrid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px;
-}
-
-.promo{
-background:white;
-border-radius:16px;
-overflow:hidden;
-box-shadow:0 12px 35px #071a5314;
-}
-
-.promo img{
-width:100%;
-height:170px;
-object-fit:cover;
-display:block;
-}
-
-.promoBody{
-padding:20px;
-}
-
-.promoBody h3{
-color:var(--navy);
-margin-bottom:7px;
-}
-
-.promoBody p{
-font-size:13px;
-color:var(--muted);
-line-height:1.5;
-}
-
-/* CONTACT */
-
-.contact{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:22px;
-}
-
-.box{
-background:white;
-padding:28px;
-border-radius:15px;
-box-shadow:0 12px 35px #071a5314;
-}
-
-.box h3{
-color:var(--navy);
-margin-bottom:12px;
-}
-
-.box p{
-color:var(--muted);
-line-height:1.6;
-font-size:14px;
-}
-
-/* FOOTER */
-
-footer{
-background:#041327;
-color:#9fb0c5;
-padding:40px 5%;
-}
-
-.footer{
-max-width:1150px;
-margin:auto;
-}
-
-.footer .logo{
-color:white;
-margin-bottom:12px;
-}
-
-.footer p{
-font-size:13px;
-}
-
-.copy{
-margin-top:25px;
-padding-top:18px;
-border-top:1px solid #ffffff15;
-font-size:11px;
-}
-
-/* MODALS */
-
-.modal{
-display:none;
-position:fixed;
-inset:0;
-background:#000a1bb8;
-z-index:100;
-align-items:center;
-justify-content:center;
-padding:20px;
-}
-
-.modal.show{
-display:flex;
-}
-
-.modalBox{
-background:white;
-width:100%;
-max-width:460px;
-border-radius:18px;
-padding:30px;
-position:relative;
-max-height:90vh;
-overflow:auto;
-}
-
-.close{
-position:absolute;
-right:17px;
-top:12px;
-border:0;
-background:none;
-font-size:25px;
-color:#777;
-}
-
-.modalBox h2{
-color:var(--navy);
-margin-bottom:5px;
-}
-
-.modalBox>p{
-font-size:13px;
-color:var(--muted);
-margin-bottom:20px;
-}
-
-.field{
-margin-bottom:14px;
-}
-
-.field label{
-display:block;
-font-size:12px;
-font-weight:bold;
-margin-bottom:6px;
-}
-
-.field input{
-width:100%;
-padding:13px;
-border:1px solid #d8e0eb;
-border-radius:8px;
-outline:0;
-}
-
-.field input:focus{
-border-color:var(--blue);
-}
-
-.full{
-width:100%;
-}
-
-.switch{
-text-align:center;
-font-size:13px;
-color:var(--muted);
-margin-top:15px;
-}
-
-.switch button{
-border:0;
-background:none;
-color:var(--blue);
-font-weight:bold;
-}
-
-.error{
-display:none;
-background:#ffe8e8;
-color:#a21d1d;
-padding:10px;
-border-radius:8px;
-font-size:12px;
-margin-bottom:12px;
-}
-
-.error.show{
-display:block;
-}
-
-/* DASHBOARD */
-
-#dashboard{
-display:none;
-min-height:100vh;
-background:#f3f6fa;
-}
-
-.dashNav{
-background:var(--navy);
-color:white;
-padding:14px 5%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-}
-
-.dashUser{
-display:flex;
-align-items:center;
-gap:9px;
-}
-
-.avatar{
-width:42px;
-height:42px;
-border-radius:50%;
-background:var(--gold);
-color:var(--navy);
-display:grid;
-place-items:center;
-font-weight:bold;
-overflow:hidden;
-}
-
-.avatar img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.dashWrap{
-max-width:1200px;
-margin:auto;
-padding:35px 5%;
-}
-
-.dashTop{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
-}
-
-.dashTop h1{
-font-size:32px;
-color:var(--navy);
-margin:0;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px;
-}
-
-.balance{
-background:linear-gradient(135deg,var(--navy),var(--navy2));
-color:white;
-padding:24px;
-border-radius:15px;
-}
-
-.balance small{
-color:#bdcce0;
-}
-
-.balance h2{
-margin:8px 0;
-font-size:30px;
-}
-
-.stat{
-background:white;
-padding:22px;
-border-radius:15px;
-}
-
-.stat small{
-color:var(--muted);
-}
-
-.stat h3{
-margin-top:7px;
-}
-
-.columns{
-display:grid;
-grid-template-columns:1.5fr 1fr;
-gap:18px;
-margin-top:18px;
-}
-
-.panel{
-background:white;
-border-radius:15px;
-padding:24px;
-}
-
-.panel h3{
-color:var(--navy);
-margin-bottom:16px;
-}
-
-.tx{
-display:flex;
-justify-content:space-between;
-padding:13px 0;
-border-bottom:1px solid #edf0f4;
-}
-
-.tx:last-child{
-border:0;
-}
-
-.txName{
-font-weight:bold;
-font-size:13px;
-}
-
-.txDate{
-font-size:11px;
-color:var(--muted);
-}
-
-.out{
-color:var(--red);
-font-weight:bold;
-}
-
-.in{
-color:var(--green);
-font-weight:bold;
-}
-
-.empty{
-text-align:center;
-color:var(--muted);
-padding:25px;
-font-size:13px;
-}
-
-.quick{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.quick button{
-padding:14px;
-border:1px solid #e1e7ef;
-background:white;
-border-radius:9px;
-font-weight:bold;
-color:var(--navy);
-}
-
-.profilePanel{
-margin-top:18px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:18px;
-}
-
-.profileCard{
-background:white;
-padding:24px;
-border-radius:15px;
-}
-
-.profilePicture{
-width:85px;
-height:85px;
-border-radius:50%;
-background:#eaf2ff;
-display:grid;
-place-items:center;
-margin-bottom:15px;
-overflow:hidden;
-font-size:25px;
-font-weight:bold;
-color:var(--blue);
-}
-
-.profilePicture img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.profileCard h3{
-color:var(--navy);
-margin-bottom:12px;
-}
-
-.profileCard input{
-width:100%;
-padding:11px;
-border:1px solid var(--border);
-border-radius:8px;
-margin-bottom:10px;
-}
-
-.fileInput{
-font-size:12px;
-}
-
-.profileNote{
-font-size:12px;
-color:var(--muted);
-margin-bottom:15px;
-}
-
-/* LOADING */
-
-.loadingOverlay{
-display:none;
-position:fixed;
-inset:0;
-background:#041327e8;
-z-index:500;
-align-items:center;
-justify-content:center;
-text-align:center;
-color:white;
-}
-
-.loadingOverlay.show{
-display:flex;
-}
-
-.loaderBox{
-background:#ffffff12;
-border:1px solid #ffffff22;
-padding:35px;
-border-radius:18px;
-width:90%;
-max-width:360px;
-backdrop-filter:blur(8px);
-}
-
-.spinner{
-width:50px;
-height:50px;
-border:4px solid #ffffff35;
-border-top-color:white;
-border-radius:50%;
-animation:spin 1s linear infinite;
-margin:0 auto 18px;
-}
-
-@keyframes spin{
-to{transform:rotate(360deg)}
-}
-
-/* CHAT */
-
-.chatBtn{
-position:fixed;
-right:20px;
-bottom:20px;
-width:56px;
-height:56px;
-border:0;
-border-radius:50%;
-background:var(--blue);
-color:white;
-font-size:23px;
-z-index:60;
-box-shadow:0 8px 25px #1769e050;
-}
-
-.chat{
-display:none;
-position:fixed;
-right:20px;
-bottom:85px;
-width:350px;
-max-width:calc(100% - 40px);
-background:white;
-border-radius:15px;
-box-shadow:0 15px 45px #0003;
-overflow:hidden;
-z-index:70;
-}
-
-.chat.show{
-display:block;
-}
-
-.chatHead{
-background:var(--navy);
-color:white;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.chatBody{
-height:260px;
-padding:14px;
-overflow:auto;
-background:#f5f7fa;
-}
-
-.msg{
-padding:9px 11px;
-border-radius:11px;
-background:white;
-font-size:13px;
-margin-bottom:9px;
-max-width:85%;
-line-height:1.45;
-}
-
-.msg.user{
-margin-left:auto;
-background:#dceaff;
-}
-
-.chatInput{
-display:flex;
-border-top:1px solid #ddd;
-}
-
-.chatInput input{
-flex:1;
-border:0;
-padding:12px;
-outline:0;
-}
-
-.chatInput button{
-border:0;
-background:var(--blue);
-color:white;
-padding:0 16px;
-}
-
-/* TOAST */
-
-.toast{
-position:fixed;
-left:50%;
-bottom:25px;
-transform:translate(-50%,120px);
-background:var(--navy);
-color:white;
-padding:12px 18px;
-border-radius:8px;
-transition:.3s;
-z-index:600;
-}
-
-.toast.show{
-transform:translate(-50%,0);
-}
-
-/* RESPONSIVE */
+ min-height:570px;
+ background:linear-gradient(90deg,#041327f5,#041327d9,#04132755),
+ url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85");
+ background-size:cover;background-position:center;color:white;
+ display:flex;align-items:center
+}
+.heroInner{max-width:1200px;width:90%;margin:auto;padding:70px 0}
+.heroText{max-width:680px}
+.eyebrow{color:#e0bc61;font-weight:bold;letter-spacing:2px;font-size:12px;margin-bottom:15px}
+h1{font-size:clamp(38px,6vw,68px);line-height:1.05;margin-bottom:20px}
+.hero p{font-size:18px;color:#d8e4f2;line-height:1.6;margin-bottom:28px}
+.heroButtons{display:flex;gap:12px;flex-wrap:wrap}
+
+.trust{background:#fff;padding:20px 5%;display:flex;justify-content:center;
+gap:35px;flex-wrap:wrap;color:#607080;font-size:13px;font-weight:bold}
+
+.section{padding:70px 5%}.inner{max-width:1150px;margin:auto}
+.head{text-align:center;max-width:700px;margin:0 auto 38px}
+.head h2{font-size:35px;color:var(--navy);margin-bottom:10px}
+.head p{color:var(--muted);line-height:1.6}
+
+.cards,.promoGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card,.promo,.box,.panel,.profileCard,.service{
+ background:#fff;border-radius:15px;box-shadow:0 12px 35px #071a5314
+}
+.card{padding:28px}.icon{width:50px;height:50px;border-radius:12px;
+background:#eaf2ff;color:var(--blue);display:grid;place-items:center;
+font-size:23px;margin-bottom:18px}
+.card h3,.promo h3,.box h3,.panel h3,.profileCard h3,.service h3{
+color:var(--navy);margin-bottom:8px}
+.card p,.promo p,.box p{color:var(--muted);font-size:14px;line-height:1.6}
+
+.visualGrid{max-width:1150px;margin:auto;display:grid;
+grid-template-columns:1.5fr 1fr;gap:20px}
+.liveVisual{padding:55px 5%;background:white}
+.visualCard{height:290px;border-radius:18px;overflow:hidden;position:relative;
+background-size:cover;background-position:center}
+.visualCard.one{background-image:linear-gradient(0deg,#041327dc,transparent 70%),
+url("https://images.unsplash.com/photo-1556742111-a301076d9d18?auto=format&fit=crop&w=1200&q=85")}
+.visualCard.two{background-image:linear-gradient(0deg,#041327e6,transparent 75%),
+url("https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85")}
+.visualText{position:absolute;left:24px;bottom:22px;color:white}
+.visualText h3{font-size:23px;margin-bottom:5px}
+.visualText p{font-size:13px;color:#d9e4f2}
+
+.security{background:var(--navy);color:white}
+.security .head h2{color:white}.security .head p{color:#bdcce0}
+.securityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.securityBox{padding:24px;border:1px solid #ffffff20;border-radius:14px;background:#ffffff08}
+.securityBox strong{display:block;margin-bottom:7px}
+.securityBox span{font-size:13px;color:#bdcce0;line-height:1.5}
+
+.promo{overflow:hidden}.promo img{width:100%;height:170px;object-fit:cover}
+.promoBody{padding:20px}
+
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.box{padding:28px}
+
+footer{background:#041327;color:#9fb0c5;padding:40px 5%}
+.footer{max-width:1150px;margin:auto}.footer .logo{color:white;margin-bottom:12px}
+.copy{margin-top:25px;padding-top:18px;border-top:1px solid #ffffff15;font-size:11px}
+
+.modal{display:none;position:fixed;inset:0;background:#000a1bb8;z-index:100;
+align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modalBox{background:white;width:100%;max-width:460px;border-radius:18px;
+padding:30px;position:relative;max-height:90vh;overflow:auto}
+.close{position:absolute;right:17px;top:12px;border:0;background:none;font-size:25px;color:#777}
+.modalBox h2{color:var(--navy);margin-bottom:5px}
+.modalBox>p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.field{margin-bottom:14px}.field label{display:block;font-size:12px;
+font-weight:bold;margin-bottom:6px}
+.field input,.field select{width:100%;padding:13px;border:1px solid #d8e0eb;
+border-radius:8px;outline:0}
+.full{width:100%}.error{display:none;background:#ffe8e8;color:#a21d1d;
+padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px}
+.error.show{display:block}
+
+#dashboard{display:none;min-height:100vh;background:#f3f6fa}
+.dashNav{background:var(--navy);color:white;padding:14px 5%;
+display:flex;justify-content:space-between;align-items:center;gap:15px}
+.dashUser{display:flex;align-items:center;gap:9px}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--gold);
+color:var(--navy);display:grid;place-items:center;font-weight:bold;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.dashWrap{max-width:1200px;margin:auto;padding:35px 5%}
+.dashTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.dashTop h1{font-size:32px;color:var(--navy);margin:0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.balance{background:linear-gradient(135deg,var(--navy),var(--navy2));
+color:white;padding:24px;border-radius:15px}
+.balance small{color:#bdcce0}.balance h2{margin:8px 0;font-size:30px}
+.stat{background:white;padding:22px;border-radius:15px}
+.stat small{color:var(--muted)}.stat h3{margin-top:7px}
+
+.columns{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
+.panel{padding:24px}
+.tx{display:flex;justify-content:space-between;padding:13px 0;
+border-bottom:1px solid #edf0f4;gap:10px}
+.tx:last-child{border:0}.txName{font-weight:bold;font-size:13px}
+.txDate{font-size:11px;color:var(--muted)}
+.out{color:var(--red);font-weight:bold}.in{color:var(--green);font-weight:bold}
+.empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
+
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick button{padding:14px;border:1px solid #e1e7ef;background:white;
+border-radius:9px;font-weight:bold;color:var(--navy)}
+
+.profilePanel{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.profileCard{padding:24px}.profileCard input{width:100%;padding:11px;
+border:1px solid var(--border);border-radius:8px;margin-bottom:10px}
+.profileNote{font-size:12px;color:var(--muted);margin-bottom:15px}
+
+.servicesGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.service{padding:22px}.serviceIcon{font-size:28px;margin-bottom:12px}
+.service p{font-size:12px;color:var(--muted);line-height:1.5}
+.service button{margin-top:14px;width:100%}
+
+.notification{padding:13px;background:#eef5ff;border-left:4px solid var(--blue);
+border-radius:8px;margin-bottom:10px;font-size:13px}
+.notification small{display:block;color:var(--muted);margin-top:5px}
+
+.admin{display:none;margin-top:25px;background:#fff;border-radius:15px;padding:25px;
+box-shadow:0 12px 35px #071a5314}
+.admin h2{color:var(--navy);margin-bottom:15px}
+.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.adminBox{border:1px solid var(--border);padding:20px;border-radius:12px}
+.adminBox h3{margin-bottom:12px;color:var(--navy)}
+.adminBox input,.adminBox select{width:100%;padding:11px;margin-bottom:10px;
+border:1px solid var(--border);border-radius:8px}
+
+.chatBtn{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border:0;
+border-radius:50%;background:var(--blue);color:white;font-size:23px;z-index:60}
+.chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;
+max-width:calc(100% - 40px);background:white;border-radius:15px;
+box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
+.chat.show{display:block}.chatHead{background:var(--navy);color:white;padding:15px;
+display:flex;justify-content:space-between}
+.chatBody{height:260px;padding:14px;overflow:auto;background:#f5f7fa}
+.msg{padding:9px 11px;border-radius:11px;background:white;font-size:13px;
+margin-bottom:9px;max-width:85%;line-height:1.45}
+.msg.user{margin-left:auto;background:#dceaff}
+.chatInput{display:flex;border-top:1px solid #ddd}
+.chatInput input{flex:1;border:0;padding:12px;outline:0}
+.chatInput button{border:0;background:var(--blue);color:white;padding:0 16px}
+
+.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,120px);
+background:var(--navy);color:white;padding:12px 18px;border-radius:8px;
+transition:.3s;z-index:600}
+.toast.show{transform:translate(-50%,0)}
 
 @media(max-width:850px){
-
-.links{
-display:none;
+.links{display:none}.cards,.securityGrid,.promoGrid{grid-template-columns:1fr}
+.contact,.columns,.visualGrid,.profilePanel{grid-template-columns:1fr}
+.grid{grid-template-columns:1fr 1fr}.servicesGrid{grid-template-columns:1fr 1fr}
+.adminGrid{grid-template-columns:1fr}
 }
-
-.cards,
-.securityGrid,
-.promoGrid{
-grid-template-columns:1fr;
-}
-
-.contact,
-.columns,
-.visualGrid,
-.profilePanel{
-grid-template-columns:1fr;
-}
-
-.grid{
-grid-template-columns:1fr 1fr;
-}
-
-}
-
 @media(max-width:600px){
-
-.top{
-display:none;
-}
-
-.nav{
-min-height:65px;
-}
-
-.logo span:last-child{
-font-size:13px;
-}
-
-.nav .actions .btn{
-padding:9px 10px;
-font-size:12px;
-}
-
-.hero{
-min-height:520px;
-}
-
-.hero p{
-font-size:15px;
-}
-
-.section{
-padding:55px 5%;
-}
-
-.grid{
-grid-template-columns:1fr;
-}
-
-.dashTop{
-flex-direction:column;
-align-items:flex-start;
-gap:12px;
-}
-
-.chat{
-right:10px;
-bottom:80px;
-max-width:calc(100% - 20px);
-}
-
-.dashNav .logo span:last-child{
-display:none;
-}
-
-}
-
-/* EXTRA SMALL */
-
-@media(max-width:400px){
-
-.heroButtons .btn{
-width:100%;
-}
-
-.actions{
-gap:4px;
-}
-
+.top{display:none}.nav{min-height:65px}.hero{min-height:520px}
+.hero p{font-size:15px}.section{padding:55px 5%}.grid{grid-template-columns:1fr}
+.dashTop{flex-direction:column;align-items:flex-start;gap:12px}
+.chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
+.dashNav .logo span:last-child{display:none}
+.servicesGrid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 
 <body>
 
-<!-- SMALL PROTOTYPE DISCLOSURE -->
-<div class="notice">
-AMERICAN CREST BANK — ONLINE BANKING PROTOTYPE
+<div class="demo">
+AMERICAN CREST BANK — DEMONSTRATION / PROTOTYPE
 </div>
 
 <div id="publicSite">
 
 <div class="top">
 <span>American Crest Bank • Online Banking</span>
-<span>Online support available</span>
+<span>Digital Services</span>
 </div>
 
 <header>
 <nav class="nav">
-
 <a href="#home" class="logo">
 <span class="mark">AC</span>
 <span>AMERICAN CREST BANK</span>
@@ -1040,1699 +233,858 @@ AMERICAN CREST BANK — ONLINE BANKING PROTOTYPE
 <a href="#services">Services</a>
 <a href="#security">Security</a>
 <a href="#support">Support</a>
-<a href="#offers">Offers</a>
+<a href="#offers">Services</a>
 </div>
 
 <div class="actions">
 <button class="btn outline" onclick="openModal('login')">Sign In</button>
 <button class="btn primary" onclick="openModal('register')">Open Account</button>
 </div>
-
 </nav>
 </header>
 
-<!-- HERO -->
-
 <section class="hero" id="home">
-
 <div class="heroInner">
-
 <div class="heroText">
-
-<div class="eyebrow">ONLINE BANKING</div>
-
-<h1>
-Bank smarter.<br>
-Manage with confidence.
-</h1>
-
+<div class="eyebrow">DIGITAL BANKING EXPERIENCE</div>
+<h1>Bank smarter.<br>Manage with confidence.</h1>
 <p>
-A modern online banking experience designed around
-simple account management, transfers, support and useful services.
+A professional online banking demonstration interface for account
+management, activity, transfers and digital services.
 </p>
-
 <div class="heroButtons">
-
-<button class="btn primary" onclick="openModal('register')">
-Open an Account
-</button>
-
-<button class="btn outline" onclick="openModal('login')">
-Access Online Banking
-</button>
-
+<button class="btn primary" onclick="openModal('register')">Open an Account</button>
+<button class="btn outline" onclick="openModal('login')">Access Online Banking</button>
 </div>
-
 </div>
-
 </div>
-
 </section>
 
-<!-- TRUST -->
-
 <div class="trust">
-
 <span>✓ Account Management</span>
-<span>✓ Money Transfers</span>
-<span>✓ Activity History</span>
+<span>✓ Fund Credits</span>
+<span>✓ Transfer History</span>
+<span>✓ Digital Services</span>
 <span>✓ Customer Support</span>
-<span>✓ Online Services</span>
-
 </div>
 
-<!-- LIVE IMAGES -->
-
 <section class="liveVisual">
-
 <div class="visualGrid">
-
 <div class="visualCard one">
 <div class="visualText">
 <h3>Banking on the go</h3>
-<p>Manage your online banking experience wherever you are.</p>
+<p>Manage your digital account experience wherever you are.</p>
 </div>
 </div>
-
 <div class="visualCard two">
 <div class="visualText">
-<h3>Simple payments</h3>
-<p>Access your available online services from one dashboard.</p>
+<h3>Simple digital payments</h3>
+<p>Explore the services available from one dashboard.</p>
 </div>
 </div>
-
 </div>
-
 </section>
 
-<!-- SERVICES -->
-
 <section class="section" id="services">
-
 <div class="inner">
-
 <div class="head">
 <h2>Everything in one place</h2>
-<p>
-Manage your account, send money, review activity and contact support.
-</p>
+<p>Account management, transfers, digital services and support.</p>
 </div>
 
 <div class="cards">
-
 <div class="card">
 <div class="icon">▣</div>
 <h3>Account Overview</h3>
-<p>
-View your available balance, account information,
-profile and recent activity.
-</p>
+<p>View your balance, account status, profile and recent activity.</p>
 </div>
-
 <div class="card">
 <div class="icon">↗</div>
 <h3>Send Money</h3>
-<p>
-Use the transfer service to send money to a recipient
-from your available account balance.
-</p>
+<p>Create a simulated transfer from your available demo balance.</p>
 </div>
-
 <div class="card">
 <div class="icon">▤</div>
 <h3>Activity History</h3>
-<p>
-Keep track of your account activity and previous
-transfer requests.
-</p>
+<p>Review credits and debits recorded in the demonstration account.</p>
 </div>
-
 </div>
-
 </div>
-
 </section>
-
-<!-- SECURITY -->
 
 <section class="section security" id="security">
-
 <div class="inner">
-
 <div class="head">
-<h2>Designed with account control in mind</h2>
-<p>
-Your online banking dashboard keeps important account
-functions organized in one place.
-</p>
+<h2>Account control</h2>
+<p>The demonstration dashboard keeps important account functions organized.</p>
 </div>
-
 <div class="securityGrid">
-
 <div class="securityBox">
-<strong>Protected Login</strong>
-<span>
-Account access is handled through the connected backend authentication system.
-</span>
+<strong>Account Dashboard</strong>
+<span>View your current demonstration balance and account information.</span>
 </div>
-
 <div class="securityBox">
-<strong>Account Controls</strong>
-<span>
-Important account actions can be controlled by the connected account system.
-</span>
+<strong>Credit & Debit Records</strong>
+<span>Credits are displayed with a plus sign and debits with a minus sign.</span>
 </div>
-
 <div class="securityBox">
-<strong>Activity Records</strong>
-<span>
-Account activity and transfer records are displayed through the connected backend.
-</span>
+<strong>Digital Services</strong>
+<span>Explore the mobile, airtime and bill-payment service interface.</span>
 </div>
-
 </div>
-
 </div>
-
 </section>
-
-<!-- OFFERS -->
 
 <section class="section" id="offers">
-
 <div class="inner">
-
 <div class="head">
 <h2>Featured services</h2>
-<p>
-Explore useful services and announcements from your online banking homepage.
-</p>
+<p>Digital service options displayed inside the demonstration dashboard.</p>
 </div>
-
 <div class="promoGrid">
-
 <div class="promo">
-
-<img
-src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=85"
-alt="Online banking service">
-
-<div class="promoBody">
-<h3>Online Banking</h3>
-<p>
-Manage your account from a convenient digital dashboard.
-</p>
+<img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=85">
+<div class="promoBody"><h3>Online Banking</h3><p>Access your account from a convenient digital dashboard.</p></div>
 </div>
-
-</div>
-
 <div class="promo">
-
-<img
-src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85"
-alt="Digital payment service">
-
-<div class="promoBody">
-<h3>Payment Services</h3>
-<p>
-Explore available payment and account services from your dashboard.
-</p>
+<img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85">
+<div class="promoBody"><h3>Payment Services</h3><p>Explore the available demonstration payment services.</p></div>
 </div>
-
-</div>
-
 <div class="promo">
-
-<img
-src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=85"
-alt="Customer support">
-
-<div class="promoBody">
-<h3>Customer Support</h3>
-<p>
-Need help? Contact online support directly from your account.
-</p>
+<img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=85">
+<div class="promoBody"><h3>Customer Support</h3><p>Send a message to the demonstration support interface.</p></div>
 </div>
-
 </div>
-
 </div>
-
-</div>
-
 </section>
-
-<!-- SUPPORT -->
 
 <section class="section" id="support">
-
 <div class="inner">
-
 <div class="head">
 <h2>Customer Support</h2>
-<p>
-Get assistance directly from the online banking support interface.
-</p>
+<p>Open the support assistant from anywhere on the site.</p>
 </div>
-
 <div class="contact">
-
 <div class="box">
-
 <h3>Need assistance?</h3>
-
-<p style="margin-bottom:18px">
-Open the support assistant to ask a question or request help.
-</p>
-
-<button class="btn primary" onclick="toggleChat()">
-Open Support
-</button>
-
+<p style="margin-bottom:18px">Send a message through the demonstration support system.</p>
+<button class="btn primary" onclick="toggleChat()">Open Support</button>
 </div>
-
 <div class="box">
-
-<h3>Account protection</h3>
-
-<p>
-Never share your password, PIN, card security code or other
-sensitive credentials with anyone through a support chat.
-</p>
-
+<h3>Digital account services</h3>
+<p>Account, transfers, airtime, data and bill-payment interfaces are available inside the dashboard.</p>
 </div>
-
 </div>
-
 </div>
-
 </section>
-
-<!-- ABOUT -->
-
-<section class="section" id="about" style="background:white">
-
-<div class="inner">
-
-<div class="head">
-
-<h2>American Crest Bank</h2>
-
-<p>
-A modern online banking prototype designed to demonstrate
-customer account management, transfers, support and digital services.
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- FOOTER -->
 
 <footer>
-
 <div class="footer">
-
-<div class="logo">
-<span class="mark">AC</span>
-<span>AMERICAN CREST BANK</span>
+<div class="logo"><span class="mark">AC</span><span>AMERICAN CREST BANK</span></div>
+<p>Online banking demonstration interface.</p>
+<div class="copy">© 2026 American Crest Bank — Demonstration.</div>
 </div>
-
-<p>Online banking prototype.</p>
-
-<div class="copy">
-© 2026 American Crest Bank.
-</div>
-
-</div>
-
 </footer>
 
 </div>
 
-
-<!-- ================= DASHBOARD ================= -->
+<!-- DASHBOARD -->
 
 <div id="dashboard">
 
 <div class="dashNav">
-
 <div class="logo" style="color:white">
-
-<span class="mark">AC</span>
-<span>AMERICAN CREST BANK</span>
-
+<span class="mark">AC</span><span>AMERICAN CREST BANK</span>
 </div>
 
 <div class="dashUser">
-
-<div class="avatar" id="avatar">
-AC
-</div>
-
+<div class="avatar" id="avatar">AC</div>
 <div>
-
-<div id="dashName" style="font-weight:bold">
-Customer
+<div id="dashName" style="font-weight:bold">Customer</div>
+<small style="color:#bdcce0">Online Banking</small>
 </div>
-
-<small style="color:#bdcce0">
-Online Banking
-</small>
-
+<button class="btn outline" onclick="logout()">Log Out</button>
 </div>
-
-<button class="btn outline" onclick="logout()">
-Log Out
-</button>
-
 </div>
-
-</div>
-
 
 <div class="dashWrap">
 
 <div class="dashTop">
-
 <div>
-
-<small style="color:#718096">
-Welcome back
-</small>
-
-<h1 id="welcomeName">
-Customer
-</h1>
-
+<small style="color:#718096">Welcome back</small>
+<h1 id="welcomeName">Customer</h1>
+</div>
+<button class="btn primary" onclick="openTransfer()">+ New Transfer</button>
 </div>
 
-<button class="btn primary" onclick="openTransfer()">
-+ New Transfer
-</button>
-
-</div>
-
-
-<!-- ACCOUNT CARDS -->
+<div id="notifications"></div>
 
 <div class="grid">
 
 <div class="balance">
-
-<small>
-AVAILABLE BALANCE
-</small>
-
-<h2 id="balance">
-$0.00
-</h2>
-
-<small>
-Available for online banking services
-</small>
-
+<small>AVAILABLE BALANCE</small>
+<h2 id="balance">$0.00</h2>
+<small>Demonstration balance</small>
 </div>
-
 
 <div class="stat">
-
-<small>
-ACCOUNT STATUS
-</small>
-
-<h3 id="status">
-Active
-</h3>
-
+<small>ACCOUNT STATUS</small>
+<h3>Active</h3>
 </div>
-
 
 <div class="stat">
-
-<small>
-TRANSACTIONS
-</small>
-
-<h3 id="txCount">
-0
-</h3>
-
+<small>TRANSACTIONS</small>
+<h3 id="txCount">0</h3>
 </div>
-
 
 <div class="stat">
-
-<small>
-ACCOUNT EMAIL
-</small>
-
-<h3 id="emailStat" style="font-size:14px">
-—
-</h3>
-
+<small>ACCOUNT EMAIL</small>
+<h3 id="emailStat" style="font-size:14px">—</h3>
 </div>
 
 </div>
-
-
-<!-- MAIN DASHBOARD -->
 
 <div class="columns">
 
 <div class="panel">
-
-<h3>
-Recent Activity
-</h3>
-
-<div id="transactions">
-
-<div class="empty">
-No transactions yet.
+<h3>Recent Activity</h3>
+<div id="transactions"></div>
 </div>
-
-</div>
-
-</div>
-
 
 <div class="panel">
-
-<h3>
-Quick Actions
-</h3>
-
+<h3>Quick Actions</h3>
 <div class="quick">
-
-<button onclick="openTransfer()">
-Send Money
-</button>
-
-<button onclick="loadAccount()">
-Refresh
-</button>
-
-<button onclick="toggleChat()">
-Support
-</button>
-
-<button onclick="scrollToProfile()">
-My Profile
-</button>
-
+<button onclick="openTransfer()">Send Money</button>
+<button onclick="refreshDashboard()">Refresh</button>
+<button onclick="toggleChat()">Support</button>
+<button onclick="scrollToServices()">Services</button>
+</div>
 </div>
 
 </div>
 
+<div class="servicesGrid" id="dashboardServices">
+
+<div class="service">
+<div class="serviceIcon">📱</div>
+<h3>Buy Data</h3>
+<p>Data bundle purchase interface.</p>
+<button class="btn outline" onclick="demoService('Data purchase')">Open</button>
 </div>
 
-
-<!-- PROFILE -->
-
-<div class="profilePanel" id="profileSection">
-
-<div class="profileCard">
-
-<h3>
-Profile Picture
-</h3>
-
-<div class="profilePicture" id="profilePreview">
-AC
+<div class="service">
+<div class="serviceIcon">☎️</div>
+<h3>Airtime</h3>
+<p>Mobile airtime service interface.</p>
+<button class="btn outline" onclick="demoService('Airtime purchase')">Open</button>
 </div>
 
-<input
-class="fileInput"
-type="file"
-id="profileImage"
-accept="image/*"
-onchange="previewProfileImage(event)"
->
-
-<p class="profileNote">
-Choose a profile picture from your device.
-</p>
-
-<button class="btn primary" onclick="saveProfileImage()">
-Save Profile Picture
-</button>
-
+<div class="service">
+<div class="serviceIcon">💡</div>
+<h3>Pay Bills</h3>
+<p>Utility bill-payment interface.</p>
+<button class="btn outline" onclick="demoService('Bill payment')">Open</button>
 </div>
 
-
-<div class="profileCard">
-
-<h3>
-Personal Information
-</h3>
-
-<label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
-Display Name
-</label>
-
-<input
-id="profileName"
-type="text"
-placeholder="Your name"
->
-
-<p class="profileNote">
-You can update the name displayed on your online banking dashboard.
-</p>
-
-<button class="btn primary" onclick="saveProfileName()">
-Save Name
-</button>
-
+<div class="service">
+<div class="serviceIcon">💳</div>
+<h3>Cards</h3>
+<p>View your demonstration card services.</p>
+<button class="btn outline" onclick="demoService('Card services')">Open</button>
 </div>
 
 </div>
-
-
-<!-- DASHBOARD OFFERS -->
 
 <div class="profilePanel">
 
 <div class="profileCard">
-
-<h3>
-Featured Service
-</h3>
-
-<p class="profileNote">
-Explore available online services and announcements.
-</p>
-
-<button class="btn outline" onclick="toast('Service information opened.')">
-View Service
-</button>
-
+<h3>My Profile</h3>
+<label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
+Display Name
+</label>
+<input id="profileName" type="text">
+<button class="btn primary" onclick="saveProfileName()">Save Name</button>
 </div>
 
 <div class="profileCard">
+<h3>Account Information</h3>
+<p class="profileNote">Your demonstration account information is stored locally in this browser.</p>
+<button class="btn outline" onclick="toast('Account information opened.')">View Details</button>
+</div>
 
-<h3>
-Account Support
-</h3>
+</div>
 
-<p class="profileNote">
-Contact support if you need help with your account.
+<!-- DEMO ADMIN -->
+
+<div class="admin" id="adminPanel">
+
+<h2>Demo Administration</h2>
+<p style="font-size:13px;color:#718096;margin-bottom:20px">
+Demonstration controls for testing credits, notifications and support messages.
 </p>
 
-<button class="btn primary" onclick="toggleChat()">
-Contact Support
-</button>
+<div class="adminGrid">
 
+<div class="adminBox">
+<h3>Add Demonstration Funds</h3>
+<input id="adminAmount" type="number" min="0.01" placeholder="Amount">
+<button class="btn primary" onclick="adminCredit()">Add Credit</button>
+</div>
+
+<div class="adminBox">
+<h3>Send Notification</h3>
+<input id="adminNotification" type="text" placeholder="Notification message">
+<button class="btn primary" onclick="adminNotify()">Send Notification</button>
+</div>
+
+<div class="adminBox">
+<h3>Support Reply</h3>
+<input id="adminReply" type="text" placeholder="Reply to customer">
+<button class="btn primary" onclick="adminReplyMessage()">Send Reply</button>
+</div>
+
+<div class="adminBox">
+<h3>Demo Controls</h3>
+<button class="btn outline" onclick="clearDemo()">Reset Demo Account</button>
 </div>
 
 </div>
-
 </div>
 
 </div>
+</div>
 
-
-<!-- ================= LOGIN / REGISTER ================= -->
+<!-- LOGIN / REGISTER -->
 
 <div class="modal" id="authModal">
-
 <div class="modalBox">
-
 <button class="close" onclick="closeModal()">×</button>
 
-
 <div id="loginForm">
-
-<h2>
-Welcome Back
-</h2>
-
-<p>
-Sign in to your online banking account.
-</p>
-
+<h2>Welcome Back</h2>
+<p>Sign in to your demonstration account.</p>
 <div class="error" id="loginError"></div>
 
 <div class="field">
-
-<label>
-Email
-</label>
-
-<input
-id="loginEmail"
-type="email"
-autocomplete="email"
->
-
+<label>Email</label>
+<input id="loginEmail" type="email">
 </div>
-
 
 <div class="field">
-
-<label>
-Password
-</label>
-
-<input
-id="loginPassword"
-type="password"
-autocomplete="current-password"
->
-
+<label>Password</label>
+<input id="loginPassword" type="password">
 </div>
 
+<button class="btn primary full" onclick="login()">Sign In</button>
 
-<button class="btn primary full" onclick="login()">
-Sign In
-</button>
-
-
-<div class="switch">
-
+<div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
 Don't have an account?
-
-<button onclick="showRegister()">
-Create Account
-</button>
-
+<button onclick="showRegister()" style="border:0;background:none;color:#1769e0;font-weight:bold">Create Account</button>
 </div>
-
 </div>
-
 
 <div id="registerForm" style="display:none">
-
-<h2>
-Create Account
-</h2>
-
-<p>
-Create your online banking account.
-</p>
-
+<h2>Create Account</h2>
+<p>Create a demonstration account.</p>
 <div class="error" id="registerError"></div>
 
-
 <div class="field">
-
-<label>
-Full Name
-</label>
-
+<label>Full Name</label>
 <input id="regName" type="text">
-
 </div>
 
-
 <div class="field">
-
-<label>
-Email
-</label>
-
+<label>Email</label>
 <input id="regEmail" type="email">
-
 </div>
 
-
 <div class="field">
-
-<label>
-Password
-</label>
-
+<label>Password</label>
 <input id="regPassword" type="password">
-
 </div>
 
+<button class="btn primary full" onclick="register()">Create Account</button>
 
-<div class="field">
-
-<label>
-Confirm Password
-</label>
-
-<input id="regConfirm" type="password">
-
+<div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+Already registered?
+<button onclick="showLogin()" style="border:0;background:none;color:#1769e0;font-weight:bold">Sign In</button>
 </div>
-
-
-<button class="btn primary full" onclick="register()">
-Create Account
-</button>
-
-
-<div class="switch">
-
-Already have an account?
-
-<button onclick="showLogin()">
-Sign In
-</button>
-
 </div>
 
 </div>
-
 </div>
 
-</div>
-
-
-<!-- ================= TRANSFER ================= -->
+<!-- TRANSFER -->
 
 <div class="modal" id="transferModal">
-
 <div class="modalBox">
-
 <button class="close" onclick="closeTransfer()">×</button>
-
-<h2>
-Send Money
-</h2>
-
-<p>
-Enter the recipient information and amount.
-</p>
-
+<h2>Send Money</h2>
+<p>Create a simulated customer transfer.</p>
 <div class="error" id="transferError"></div>
 
+<div class="field">
+<label>Amount</label>
+<input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00">
+</div>
 
 <div class="field">
-
-<label>
-Amount
-</label>
-
-<input
-id="transferAmount"
-type="number"
-min="0.01"
-step="0.01"
-placeholder="0.00"
->
-
+<label>Recipient</label>
+<input id="transferRecipient" type="text" placeholder="Recipient name">
 </div>
 
-
-<div class="field">
-
-<label>
-Recipient
-</label>
-
-<input
-id="transferRecipient"
-type="text"
-placeholder="Recipient name or reference"
->
-
+<button class="btn primary full" onclick="transfer()">Continue</button>
+</div>
 </div>
 
+<!-- CHAT -->
 
-<button class="btn primary full" onclick="transfer()">
-Continue
-</button>
-
-</div>
-
-</div>
-
-
-<!-- ================= SUPPORT ================= -->
-
-<button class="chatBtn" onclick="toggleChat()">
-?
-</button>
-
+<button class="chatBtn" onclick="toggleChat()">?</button>
 
 <div class="chat" id="chat">
-
 <div class="chatHead">
-
-<strong>
-Customer Support
-</strong>
-
-<button
-onclick="toggleChat()"
-style="background:none;border:0;color:white;font-size:20px"
->
-×
-</button>
-
+<strong>Customer Support</strong>
+<button onclick="toggleChat()" style="background:none;border:0;color:white;font-size:20px">×</button>
 </div>
-
 
 <div class="chatBody" id="chatBody">
-
-<div class="msg">
-Hello. Welcome to American Crest Bank online support.
-How can we help you today?
+<div class="msg">Hello. Welcome to American Crest Bank demonstration support. How can we help you?</div>
 </div>
-
-</div>
-
 
 <div class="chatInput">
-
-<input
-id="chatInput"
-placeholder="Type a message..."
-onkeydown="if(event.key==='Enter')sendChat()"
->
-
-<button onclick="sendChat()">
-Send
-</button>
-
+<input id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
+<button onclick="sendChat()">Send</button>
 </div>
-
 </div>
-
-
-<!-- ================= LOADING ================= -->
-
-<div class="loadingOverlay" id="loadingOverlay">
-
-<div class="loaderBox">
-
-<div class="spinner"></div>
-
-<h3 id="loadingTitle">
-Processing
-</h3>
-
-<p
-id="loadingText"
-style="font-size:13px;color:#bdcce0;margin-top:8px"
->
-Please wait...
-</p>
-
-</div>
-
-</div>
-
 
 <div class="toast" id="toast"></div>
 
-
 <script>
+const KEY="acb_demo_account";
+const TXKEY="acb_demo_transactions";
+const NOTEKEY="acb_demo_notifications";
+const CHATKEY="acb_demo_chat";
 
-const API = window.location.origin;
+let account=JSON.parse(localStorage.getItem(KEY)||"null");
 
-let token = localStorage.getItem("acb_token");
-
-let selectedProfileImage = null;
-
-
-function $(id){
-return document.getElementById(id);
-}
-
+function $(id){return document.getElementById(id)}
 
 function toast(message){
-
-$("toast").textContent=message;
-
-$("toast").classList.add("show");
-
-setTimeout(
-()=>$("toast").classList.remove("show"),
-3000
-);
-
+ $("toast").textContent=message;
+ $("toast").classList.add("show");
+ setTimeout(()=>$("toast").classList.remove("show"),2800);
 }
 
-
-function showLoading(title="Processing",text="Please wait..."){
-
-$("loadingTitle").textContent=title;
-
-$("loadingText").textContent=text;
-
-$("loadingOverlay").classList.add("show");
-
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(account));
 }
 
-
-function hideLoading(){
-
-$("loadingOverlay").classList.remove("show");
-
+function transactions(){
+ return JSON.parse(localStorage.getItem(TXKEY)||"[]");
 }
 
+function saveTransactions(x){
+ localStorage.setItem(TXKEY,JSON.stringify(x));
+}
+
+function money(n){
+ return "$"+Number(n).toLocaleString(undefined,{
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+ });
+}
+
+function escapeHtml(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#039;"
+ }[c]));
+}
 
 function openModal(type){
-
-$("authModal").classList.add("show");
-
-type==="register"
-?showRegister()
-:showLogin();
-
+ $("authModal").classList.add("show");
+ type==="register"?showRegister():showLogin();
 }
-
 
 function closeModal(){
-
-$("authModal").classList.remove("show");
-
+ $("authModal").classList.remove("show");
 }
-
 
 function showRegister(){
-
-$("loginForm").style.display="none";
-
-$("registerForm").style.display="block";
-
-$("loginError").classList.remove("show");
-
+ $("loginForm").style.display="none";
+ $("registerForm").style.display="block";
 }
-
 
 function showLogin(){
-
-$("registerForm").style.display="none";
-
-$("loginForm").style.display="block";
-
-$("registerError").classList.remove("show");
-
+ $("registerForm").style.display="none";
+ $("loginForm").style.display="block";
 }
 
-
-function showError(id,msg){
-
-$(id).textContent=msg;
-
-$(id).classList.add("show");
-
+function error(id,msg){
+ $(id).textContent=msg;
+ $(id).classList.add("show");
 }
 
-
-async function register(){
+function register(){
 
 const name=$("regName").value.trim();
-
 const email=$("regEmail").value.trim();
-
 const password=$("regPassword").value;
 
-const confirm=$("regConfirm").value;
+if(name.length<2)return error("registerError","Enter your name.");
+if(!email.includes("@"))return error("registerError","Enter a valid email.");
+if(password.length<4)return error("registerError","Use at least 4 characters.");
 
-
-if(!name||!email||!password)
-return showError(
-"registerError",
-"Please complete all fields."
-);
-
-
-if(password.length<8)
-return showError(
-"registerError",
-"Password must contain at least 8 characters."
-);
-
-
-if(password!==confirm)
-return showError(
-"registerError",
-"Passwords do not match."
-);
-
-
-showLoading(
-"Creating your account",
-"Please wait while your account is being prepared..."
-);
-
-
-try{
-
-const res=await fetch(
-API+"/api/register",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-fullName:name,
-email,
-password
-})
-}
-);
-
-
-const data=await res.json();
-
-
-if(!res.ok)
-throw new Error(
-data.error||"Unable to create account."
-);
-
-
-token=data.token;
-
-localStorage.setItem(
-"acb_token",
-token
-);
-
-
-closeModal();
-
-await new Promise(r=>setTimeout(r,700));
-
-hideLoading();
-
-await showDashboard();
-
-toast("Account created successfully.");
-
-}catch(e){
-
-hideLoading();
-
-showError(
-"registerError",
-e.message
-);
-
-}
-
-}
-
-
-async function login(){
-
-const email=$("loginEmail").value.trim();
-
-const password=$("loginPassword").value;
-
-
-if(!email||!password)
-return showError(
-"loginError",
-"Enter your email and password."
-);
-
-
-showLoading(
-"Signing you in",
-"Securely connecting to your online banking account..."
-);
-
-
-try{
-
-const res=await fetch(
-API+"/api/login",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-email,
-password
-})
-}
-);
-
-
-const data=await res.json();
-
-
-if(!res.ok)
-throw new Error(
-data.error||"Unable to sign in."
-);
-
-
-token=data.token;
-
-localStorage.setItem(
-"acb_token",
-token
-);
-
-
-closeModal();
-
-await new Promise(r=>setTimeout(r,700));
-
-hideLoading();
-
-await showDashboard();
-
-toast("Signed in successfully.");
-
-}catch(e){
-
-hideLoading();
-
-showError(
-"loginError",
-e.message
-);
-
-}
-
-}
-
-
-async function api(path,options={}){
-
-options.headers={
-...(options.headers||{}),
-Authorization:"Bearer "+token,
-"Content-Type":"application/json"
+account={
+ name:name,
+ email:email,
+ password:password,
+ balance:0,
+ status:"Active"
 };
 
+save();
+saveTransactions([]);
+localStorage.setItem(NOTEKEY,"[]");
 
-const res=await fetch(
-API+path,
-options
-);
-
-
-const data=await res.json();
-
-
-if(res.status===401){
-
-logout();
-
-throw new Error(
-"Your session has expired."
-);
-
+closeModal();
+showDashboard();
+toast("Demonstration account created.");
 }
 
+function login(){
 
-if(!res.ok)
-throw new Error(
-data.error||"Request failed."
-);
+const email=$("loginEmail").value.trim();
+const password=$("loginPassword").value;
 
-
-return data;
-
+if(!account){
+ return error("loginError","No demonstration account exists. Create one first.");
 }
 
+if(email!==account.email||password!==account.password){
+ return error("loginError","Incorrect demonstration login details.");
+}
 
-async function showDashboard(){
+closeModal();
+showDashboard();
+toast("Signed in successfully.");
+}
+
+function showDashboard(){
+
+if(!account)return;
 
 $("publicSite").style.display="none";
-
 $("dashboard").style.display="block";
 
-await loadAccount();
+$("welcomeName").textContent=account.name;
+$("dashName").textContent=account.name;
+$("emailStat").textContent=account.email;
+$("profileName").value=account.name;
 
-await loadTransactions();
+const initials=account.name.split(/\s+/)
+.map(x=>x[0]).slice(0,2).join("").toUpperCase();
 
-loadSavedProfile();
+$("avatar").textContent=initials;
 
+renderBalance();
+renderTransactions();
+renderNotifications();
+
+$("adminPanel").style.display="block";
 }
 
-
-async function loadAccount(){
-
-try{
-
-const data=await api(
-"/api/account"
-);
-
-
-$("welcomeName").textContent=data.full_name;
-
-$("dashName").textContent=data.full_name;
-
-$("emailStat").textContent=data.email;
-
-$("status").textContent=data.status;
-
-
-$("balance").textContent="$"+
-Number(data.balance).toLocaleString(
-undefined,
-{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}
-);
-
-
-$("profileName").value=data.full_name;
-
-
-const initials=data.full_name
-.split(/\s+/)
-.map(x=>x[0])
-.slice(0,2)
-.join("")
-.toUpperCase();
-
-
-$("avatar").innerHTML=initials;
-
-$("profilePreview").innerHTML=initials;
-
-
-}catch(e){
-
-toast(e.message);
-
+function renderBalance(){
+ $("balance").textContent=money(account.balance);
 }
 
+function renderTransactions(){
+
+const list=transactions();
+$("txCount").textContent=list.length;
+
+if(!list.length){
+ $("transactions").innerHTML='<div class="empty">No transactions yet.</div>';
+ return;
 }
 
+$("transactions").innerHTML=list.slice().reverse().map(t=>{
 
-async function loadTransactions(){
-
-try{
-
-const rows=await api(
-"/api/transactions"
-);
-
-
-$("txCount").textContent=rows.length;
-
-
-if(!rows.length){
-
-$("transactions").innerHTML=
-'<div class="empty">No transactions yet.</div>';
-
-return;
-
-}
-
-
-$("transactions").innerHTML=rows.map(t=>{
-
-const amount=Number(t.amount)
-.toLocaleString(
-undefined,
-{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}
-);
-
+const positive=t.kind==="credit";
 
 return `
 <div class="tx">
-
 <div>
-
-<div class="txName">
-${escapeHtml(t.type)}
-—
-${escapeHtml(t.recipient||"")}
+<div class="txName">${escapeHtml(t.title)}</div>
+<div class="txDate">${escapeHtml(t.date)}</div>
 </div>
-
-<div class="txDate">
-${new Date(t.created_at).toLocaleString()}
+<div class="${positive?"in":"out"}">
+${positive?"+":"-"}${money(t.amount)}
 </div>
-
-</div>
-
-<div class="out">
--$${amount}
-</div>
-
-</div>
-`;
+</div>`;
 
 }).join("");
-
-
-}catch(e){
-
-toast(e.message);
-
 }
 
-}
+function addTransaction(kind,title,amount){
 
+const list=transactions();
+
+list.push({
+ kind:kind,
+ title:title,
+ amount:Number(amount),
+ date:new Date().toLocaleString()
+});
+
+saveTransactions(list);
+renderTransactions();
+}
 
 function openTransfer(){
 
-if(!token){
-
-openModal("login");
-
-return;
-
+if(!account){
+ openModal("login");
+ return;
 }
-
 
 $("transferError").classList.remove("show");
-
 $("transferAmount").value="";
-
 $("transferRecipient").value="";
-
 $("transferModal").classList.add("show");
-
 }
-
 
 function closeTransfer(){
-
-$("transferModal").classList.remove("show");
-
+ $("transferModal").classList.remove("show");
 }
 
+function transfer(){
 
-async function transfer(){
+const amount=Number($("transferAmount").value);
+const recipient=$("transferRecipient").value.trim();
 
-const amount=Number(
-$("transferAmount").value
+if(!amount||amount<=0)
+ return error("transferError","Enter a valid amount.");
+
+if(recipient.length<2)
+ return error("transferError","Enter a recipient.");
+
+if(amount>account.balance)
+ return error("transferError","Insufficient demonstration balance.");
+
+account.balance-=amount;
+save();
+
+addTransaction(
+ "debit",
+ "Transfer to "+recipient,
+ amount
 );
-
-const recipient=$("transferRecipient")
-.value.trim();
-
-
-if(!Number.isFinite(amount)||amount<=0)
-return showError(
-"transferError",
-"Enter a valid amount."
-);
-
-
-if(recipient.length<3)
-return showError(
-"transferError",
-"Enter a recipient."
-);
-
 
 closeTransfer();
+renderBalance();
 
-
-showLoading(
-"Processing transfer",
-"Please wait while your request is being processed..."
-);
-
-
-try{
-
-const data=await api(
-"/api/transfers",
-{
-method:"POST",
-body:JSON.stringify({
-amount,
-recipient
-})
-}
-);
-
-
-await new Promise(r=>setTimeout(r,900));
-
-hideLoading();
-
-await loadAccount();
-
-await loadTransactions();
-
-toast(data.message);
-
-
-}catch(e){
-
-hideLoading();
-
-$("transferModal").classList.add("show");
-
-showError(
-"transferError",
-e.message
-);
-
+toast("Transfer recorded as a debit.");
 }
 
+function adminCredit(){
+
+const amount=Number($("adminAmount").value);
+
+if(!amount||amount<=0){
+ toast("Enter a valid amount.");
+ return;
 }
 
+account.balance+=amount;
+save();
 
-/* PROFILE */
+addTransaction(
+ "credit",
+ "Funds added by Demo Administration",
+ amount
+);
 
-function scrollToProfile(){
+$("adminAmount").value="";
+renderBalance();
 
-$("profileSection")
-.scrollIntoView({
-behavior:"smooth"
+toast("Funds added successfully as CREDIT.");
+}
+
+function adminNotify(){
+
+const message=$("adminNotification").value.trim();
+
+if(!message){
+ toast("Enter a notification.");
+ return;
+}
+
+const list=JSON.parse(localStorage.getItem(NOTEKEY)||"[]");
+
+list.push({
+ message:message,
+ date:new Date().toLocaleString()
 });
 
+localStorage.setItem(NOTEKEY,JSON.stringify(list));
+
+$("adminNotification").value="";
+renderNotifications();
+
+toast("Notification sent.");
 }
 
+function renderNotifications(){
 
-function previewProfileImage(event){
+const list=JSON.parse(localStorage.getItem(NOTEKEY)||"[]");
 
-const file=event.target.files[0];
-
-if(!file)return;
-
-if(!file.type.startsWith("image/")){
-
-toast("Please select an image.");
-
-return;
-
+if(!list.length){
+ $("notifications").innerHTML="";
+ return;
 }
 
-
-selectedProfileImage=file;
-
-
-const reader=new FileReader();
-
-
-reader.onload=function(e){
-
-$("profilePreview").innerHTML=
-`<img src="${e.target.result}" alt="Profile picture">`;
-
-$("avatar").innerHTML=
-`<img src="${e.target.result}" alt="Profile picture">`;
-
-};
-
-
-reader.readAsDataURL(file);
-
+$("notifications").innerHTML=list.slice(-5).reverse().map(n=>`
+<div class="notification">
+<strong>Account Notification</strong>
+<div>${escapeHtml(n.message)}</div>
+<small>${escapeHtml(n.date)}</small>
+</div>
+`).join("");
 }
 
+function adminReplyMessage(){
 
-function saveProfileImage(){
+const text=$("adminReply").value.trim();
 
-if(!selectedProfileImage){
-
-toast("Choose a profile picture first.");
-
-return;
-
+if(!text){
+ toast("Enter a reply.");
+ return;
 }
 
+const body=$("chatBody");
 
-/*
-The image is currently stored locally in the browser.
-The server will be upgraded in the next step so the
-profile picture can be stored with the customer's account.
-*/
+body.innerHTML+=`
+<div class="msg">
+<strong>Support:</strong><br>${escapeHtml(text)}
+</div>`;
 
-const reader=new FileReader();
+$("adminReply").value="";
+localStorage.setItem(CHATKEY,body.innerHTML);
 
-reader.onload=function(e){
-
-localStorage.setItem(
-"acb_profile_image",
-e.target.result
-);
-
-toast("Profile picture saved.");
-
-};
-
-reader.readAsDataURL(selectedProfileImage);
-
+toast("Support reply added.");
 }
-
-
-function loadSavedProfile(){
-
-const image=
-localStorage.getItem(
-"acb_profile_image"
-);
-
-
-if(image){
-
-$("profilePreview").innerHTML=
-`<img src="${image}" alt="Profile picture">`;
-
-$("avatar").innerHTML=
-`<img src="${image}" alt="Profile picture">`;
-
-}
-
-}
-
 
 function saveProfileName(){
 
-const name=$("profileName")
-.value.trim();
-
+const name=$("profileName").value.trim();
 
 if(name.length<2){
-
-toast("Enter a valid name.");
-
-return;
-
+ toast("Enter a valid name.");
+ return;
 }
 
+account.name=name;
+save();
 
 $("welcomeName").textContent=name;
-
 $("dashName").textContent=name;
 
-toast(
-"Name updated on this device. Server profile storage will be connected next."
-);
+const initials=name.split(/\s+/)
+.map(x=>x[0]).slice(0,2).join("").toUpperCase();
 
+$("avatar").textContent=initials;
+
+toast("Profile name updated.");
 }
 
-
-/* LOGOUT */
-
-function logout(){
-
-token=null;
-
-localStorage.removeItem(
-"acb_token"
-);
-
-$("dashboard").style.display="none";
-
-$("publicSite").style.display="block";
-
-toast(
-"You have been signed out."
-);
-
+function refreshDashboard(){
+ renderBalance();
+ renderTransactions();
+ renderNotifications();
+ toast("Dashboard refreshed.");
 }
 
+function scrollToServices(){
+ $("dashboardServices").scrollIntoView({behavior:"smooth"});
+}
 
-/* SUPPORT */
+function demoService(service){
+
+toast(service+" interface opened. Demonstration only.");
+
+}
 
 function toggleChat(){
-
-$("chat").classList.toggle("show");
-
+ $("chat").classList.toggle("show");
 }
-
 
 function sendChat(){
 
 const input=$("chatInput");
-
 const text=input.value.trim();
-
 
 if(!text)return;
 
-
 const body=$("chatBody");
 
-
-body.innerHTML+=
-`<div class="msg user">
-${escapeHtml(text)}
-</div>`;
-
+body.innerHTML+=`
+<div class="msg user">${escapeHtml(text)}</div>
+`;
 
 input.value="";
-
 body.scrollTop=body.scrollHeight;
 
+localStorage.setItem(CHATKEY,body.innerHTML);
 
 setTimeout(()=>{
-
-body.innerHTML+=
-`<div class="msg">
-Thank you for contacting online support.
-Your message has been received. Our support team can assist you with your account.
-</div>`;
-
-body.scrollTop=body.scrollHeight;
-
-},700);
-
+ body.innerHTML+=`
+ <div class="msg">
+ Thank you. Your message has been received by demonstration support.
+ </div>`;
+ body.scrollTop=body.scrollHeight;
+ localStorage.setItem(CHATKEY,body.innerHTML);
+},500);
 }
 
+function logout(){
 
-/* SECURITY */
+$("dashboard").style.display="none";
+$("publicSite").style.display="block";
 
-function escapeHtml(value){
-
-return String(value).replace(
-/[&<>"']/g,
-c=>({
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#039;"
-}[c])
-);
-
+toast("Signed out.");
 }
 
+function clearDemo(){
 
-/* START */
+if(!confirm("Reset the demonstration account and all demo activity?"))return;
 
-window.addEventListener(
-"load",
-async()=>{
+localStorage.removeItem(KEY);
+localStorage.removeItem(TXKEY);
+localStorage.removeItem(NOTEKEY);
+localStorage.removeItem(CHATKEY);
 
-if(token){
+account=null;
 
-try{
+$("dashboard").style.display="none";
+$("publicSite").style.display="block";
 
-await showDashboard();
-
-}catch(e){
-
-logout();
-
+toast("Demonstration account reset.");
 }
 
+window.addEventListener("load",()=>{
+
+const savedChat=localStorage.getItem(CHATKEY);
+
+if(savedChat){
+ $("chatBody").innerHTML=savedChat;
 }
 
+if(account){
+ showDashboard();
 }
-);
+
+});
 
 </script>
 
