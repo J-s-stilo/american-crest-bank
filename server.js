@@ -48,6 +48,36 @@ const adminLimiter = rateLimit({
   legacyHeaders: false
 });
 
+/* =========================================================
+   SUPPORTED CURRENCIES
+========================================================= */
+
+const CURRENCIES = {
+  USD: { name: "US Dollar", symbol: "$" },
+  NGN: { name: "Nigerian Naira", symbol: "₦" },
+  EUR: { name: "Euro", symbol: "€" },
+  GBP: { name: "British Pound", symbol: "£" },
+  CAD: { name: "Canadian Dollar", symbol: "C$" },
+  AUD: { name: "Australian Dollar", symbol: "A$" },
+  CHF: { name: "Swiss Franc", symbol: "CHF" },
+  JPY: { name: "Japanese Yen", symbol: "¥" },
+  CNY: { name: "Chinese Yuan", symbol: "¥" },
+  INR: { name: "Indian Rupee", symbol: "₹" },
+  IDR: { name: "Indonesian Rupiah", symbol: "Rp" },
+  MYR: { name: "Malaysian Ringgit", symbol: "RM" },
+  SGD: { name: "Singapore Dollar", symbol: "S$" },
+  AED: { name: "UAE Dirham", symbol: "د.إ" },
+  ZAR: { name: "South African Rand", symbol: "R" },
+  KES: { name: "Kenyan Shilling", symbol: "KSh" },
+  GHS: { name: "Ghanaian Cedi", symbol: "GH₵" }
+};
+
+function isCurrency(currency) {
+  return Object.prototype.hasOwnProperty.call(
+    CURRENCIES,
+    String(currency || "").toUpperCase()
+  );
+}
 
 /* =========================================================
    DATABASE
@@ -61,21 +91,31 @@ async function setupDatabase() {
       full_name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
-      balance NUMERIC(18,2) NOT NULL DEFAULT 0,
       status TEXT NOT NULL DEFAULT 'active',
       role TEXT NOT NULL DEFAULT 'customer',
       profile_image_url TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS accounts (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      currency CHAR(3) NOT NULL,
+      balance NUMERIC(20,2) NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(user_id, currency)
+    );
+
     CREATE TABLE IF NOT EXISTS transactions (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       type TEXT NOT NULL,
-      amount NUMERIC(18,2) NOT NULL,
+      currency CHAR(3) NOT NULL,
+      amount NUMERIC(20,2) NOT NULL,
       recipient TEXT,
       reference TEXT UNIQUE NOT NULL,
       status TEXT NOT NULL DEFAULT 'pending',
+      description TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
@@ -106,34 +146,31 @@ async function setupDatabase() {
     );
   `);
 
-  /*
-    Safe upgrades for databases that were created using
-    the previous version of the application.
-  */
-
   await pool.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active';
+
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'customer';
 
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS profile_image_url TEXT;
-  `);
 
-  await pool.query(`
     ALTER TABLE transactions
-    ALTER COLUMN status SET DEFAULT 'pending';
+    ADD COLUMN IF NOT EXISTS currency CHAR(3);
+
+    ALTER TABLE transactions
+    ADD COLUMN IF NOT EXISTS description TEXT;
   `);
 
-  console.log("Database ready.");
+  console.log("Multi-currency database ready.");
 }
-
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
 function createToken(user) {
-
   return jwt.sign(
     {
       id: user.id,
@@ -141,45 +178,34 @@ function createToken(user) {
       role: user.role
     },
     JWT_SECRET,
-    {
-      expiresIn: "7d"
-    }
+    { expiresIn: "7d" }
   );
 }
-
 
 function authenticate(req, res, next) {
 
   const header = req.headers.authorization || "";
 
   if (!header.startsWith("Bearer ")) {
-
     return res.status(401).json({
       error: "Authentication required."
     });
-
   }
 
-  const token = header.substring(7);
-
   try {
-
     req.user = jwt.verify(
-      token,
+      header.substring(7),
       JWT_SECRET
     );
 
     next();
 
   } catch {
-
     return res.status(401).json({
       error: "Invalid or expired session."
     });
-
   }
 }
-
 
 async function requireAdmin(req, res, next) {
 
@@ -193,29 +219,20 @@ async function requireAdmin(req, res, next) {
     );
 
     if (!result.rows.length) {
-
       return res.status(401).json({
         error: "Account not found."
       });
-
     }
 
     const user = result.rows[0];
 
-    if (user.role !== "admin") {
-
+    if (
+      user.role !== "admin" ||
+      user.status !== "active"
+    ) {
       return res.status(403).json({
         error: "Administrator access required."
       });
-
-    }
-
-    if (user.status !== "active") {
-
-      return res.status(403).json({
-        error: "Administrator account is unavailable."
-      });
-
     }
 
     next();
@@ -224,15 +241,24 @@ async function requireAdmin(req, res, next) {
 
     console.error(error);
 
-    return res.status(500).json({
+    res.status(500).json({
       error: "Unable to verify administrator access."
     });
-
   }
 }
 
+function validAmount(value) {
 
-function makeReference(prefix = "ACB") {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) return null;
+  if (amount <= 0) return null;
+  if (amount > 1000000000) return null;
+
+  return Math.round(amount * 100) / 100;
+}
+
+function makeReference(prefix = "BANK") {
 
   return (
     prefix +
@@ -244,30 +270,32 @@ function makeReference(prefix = "ACB") {
       .substring(2, 8)
       .toUpperCase()
   );
-
 }
 
+async function ensureCurrencyAccount(
+  client,
+  userId,
+  currency
+) {
 
-function validAmount(value) {
+  const code = String(currency).toUpperCase();
 
-  const amount = Number(value);
-
-  if (!Number.isFinite(amount)) {
-    return null;
+  if (!isCurrency(code)) {
+    throw new Error("Unsupported currency.");
   }
 
-  if (amount <= 0) {
-    return null;
-  }
+  const result = await client.query(
+    `INSERT INTO accounts
+     (user_id, currency, balance)
+     VALUES ($1, $2, 0)
+     ON CONFLICT (user_id, currency)
+     DO UPDATE SET currency = EXCLUDED.currency
+     RETURNING id, user_id, currency, balance`,
+    [userId, code]
+  );
 
-  if (amount > 1000000000) {
-    return null;
-  }
-
-  return Math.round(amount * 100) / 100;
-
+  return result.rows[0];
 }
-
 
 /* =========================================================
    STATIC WEBSITE
@@ -279,49 +307,52 @@ app.use(
   )
 );
 
-
 app.get("/", (req, res) => {
-
   res.sendFile(
-    path.join(
-      __dirname,
-      "index.html"
-    )
+    path.join(__dirname, "index.html")
   );
-
 });
-
 
 /* =========================================================
    HEALTH
 ========================================================= */
 
-app.get(
-  "/api/health",
-  async (req, res) => {
+app.get("/api/health", async (req, res) => {
 
-    try {
+  try {
 
-      await pool.query("SELECT 1");
+    await pool.query("SELECT 1");
 
-      res.json({
-        status: "healthy",
-        database: "connected",
-        service: "American Crest Bank Online Banking"
-      });
+    res.json({
+      status: "healthy",
+      database: "connected",
+      service: "Multi-Currency Banking Platform"
+    });
 
-    } catch {
+  } catch {
 
-      res.status(500).json({
-        status: "unhealthy",
-        database: "disconnected"
-      });
-
-    }
-
+    res.status(500).json({
+      status: "unhealthy",
+      database: "disconnected"
+    });
   }
-);
+});
 
+/* =========================================================
+   CURRENCIES
+========================================================= */
+
+app.get("/api/currencies", (req, res) => {
+
+  res.json(
+    Object.entries(CURRENCIES).map(
+      ([code, data]) => ({
+        code,
+        ...data
+      })
+    )
+  );
+});
 
 /* =========================================================
    REGISTER
@@ -341,35 +372,27 @@ app.post(
       } = req.body;
 
       if (!fullName || !email || !password) {
-
         return res.status(400).json({
           error:
             "Full name, email and password are required."
         });
-
       }
 
       if (String(fullName).trim().length < 2) {
-
         return res.status(400).json({
           error: "Please enter a valid full name."
         });
-
       }
 
       if (password.length < 8) {
-
         return res.status(400).json({
           error:
             "Password must contain at least 8 characters."
         });
-
       }
 
       const normalizedEmail =
-        String(email)
-          .trim()
-          .toLowerCase();
+        String(email).trim().toLowerCase();
 
       const existing =
         await pool.query(
@@ -378,34 +401,24 @@ app.post(
         );
 
       if (existing.rows.length) {
-
         return res.status(409).json({
           error:
             "An account with this email already exists."
         });
-
       }
 
       const passwordHash =
-        await bcrypt.hash(
-          password,
-          12
-        );
+        await bcrypt.hash(password, 12);
 
       const result =
         await pool.query(
           `INSERT INTO users
-          (
-            full_name,
-            email,
-            password_hash
-          )
+          (full_name, email, password_hash)
           VALUES ($1, $2, $3)
           RETURNING
             id,
             full_name,
             email,
-            balance,
             status,
             role,
             profile_image_url,
@@ -417,19 +430,14 @@ app.post(
           ]
         );
 
-      const user =
-        result.rows[0];
+      const user = result.rows[0];
 
       res.status(201).json({
-
         message:
           "Account created successfully.",
-
         user,
-
         token:
           createToken(user)
-
       });
 
     } catch (error) {
@@ -440,12 +448,9 @@ app.post(
         error:
           "Unable to create account."
       });
-
     }
-
   }
 );
-
 
 /* =========================================================
    LOGIN
@@ -464,12 +469,10 @@ app.post(
       } = req.body;
 
       if (!email || !password) {
-
         return res.status(400).json({
           error:
             "Email and password are required."
         });
-
       }
 
       const result =
@@ -485,24 +488,19 @@ app.post(
         );
 
       if (!result.rows.length) {
-
         return res.status(401).json({
           error:
             "Invalid email or password."
         });
-
       }
 
-      const user =
-        result.rows[0];
+      const user = result.rows[0];
 
       if (user.status !== "active") {
-
         return res.status(403).json({
           error:
             "This account is currently unavailable."
         });
-
       }
 
       const valid =
@@ -512,46 +510,26 @@ app.post(
         );
 
       if (!valid) {
-
         return res.status(401).json({
           error:
             "Invalid email or password."
         });
-
       }
 
       res.json({
-
         message:
           "Login successful.",
-
         token:
           createToken(user),
-
         user: {
-
           id: user.id,
-
-          fullName:
-            user.full_name,
-
-          email:
-            user.email,
-
-          balance:
-            user.balance,
-
-          status:
-            user.status,
-
-          role:
-            user.role,
-
+          fullName: user.full_name,
+          email: user.email,
+          status: user.status,
+          role: user.role,
           profileImageUrl:
             user.profile_image_url
-
         }
-
       });
 
     } catch (error) {
@@ -562,12 +540,9 @@ app.post(
         error:
           "Unable to sign in."
       });
-
     }
-
   }
 );
-
 
 /* =========================================================
    CUSTOMER ACCOUNT
@@ -580,13 +555,12 @@ app.get(
 
     try {
 
-      const result =
+      const user =
         await pool.query(
           `SELECT
             id,
             full_name,
             email,
-            balance,
             status,
             role,
             profile_image_url,
@@ -596,18 +570,30 @@ app.get(
           [req.user.id]
         );
 
-      if (!result.rows.length) {
-
+      if (!user.rows.length) {
         return res.status(404).json({
           error:
             "Account not found."
         });
-
       }
 
-      res.json(
-        result.rows[0]
-      );
+      const accounts =
+        await pool.query(
+          `SELECT
+            currency,
+            balance,
+            created_at
+           FROM accounts
+           WHERE user_id = $1
+           ORDER BY currency`,
+          [req.user.id]
+        );
+
+      res.json({
+        ...user.rows[0],
+        accounts:
+          accounts.rows
+      });
 
     } catch (error) {
 
@@ -617,15 +603,51 @@ app.get(
         error:
           "Unable to load account."
       });
-
     }
-
   }
 );
 
+/* =========================================================
+   CUSTOMER BALANCES
+========================================================= */
+
+app.get(
+  "/api/accounts",
+  authenticate,
+  async (req, res) => {
+
+    try {
+
+      const result =
+        await pool.query(
+          `SELECT
+            currency,
+            balance,
+            created_at
+           FROM accounts
+           WHERE user_id = $1
+           ORDER BY currency`,
+          [req.user.id]
+        );
+
+      res.json(
+        result.rows
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        error:
+          "Unable to load currency accounts."
+      });
+    }
+  }
+);
 
 /* =========================================================
-   CUSTOMER PROFILE
+   PROFILE
 ========================================================= */
 
 app.patch(
@@ -650,12 +672,10 @@ app.patch(
           String(fullName).trim();
 
         if (name.length < 2) {
-
           return res.status(400).json({
             error:
               "Please enter a valid name."
           });
-
         }
 
         updates.push(
@@ -663,7 +683,6 @@ app.patch(
         );
 
         values.push(name);
-
       }
 
       if (profileImageUrl !== undefined) {
@@ -672,12 +691,10 @@ app.patch(
           profileImageUrl !== null &&
           String(profileImageUrl).length > 1000000
         ) {
-
           return res.status(400).json({
             error:
               "Profile image is too large."
           });
-
         }
 
         updates.push(
@@ -689,21 +706,16 @@ app.patch(
             ? String(profileImageUrl)
             : null
         );
-
       }
 
       if (!updates.length) {
-
         return res.status(400).json({
           error:
             "No profile changes were provided."
         });
-
       }
 
-      values.push(
-        req.user.id
-      );
+      values.push(req.user.id);
 
       const result =
         await pool.query(
@@ -714,30 +726,17 @@ app.patch(
              id,
              full_name,
              email,
-             balance,
              status,
              role,
              profile_image_url`,
           values
         );
 
-      if (!result.rows.length) {
-
-        return res.status(404).json({
-          error:
-            "Account not found."
-        });
-
-      }
-
       res.json({
-
         message:
           "Profile updated successfully.",
-
         user:
           result.rows[0]
-
       });
 
     } catch (error) {
@@ -748,15 +747,12 @@ app.patch(
         error:
           "Unable to update profile."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   CUSTOMER TRANSACTIONS
+   TRANSACTIONS
 ========================================================= */
 
 app.get(
@@ -771,10 +767,12 @@ app.get(
           `SELECT
             id,
             type,
+            currency,
             amount,
             recipient,
             reference,
             status,
+            description,
             created_at
            FROM transactions
            WHERE user_id = $1
@@ -794,15 +792,12 @@ app.get(
         error:
           "Unable to load transactions."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   CUSTOMER TRANSFER
+   TRANSFER REQUEST
 ========================================================= */
 
 app.post(
@@ -816,9 +811,12 @@ app.post(
     try {
 
       const amount =
-        validAmount(
-          req.body.amount
-        );
+        validAmount(req.body.amount);
+
+      const currency =
+        String(
+          req.body.currency || ""
+        ).toUpperCase();
 
       const recipient =
         String(
@@ -826,96 +824,50 @@ app.post(
         ).trim();
 
       if (!amount) {
-
         return res.status(400).json({
           error:
             "Enter a valid transfer amount."
         });
+      }
 
+      if (!isCurrency(currency)) {
+        return res.status(400).json({
+          error:
+            "Please select a supported currency."
+        });
       }
 
       if (recipient.length < 3) {
-
         return res.status(400).json({
           error:
             "Recipient is required."
         });
-
       }
 
-      await client.query(
-        "BEGIN"
-      );
-
-      /*
-        Server-side one-transfer rule:
-        once a customer has a transfer record,
-        another transfer is not permitted.
-      */
-
-      const previousTransfer =
-        await client.query(
-          `SELECT id, status
-           FROM transactions
-           WHERE user_id = $1
-             AND type = 'transfer'
-           ORDER BY created_at DESC
-           LIMIT 1
-           FOR UPDATE`,
-          [req.user.id]
-        );
-
-      if (previousTransfer.rows.length) {
-
-        await client.query(
-          "ROLLBACK"
-        );
-
-        return res.status(409).json({
-          error:
-            "A transfer has already been submitted for this account. Please contact customer support."
-        });
-
-      }
+      await client.query("BEGIN");
 
       const account =
         await client.query(
           `SELECT
-            balance,
-            status
-           FROM users
-           WHERE id = $1
+            id,
+            balance
+           FROM accounts
+           WHERE user_id = $1
+             AND currency = $2
            FOR UPDATE`,
-          [req.user.id]
+          [
+            req.user.id,
+            currency
+          ]
         );
 
       if (!account.rows.length) {
+        await client.query("ROLLBACK");
 
-        await client.query(
-          "ROLLBACK"
-        );
-
-        return res.status(404).json({
+        return res.status(400).json({
           error:
-            "Account not found."
+            `You do not have a ${currency} account.`
         });
-
-      }
-
-      if (
-        account.rows[0].status !==
-        "active"
-      ) {
-
-        await client.query(
-          "ROLLBACK"
-        );
-
-        return res.status(403).json({
-          error:
-            "This account cannot currently make transfers."
-        });
-
       }
 
       const balance =
@@ -924,28 +876,22 @@ app.post(
         );
 
       if (amount > balance) {
-
-        await client.query(
-          "ROLLBACK"
-        );
+        await client.query("ROLLBACK");
 
         return res.status(400).json({
           error:
             "Insufficient available balance."
         });
-
       }
 
-      const reference =
-        makeReference(
-          "ACB"
-        );
-
       /*
-        The transfer is recorded as pending.
-        A legitimate administrator/backend workflow
-        can later update its status.
+        Funds remain recorded in the account until
+        an authorized payment/banking provider processes
+        the actual external transfer.
       */
+
+      const reference =
+        makeReference("TRF");
 
       const transaction =
         await client.query(
@@ -953,10 +899,12 @@ app.post(
           (
             user_id,
             type,
+            currency,
             amount,
             recipient,
             reference,
-            status
+            status,
+            description
           )
           VALUES
           (
@@ -965,37 +913,34 @@ app.post(
             $2,
             $3,
             $4,
-            'pending'
+            $5,
+            'pending',
+            $6
           )
           RETURNING *`,
           [
             req.user.id,
+            currency,
             amount,
             recipient,
-            reference
+            reference,
+            "International transfer request"
           ]
         );
 
-      await client.query(
-        "COMMIT"
-      );
+      await client.query("COMMIT");
 
       res.status(201).json({
-
         message:
           "Transfer request submitted for processing.",
-
         transaction:
           transaction.rows[0]
-
       });
 
     } catch (error) {
 
       try {
-        await client.query(
-          "ROLLBACK"
-        );
+        await client.query("ROLLBACK");
       } catch {}
 
       console.error(error);
@@ -1006,26 +951,19 @@ app.post(
       });
 
     } finally {
-
       client.release();
-
     }
-
   }
 );
 
-
 /* =========================================================
-   CUSTOMER SUPPORT
+   SUPPORT
 ========================================================= */
 
 app.post(
   "/api/support",
   authenticate,
   async (req, res) => {
-
-    const client =
-      await pool.connect();
 
     try {
 
@@ -1043,34 +981,17 @@ app.post(
         subject.length < 2 ||
         message.length < 2
       ) {
-
         return res.status(400).json({
           error:
             "Subject and message are required."
         });
-
       }
 
-      await client.query(
-        "BEGIN"
-      );
-
       const ticket =
-        await client.query(
+        await pool.query(
           `INSERT INTO support_tickets
-          (
-            user_id,
-            subject,
-            message,
-            status
-          )
-          VALUES
-          (
-            $1,
-            $2,
-            $3,
-            'open'
-          )
+          (user_id, subject, message)
+          VALUES ($1, $2, $3)
           RETURNING
             id,
             subject,
@@ -1084,84 +1005,14 @@ app.post(
           ]
         );
 
-      await client.query(
-        `INSERT INTO support_messages
-        (
-          ticket_id,
-          sender_role,
-          message
-        )
-        VALUES
-        (
-          $1,
-          'customer',
-          $2
-        )`,
-        [
-          ticket.rows[0].id,
-          message
-        ]
-      );
-
-      /*
-        Create an administrator notification.
-      */
-
-      const admins =
-        await client.query(
-          `SELECT id
-           FROM users
-           WHERE role = 'admin'
-             AND status = 'active'`
-        );
-
-      for (
-        const admin of admins.rows
-      ) {
-
-        await client.query(
-          `INSERT INTO notifications
-          (
-            user_id,
-            title,
-            message
-          )
-          VALUES
-          (
-            $1,
-            $2,
-            $3
-          )`,
-          [
-            admin.id,
-            "New support message",
-            `A customer opened support request #${ticket.rows[0].id}.`
-          ]
-        );
-
-      }
-
-      await client.query(
-        "COMMIT"
-      );
-
       res.status(201).json({
-
         message:
           "Support request submitted.",
-
         ticket:
           ticket.rows[0]
-
       });
 
     } catch (error) {
-
-      try {
-        await client.query(
-          "ROLLBACK"
-        );
-      } catch {}
 
       console.error(error);
 
@@ -1169,20 +1020,9 @@ app.post(
         error:
           "Unable to submit support request."
       });
-
-    } finally {
-
-      client.release();
-
     }
-
   }
 );
-
-
-/* =========================================================
-   CUSTOMER SUPPORT LIST
-========================================================= */
 
 app.get(
   "/api/support",
@@ -1217,15 +1057,12 @@ app.get(
         error:
           "Unable to load support requests."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: DASHBOARD SUMMARY
+   ADMIN SUMMARY
 ========================================================= */
 
 app.get(
@@ -1237,28 +1074,32 @@ app.get(
 
     try {
 
-      const users =
+      const customers =
         await pool.query(
           `SELECT COUNT(*)::int AS count
            FROM users
            WHERE role = 'customer'`
         );
 
-      const balances =
+      const total =
         await pool.query(
-          `SELECT COALESCE(
-             SUM(balance),
-             0
-           ) AS total
-           FROM users
-           WHERE role = 'customer'`
+          `SELECT
+             currency,
+             COALESCE(SUM(balance), 0) AS total
+           FROM accounts a
+           JOIN users u
+             ON u.id = a.user_id
+           WHERE u.role = 'customer'
+           GROUP BY currency
+           ORDER BY currency`
         );
 
       const pending =
         await pool.query(
           `SELECT COUNT(*)::int AS count
            FROM transactions
-           WHERE status = 'pending'`
+           WHERE type = 'transfer'
+             AND status = 'pending'`
         );
 
       const support =
@@ -1268,32 +1109,15 @@ app.get(
            WHERE status = 'open'`
         );
 
-      const notifications =
-        await pool.query(
-          `SELECT COUNT(*)::int AS count
-           FROM notifications
-           WHERE user_id = $1
-             AND is_read = FALSE`,
-          [req.user.id]
-        );
-
       res.json({
-
         customers:
-          users.rows[0].count,
-
-        totalCustomerBalance:
-          balances.rows[0].total,
-
+          customers.rows[0].count,
+        balances:
+          total.rows,
         pendingTransfers:
           pending.rows[0].count,
-
         openSupport:
-          support.rows[0].count,
-
-        unreadNotifications:
-          notifications.rows[0].count
-
+          support.rows[0].count
       });
 
     } catch (error) {
@@ -1304,15 +1128,12 @@ app.get(
         error:
           "Unable to load administrator summary."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: CUSTOMER LIST
+   ADMIN CUSTOMER LIST
 ========================================================= */
 
 app.get(
@@ -1327,17 +1148,32 @@ app.get(
       const result =
         await pool.query(
           `SELECT
-            id,
-            full_name,
-            email,
-            balance,
-            status,
-            role,
-            profile_image_url,
-            created_at
-           FROM users
-           WHERE role = 'customer'
-           ORDER BY created_at DESC`
+            u.id,
+            u.full_name,
+            u.email,
+            u.status,
+            u.role,
+            u.profile_image_url,
+            u.created_at,
+            COALESCE(
+              json_agg(
+                json_build_object(
+                  'currency', a.currency,
+                  'balance', a.balance
+                )
+              ) FILTER (
+                WHERE a.id IS NOT NULL
+              ),
+              '[]'
+            ) AS accounts
+           FROM users u
+           LEFT JOIN accounts a
+             ON a.user_id = u.id
+           WHERE u.role = 'customer'
+           GROUP BY
+             u.id
+           ORDER BY
+             u.created_at DESC`
         );
 
       res.json(
@@ -1352,19 +1188,16 @@ app.get(
         error:
           "Unable to load customers."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: ADD BALANCE
+   ADMIN ADD FUNDS
 ========================================================= */
 
 app.post(
-  "/api/admin/customers/:id/credit",
+  "/api/admin/customers/:id/funds",
   authenticate,
   adminLimiter,
   requireAdmin,
@@ -1383,40 +1216,46 @@ app.post(
           req.body.amount
         );
 
-      const note =
+      const currency =
         String(
-          req.body.note ||
-          "Administrator account credit"
+          req.body.currency || ""
+        ).toUpperCase();
+
+      const description =
+        String(
+          req.body.description ||
+          "Administrator account funding"
         ).trim();
 
       if (!Number.isInteger(userId)) {
-
         return res.status(400).json({
           error:
             "Invalid customer ID."
         });
-
       }
 
       if (!amount) {
-
         return res.status(400).json({
           error:
-            "Enter a valid credit amount."
+            "Enter a valid amount."
         });
-
       }
 
-      await client.query(
-        "BEGIN"
-      );
+      if (!isCurrency(currency)) {
+        return res.status(400).json({
+          error:
+            "Please select a supported currency."
+        });
+      }
+
+      await client.query("BEGIN");
 
       const customer =
         await client.query(
           `SELECT
             id,
             full_name,
-            balance,
+            email,
             status
            FROM users
            WHERE id = $1
@@ -1426,32 +1265,44 @@ app.post(
         );
 
       if (!customer.rows.length) {
-
-        await client.query(
-          "ROLLBACK"
-        );
+        await client.query("ROLLBACK");
 
         return res.status(404).json({
           error:
             "Customer not found."
         });
-
       }
 
-      const reference =
-        makeReference(
-          "CR"
+      if (
+        customer.rows[0].status !== "active"
+      ) {
+        await client.query("ROLLBACK");
+
+        return res.status(400).json({
+          error:
+            "This customer account is not active."
+        });
+      }
+
+      const account =
+        await ensureCurrencyAccount(
+          client,
+          userId,
+          currency
         );
 
       await client.query(
-        `UPDATE users
+        `UPDATE accounts
          SET balance = balance + $1
          WHERE id = $2`,
         [
           amount,
-          userId
+          account.id
         ]
       );
+
+      const reference =
+        makeReference("FUND");
 
       const transaction =
         await client.query(
@@ -1459,10 +1310,11 @@ app.post(
           (
             user_id,
             type,
+            currency,
             amount,
-            recipient,
             reference,
-            status
+            status,
+            description
           )
           VALUES
           (
@@ -1471,14 +1323,16 @@ app.post(
             $2,
             $3,
             $4,
-            'successful'
+            'successful',
+            $5
           )
           RETURNING *`,
           [
             userId,
+            currency,
             amount,
-            note,
-            reference
+            reference,
+            description
           ]
         );
 
@@ -1497,68 +1351,66 @@ app.post(
         )`,
         [
           userId,
-          "Account balance updated",
-          "Your account balance has been updated."
+          "Account funded",
+          `Your ${currency} account has received a new credit.`
         ]
       );
 
-      await client.query(
-        "COMMIT"
-      );
-
       const updated =
-        await pool.query(
+        await client.query(
           `SELECT
-            id,
-            full_name,
-            email,
-            balance,
-            status
-           FROM users
-           WHERE id = $1`,
+            currency,
+            balance
+           FROM accounts
+           WHERE user_id = $1
+           ORDER BY currency`,
           [userId]
         );
 
+      await client.query("COMMIT");
+
       res.json({
-
         message:
-          "Customer balance updated successfully.",
-
-        customer:
-          updated.rows[0],
-
+          "Customer account funded successfully.",
+        customer: {
+          id:
+            customer.rows[0].id,
+          fullName:
+            customer.rows[0].full_name,
+          email:
+            customer.rows[0].email
+        },
+        fundedCurrency:
+          currency,
+        fundedAmount:
+          amount,
+        accounts:
+          updated.rows,
         transaction:
           transaction.rows[0]
-
       });
 
     } catch (error) {
 
       try {
-        await client.query(
-          "ROLLBACK"
-        );
+        await client.query("ROLLBACK");
       } catch {}
 
       console.error(error);
 
       res.status(500).json({
         error:
-          "Unable to update customer balance."
+          "Unable to fund customer account."
       });
 
     } finally {
-
       client.release();
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: CUSTOMER STATUS
+   ADMIN CUSTOMER STATUS
 ========================================================= */
 
 app.patch(
@@ -1584,22 +1436,14 @@ app.patch(
         "suspended"
       ];
 
-      if (!Number.isInteger(userId)) {
-
+      if (
+        !Number.isInteger(userId) ||
+        !allowed.includes(status)
+      ) {
         return res.status(400).json({
           error:
-            "Invalid customer ID."
+            "Invalid customer or account status."
         });
-
-      }
-
-      if (!allowed.includes(status)) {
-
-        return res.status(400).json({
-          error:
-            "Invalid account status."
-        });
-
       }
 
       const result =
@@ -1612,7 +1456,6 @@ app.patch(
              id,
              full_name,
              email,
-             balance,
              status`,
           [
             status,
@@ -1621,22 +1464,17 @@ app.patch(
         );
 
       if (!result.rows.length) {
-
         return res.status(404).json({
           error:
             "Customer not found."
         });
-
       }
 
       res.json({
-
         message:
           "Customer account status updated.",
-
         customer:
           result.rows[0]
-
       });
 
     } catch (error) {
@@ -1647,15 +1485,12 @@ app.patch(
         error:
           "Unable to update customer status."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: TRANSFERS
+   ADMIN TRANSFERS
 ========================================================= */
 
 app.get(
@@ -1674,10 +1509,12 @@ app.get(
             t.user_id,
             u.full_name,
             u.email,
+            t.currency,
             t.amount,
             t.recipient,
             t.reference,
             t.status,
+            t.description,
             t.created_at
            FROM transactions t
            JOIN users u
@@ -1698,15 +1535,12 @@ app.get(
         error:
           "Unable to load transfers."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: UPDATE TRANSFER STATUS
+   ADMIN UPDATE TRANSFER STATUS
 ========================================================= */
 
 app.patch(
@@ -1732,22 +1566,14 @@ app.patch(
         "declined"
       ];
 
-      if (!Number.isInteger(transactionId)) {
-
+      if (
+        !Number.isInteger(transactionId) ||
+        !allowed.includes(status)
+      ) {
         return res.status(400).json({
           error:
-            "Invalid transaction ID."
+            "Invalid transaction or status."
         });
-
-      }
-
-      if (!allowed.includes(status)) {
-
-        return res.status(400).json({
-          error:
-            "Invalid transfer status."
-        });
-
       }
 
       const result =
@@ -1759,6 +1585,7 @@ app.patch(
            RETURNING
              id,
              user_id,
+             currency,
              amount,
              recipient,
              reference,
@@ -1771,12 +1598,10 @@ app.patch(
         );
 
       if (!result.rows.length) {
-
         return res.status(404).json({
           error:
             "Transfer not found."
         });
-
       }
 
       const transaction =
@@ -1798,17 +1623,14 @@ app.patch(
         [
           transaction.user_id,
           "Transfer status updated",
-          `Your transfer ${transaction.reference} is now ${status}.`
+          `Transfer ${transaction.reference} is now ${status}.`
         ]
       );
 
       res.json({
-
         message:
           "Transfer status updated.",
-
         transaction
-
       });
 
     } catch (error) {
@@ -1819,15 +1641,12 @@ app.patch(
         error:
           "Unable to update transfer status."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: SUPPORT TICKETS
+   ADMIN SUPPORT
 ========================================================= */
 
 app.get(
@@ -1868,15 +1687,12 @@ app.get(
         error:
           "Unable to load support requests."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: REPLY TO SUPPORT
+   ADMIN REPLY
 ========================================================= */
 
 app.post(
@@ -1899,33 +1715,21 @@ app.post(
           req.body.message || ""
         ).trim();
 
-      if (!Number.isInteger(ticketId)) {
-
+      if (
+        !Number.isInteger(ticketId) ||
+        message.length < 1
+      ) {
         return res.status(400).json({
           error:
-            "Invalid support ticket."
+            "Valid ticket and reply are required."
         });
-
       }
 
-      if (message.length < 1) {
-
-        return res.status(400).json({
-          error:
-            "Reply message is required."
-        });
-
-      }
-
-      await client.query(
-        "BEGIN"
-      );
+      await client.query("BEGIN");
 
       const ticket =
         await client.query(
-          `SELECT
-            id,
-            user_id
+          `SELECT id, user_id
            FROM support_tickets
            WHERE id = $1
            FOR UPDATE`,
@@ -1933,16 +1737,12 @@ app.post(
         );
 
       if (!ticket.rows.length) {
-
-        await client.query(
-          "ROLLBACK"
-        );
+        await client.query("ROLLBACK");
 
         return res.status(404).json({
           error:
             "Support ticket not found."
         });
-
       }
 
       await client.query(
@@ -1991,9 +1791,7 @@ app.post(
         ]
       );
 
-      await client.query(
-        "COMMIT"
-      );
+      await client.query("COMMIT");
 
       res.json({
         message:
@@ -2003,9 +1801,7 @@ app.post(
     } catch (error) {
 
       try {
-        await client.query(
-          "ROLLBACK"
-        );
+        await client.query("ROLLBACK");
       } catch {}
 
       console.error(error);
@@ -2016,17 +1812,13 @@ app.post(
       });
 
     } finally {
-
       client.release();
-
     }
-
   }
 );
 
-
 /* =========================================================
-   ADMIN: NOTIFICATIONS
+   ADMIN NOTIFICATIONS
 ========================================================= */
 
 app.get(
@@ -2065,16 +1857,9 @@ app.get(
         error:
           "Unable to load notifications."
       });
-
     }
-
   }
 );
-
-
-/* =========================================================
-   MARK NOTIFICATION READ
-========================================================= */
 
 app.patch(
   "/api/admin/notifications/:id/read",
@@ -2102,12 +1887,10 @@ app.patch(
         );
 
       if (!result.rows.length) {
-
         return res.status(404).json({
           error:
             "Notification not found."
         });
-
       }
 
       res.json({
@@ -2123,15 +1906,12 @@ app.patch(
         error:
           "Unable to update notification."
       });
-
     }
-
   }
 );
 
-
 /* =========================================================
-   CREATE ADMIN FROM ENVIRONMENT VARIABLES
+   ADMIN ACCOUNT
 ========================================================= */
 
 async function ensureAdminAccount() {
@@ -2145,11 +1925,10 @@ async function ensureAdminAccount() {
   if (!adminEmail || !adminPassword) {
 
     console.log(
-      "ADMIN_EMAIL or ADMIN_PASSWORD is not configured. Admin creation skipped."
+      "ADMIN_EMAIL or ADMIN_PASSWORD is not configured."
     );
 
     return;
-
   }
 
   if (adminPassword.length < 12) {
@@ -2159,26 +1938,23 @@ async function ensureAdminAccount() {
     );
 
     return;
-
   }
 
-  const normalizedEmail =
-    adminEmail
-      .trim()
-      .toLowerCase();
+  const email =
+    adminEmail.trim().toLowerCase();
+
+  const passwordHash =
+    await bcrypt.hash(
+      adminPassword,
+      12
+    );
 
   const existing =
     await pool.query(
       `SELECT id
        FROM users
        WHERE email = $1`,
-      [normalizedEmail]
-    );
-
-  const passwordHash =
-    await bcrypt.hash(
-      adminPassword,
-      12
+      [email]
     );
 
   if (!existing.rows.length) {
@@ -2194,15 +1970,14 @@ async function ensureAdminAccount() {
       )
       VALUES
       (
+        'Administrator',
         $1,
         $2,
-        $3,
         'admin',
         'active'
       )`,
       [
-        "Administrator",
-        normalizedEmail,
+        email,
         passwordHash
       ]
     );
@@ -2222,18 +1997,15 @@ async function ensureAdminAccount() {
        WHERE email = $2`,
       [
         passwordHash,
-        normalizedEmail
+        email
       ]
     );
 
     console.log(
       "Administrator account verified."
     );
-
   }
-
 }
-
 
 /* =========================================================
    ERROR HANDLER
@@ -2252,10 +2024,8 @@ app.use(
       error:
         "An unexpected server error occurred."
     });
-
   }
 );
-
 
 /* =========================================================
    START
@@ -2275,7 +2045,7 @@ async function start() {
       () => {
 
         console.log(
-          `American Crest Bank Online Banking server running on port ${PORT}`
+          `Multi-Currency Banking Platform running on port ${PORT}`
         );
 
       }
@@ -2289,9 +2059,7 @@ async function start() {
     );
 
     process.exit(1);
-
   }
-
 }
 
 start();
