@@ -1060,7 +1060,66 @@ app.get(
     }
   }
 );
+/* =========================================================
+   CUSTOMER SUPPORT MESSAGES
+========================================================= */
 
+app.get(
+  "/api/support/:id/messages",
+  authenticate,
+  async (req, res) => {
+
+    try {
+
+      const ticketId = Number(req.params.id);
+
+      if (!Number.isInteger(ticketId)) {
+        return res.status(400).json({
+          error: "Invalid support ticket."
+        });
+      }
+
+      const ticket = await pool.query(
+        `SELECT id
+         FROM support_tickets
+         WHERE id = $1
+           AND user_id = $2`,
+        [
+          ticketId,
+          req.user.id
+        ]
+      );
+
+      if (!ticket.rows.length) {
+        return res.status(404).json({
+          error: "Support ticket not found."
+        });
+      }
+
+      const result = await pool.query(
+        `SELECT
+          id,
+          sender_role,
+          message,
+          created_at
+         FROM support_messages
+         WHERE ticket_id = $1
+         ORDER BY created_at ASC`,
+        [ticketId]
+      );
+
+      res.json(result.rows);
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        error: "Unable to load support messages."
+      });
+    }
+  }
+);
 /* =========================================================
    ADMIN SUMMARY
 ========================================================= */
