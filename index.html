@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>American Crest Bank | Digital Banking</title>
+<meta name="description" content="American Crest Bank - modern digital banking platform.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#071a35;
+  --navy2:#0c2b52;
+  --blue:#1769e0;
+  --light:#f4f7fb;
+  --white:#fff;
+  --text:#182536;
+  --muted:#718096;
+  --green:#159447;
+  --red:#d93434;
+  --gold:#d6aa43;
+  --shadow:0 12px 35px rgba(7,26,53,.10);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--light);
+  color:var(--text);
+  line-height:1.5;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+.topbar{
+  background:#041327;
+  color:#dbe7f5;
+  padding:9px 5%;
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+}
+header{
+  background:var(--white);
+  position:sticky;
+  top:0;
+  z-index:50;
+  box-shadow:0 2px 15px rgba(0,0,0,.06);
+}
+.nav{
+  max-width:1200px;
+  margin:auto;
+  min-height:74px;
+  padding:0 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:800;
+  color:var(--navy);
+  font-size:19px;
+}
+.logoMark{
+  width:42px;height:42px;
+  border-radius:50%;
+  background:var(--navy);
+  color:var(--gold);
+  display:grid;
+  place-items:center;
+  border:2px solid var(--gold);
+  font-weight:900;
+}
+.navlinks{display:flex;gap:25px;font-size:14px;font-weight:600}
+.navlinks a:hover{color:var(--blue)}
+.navbuttons{display:flex;gap:10px}
+.btn{
+  border:0;
+  border-radius:8px;
+  padding:12px 18px;
+  font-weight:700;
+  transition:.2s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btnPrimary{background:var(--blue);color:#fff}
+.btnDark{background:var(--navy);color:#fff}
+.btnOutline{background:#fff;color:var(--navy);border:1px solid #d8e0eb}
+
+.hero{
+  min-height:570px;
+  background:
+    linear-gradient(90deg,rgba(4,19,39,.97) 0%,rgba(4,19,39,.85) 45%,rgba(4,19,39,.30) 100%),
+    radial-gradient(circle at 75% 30%,#326fc4 0,#0b315f 35%,#041327 75%);
+  color:#fff;
+  display:flex;
+  align-items:center;
+}
+.heroInner{
+  width:1200px;
+  max-width:90%;
+  margin:auto;
+  padding:70px 0;
+}
+.heroText{max-width:650px}
+.eyebrow{
+  color:#d9b65c;
+  font-weight:800;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-size:12px;
+  margin-bottom:16px;
+}
+.hero h1{
+  font-size:clamp(38px,6vw,68px);
+  line-height:1.04;
+  margin-bottom:22px;
+}
+.hero p{
+  color:#d8e4f2;
+  font-size:18px;
+  max-width:600px;
+  margin-bottom:30px;
+}
+.heroBtns{display:flex;gap:12px;flex-wrap:wrap}
+
+.trust{
+  background:#fff;
+  padding:20px 5%;
+  display:flex;
+  justify-content:center;
+  gap:55px;
+  flex-wrap:wrap;
+  color:#5f6d7e;
+  font-size:13px;
+  font-weight:700;
+}
+.trust span{display:flex;gap:8px;align-items:center}
+
+.section{padding:75px 5%}
+.sectionInner{max-width:1150px;margin:auto}
+.sectionHead{text-align:center;max-width:700px;margin:0 auto 40px}
+.sectionHead h2{font-size:36px;color:var(--navy);margin-bottom:10px}
+.sectionHead p{color:var(--muted)}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+}
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:30px;
+  box-shadow:var(--shadow);
+}
+.icon{
+  width:52px;height:52px;
+  border-radius:12px;
+  background:#eaf2ff;
+  color:var(--blue);
+  display:grid;
+  place-items:center;
+  font-size:24px;
+  margin-bottom:20px;
+}
+.card h3{margin-bottom:9px;color:var(--navy)}
+.card p{color:var(--muted);font-size:14px}
+
+.security{
+  background:var(--navy);
+  color:#fff;
+}
+.security .sectionHead h2{color:#fff}
+.security .sectionHead p{color:#bdcce0}
+
+.securityGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.securityBox{
+  padding:25px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:15px;
+  background:rgba(255,255,255,.04);
+}
+.securityBox strong{display:block;margin-bottom:7px}
+.securityBox span{font-size:13px;color:#b8c7da}
+
+.contactGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+}
+.contactBox{
+  background:#fff;
+  padding:30px;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+.contactBox h3{color:var(--navy);margin-bottom:15px}
+.contactItem{
+  display:flex;
+  gap:15px;
+  padding:15px 0;
+  border-bottom:1px solid #edf0f4;
+}
+.contactItem:last-child{border-bottom:0}
+.contactItem b{display:block}
+.contactItem small{color:var(--muted)}
+
+footer{
+  background:#041327;
+  color:#9fb0c5;
+  padding:45px 5% 25px;
+}
+.footerGrid{
+  max-width:1150px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:30px;
+}
+footer h4{color:#fff;margin-bottom:15px}
+footer a{display:block;font-size:13px;margin:8px 0}
+.copyright{
+  max-width:1150px;
+  margin:35px auto 0;
+  padding-top:20px;
+  border-top:1px solid rgba(255,255,255,.1);
+  font-size:12px;
+}
+
+/* AUTH */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,10,25,.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:100;
+}
+.modal.show{display:flex}
+.modalBox{
+  background:#fff;
+  width:100%;
+  max-width:460px;
+  border-radius:18px;
+  padding:30px;
+  max-height:90vh;
+  overflow:auto;
+  position:relative;
+}
+.close{
+  position:absolute;
+  right:18px;
+  top:15px;
+  background:none;
+  border:0;
+  font-size:25px;
+  color:#778397;
+}
+.modalBox h2{color:var(--navy);margin-bottom:7px}
+.modalBox>p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.field{margin-bottom:15px}
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+.field input,.field select{
+  width:100%;
+  padding:13px;
+  border:1px solid #d8e0eb;
+  border-radius:8px;
+  outline:none;
+}
+.field input:focus,.field select:focus{border-color:var(--blue)}
+.full{width:100%}
+.formSwitch{
+  margin-top:15px;
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+.formSwitch button{
+  border:0;background:none;color:var(--blue);font-weight:700;
+}
+.demoNote{
+  background:#eef5ff;
+  border-radius:8px;
+  padding:11px;
+  font-size:11px;
+  color:#3b5c85;
+  margin-bottom:15px;
+}
+
+/* DASHBOARD */
+#dashboard{display:none;background:#f3f6fa;min-height:100vh}
+.dashNav{
+  background:var(--navy);
+  color:#fff;
+  padding:15px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+.dashUser{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:40px;height:40px;
+  border-radius:50%;
+  background:var(--gold);
+  color:var(--navy);
+  display:grid;place-items:center;
+  font-weight:900;
+}
+.dashWrap{max-width:1200px;margin:auto;padding:35px 5%}
+.dashTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+.dashTop h1{color:var(--navy)}
+.dashGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.balanceCard{
+  background:linear-gradient(135deg,var(--navy),#123f72);
+  color:#fff;
+  padding:25px;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+.balanceCard small{color:#b7c8dc}
+.balanceCard h2{font-size:30px;margin:8px 0}
+.statCard{
+  background:#fff;
+  padding:22px;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+.statCard small{color:var(--muted)}
+.statCard h3{margin-top:7px}
+.dashColumns{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:20px;
+  margin-top:20px;
+}
+.panel{
+  background:#fff;
+  border-radius:16px;
+  padding:25px;
+  box-shadow:var(--shadow);
+}
+.panel h3{color:var(--navy);margin-bottom:18px}
+.tx{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid #edf0f4;
+}
+.tx:last-child{border-bottom:0}
+.txLeft{display:flex;gap:12px;align-items:center}
+.txIcon{
+  width:38px;height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#eef4fb;
+}
+.txName{font-weight:700;font-size:14px}
+.txDate{font-size:11px;color:var(--muted)}
+.amountIn{color:var(--green);font-weight:800}
+.amountOut{color:var(--red);font-weight:800}
+
+.quickActions{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+.quickActions button{
+  padding:15px 10px;
+  border:1px solid #e1e7ef;
+  background:#fff;
+  border-radius:10px;
+  color:var(--navy);
+  font-weight:700;
+}
+.quickActions button:hover{border-color:var(--blue);color:var(--blue)}
+
+.adminPanel{
+  display:none;
+  margin-top:20px;
+  border:2px solid #d8b252;
+}
+.adminBadge{
+  display:inline-block;
+  background:#fff4d6;
+  color:#856313;
+  border-radius:20px;
+  padding:5px 10px;
+  font-size:10px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+.adminControls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+/* SUPPORT */
+.supportBtn{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:58px;height:58px;
+  border-radius:50%;
+  background:var(--blue);
+  color:#fff;
+  border:0;
+  font-size:25px;
+  box-shadow:0 8px 25px rgba(23,105,224,.35);
+  z-index:80;
+}
+.chat{
+  position:fixed;
+  right:20px;
+  bottom:90px;
+  width:350px;
+  max-width:calc(100% - 40px);
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 15px 45px rgba(0,0,0,.2);
+  overflow:hidden;
+  display:none;
+  z-index:90;
+}
+.chat.show{display:block}
+.chatHead{
+  background:var(--navy);
+  color:#fff;
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+}
+.chatHead small{display:block;color:#b9c8da;margin-top:2px}
+.chatBody{
+  height:280px;
+  padding:15px;
+  overflow:auto;
+  background:#f5f7fa;
+}
+.msg{
+  max-width:82%;
+  padding:10px 12px;
+  border-radius:12px;
+  margin-bottom:10px;
+  font-size:13px;
+}
+.bot{background:#fff}
+.userMsg{background:#dceaff;margin-left:auto}
+.chatInput{
+  display:flex;
+  border-top:1px solid #e2e6eb;
+}
+.chatInput input{
+  flex:1;border:0;padding:13px;outline:0;
+}
+.chatInput button{
+  border:0;background:var(--blue);color:#fff;padding:0 17px;
+}
+
+.whatsapp{
+  position:fixed;
+  left:20px;
+  bottom:20px;
+  width:54px;height:54px;
+  border-radius:50%;
+  background:#20b85a;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:25px;
+  box-shadow:0 8px 25px rgba(32,184,90,.3);
+  z-index:80;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translate(-50%,120px);
+  background:#071a35;
+  color:#fff;
+  padding:13px 20px;
+  border-radius:9px;
+  z-index:200;
+  transition:.3s;
+  font-size:13px;
+}
+.toast.show{transform:translate(-50%,0)}
+
+.hidden{display:none!important}
+
+@media(max-width:900px){
+  .navlinks{display:none}
+  .cards,.securityGrid{grid-template-columns:1fr}
+  .contactGrid,.dashColumns{grid-template-columns:1fr}
+  .dashGrid{grid-template-columns:1fr 1fr}
+  .footerGrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .topbar{display:none}
+  .nav{min-height:65px}
+  .logo{font-size:15px}
+  .logoMark{width:35px;height:35px}
+  .navbuttons .btn{padding:9px 11px;font-size:12px}
+  .hero{min-height:520px}
+  .hero p{font-size:15px}
+  .section{padding:55px 5%}
+  .sectionHead h2{font-size:28px}
+  .dashGrid{grid-template-columns:1fr}
+  .dashTop{align-items:flex-start;gap:12px;flex-direction:column}
+  .adminControls{grid-template-columns:1fr}
+  .footerGrid{grid-template-columns:1fr}
+  .chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
+}
+</style>
+</head>
+
+<body>
+
+<!-- PUBLIC WEBSITE -->
+<div id="publicSite">
+
+<div class="topbar">
+  <span>American Crest Bank • Digital Banking</span>
+  <span>Customer Support: Available 24/7</span>
+</div>
+
+<header>
+  <nav class="nav">
+    <a href="#home" class="logo">
+      <span class="logoMark">AC</span>
+      <span>AMERICAN CREST BANK</span>
+    </a>
+
+    <div class="navlinks">
+      <a href="#services">Services</a>
+      <a href="#security">Security</a>
+      <a href="#support">Support</a>
+      <a href="#about">About</a>
+    </div>
+
+    <div class="navbuttons">
+      <button class="btn btnOutline" onclick="openModal('login')">Sign In</button>
+      <button class="btn btnPrimary" onclick="openModal('register')">Open Account</button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" id="home">
+  <div class="heroInner">
+    <div class="heroText">
+      <div class="eyebrow">Banking built around you</div>
+      <h1>Bank smarter.<br>Live with confidence.</h1>
+      <p>
+        A modern digital banking experience designed to make everyday
+        money management simple, convenient and secure.
+      </p>
+      <div class="heroBtns">
+        <button class="btn btnPrimary" onclick="openModal('register')">Open an Account</button>
+        <button class="btn btnOutline" onclick="openModal('login')">Access Online Banking</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trust">
+  <span>✓ Digital account access</span>
+  <span>✓ Transaction management</span>
+  <span>✓ Customer support</span>
+  <span>✓ Mobile friendly</span>
+</div>
+
+<section class="section" id="services">
+  <div class="sectionInner">
+    <div class="sectionHead">
+      <h2>Banking made simple</h2>
+      <p>Everything you need to manage your financial life from one convenient place.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="icon">▣</div>
+        <h3>Digital Banking</h3>
+        <p>View your account, review activity and manage your banking experience from your device.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">↗</div>
+        <h3>Transfers</h3>
+        <p>Use a simple transfer interface to organize your payments and account movements.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">▤</div>
+        <h3>Statements</h3>
+        <p>Keep track of account activity with an easy-to-read transaction history.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section security" id="security">
+  <div class="sectionInner">
+    <div class="sectionHead">
+      <h2>Designed with security in mind</h2>
+      <p>Your banking interface should feel clear, controlled and easy to navigate.</p>
+    </div>
+
+    <div class="securityGrid">
+      <div class="securityBox">
+        <strong>Account Protection</strong>
+        <span>Clear account access and session controls for the banking experience.</span>
+      </div>
+      <div class="securityBox">
+        <strong>Activity Visibility</strong>
+        <span>Review recent account activity through a clean transaction interface.</span>
+      </div>
+      <div class="securityBox">
+        <strong>Customer Assistance</strong>
+        <span>Get support through the built-in digital assistant and contact options.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="support">
+  <div class="sectionInner">
+    <div class="sectionHead">
+      <h2>We're here to help</h2>
+      <p>Choose the support option that works best for you.</p>
+    </div>
+
+    <div class="contactGrid">
+      <div class="contactBox">
+        <h3>Customer Support</h3>
+
+        <div class="contactItem">
+          <div>◉</div>
+          <div>
+            <b>Digital Assistant</b>
+            <small>Chat with our automated support assistant.</small>
+          </div>
+        </div>
+
+        <div class="contactItem">
+          <div>☎</div>
+          <div>
+            <b>Customer Care</b>
+            <small>Support information can be configured by the administrator.</small>
+          </div>
+        </div>
+
+        <div class="contactItem">
+          <div>✉</div>
+          <div>
+            <b>Email Support</b>
+            <small>support@americancrestbank.example</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="contactBox">
+        <h3>Need quick assistance?</h3>
+        <p style="color:#718096;margin-bottom:20px">
+          Use the digital assistant or WhatsApp contact button to reach your support channel.
+        </p>
+        <button class="btn btnPrimary" onclick="toggleChat()">Open AI Assistant</button>
+        <a class="btn btnOutline" style="display:inline-block;margin-top:10px"
+           href="https://wa.me/10000000000" target="_blank">
+          WhatsApp Support
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about" style="background:#fff">
+  <div class="sectionInner">
+    <div class="sectionHead">
+      <h2>American Crest Bank</h2>
+      <p>
+        A professionally designed fictional digital banking platform.
+        Customize the branding, colors, services and account workflows for your own legitimate business.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footerGrid">
+    <div>
+      <div class="logo" style="color:#fff;margin-bottom:15px">
+        <span class="logoMark">AC</span>
+        <span>AMERICAN CREST BANK</span>
+      </div>
+      <p style="font-size:13px">
+        Modern digital banking interface for a fictional financial-services brand.
+      </p>
+    </div>
+
+    <div>
+      <h4>Banking</h4>
+      <a href="#services">Services</a>
+      <a href="#security">Security</a>
+      <a href="#" onclick="openModal('login');return false">Sign In</a>
+    </div>
+
+    <div>
+      <h4>Company</h4>
+      <a href="#about">About</a>
+      <a href="#support">Support</a>
+    </div>
+
+    <div>
+      <h4>Legal</h4>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+
+  <div class="copyright">
+    © 2026 American Crest Bank. Fictional banking platform for legitimate demonstration and commercial development.
+  </div>
+</footer>
+
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+  <div class="dashNav">
+    <div class="logo" style="color:#fff">
+      <span class="logoMark">AC</span>
+      <span>AMERICAN CREST BANK</span>
+    </div>
+
+    <div class="dashUser">
+      <div class="avatar" id="dashAvatar">AC</div>
+      <div>
+        <div id="dashName" style="font-weight:700">Customer</div>
+        <small style="color:#b9c8da">Online Banking</small>
+      </div>
+      <button class="btn btnOutline" onclick="logout()" style="margin-left:8px">Log Out</button>
+    </div>
+  </div>
+
+  <div class="dashWrap">
+
+    <div class="dashTop">
+      <div>
+        <small style="color:#718096">Welcome back</small>
+        <h1 id="welcomeName">Customer</h1>
+      </div>
+      <button class="btn btnPrimary" onclick="openTransfer()">+ New Transfer</button>
+    </div>
+
+    <div class="dashGrid">
+
+     
