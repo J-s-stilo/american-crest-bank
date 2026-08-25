@@ -3,725 +3,2737 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>American Crest Bank — Digital Banking Simulator</title>
-<meta name="description" content="American Crest Bank fictional digital banking simulator.">
+
+<title>American Crest Bank — Online Banking</title>
+<meta name="description" content="American Crest Bank online banking customer portal.">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
 :root{
---navy:#071a35;--navy2:#0d315d;--blue:#1769e0;
---gold:#d6aa43;--light:#f4f7fb;--white:#fff;
---text:#182536;--muted:#718096;--green:#159447;--red:#d93434;
+--navy:#071a35;
+--navy2:#0d315d;
+--blue:#1769e0;
+--gold:#d6aa43;
+--light:#f4f7fb;
+--white:#fff;
+--text:#182536;
+--muted:#718096;
+--green:#159447;
+--red:#d93434;
+--border:#e3e9f1;
 }
-body{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
-button,input{font:inherit}button{cursor:pointer}
+
+html{scroll-behavior:smooth}
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:var(--light);
+color:var(--text);
+}
+
+button,input{font:inherit}
+button{cursor:pointer}
 a{text-decoration:none;color:inherit}
 
 .notice{
-background:#fff3cd;color:#725b13;text-align:center;
-padding:8px;font-size:12px;font-weight:bold
+background:#fff3cd;
+color:#725b13;
+text-align:center;
+padding:8px;
+font-size:11px;
+font-weight:bold;
 }
-.top{background:#041327;color:#dbe7f5;padding:9px 5%;
-display:flex;justify-content:space-between;font-size:12px}
-header{background:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 15px #00000010}
-.nav{max-width:1200px;margin:auto;min-height:72px;padding:0 5%;
-display:flex;align-items:center;justify-content:space-between;gap:20px}
-.logo{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)}
-.mark{width:40px;height:40px;border-radius:50%;background:var(--navy);
-color:var(--gold);border:2px solid var(--gold);display:grid;place-items:center}
-.links{display:flex;gap:24px;font-size:14px;font-weight:bold}
-.actions{display:flex;gap:8px}
-.btn{border:0;border-radius:8px;padding:12px 18px;font-weight:bold}
-.primary{background:var(--blue);color:white}
-.dark{background:var(--navy);color:white}
-.outline{background:white;border:1px solid #d8e0eb;color:var(--navy)}
 
-.hero{min-height:560px;background:
-linear-gradient(90deg,#041327f5,#041327d9,#04132755),
-radial-gradient(circle at 75% 30%,#3677c9,#0b315f 40%,#041327 75%);
-color:white;display:flex;align-items:center}
-.heroInner{max-width:1200px;width:90%;margin:auto;padding:70px 0}
-.heroText{max-width:680px}
-.eyebrow{color:#e0bc61;font-weight:bold;letter-spacing:2px;font-size:12px;margin-bottom:15px}
-h1{font-size:clamp(38px,6vw,68px);line-height:1.05;margin-bottom:20px}
-.hero p{font-size:18px;color:#d8e4f2;max-width:600px;margin-bottom:28px}
-.heroButtons{display:flex;gap:12px;flex-wrap:wrap}
+.top{
+background:#041327;
+color:#dbe7f5;
+padding:9px 5%;
+display:flex;
+justify-content:space-between;
+font-size:12px;
+}
 
-.trust{background:#fff;padding:20px 5%;display:flex;justify-content:center;
-gap:45px;flex-wrap:wrap;color:#607080;font-size:13px;font-weight:bold}
-.section{padding:70px 5%}.inner{max-width:1150px;margin:auto}
-.head{text-align:center;max-width:700px;margin:0 auto 38px}
-.head h2{font-size:35px;color:var(--navy);margin-bottom:10px}
-.head p{color:var(--muted)}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.card{background:#fff;padding:28px;border-radius:15px;box-shadow:0 12px 35px #071a5314}
-.icon{width:50px;height:50px;border-radius:12px;background:#eaf2ff;color:var(--blue);
-display:grid;place-items:center;font-size:23px;margin-bottom:18px}
-.card h3{color:var(--navy);margin-bottom:8px}.card p{color:var(--muted);font-size:14px}
+header{
+background:#fff;
+position:sticky;
+top:0;
+z-index:20;
+box-shadow:0 2px 15px #00000010;
+}
 
-.security{background:var(--navy);color:white}
-.security .head h2{color:white}.security .head p{color:#bdcce0}
-.securityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.securityBox{padding:24px;border:1px solid #ffffff20;border-radius:14px;background:#ffffff08}
-.securityBox strong{display:block;margin-bottom:7px}.securityBox span{font-size:13px;color:#bdcce0}
+.nav{
+max-width:1200px;
+margin:auto;
+min-height:72px;
+padding:0 5%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:20px;
+}
 
-.contact{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.box{background:white;padding:28px;border-radius:15px;box-shadow:0 12px 35px #071a5314}
-.box h3{color:var(--navy);margin-bottom:12px}
-footer{background:#041327;color:#9fb0c5;padding:40px 5%}
-.footer{max-width:1150px;margin:auto}
-.footer .logo{color:white;margin-bottom:12px}
-.footer p{font-size:13px}.copy{margin-top:25px;padding-top:18px;border-top:1px solid #ffffff15;font-size:11px}
+.logo{
+display:flex;
+align-items:center;
+gap:9px;
+font-weight:800;
+color:var(--navy);
+}
 
-.modal{display:none;position:fixed;inset:0;background:#000a1bb8;z-index:100;
-align-items:center;justify-content:center;padding:20px}
-.modal.show{display:flex}.modalBox{background:white;width:100%;max-width:460px;
-border-radius:18px;padding:30px;position:relative;max-height:90vh;overflow:auto}
-.close{position:absolute;right:17px;top:12px;border:0;background:none;font-size:25px;color:#777}
-.modalBox h2{color:var(--navy);margin-bottom:5px}.modalBox>p{font-size:13px;color:var(--muted);margin-bottom:20px}
-.field{margin-bottom:14px}.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:6px}
-.field input{width:100%;padding:13px;border:1px solid #d8e0eb;border-radius:8px;outline:0}
-.field input:focus{border-color:var(--blue)}.full{width:100%}
-.switch{text-align:center;font-size:13px;color:var(--muted);margin-top:15px}
-.switch button{border:0;background:none;color:var(--blue);font-weight:bold}
-.error{display:none;background:#ffe8e8;color:#a21d1d;padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px}
-.error.show{display:block}
+.mark{
+width:40px;
+height:40px;
+border-radius:50%;
+background:var(--navy);
+color:var(--gold);
+border:2px solid var(--gold);
+display:grid;
+place-items:center;
+font-size:12px;
+}
 
-#dashboard{display:none;min-height:100vh;background:#f3f6fa}
-.dashNav{background:var(--navy);color:white;padding:14px 5%;display:flex;
-justify-content:space-between;align-items:center;gap:15px}
-.dashUser{display:flex;align-items:center;gap:9px}.avatar{width:40px;height:40px;
-border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-weight:bold}
-.dashWrap{max-width:1200px;margin:auto;padding:35px 5%}
-.dashTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
-.dashTop h1{font-size:32px;color:var(--navy);margin:0}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.balance{background:linear-gradient(135deg,var(--navy),var(--navy2));color:white;
-padding:24px;border-radius:15px}.balance small{color:#bdcce0}.balance h2{margin:8px 0;font-size:30px}
-.stat{background:white;padding:22px;border-radius:15px}.stat small{color:var(--muted)}.stat h3{margin-top:7px}
-.columns{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
-.panel{background:white;border-radius:15px;padding:24px}.panel h3{color:var(--navy);margin-bottom:16px}
-.tx{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #edf0f4}
-.tx:last-child{border:0}.txName{font-weight:bold;font-size:13px}.txDate{font-size:11px;color:var(--muted)}
-.out{color:var(--red);font-weight:bold}.in{color:var(--green);font-weight:bold}
-.empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
-.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.quick button{padding:14px;border:1px solid #e1e7ef;background:white;border-radius:9px;font-weight:bold;color:var(--navy)}
+.links{
+display:flex;
+gap:24px;
+font-size:14px;
+font-weight:bold;
+}
 
-.chatBtn{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border:0;
-border-radius:50%;background:var(--blue);color:white;font-size:23px;z-index:60}
-.chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;max-width:calc(100% - 40px);
-background:white;border-radius:15px;box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
-.chat.show{display:block}.chatHead{background:var(--navy);color:white;padding:15px}
-.chatBody{height:260px;padding:14px;overflow:auto;background:#f5f7fa}
-.msg{padding:9px 11px;border-radius:11px;background:white;font-size:13px;margin-bottom:9px;max-width:85%}
-.msg.user{margin-left:auto;background:#dceaff}.chatInput{display:flex;border-top:1px solid #ddd}
-.chatInput input{flex:1;border:0;padding:12px;outline:0}.chatInput button{border:0;background:var(--blue);color:white;padding:0 16px}
+.actions{
+display:flex;
+gap:8px;
+}
 
-.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,120px);
-background:var(--navy);color:white;padding:12px 18px;border-radius:8px;transition:.3s;z-index:200}
-.toast.show{transform:translate(-50%,0)}
+.btn{
+border:0;
+border-radius:8px;
+padding:12px 18px;
+font-weight:bold;
+}
+
+.primary{
+background:var(--blue);
+color:white;
+}
+
+.dark{
+background:var(--navy);
+color:white;
+}
+
+.outline{
+background:white;
+border:1px solid #d8e0eb;
+color:var(--navy);
+}
+
+/* HERO */
+
+.hero{
+min-height:600px;
+background:
+linear-gradient(90deg,#041327f5 10%,#041327df 48%,#04132755 100%),
+url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85");
+background-size:cover;
+background-position:center;
+color:white;
+display:flex;
+align-items:center;
+}
+
+.heroInner{
+max-width:1200px;
+width:90%;
+margin:auto;
+padding:75px 0;
+}
+
+.heroText{
+max-width:690px;
+}
+
+.eyebrow{
+color:#e0bc61;
+font-weight:bold;
+letter-spacing:2px;
+font-size:12px;
+margin-bottom:15px;
+}
+
+h1{
+font-size:clamp(38px,6vw,68px);
+line-height:1.05;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:18px;
+color:#d8e4f2;
+max-width:600px;
+margin-bottom:28px;
+line-height:1.6;
+}
+
+.heroButtons{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+}
+
+/* VISUAL CARDS */
+
+.liveVisual{
+padding:55px 5%;
+background:white;
+}
+
+.visualGrid{
+max-width:1150px;
+margin:auto;
+display:grid;
+grid-template-columns:1.5fr 1fr;
+gap:20px;
+}
+
+.visualCard{
+height:290px;
+border-radius:18px;
+overflow:hidden;
+position:relative;
+background-size:cover;
+background-position:center;
+box-shadow:0 15px 40px #071a5318;
+}
+
+.visualCard.one{
+background-image:
+linear-gradient(0deg,#041327d9,transparent 70%),
+url("https://images.unsplash.com/photo-1556742111-a301076d9d18?auto=format&fit=crop&w=1200&q=85");
+}
+
+.visualCard.two{
+background-image:
+linear-gradient(0deg,#041327e6,transparent 75%),
+url("https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85");
+}
+
+.visualText{
+position:absolute;
+left:24px;
+bottom:22px;
+color:white;
+}
+
+.visualText h3{
+font-size:23px;
+margin-bottom:5px;
+}
+
+.visualText p{
+font-size:13px;
+color:#d9e4f2;
+}
+
+/* TRUST */
+
+.trust{
+background:#fff;
+padding:20px 5%;
+display:flex;
+justify-content:center;
+gap:45px;
+flex-wrap:wrap;
+color:#607080;
+font-size:13px;
+font-weight:bold;
+}
+
+/* SECTIONS */
+
+.section{
+padding:70px 5%;
+}
+
+.inner{
+max-width:1150px;
+margin:auto;
+}
+
+.head{
+text-align:center;
+max-width:700px;
+margin:0 auto 38px;
+}
+
+.head h2{
+font-size:35px;
+color:var(--navy);
+margin-bottom:10px;
+}
+
+.head p{
+color:var(--muted);
+line-height:1.6;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+
+.card{
+background:#fff;
+padding:28px;
+border-radius:15px;
+box-shadow:0 12px 35px #071a5314;
+}
+
+.icon{
+width:50px;
+height:50px;
+border-radius:12px;
+background:#eaf2ff;
+color:var(--blue);
+display:grid;
+place-items:center;
+font-size:23px;
+margin-bottom:18px;
+}
+
+.card h3{
+color:var(--navy);
+margin-bottom:8px;
+}
+
+.card p{
+color:var(--muted);
+font-size:14px;
+line-height:1.6;
+}
+
+/* SECURITY */
+
+.security{
+background:var(--navy);
+color:white;
+}
+
+.security .head h2{
+color:white;
+}
+
+.security .head p{
+color:#bdcce0;
+}
+
+.securityGrid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+}
+
+.securityBox{
+padding:24px;
+border:1px solid #ffffff20;
+border-radius:14px;
+background:#ffffff08;
+}
+
+.securityBox strong{
+display:block;
+margin-bottom:7px;
+}
+
+.securityBox span{
+font-size:13px;
+color:#bdcce0;
+line-height:1.5;
+}
+
+/* PROMOTIONS */
+
+.promoGrid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+}
+
+.promo{
+background:white;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 12px 35px #071a5314;
+}
+
+.promo img{
+width:100%;
+height:170px;
+object-fit:cover;
+display:block;
+}
+
+.promoBody{
+padding:20px;
+}
+
+.promoBody h3{
+color:var(--navy);
+margin-bottom:7px;
+}
+
+.promoBody p{
+font-size:13px;
+color:var(--muted);
+line-height:1.5;
+}
+
+/* CONTACT */
+
+.contact{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:22px;
+}
+
+.box{
+background:white;
+padding:28px;
+border-radius:15px;
+box-shadow:0 12px 35px #071a5314;
+}
+
+.box h3{
+color:var(--navy);
+margin-bottom:12px;
+}
+
+.box p{
+color:var(--muted);
+line-height:1.6;
+font-size:14px;
+}
+
+/* FOOTER */
+
+footer{
+background:#041327;
+color:#9fb0c5;
+padding:40px 5%;
+}
+
+.footer{
+max-width:1150px;
+margin:auto;
+}
+
+.footer .logo{
+color:white;
+margin-bottom:12px;
+}
+
+.footer p{
+font-size:13px;
+}
+
+.copy{
+margin-top:25px;
+padding-top:18px;
+border-top:1px solid #ffffff15;
+font-size:11px;
+}
+
+/* MODALS */
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:#000a1bb8;
+z-index:100;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.modal.show{
+display:flex;
+}
+
+.modalBox{
+background:white;
+width:100%;
+max-width:460px;
+border-radius:18px;
+padding:30px;
+position:relative;
+max-height:90vh;
+overflow:auto;
+}
+
+.close{
+position:absolute;
+right:17px;
+top:12px;
+border:0;
+background:none;
+font-size:25px;
+color:#777;
+}
+
+.modalBox h2{
+color:var(--navy);
+margin-bottom:5px;
+}
+
+.modalBox>p{
+font-size:13px;
+color:var(--muted);
+margin-bottom:20px;
+}
+
+.field{
+margin-bottom:14px;
+}
+
+.field label{
+display:block;
+font-size:12px;
+font-weight:bold;
+margin-bottom:6px;
+}
+
+.field input{
+width:100%;
+padding:13px;
+border:1px solid #d8e0eb;
+border-radius:8px;
+outline:0;
+}
+
+.field input:focus{
+border-color:var(--blue);
+}
+
+.full{
+width:100%;
+}
+
+.switch{
+text-align:center;
+font-size:13px;
+color:var(--muted);
+margin-top:15px;
+}
+
+.switch button{
+border:0;
+background:none;
+color:var(--blue);
+font-weight:bold;
+}
+
+.error{
+display:none;
+background:#ffe8e8;
+color:#a21d1d;
+padding:10px;
+border-radius:8px;
+font-size:12px;
+margin-bottom:12px;
+}
+
+.error.show{
+display:block;
+}
+
+/* DASHBOARD */
+
+#dashboard{
+display:none;
+min-height:100vh;
+background:#f3f6fa;
+}
+
+.dashNav{
+background:var(--navy);
+color:white;
+padding:14px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+}
+
+.dashUser{
+display:flex;
+align-items:center;
+gap:9px;
+}
+
+.avatar{
+width:42px;
+height:42px;
+border-radius:50%;
+background:var(--gold);
+color:var(--navy);
+display:grid;
+place-items:center;
+font-weight:bold;
+overflow:hidden;
+}
+
+.avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.dashWrap{
+max-width:1200px;
+margin:auto;
+padding:35px 5%;
+}
+
+.dashTop{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.dashTop h1{
+font-size:32px;
+color:var(--navy);
+margin:0;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+}
+
+.balance{
+background:linear-gradient(135deg,var(--navy),var(--navy2));
+color:white;
+padding:24px;
+border-radius:15px;
+}
+
+.balance small{
+color:#bdcce0;
+}
+
+.balance h2{
+margin:8px 0;
+font-size:30px;
+}
+
+.stat{
+background:white;
+padding:22px;
+border-radius:15px;
+}
+
+.stat small{
+color:var(--muted);
+}
+
+.stat h3{
+margin-top:7px;
+}
+
+.columns{
+display:grid;
+grid-template-columns:1.5fr 1fr;
+gap:18px;
+margin-top:18px;
+}
+
+.panel{
+background:white;
+border-radius:15px;
+padding:24px;
+}
+
+.panel h3{
+color:var(--navy);
+margin-bottom:16px;
+}
+
+.tx{
+display:flex;
+justify-content:space-between;
+padding:13px 0;
+border-bottom:1px solid #edf0f4;
+}
+
+.tx:last-child{
+border:0;
+}
+
+.txName{
+font-weight:bold;
+font-size:13px;
+}
+
+.txDate{
+font-size:11px;
+color:var(--muted);
+}
+
+.out{
+color:var(--red);
+font-weight:bold;
+}
+
+.in{
+color:var(--green);
+font-weight:bold;
+}
+
+.empty{
+text-align:center;
+color:var(--muted);
+padding:25px;
+font-size:13px;
+}
+
+.quick{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.quick button{
+padding:14px;
+border:1px solid #e1e7ef;
+background:white;
+border-radius:9px;
+font-weight:bold;
+color:var(--navy);
+}
+
+.profilePanel{
+margin-top:18px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+
+.profileCard{
+background:white;
+padding:24px;
+border-radius:15px;
+}
+
+.profilePicture{
+width:85px;
+height:85px;
+border-radius:50%;
+background:#eaf2ff;
+display:grid;
+place-items:center;
+margin-bottom:15px;
+overflow:hidden;
+font-size:25px;
+font-weight:bold;
+color:var(--blue);
+}
+
+.profilePicture img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.profileCard h3{
+color:var(--navy);
+margin-bottom:12px;
+}
+
+.profileCard input{
+width:100%;
+padding:11px;
+border:1px solid var(--border);
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.fileInput{
+font-size:12px;
+}
+
+.profileNote{
+font-size:12px;
+color:var(--muted);
+margin-bottom:15px;
+}
+
+/* LOADING */
+
+.loadingOverlay{
+display:none;
+position:fixed;
+inset:0;
+background:#041327e8;
+z-index:500;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:white;
+}
+
+.loadingOverlay.show{
+display:flex;
+}
+
+.loaderBox{
+background:#ffffff12;
+border:1px solid #ffffff22;
+padding:35px;
+border-radius:18px;
+width:90%;
+max-width:360px;
+backdrop-filter:blur(8px);
+}
+
+.spinner{
+width:50px;
+height:50px;
+border:4px solid #ffffff35;
+border-top-color:white;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin:0 auto 18px;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg)}
+}
+
+/* CHAT */
+
+.chatBtn{
+position:fixed;
+right:20px;
+bottom:20px;
+width:56px;
+height:56px;
+border:0;
+border-radius:50%;
+background:var(--blue);
+color:white;
+font-size:23px;
+z-index:60;
+box-shadow:0 8px 25px #1769e050;
+}
+
+.chat{
+display:none;
+position:fixed;
+right:20px;
+bottom:85px;
+width:350px;
+max-width:calc(100% - 40px);
+background:white;
+border-radius:15px;
+box-shadow:0 15px 45px #0003;
+overflow:hidden;
+z-index:70;
+}
+
+.chat.show{
+display:block;
+}
+
+.chatHead{
+background:var(--navy);
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.chatBody{
+height:260px;
+padding:14px;
+overflow:auto;
+background:#f5f7fa;
+}
+
+.msg{
+padding:9px 11px;
+border-radius:11px;
+background:white;
+font-size:13px;
+margin-bottom:9px;
+max-width:85%;
+line-height:1.45;
+}
+
+.msg.user{
+margin-left:auto;
+background:#dceaff;
+}
+
+.chatInput{
+display:flex;
+border-top:1px solid #ddd;
+}
+
+.chatInput input{
+flex:1;
+border:0;
+padding:12px;
+outline:0;
+}
+
+.chatInput button{
+border:0;
+background:var(--blue);
+color:white;
+padding:0 16px;
+}
+
+/* TOAST */
+
+.toast{
+position:fixed;
+left:50%;
+bottom:25px;
+transform:translate(-50%,120px);
+background:var(--navy);
+color:white;
+padding:12px 18px;
+border-radius:8px;
+transition:.3s;
+z-index:600;
+}
+
+.toast.show{
+transform:translate(-50%,0);
+}
+
+/* RESPONSIVE */
 
 @media(max-width:850px){
-.links{display:none}.cards,.securityGrid{grid-template-columns:1fr}
-.contact,.columns{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}
+
+.links{
+display:none;
 }
+
+.cards,
+.securityGrid,
+.promoGrid{
+grid-template-columns:1fr;
+}
+
+.contact,
+.columns,
+.visualGrid,
+.profilePanel{
+grid-template-columns:1fr;
+}
+
+.grid{
+grid-template-columns:1fr 1fr;
+}
+
+}
+
 @media(max-width:600px){
-.top{display:none}.nav{min-height:65px}.logo span:last-child{font-size:13px}
-.nav .actions .btn{padding:9px 10px;font-size:12px}.hero{min-height:520px}
-.hero p{font-size:15px}.section{padding:55px 5%}.grid{grid-template-columns:1fr}
-.dashTop{flex-direction:column;align-items:flex-start;gap:12px}
-.chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
+
+.top{
+display:none;
+}
+
+.nav{
+min-height:65px;
+}
+
+.logo span:last-child{
+font-size:13px;
+}
+
+.nav .actions .btn{
+padding:9px 10px;
+font-size:12px;
+}
+
+.hero{
+min-height:520px;
+}
+
+.hero p{
+font-size:15px;
+}
+
+.section{
+padding:55px 5%;
+}
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.dashTop{
+flex-direction:column;
+align-items:flex-start;
+gap:12px;
+}
+
+.chat{
+right:10px;
+bottom:80px;
+max-width:calc(100% - 20px);
+}
+
+.dashNav .logo span:last-child{
+display:none;
+}
+
+}
+
+/* EXTRA SMALL */
+
+@media(max-width:400px){
+
+.heroButtons .btn{
+width:100%;
+}
+
+.actions{
+gap:4px;
+}
+
 }
 </style>
 </head>
 
 <body>
 
+<!-- SMALL PROTOTYPE DISCLOSURE -->
 <div class="notice">
-FICTIONAL BANKING SIMULATOR — NOT A REAL FINANCIAL INSTITUTION
+AMERICAN CREST BANK — ONLINE BANKING PROTOTYPE
 </div>
 
 <div id="publicSite">
 
 <div class="top">
-<span>American Crest Bank • Digital Banking Simulator</span>
+<span>American Crest Bank • Online Banking</span>
 <span>Online support available</span>
 </div>
 
 <header>
 <nav class="nav">
+
 <a href="#home" class="logo">
-<span class="mark">AC</span><span>AMERICAN CREST BANK</span>
+<span class="mark">AC</span>
+<span>AMERICAN CREST BANK</span>
 </a>
 
 <div class="links">
 <a href="#services">Services</a>
 <a href="#security">Security</a>
 <a href="#support">Support</a>
-<a href="#about">About</a>
+<a href="#offers">Offers</a>
 </div>
 
 <div class="actions">
 <button class="btn outline" onclick="openModal('login')">Sign In</button>
 <button class="btn primary" onclick="openModal('register')">Open Account</button>
 </div>
+
 </nav>
 </header>
 
+<!-- HERO -->
+
 <section class="hero" id="home">
+
 <div class="heroInner">
+
 <div class="heroText">
-<div class="eyebrow">DIGITAL BANKING SIMULATOR</div>
-<h1>Bank smarter.<br>Manage with confidence.</h1>
+
+<div class="eyebrow">ONLINE BANKING</div>
+
+<h1>
+Bank smarter.<br>
+Manage with confidence.
+</h1>
+
 <p>
-Explore a modern banking interface with account management,
-simulated transfers, transaction history and customer support.
+A modern online banking experience designed around
+simple account management, transfers, support and useful services.
 </p>
+
 <div class="heroButtons">
-<button class="btn primary" onclick="openModal('register')">Open an Account</button>
-<button class="btn outline" onclick="openModal('login')">Access Online Banking</button>
+
+<button class="btn primary" onclick="openModal('register')">
+Open an Account
+</button>
+
+<button class="btn outline" onclick="openModal('login')">
+Access Online Banking
+</button>
+
 </div>
+
 </div>
+
 </div>
+
 </section>
 
+<!-- TRUST -->
+
 <div class="trust">
+
 <span>✓ Account Management</span>
-<span>✓ Simulated Transfers</span>
+<span>✓ Money Transfers</span>
 <span>✓ Activity History</span>
 <span>✓ Customer Support</span>
+<span>✓ Online Services</span>
+
 </div>
 
+<!-- LIVE IMAGES -->
+
+<section class="liveVisual">
+
+<div class="visualGrid">
+
+<div class="visualCard one">
+<div class="visualText">
+<h3>Banking on the go</h3>
+<p>Manage your online banking experience wherever you are.</p>
+</div>
+</div>
+
+<div class="visualCard two">
+<div class="visualText">
+<h3>Simple payments</h3>
+<p>Access your available online services from one dashboard.</p>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- SERVICES -->
+
 <section class="section" id="services">
+
 <div class="inner">
+
 <div class="head">
 <h2>Everything in one place</h2>
-<p>A simple digital banking interface for testing and development.</p>
+<p>
+Manage your account, send money, review activity and contact support.
+</p>
 </div>
 
 <div class="cards">
+
 <div class="card">
 <div class="icon">▣</div>
 <h3>Account Overview</h3>
-<p>View your simulated balance, account information and recent activity.</p>
+<p>
+View your available balance, account information,
+profile and recent activity.
+</p>
 </div>
+
 <div class="card">
 <div class="icon">↗</div>
 <h3>Send Money</h3>
-<p>Create simulated transfers and keep a record of them in your account.</p>
+<p>
+Use the transfer service to send money to a recipient
+from your available account balance.
+</p>
 </div>
+
 <div class="card">
 <div class="icon">▤</div>
-<h3>Transaction History</h3>
-<p>Review transfers and account activity from your dashboard.</p>
+<h3>Activity History</h3>
+<p>
+Keep track of your account activity and previous
+transfer requests.
+</p>
 </div>
+
 </div>
+
 </div>
+
 </section>
+
+<!-- SECURITY -->
 
 <section class="section security" id="security">
+
 <div class="inner">
+
 <div class="head">
-<h2>Built for a controlled simulation</h2>
-<p>This platform is designed for legitimate software testing and development.</p>
+<h2>Designed with account control in mind</h2>
+<p>
+Your online banking dashboard keeps important account
+functions organized in one place.
+</p>
 </div>
+
 <div class="securityGrid">
-<div class="securityBox"><strong>Protected Login</strong><span>Passwords are handled by the backend using secure hashing.</span></div>
-<div class="securityBox"><strong>Session Control</strong><span>Authenticated dashboard requests use signed sessions.</span></div>
-<div class="securityBox"><strong>Activity Records</strong><span>Simulated transactions are stored in the connected database.</span></div>
+
+<div class="securityBox">
+<strong>Protected Login</strong>
+<span>
+Account access is handled through the connected backend authentication system.
+</span>
 </div>
+
+<div class="securityBox">
+<strong>Account Controls</strong>
+<span>
+Important account actions can be controlled by the connected account system.
+</span>
 </div>
+
+<div class="securityBox">
+<strong>Activity Records</strong>
+<span>
+Account activity and transfer records are displayed through the connected backend.
+</span>
+</div>
+
+</div>
+
+</div>
+
 </section>
+
+<!-- OFFERS -->
+
+<section class="section" id="offers">
+
+<div class="inner">
+
+<div class="head">
+<h2>Featured services</h2>
+<p>
+Explore useful services and announcements from your online banking homepage.
+</p>
+</div>
+
+<div class="promoGrid">
+
+<div class="promo">
+
+<img
+src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=85"
+alt="Online banking service">
+
+<div class="promoBody">
+<h3>Online Banking</h3>
+<p>
+Manage your account from a convenient digital dashboard.
+</p>
+</div>
+
+</div>
+
+<div class="promo">
+
+<img
+src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=85"
+alt="Digital payment service">
+
+<div class="promoBody">
+<h3>Payment Services</h3>
+<p>
+Explore available payment and account services from your dashboard.
+</p>
+</div>
+
+</div>
+
+<div class="promo">
+
+<img
+src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=85"
+alt="Customer support">
+
+<div class="promoBody">
+<h3>Customer Support</h3>
+<p>
+Need help? Contact online support directly from your account.
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SUPPORT -->
 
 <section class="section" id="support">
+
 <div class="inner">
+
 <div class="head">
 <h2>Customer Support</h2>
-<p>Use the built-in support interface for the simulator.</p>
+<p>
+Get assistance directly from the online banking support interface.
+</p>
 </div>
+
 <div class="contact">
+
 <div class="box">
+
 <h3>Need assistance?</h3>
-<p style="color:#718096;margin-bottom:18px">
-You can use the support assistant after signing in to your simulated account.
+
+<p style="margin-bottom:18px">
+Open the support assistant to ask a question or request help.
 </p>
-<button class="btn primary" onclick="toggleChat()">Open Support</button>
+
+<button class="btn primary" onclick="toggleChat()">
+Open Support
+</button>
+
 </div>
+
 <div class="box">
-<h3>Support information</h3>
-<p style="color:#718096">
-American Crest Bank is a fictional banking simulator. Do not enter real banking credentials,
-card numbers, PINs or other sensitive financial information.
+
+<h3>Account protection</h3>
+
+<p>
+Never share your password, PIN, card security code or other
+sensitive credentials with anyone through a support chat.
 </p>
+
 </div>
+
 </div>
+
 </div>
+
 </section>
+
+<!-- ABOUT -->
 
 <section class="section" id="about" style="background:white">
+
 <div class="inner">
+
 <div class="head">
+
 <h2>American Crest Bank</h2>
+
 <p>
-A fictional digital banking simulator created for legitimate software development,
-testing and demonstration.
+A modern online banking prototype designed to demonstrate
+customer account management, transfers, support and digital services.
 </p>
+
 </div>
+
 </div>
+
 </section>
 
+<!-- FOOTER -->
+
 <footer>
+
 <div class="footer">
-<div class="logo"><span class="mark">AC</span><span>AMERICAN CREST BANK</span></div>
-<p>Fictional digital banking simulator.</p>
-<div class="copy">© 2026 American Crest Bank Simulator.</div>
+
+<div class="logo">
+<span class="mark">AC</span>
+<span>AMERICAN CREST BANK</span>
 </div>
+
+<p>Online banking prototype.</p>
+
+<div class="copy">
+© 2026 American Crest Bank.
+</div>
+
+</div>
+
 </footer>
+
 </div>
+
+
+<!-- ================= DASHBOARD ================= -->
 
 <div id="dashboard">
 
 <div class="dashNav">
+
 <div class="logo" style="color:white">
-<span class="mark">AC</span><span>AMERICAN CREST BANK</span>
+
+<span class="mark">AC</span>
+<span>AMERICAN CREST BANK</span>
+
 </div>
 
 <div class="dashUser">
-<div class="avatar" id="avatar">AC</div>
+
+<div class="avatar" id="avatar">
+AC
+</div>
+
 <div>
-<div id="dashName" style="font-weight:bold">Customer</div>
-<small style="color:#bdcce0">Simulator Account</small>
+
+<div id="dashName" style="font-weight:bold">
+Customer
 </div>
-<button class="btn outline" onclick="logout()">Log Out</button>
+
+<small style="color:#bdcce0">
+Online Banking
+</small>
+
 </div>
+
+<button class="btn outline" onclick="logout()">
+Log Out
+</button>
+
 </div>
+
+</div>
+
 
 <div class="dashWrap">
 
 <div class="dashTop">
+
 <div>
-<small style="color:#718096">Welcome back</small>
-<h1 id="welcomeName">Customer</h1>
+
+<small style="color:#718096">
+Welcome back
+</small>
+
+<h1 id="welcomeName">
+Customer
+</h1>
+
 </div>
-<button class="btn primary" onclick="openTransfer()">+ New Transfer</button>
+
+<button class="btn primary" onclick="openTransfer()">
++ New Transfer
+</button>
+
 </div>
+
+
+<!-- ACCOUNT CARDS -->
 
 <div class="grid">
+
 <div class="balance">
-<small>SIMULATED AVAILABLE BALANCE</small>
-<h2 id="balance">$0.00</h2>
-<small>Fictional account</small>
+
+<small>
+AVAILABLE BALANCE
+</small>
+
+<h2 id="balance">
+$0.00
+</h2>
+
+<small>
+Available for online banking services
+</small>
+
 </div>
 
-<div class="stat">
-<small>ACCOUNT STATUS</small>
-<h3 id="status">Active</h3>
-</div>
 
 <div class="stat">
-<small>TRANSACTIONS</small>
-<h3 id="txCount">0</h3>
+
+<small>
+ACCOUNT STATUS
+</small>
+
+<h3 id="status">
+Active
+</h3>
+
 </div>
 
+
 <div class="stat">
-<small>ACCOUNT EMAIL</small>
-<h3 id="emailStat" style="font-size:14px">—</h3>
+
+<small>
+TRANSACTIONS
+</small>
+
+<h3 id="txCount">
+0
+</h3>
+
 </div>
+
+
+<div class="stat">
+
+<small>
+ACCOUNT EMAIL
+</small>
+
+<h3 id="emailStat" style="font-size:14px">
+—
+</h3>
+
 </div>
+
+</div>
+
+
+<!-- MAIN DASHBOARD -->
 
 <div class="columns">
 
 <div class="panel">
-<h3>Recent Activity</h3>
+
+<h3>
+Recent Activity
+</h3>
+
 <div id="transactions">
-<div class="empty">No transactions yet.</div>
+
+<div class="empty">
+No transactions yet.
 </div>
+
 </div>
+
+</div>
+
 
 <div class="panel">
-<h3>Quick Actions</h3>
+
+<h3>
+Quick Actions
+</h3>
+
 <div class="quick">
-<button onclick="openTransfer()">Send Money</button>
-<button onclick="loadAccount()">Refresh</button>
-<button onclick="toggleChat()">Support</button>
-<button onclick="logout()">Sign Out</button>
-</div>
+
+<button onclick="openTransfer()">
+Send Money
+</button>
+
+<button onclick="loadAccount()">
+Refresh
+</button>
+
+<button onclick="toggleChat()">
+Support
+</button>
+
+<button onclick="scrollToProfile()">
+My Profile
+</button>
+
 </div>
 
 </div>
-</div>
+
 </div>
 
-<!-- LOGIN / REGISTER -->
+
+<!-- PROFILE -->
+
+<div class="profilePanel" id="profileSection">
+
+<div class="profileCard">
+
+<h3>
+Profile Picture
+</h3>
+
+<div class="profilePicture" id="profilePreview">
+AC
+</div>
+
+<input
+class="fileInput"
+type="file"
+id="profileImage"
+accept="image/*"
+onchange="previewProfileImage(event)"
+>
+
+<p class="profileNote">
+Choose a profile picture from your device.
+</p>
+
+<button class="btn primary" onclick="saveProfileImage()">
+Save Profile Picture
+</button>
+
+</div>
+
+
+<div class="profileCard">
+
+<h3>
+Personal Information
+</h3>
+
+<label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
+Display Name
+</label>
+
+<input
+id="profileName"
+type="text"
+placeholder="Your name"
+>
+
+<p class="profileNote">
+You can update the name displayed on your online banking dashboard.
+</p>
+
+<button class="btn primary" onclick="saveProfileName()">
+Save Name
+</button>
+
+</div>
+
+</div>
+
+
+<!-- DASHBOARD OFFERS -->
+
+<div class="profilePanel">
+
+<div class="profileCard">
+
+<h3>
+Featured Service
+</h3>
+
+<p class="profileNote">
+Explore available online services and announcements.
+</p>
+
+<button class="btn outline" onclick="toast('Service information opened.')">
+View Service
+</button>
+
+</div>
+
+<div class="profileCard">
+
+<h3>
+Account Support
+</h3>
+
+<p class="profileNote">
+Contact support if you need help with your account.
+</p>
+
+<button class="btn primary" onclick="toggleChat()">
+Contact Support
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= LOGIN / REGISTER ================= -->
+
 <div class="modal" id="authModal">
+
 <div class="modalBox">
+
 <button class="close" onclick="closeModal()">×</button>
 
+
 <div id="loginForm">
-<h2>Welcome Back</h2>
-<p>Sign in to your simulator account.</p>
+
+<h2>
+Welcome Back
+</h2>
+
+<p>
+Sign in to your online banking account.
+</p>
+
 <div class="error" id="loginError"></div>
 
 <div class="field">
-<label>Email</label>
-<input id="loginEmail" type="email" autocomplete="email">
+
+<label>
+Email
+</label>
+
+<input
+id="loginEmail"
+type="email"
+autocomplete="email"
+>
+
 </div>
+
 
 <div class="field">
-<label>Password</label>
-<input id="loginPassword" type="password" autocomplete="current-password">
+
+<label>
+Password
+</label>
+
+<input
+id="loginPassword"
+type="password"
+autocomplete="current-password"
+>
+
 </div>
 
-<button class="btn primary full" onclick="login()">Sign In</button>
+
+<button class="btn primary full" onclick="login()">
+Sign In
+</button>
+
 
 <div class="switch">
+
 Don't have an account?
-<button onclick="showRegister()">Create Account</button>
+
+<button onclick="showRegister()">
+Create Account
+</button>
+
 </div>
+
 </div>
+
 
 <div id="registerForm" style="display:none">
-<h2>Create Account</h2>
-<p>Create a fictional simulator account.</p>
+
+<h2>
+Create Account
+</h2>
+
+<p>
+Create your online banking account.
+</p>
+
 <div class="error" id="registerError"></div>
 
+
 <div class="field">
-<label>Full Name</label>
+
+<label>
+Full Name
+</label>
+
 <input id="regName" type="text">
+
 </div>
 
+
 <div class="field">
-<label>Email</label>
+
+<label>
+Email
+</label>
+
 <input id="regEmail" type="email">
+
 </div>
 
+
 <div class="field">
-<label>Password</label>
+
+<label>
+Password
+</label>
+
 <input id="regPassword" type="password">
+
 </div>
+
 
 <div class="field">
-<label>Confirm Password</label>
+
+<label>
+Confirm Password
+</label>
+
 <input id="regConfirm" type="password">
+
 </div>
 
-<button class="btn primary full" onclick="register()">Create Account</button>
+
+<button class="btn primary full" onclick="register()">
+Create Account
+</button>
+
 
 <div class="switch">
+
 Already have an account?
-<button onclick="showLogin()">Sign In</button>
-</div>
+
+<button onclick="showLogin()">
+Sign In
+</button>
+
 </div>
 
 </div>
+
 </div>
 
-<!-- TRANSFER -->
+</div>
+
+
+<!-- ================= TRANSFER ================= -->
+
 <div class="modal" id="transferModal">
+
 <div class="modalBox">
+
 <button class="close" onclick="closeTransfer()">×</button>
-<h2>Send Money</h2>
-<p>Simulation only — no real money is transferred.</p>
+
+<h2>
+Send Money
+</h2>
+
+<p>
+Enter the recipient information and amount.
+</p>
+
 <div class="error" id="transferError"></div>
 
-<div class="field">
-<label>Amount</label>
-<input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00">
-</div>
 
 <div class="field">
-<label>Recipient</label>
-<input id="transferRecipient" type="text" placeholder="Recipient name or reference">
+
+<label>
+Amount
+</label>
+
+<input
+id="transferAmount"
+type="number"
+min="0.01"
+step="0.01"
+placeholder="0.00"
+>
+
 </div>
 
-<button class="btn primary full" onclick="transfer()">Submit Simulated Transfer</button>
-</div>
+
+<div class="field">
+
+<label>
+Recipient
+</label>
+
+<input
+id="transferRecipient"
+type="text"
+placeholder="Recipient name or reference"
+>
+
 </div>
 
-<!-- SUPPORT -->
-<button class="chatBtn" onclick="toggleChat()">?</button>
+
+<button class="btn primary full" onclick="transfer()">
+Continue
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= SUPPORT ================= -->
+
+<button class="chatBtn" onclick="toggleChat()">
+?
+</button>
+
 
 <div class="chat" id="chat">
+
 <div class="chatHead">
-<strong>Customer Support</strong>
-<button onclick="toggleChat()" style="background:none;border:0;color:white;font-size:20px">×</button>
+
+<strong>
+Customer Support
+</strong>
+
+<button
+onclick="toggleChat()"
+style="background:none;border:0;color:white;font-size:20px"
+>
+×
+</button>
+
 </div>
+
+
 <div class="chatBody" id="chatBody">
-<div class="msg">Hello. Welcome to American Crest Bank Simulator support. How can we help?</div>
+
+<div class="msg">
+Hello. Welcome to American Crest Bank online support.
+How can we help you today?
 </div>
+
+</div>
+
+
 <div class="chatInput">
-<input id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
-<button onclick="sendChat()">Send</button>
+
+<input
+id="chatInput"
+placeholder="Type a message..."
+onkeydown="if(event.key==='Enter')sendChat()"
+>
+
+<button onclick="sendChat()">
+Send
+</button>
+
 </div>
+
 </div>
+
+
+<!-- ================= LOADING ================= -->
+
+<div class="loadingOverlay" id="loadingOverlay">
+
+<div class="loaderBox">
+
+<div class="spinner"></div>
+
+<h3 id="loadingTitle">
+Processing
+</h3>
+
+<p
+id="loadingText"
+style="font-size:13px;color:#bdcce0;margin-top:8px"
+>
+Please wait...
+</p>
+
+</div>
+
+</div>
+
 
 <div class="toast" id="toast"></div>
 
+
 <script>
+
 const API = window.location.origin;
 
 let token = localStorage.getItem("acb_token");
 
-function $(id){return document.getElementById(id)}
+let selectedProfileImage = null;
+
+
+function $(id){
+return document.getElementById(id);
+}
+
 
 function toast(message){
+
 $("toast").textContent=message;
+
 $("toast").classList.add("show");
-setTimeout(()=>$("toast").classList.remove("show"),3000);
+
+setTimeout(
+()=>$("toast").classList.remove("show"),
+3000
+);
+
 }
+
+
+function showLoading(title="Processing",text="Please wait..."){
+
+$("loadingTitle").textContent=title;
+
+$("loadingText").textContent=text;
+
+$("loadingOverlay").classList.add("show");
+
+}
+
+
+function hideLoading(){
+
+$("loadingOverlay").classList.remove("show");
+
+}
+
 
 function openModal(type){
+
 $("authModal").classList.add("show");
-type==="register"?showRegister():showLogin();
+
+type==="register"
+?showRegister()
+:showLogin();
+
 }
+
 
 function closeModal(){
+
 $("authModal").classList.remove("show");
+
 }
+
 
 function showRegister(){
+
 $("loginForm").style.display="none";
+
 $("registerForm").style.display="block";
+
 $("loginError").classList.remove("show");
+
 }
+
 
 function showLogin(){
+
 $("registerForm").style.display="none";
+
 $("loginForm").style.display="block";
+
 $("registerError").classList.remove("show");
+
 }
+
 
 function showError(id,msg){
+
 $(id).textContent=msg;
+
 $(id).classList.add("show");
+
 }
+
 
 async function register(){
+
 const name=$("regName").value.trim();
+
 const email=$("regEmail").value.trim();
+
 const password=$("regPassword").value;
+
 const confirm=$("regConfirm").value;
 
+
 if(!name||!email||!password)
-return showError("registerError","Please complete all fields.");
+return showError(
+"registerError",
+"Please complete all fields."
+);
+
 
 if(password.length<8)
-return showError("registerError","Password must contain at least 8 characters.");
+return showError(
+"registerError",
+"Password must contain at least 8 characters."
+);
+
 
 if(password!==confirm)
-return showError("registerError","Passwords do not match.");
+return showError(
+"registerError",
+"Passwords do not match."
+);
+
+
+showLoading(
+"Creating your account",
+"Please wait while your account is being prepared..."
+);
+
 
 try{
-const res=await fetch(API+"/api/register",{
+
+const res=await fetch(
+API+"/api/register",
+{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({fullName:name,email,password})
-});
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+fullName:name,
+email,
+password
+})
+}
+);
+
 
 const data=await res.json();
 
-if(!res.ok)throw new Error(data.error||"Unable to create account.");
+
+if(!res.ok)
+throw new Error(
+data.error||"Unable to create account."
+);
+
 
 token=data.token;
-localStorage.setItem("acb_token",token);
+
+localStorage.setItem(
+"acb_token",
+token
+);
+
+
 closeModal();
+
+await new Promise(r=>setTimeout(r,700));
+
+hideLoading();
+
 await showDashboard();
+
 toast("Account created successfully.");
+
 }catch(e){
-showError("registerError",e.message);
+
+hideLoading();
+
+showError(
+"registerError",
+e.message
+);
+
 }
+
 }
+
 
 async function login(){
+
 const email=$("loginEmail").value.trim();
+
 const password=$("loginPassword").value;
 
+
 if(!email||!password)
-return showError("loginError","Enter your email and password.");
+return showError(
+"loginError",
+"Enter your email and password."
+);
+
+
+showLoading(
+"Signing you in",
+"Securely connecting to your online banking account..."
+);
+
 
 try{
-const res=await fetch(API+"/api/login",{
+
+const res=await fetch(
+API+"/api/login",
+{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({email,password})
-});
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+email,
+password
+})
+}
+);
+
 
 const data=await res.json();
 
-if(!res.ok)throw new Error(data.error||"Unable to sign in.");
+
+if(!res.ok)
+throw new Error(
+data.error||"Unable to sign in."
+);
+
 
 token=data.token;
-localStorage.setItem("acb_token",token);
+
+localStorage.setItem(
+"acb_token",
+token
+);
+
+
 closeModal();
+
+await new Promise(r=>setTimeout(r,700));
+
+hideLoading();
+
 await showDashboard();
+
 toast("Signed in successfully.");
+
 }catch(e){
-showError("loginError",e.message);
-}
+
+hideLoading();
+
+showError(
+"loginError",
+e.message
+);
+
 }
 
+}
+
+
 async function api(path,options={}){
+
 options.headers={
 ...(options.headers||{}),
 Authorization:"Bearer "+token,
 "Content-Type":"application/json"
 };
 
-const res=await fetch(API+path,options);
+
+const res=await fetch(
+API+path,
+options
+);
+
+
 const data=await res.json();
 
+
 if(res.status===401){
+
 logout();
-throw new Error("Your session has expired.");
+
+throw new Error(
+"Your session has expired."
+);
+
 }
 
-if(!res.ok)throw new Error(data.error||"Request failed.");
+
+if(!res.ok)
+throw new Error(
+data.error||"Request failed."
+);
+
+
 return data;
+
 }
+
 
 async function showDashboard(){
+
 $("publicSite").style.display="none";
+
 $("dashboard").style.display="block";
+
 await loadAccount();
+
 await loadTransactions();
+
+loadSavedProfile();
+
 }
+
 
 async function loadAccount(){
+
 try{
-const data=await api("/api/account");
+
+const data=await api(
+"/api/account"
+);
+
 
 $("welcomeName").textContent=data.full_name;
+
 $("dashName").textContent=data.full_name;
+
 $("emailStat").textContent=data.email;
+
 $("status").textContent=data.status;
-$("balance").textContent="$"+Number(data.balance).toLocaleString(undefined,{
+
+
+$("balance").textContent="$"+
+Number(data.balance).toLocaleString(
+undefined,
+{
 minimumFractionDigits:2,
 maximumFractionDigits:2
-});
+}
+);
 
-const initials=data.full_name.split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase();
-$("avatar").textContent=initials;
+
+$("profileName").value=data.full_name;
+
+
+const initials=data.full_name
+.split(/\s+/)
+.map(x=>x[0])
+.slice(0,2)
+.join("")
+.toUpperCase();
+
+
+$("avatar").innerHTML=initials;
+
+$("profilePreview").innerHTML=initials;
+
+
 }catch(e){
+
 toast(e.message);
+
 }
+
 }
+
 
 async function loadTransactions(){
+
 try{
-const rows=await api("/api/transactions");
+
+const rows=await api(
+"/api/transactions"
+);
+
+
 $("txCount").textContent=rows.length;
 
+
 if(!rows.length){
-$("transactions").innerHTML='<div class="empty">No transactions yet.</div>';
+
+$("transactions").innerHTML=
+'<div class="empty">No transactions yet.</div>';
+
 return;
+
 }
 
+
 $("transactions").innerHTML=rows.map(t=>{
-const amount=Number(t.amount).toLocaleString(undefined,{
-minimumFractionDigits:2,maximumFractionDigits:2
-});
+
+const amount=Number(t.amount)
+.toLocaleString(
+undefined,
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
 
 return `
 <div class="tx">
+
 <div>
-<div class="txName">${escapeHtml(t.type)} — ${escapeHtml(t.recipient||"")}</div>
-<div class="txDate">${new Date(t.created_at).toLocaleString()}</div>
+
+<div class="txName">
+${escapeHtml(t.type)}
+—
+${escapeHtml(t.recipient||"")}
 </div>
-<div class="out">-$${amount}</div>
-</div>`;
+
+<div class="txDate">
+${new Date(t.created_at).toLocaleString()}
+</div>
+
+</div>
+
+<div class="out">
+-$${amount}
+</div>
+
+</div>
+`;
+
 }).join("");
+
+
 }catch(e){
+
 toast(e.message);
+
 }
+
 }
+
 
 function openTransfer(){
+
 if(!token){
+
 openModal("login");
+
 return;
+
 }
+
+
 $("transferError").classList.remove("show");
+
 $("transferAmount").value="";
+
 $("transferRecipient").value="";
+
 $("transferModal").classList.add("show");
+
 }
+
 
 function closeTransfer(){
+
 $("transferModal").classList.remove("show");
+
 }
+
 
 async function transfer(){
-const amount=Number($("transferAmount").value);
-const recipient=$("transferRecipient").value.trim();
+
+const amount=Number(
+$("transferAmount").value
+);
+
+const recipient=$("transferRecipient")
+.value.trim();
+
 
 if(!Number.isFinite(amount)||amount<=0)
-return showError("transferError","Enter a valid amount.");
+return showError(
+"transferError",
+"Enter a valid amount."
+);
+
 
 if(recipient.length<3)
-return showError("transferError","Enter a recipient.");
+return showError(
+"transferError",
+"Enter a recipient."
+);
 
-try{
-const data=await api("/api/transfers",{
-method:"POST",
-body:JSON.stringify({amount,recipient})
-});
 
 closeTransfer();
+
+
+showLoading(
+"Processing transfer",
+"Please wait while your request is being processed..."
+);
+
+
+try{
+
+const data=await api(
+"/api/transfers",
+{
+method:"POST",
+body:JSON.stringify({
+amount,
+recipient
+})
+}
+);
+
+
+await new Promise(r=>setTimeout(r,900));
+
+hideLoading();
+
 await loadAccount();
+
 await loadTransactions();
+
 toast(data.message);
+
+
 }catch(e){
-showError("transferError",e.message);
+
+hideLoading();
+
+$("transferModal").classList.add("show");
+
+showError(
+"transferError",
+e.message
+);
+
 }
+
 }
+
+
+/* PROFILE */
+
+function scrollToProfile(){
+
+$("profileSection")
+.scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+function previewProfileImage(event){
+
+const file=event.target.files[0];
+
+if(!file)return;
+
+if(!file.type.startsWith("image/")){
+
+toast("Please select an image.");
+
+return;
+
+}
+
+
+selectedProfileImage=file;
+
+
+const reader=new FileReader();
+
+
+reader.onload=function(e){
+
+$("profilePreview").innerHTML=
+`<img src="${e.target.result}" alt="Profile picture">`;
+
+$("avatar").innerHTML=
+`<img src="${e.target.result}" alt="Profile picture">`;
+
+};
+
+
+reader.readAsDataURL(file);
+
+}
+
+
+function saveProfileImage(){
+
+if(!selectedProfileImage){
+
+toast("Choose a profile picture first.");
+
+return;
+
+}
+
+
+/*
+The image is currently stored locally in the browser.
+The server will be upgraded in the next step so the
+profile picture can be stored with the customer's account.
+*/
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+localStorage.setItem(
+"acb_profile_image",
+e.target.result
+);
+
+toast("Profile picture saved.");
+
+};
+
+reader.readAsDataURL(selectedProfileImage);
+
+}
+
+
+function loadSavedProfile(){
+
+const image=
+localStorage.getItem(
+"acb_profile_image"
+);
+
+
+if(image){
+
+$("profilePreview").innerHTML=
+`<img src="${image}" alt="Profile picture">`;
+
+$("avatar").innerHTML=
+`<img src="${image}" alt="Profile picture">`;
+
+}
+
+}
+
+
+function saveProfileName(){
+
+const name=$("profileName")
+.value.trim();
+
+
+if(name.length<2){
+
+toast("Enter a valid name.");
+
+return;
+
+}
+
+
+$("welcomeName").textContent=name;
+
+$("dashName").textContent=name;
+
+toast(
+"Name updated on this device. Server profile storage will be connected next."
+);
+
+}
+
+
+/* LOGOUT */
 
 function logout(){
+
 token=null;
-localStorage.removeItem("acb_token");
+
+localStorage.removeItem(
+"acb_token"
+);
+
 $("dashboard").style.display="none";
+
 $("publicSite").style.display="block";
-toast("You have been signed out.");
+
+toast(
+"You have been signed out."
+);
+
 }
+
+
+/* SUPPORT */
 
 function toggleChat(){
+
 $("chat").classList.toggle("show");
+
 }
 
+
 function sendChat(){
+
 const input=$("chatInput");
+
 const text=input.value.trim();
+
 
 if(!text)return;
 
+
 const body=$("chatBody");
-body.innerHTML+=`<div class="msg user">${escapeHtml(text)}</div>`;
+
+
+body.innerHTML+=
+`<div class="msg user">
+${escapeHtml(text)}
+</div>`;
+
+
 input.value="";
+
 body.scrollTop=body.scrollHeight;
+
 
 setTimeout(()=>{
-body.innerHTML+=`<div class="msg">
-Thank you for contacting American Crest Bank Simulator support.
-This is a fictional support environment. A support request can be submitted from an authenticated account.
+
+body.innerHTML+=
+`<div class="msg">
+Thank you for contacting online support.
+Your message has been received. Our support team can assist you with your account.
 </div>`;
+
 body.scrollTop=body.scrollHeight;
-},600);
+
+},700);
+
 }
+
+
+/* SECURITY */
 
 function escapeHtml(value){
-return String(value).replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-}[c]));
+
+return String(value).replace(
+/[&<>"']/g,
+c=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+}[c])
+);
+
 }
 
-window.addEventListener("load",async()=>{
+
+/* START */
+
+window.addEventListener(
+"load",
+async()=>{
+
 if(token){
+
 try{
+
 await showDashboard();
+
 }catch(e){
+
 logout();
+
 }
+
 }
-});
+
+}
+);
+
 </script>
 
 </body>
