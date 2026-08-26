@@ -351,11 +351,6 @@ app.post("/api/register", async (req, res) => {
 
     const user = result.rows[0];
 
-    /*
-      Notify the administrator that a new customer
-      registered.
-    */
-
     await pool.query(
       `
       INSERT INTO admin_requests
@@ -372,10 +367,6 @@ app.post("/api/register", async (req, res) => {
         `New customer registered: ${cleanName} (${cleanEmail})`
       ]
     );
-
-    /*
-      Add a notification to the customer as well.
-    */
 
     await pool.query(
       `
@@ -477,9 +468,7 @@ app.get(
   "/api/me",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const user =
         await getUserById(req.user.id);
 
@@ -494,7 +483,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -513,9 +501,7 @@ app.get(
   "/api/transactions",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const result = await pool.query(
         `
         SELECT
@@ -545,7 +531,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -564,11 +549,9 @@ app.post(
   "/api/transfers",
   requireAuth,
   async (req, res) => {
-
     const client = await pool.connect();
 
     try {
-
       const currency =
         String(req.body.currency || "")
         .toUpperCase();
@@ -629,7 +612,6 @@ app.post(
         Number(user[column] || 0);
 
       if (amount > currentBalance) {
-
         await client.query("ROLLBACK");
 
         return res.status(400).json({
@@ -670,11 +652,6 @@ app.post(
         ]
       );
 
-      /*
-        Create an administrator request so the admin
-        can see that the customer submitted a transfer.
-      */
-
       await client.query(
         `
         INSERT INTO admin_requests
@@ -692,10 +669,6 @@ app.post(
           `Customer requested a fictional transfer of ${amount} ${currency} to ${recipient}.`
         ]
       );
-
-      /*
-        Notify the customer.
-      */
 
       await client.query(
         `
@@ -723,7 +696,6 @@ app.post(
       });
 
     } catch (error) {
-
       await client.query("ROLLBACK");
 
       console.error("TRANSFER ERROR:", error);
@@ -733,7 +705,6 @@ app.post(
       });
 
     } finally {
-
       client.release();
     }
   }
@@ -748,9 +719,7 @@ app.get(
   "/api/notifications",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -776,7 +745,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -795,9 +763,7 @@ app.post(
   "/api/support",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const message =
         String(req.body.message || "")
         .trim();
@@ -840,11 +806,6 @@ app.post(
         ]
       );
 
-      /*
-        IMPORTANT:
-        Admin also receives a request/notification.
-      */
-
       await pool.query(
         `
         INSERT INTO admin_requests
@@ -862,10 +823,6 @@ app.post(
           `New support message from ${user.name}: ${message}`
         ]
       );
-
-      /*
-        Customer gets confirmation notification.
-      */
 
       await pool.query(
         `
@@ -889,7 +846,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error("SUPPORT ERROR:", error);
 
       res.status(500).json({
@@ -908,9 +864,7 @@ app.get(
   "/api/support",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -937,7 +891,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -956,9 +909,7 @@ app.put(
   "/api/profile",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const name =
         String(req.body.name || "")
         .trim();
@@ -988,7 +939,6 @@ app.put(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1007,9 +957,7 @@ app.put(
   "/api/profile-image",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const image =
         String(req.body.image || "");
 
@@ -1047,7 +995,6 @@ app.put(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1067,9 +1014,7 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -1085,7 +1030,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1105,12 +1049,10 @@ app.post(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     const client =
       await pool.connect();
 
     try {
-
       const customerId =
         Number(req.body.customerId);
 
@@ -1199,10 +1141,6 @@ app.post(
         ]
       );
 
-      /*
-        Customer notification.
-      */
-
       await client.query(
         `
         INSERT INTO notifications
@@ -1223,11 +1161,13 @@ app.post(
 
       res.json({
         success: true,
-        message: "Customer credited successfully."
+        message: "Customer credited successfully.",
+        customerId,
+        amount,
+        currency
       });
 
     } catch (error) {
-
       await client.query("ROLLBACK");
 
       console.error("ADMIN CREDIT ERROR:", error);
@@ -1237,7 +1177,6 @@ app.post(
       });
 
     } finally {
-
       client.release();
     }
   }
@@ -1253,9 +1192,7 @@ app.post(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     try {
-
       const customerId =
         Number(req.body.customerId);
 
@@ -1306,7 +1243,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1326,9 +1262,7 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     try {
-
       const customerId =
         Number(req.params.customerId);
 
@@ -1358,7 +1292,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1378,9 +1311,7 @@ app.post(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     try {
-
       const customerId =
         Number(req.params.customerId);
 
@@ -1448,7 +1379,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1460,7 +1390,7 @@ app.post(
 
 
 /* =========================================================
-   ADMIN — REQUESTS / NOTIFICATIONS
+   ADMIN — REQUESTS
    ========================================================= */
 
 app.get(
@@ -1468,9 +1398,7 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -1504,7 +1432,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1524,9 +1451,7 @@ app.put(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     try {
-
       const requestId =
         Number(req.params.id);
 
@@ -1552,7 +1477,6 @@ app.put(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1572,9 +1496,7 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -1589,7 +1511,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1602,28 +1523,12 @@ app.get(
 
 /* =========================================================
    ADMIN — CREATE ADMIN ACCOUNT
-   =========================================================
-
-   This endpoint is intentionally protected by an environment
-   variable. Set ADMIN_SETUP_KEY in Render before using it.
-
-   Example request body:
-
-   {
-     "setupKey": "your-secret-key",
-     "name": "Administrator",
-     "email": "admin@example.com",
-     "password": "strong-password"
-   }
-
-*/
+   ========================================================= */
 
 app.post(
   "/api/admin/setup",
   async (req, res) => {
-
     try {
-
       const setupKey =
         String(req.body.setupKey || "");
 
@@ -1677,7 +1582,6 @@ app.post(
         );
 
       if (existing.rows.length) {
-
         await pool.query(
           `
           UPDATE users
@@ -1725,7 +1629,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
@@ -1747,7 +1650,6 @@ app.use(
 );
 
 app.get("*", (req, res) => {
-
   if (req.path.startsWith("/api/")) {
     return res.status(404).json({
       error: "API endpoint not found."
@@ -1760,7 +1662,6 @@ app.get("*", (req, res) => {
       "index.html"
     )
   );
-
 });
 
 
@@ -1770,7 +1671,6 @@ app.get("*", (req, res) => {
 
 app.use(
   (error, req, res, next) => {
-
     console.error(
       "SERVER ERROR:",
       error
@@ -1789,26 +1689,20 @@ app.use(
 
 initDatabase()
   .then(() => {
-
     app.listen(
       PORT,
       () => {
-
         console.log(
           `American Crest Banking server running on port ${PORT}`
         );
-
       }
     );
-
   })
   .catch(error => {
-
     console.error(
       "DATABASE STARTUP ERROR:",
       error
     );
 
     process.exit(1);
-
   });
