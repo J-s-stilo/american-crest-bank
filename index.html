@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>American Crest Banking</title>
+<title>American Crest Banking — Demo</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
 :root{
  --navy:#071a35;
  --navy2:#0d315d;
@@ -21,18 +20,10 @@
  --red:#d93434;
  --border:#e3e9f1
 }
-
-body{
- font-family:Arial,Helvetica,sans-serif;
- background:var(--light);
- color:var(--text)
-}
-
+body{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 a{text-decoration:none;color:inherit}
-
-/* FICTIONAL APP NOTICE */
 
 .prototype{
  background:#fff3cd;
@@ -43,8 +34,6 @@ a{text-decoration:none;color:inherit}
  font-weight:bold
 }
 
-/* TOP BAR */
-
 .top{
  background:#041327;
  color:#dbe7f5;
@@ -53,8 +42,6 @@ a{text-decoration:none;color:inherit}
  justify-content:space-between;
  font-size:12px
 }
-
-/* HEADER */
 
 header{
  background:#fff;
@@ -114,27 +101,10 @@ header{
  font-weight:bold
 }
 
-.primary{
- background:var(--blue);
- color:#fff
-}
-
-.dark{
- background:var(--navy);
- color:#fff
-}
-
-.outline{
- background:#fff;
- border:1px solid #d8e0eb;
- color:var(--navy)
-}
-
+.primary{background:var(--blue);color:#fff}
+.dark{background:var(--navy);color:#fff}
+.outline{background:#fff;border:1px solid #d8e0eb;color:var(--navy)}
 .full{width:100%}
-
-/* =========================================================
-   NEW HOME HERO
-   ========================================================= */
 
 .hero{
  min-height:620px;
@@ -160,9 +130,7 @@ header{
  align-items:center
 }
 
-.heroText{
- max-width:680px
-}
+.heroText{max-width:680px}
 
 .eyebrow{
  color:#e0bc61;
@@ -190,8 +158,6 @@ h1{
  gap:12px;
  flex-wrap:wrap
 }
-
-/* PHONE / WOMAN VISUAL */
 
 .heroVisual{
  position:relative;
@@ -226,12 +192,7 @@ h1{
  content:"";
  position:absolute;
  inset:0;
- background:
- linear-gradient(
-  180deg,
-  #071a3500 40%,
-  #071a35df 100%
- )
+ background:linear-gradient(180deg,#071a3500 40%,#071a35df 100%)
 }
 
 .phoneCaption{
@@ -272,17 +233,8 @@ h1{
  color:var(--blue)
 }
 
-.floatCard.one{
- left:0;
- top:60px
-}
-
-.floatCard.two{
- right:0;
- bottom:45px
-}
-
-/* TRUST */
+.floatCard.one{left:0;top:60px}
+.floatCard.two{right:0;bottom:45px}
 
 .trust{
  background:#fff;
@@ -296,16 +248,8 @@ h1{
  font-weight:bold
 }
 
-/* GENERAL SECTIONS */
-
-.section{
- padding:70px 5%
-}
-
-.inner{
- max-width:1150px;
- margin:auto
-}
+.section{padding:70px 5%}
+.inner{max-width:1150px;margin:auto}
 
 .head{
  text-align:center;
@@ -324,28 +268,19 @@ h1{
  line-height:1.6
 }
 
-.cards,
-.promoGrid{
+.cards,.promoGrid{
  display:grid;
  grid-template-columns:repeat(3,1fr);
  gap:20px
 }
 
-.card,
-.promo,
-.box,
-.panel,
-.profileCard,
-.service,
-.adminBox{
+.card,.promo,.box,.panel,.profileCard,.service,.adminBox{
  background:#fff;
  border-radius:15px;
  box-shadow:0 12px 35px #071a5314
 }
 
-.card{
- padding:28px
-}
+.card{padding:28px}
 
 .icon{
  width:50px;
@@ -359,38 +294,24 @@ h1{
  margin-bottom:18px
 }
 
-.card h3,
-.promo h3,
-.box h3,
-.panel h3,
-.profileCard h3,
-.service h3{
+.card h3,.promo h3,.box h3,.panel h3,.profileCard h3,.service h3{
  color:var(--navy);
  margin-bottom:8px
 }
 
-.card p,
-.promo p,
-.box p{
+.card p,.promo p,.box p{
  color:var(--muted);
  font-size:14px;
  line-height:1.6
 }
-
-/* SECURITY */
 
 .security{
  background:var(--navy);
  color:#fff
 }
 
-.security .head h2{
- color:#fff
-}
-
-.security .head p{
- color:#bdcce0
-}
+.security .head h2{color:#fff}
+.security .head p{color:#bdcce0}
 
 .securityGrid{
  display:grid;
@@ -416,19 +337,13 @@ h1{
  line-height:1.5
 }
 
-/* CONTACT */
-
 .contact{
  display:grid;
  grid-template-columns:1fr 1fr;
  gap:22px
 }
 
-.box{
- padding:28px
-}
-
-/* FOOTER */
+.box{padding:28px}
 
 footer{
  background:#041327;
@@ -453,8 +368,6 @@ footer{
  font-size:11px
 }
 
-/* MODALS */
-
 .modal{
  display:none;
  position:fixed;
@@ -466,9 +379,7 @@ footer{
  padding:20px
 }
 
-.modal.show{
- display:flex
-}
+.modal.show{display:flex}
 
 .modalBox{
  background:#fff;
@@ -502,9 +413,7 @@ footer{
  margin-bottom:20px
 }
 
-.field{
- margin-bottom:14px
-}
+.field{margin-bottom:14px}
 
 .field label{
  display:block;
@@ -513,9 +422,7 @@ footer{
  margin-bottom:6px
 }
 
-.field input,
-.field select,
-.field textarea{
+.field input,.field select,.field textarea{
  width:100%;
  padding:13px;
  border:1px solid #d8e0eb;
@@ -538,13 +445,7 @@ footer{
  margin-bottom:12px
 }
 
-.error.show{
- display:block
-}
-
-/* =========================================================
-   DASHBOARD
-   ========================================================= */
+.error.show{display:block}
 
 #dashboard{
  display:none;
@@ -641,13 +542,19 @@ footer{
  border-radius:15px
 }
 
-.balance small{
- color:#bdcce0
-}
+.balance small{color:#bdcce0}
 
 .balance h2{
  margin:8px 0;
  font-size:30px
+}
+
+.balanceEye{
+ border:0;
+ background:transparent;
+ color:#fff;
+ font-size:19px;
+ margin-left:8px
 }
 
 .stat{
@@ -656,13 +563,8 @@ footer{
  border-radius:15px
 }
 
-.stat small{
- color:var(--muted)
-}
-
-.stat h3{
- margin-top:7px
-}
+.stat small{color:var(--muted)}
+.stat h3{margin-top:7px}
 
 .columns{
  display:grid;
@@ -671,9 +573,7 @@ footer{
  margin-top:18px
 }
 
-.panel{
- padding:24px
-}
+.panel{padding:24px}
 
 .tx{
  display:flex;
@@ -683,9 +583,7 @@ footer{
  gap:10px
 }
 
-.tx:last-child{
- border:0
-}
+.tx:last-child{border:0}
 
 .txName{
  font-weight:bold;
@@ -697,15 +595,8 @@ footer{
  color:var(--muted)
 }
 
-.out{
- color:var(--red);
- font-weight:bold
-}
-
-.in{
- color:var(--green);
- font-weight:bold
-}
+.out{color:var(--red);font-weight:bold}
+.in{color:var(--green);font-weight:bold}
 
 .empty{
  text-align:center;
@@ -729,8 +620,6 @@ footer{
  color:var(--navy)
 }
 
-/* PROFILE */
-
 .profilePanel{
  margin-top:18px;
  display:grid;
@@ -738,9 +627,7 @@ footer{
  gap:18px
 }
 
-.profileCard{
- padding:24px
-}
+.profileCard{padding:24px}
 
 .profileCard input{
  width:100%;
@@ -755,8 +642,6 @@ footer{
  color:var(--muted);
  margin-bottom:15px
 }
-
-/* CURRENCY */
 
 .currencyBalances{
  margin-top:18px;
@@ -784,8 +669,6 @@ footer{
  font-weight:bold
 }
 
-/* SERVICES */
-
 .servicesGrid{
  display:grid;
  grid-template-columns:repeat(4,1fr);
@@ -793,9 +676,7 @@ footer{
  margin-top:18px
 }
 
-.service{
- padding:22px
-}
+.service{padding:22px}
 
 .serviceIcon{
  font-size:28px;
@@ -813,8 +694,6 @@ footer{
  width:100%
 }
 
-/* NOTIFICATIONS */
-
 .notification{
  padding:13px;
  background:#eef5ff;
@@ -830,7 +709,15 @@ footer{
  margin-top:5px
 }
 
-/* ADMIN */
+.liveBanner{
+ background:#eaf7ef;
+ border:1px solid #ccebd8;
+ color:#126c36;
+ border-radius:10px;
+ padding:12px 15px;
+ margin-bottom:18px;
+ font-size:13px
+}
 
 .admin{
  display:none;
@@ -865,9 +752,7 @@ footer{
  color:var(--navy)
 }
 
-.adminBox input,
-.adminBox select,
-.adminBox textarea{
+.adminBox input,.adminBox select,.adminBox textarea{
  width:100%;
  padding:11px;
  margin-bottom:10px;
@@ -895,20 +780,48 @@ footer{
  gap:10px
 }
 
-.customerItem:last-child{
- border-bottom:0
+.customerItem:last-child{border-bottom:0}
+.customerItem.active{background:#eef5ff}
+
+.customerItem strong{display:block}
+.customerItem small{color:var(--muted)}
+
+.requestItem{
+ padding:12px;
+ border:1px solid var(--border);
+ border-radius:10px;
+ margin-bottom:10px;
+ background:#fafcff
 }
 
-.customerItem.active{
- background:#eef5ff
+.requestItem strong{color:var(--navy)}
+.requestItem small{
+ display:block;
+ color:var(--muted);
+ margin:4px 0 8px
 }
 
-.customerItem strong{
- display:block
+.requestButtons{
+ display:flex;
+ gap:8px;
+ flex-wrap:wrap
 }
 
-.customerItem small{
- color:var(--muted)
+.requestButtons button{
+ padding:8px 12px;
+ border-radius:7px;
+ border:0;
+ font-weight:bold
+}
+
+.approveBtn{
+ background:#159447;
+ color:white
+}
+
+.rejectBtn{
+ background:#ffe8e8;
+ color:#a21d1d
 }
 
 .adminChat{
@@ -919,8 +832,6 @@ footer{
  padding:12px;
  margin-bottom:10px
 }
-
-/* CHAT */
 
 .chatBtn{
  position:fixed;
@@ -950,9 +861,7 @@ footer{
  z-index:70
 }
 
-.chat.show{
- display:block
-}
+.chat.show{display:block}
 
 .chatHead{
  background:var(--navy);
@@ -1003,8 +912,6 @@ footer{
  padding:0 16px
 }
 
-/* TOAST */
-
 .toast{
  position:fixed;
  left:50%;
@@ -1018,130 +925,46 @@ footer{
  z-index:600
 }
 
-.toast.show{
- transform:translate(-50%,0)
-}
+.toast.show{transform:translate(-50%,0)}
 
-.hiddenFile{
- display:none
-}
-
-/* RESPONSIVE */
+.hiddenFile{display:none}
 
 @media(max-width:900px){
-
- .links{
-  display:none
- }
-
- .heroInner{
-  grid-template-columns:1fr;
-  gap:20px
- }
-
- .heroVisual{
-  min-height:410px
- }
-
- .cards,
- .securityGrid,
- .promoGrid{
-  grid-template-columns:1fr
- }
-
- .contact,
- .columns,
- .profilePanel{
-  grid-template-columns:1fr
- }
-
- .grid{
-  grid-template-columns:1fr 1fr
- }
-
- .servicesGrid{
-  grid-template-columns:1fr 1fr
- }
-
- .currencyBalances{
-  grid-template-columns:1fr 1fr
- }
-
- .adminGrid{
-  grid-template-columns:1fr
- }
-
+ .links{display:none}
+ .heroInner{grid-template-columns:1fr;gap:20px}
+ .heroVisual{min-height:410px}
+ .cards,.securityGrid,.promoGrid{grid-template-columns:1fr}
+ .contact,.columns,.profilePanel{grid-template-columns:1fr}
+ .grid{grid-template-columns:1fr 1fr}
+ .servicesGrid{grid-template-columns:1fr 1fr}
+ .currencyBalances{grid-template-columns:1fr 1fr}
+ .adminGrid{grid-template-columns:1fr}
 }
 
 @media(max-width:600px){
-
- .top{
-  display:none
- }
-
- .nav{
-  min-height:65px
- }
-
- .hero{
-  min-height:760px
- }
-
- .hero p{
-  font-size:15px
- }
-
- .section{
-  padding:55px 5%
- }
-
- .grid{
-  grid-template-columns:1fr
- }
-
+ .top{display:none}
+ .nav{min-height:65px}
+ .hero{min-height:760px}
+ .hero p{font-size:15px}
+ .section{padding:55px 5%}
+ .grid{grid-template-columns:1fr}
  .dashTop{
   flex-direction:column;
   align-items:flex-start;
   gap:12px
  }
-
  .chat{
   right:10px;
   bottom:80px;
   max-width:calc(100% - 20px)
  }
-
- .servicesGrid,
- .currencyBalances{
-  grid-template-columns:1fr 1fr
- }
-
- .dashNav .logo span:last-child{
-  display:none
- }
-
- .heroVisual{
-  min-height:360px
- }
-
- .phoneCard{
-  height:370px
- }
-
- .floatCard{
-  transform:scale(.82)
- }
-
- .floatCard.one{
-  left:-8px;
-  top:35px
- }
-
- .floatCard.two{
-  right:-8px;
-  bottom:25px
- }
-
+ .servicesGrid,.currencyBalances{grid-template-columns:1fr 1fr}
+ .dashNav .logo span:last-child{display:none}
+ .heroVisual{min-height:360px}
+ .phoneCard{height:370px}
+ .floatCard{transform:scale(.82)}
+ .floatCard.one{left:-8px;top:35px}
+ .floatCard.two{right:-8px;bottom:25px}
 }
 </style>
 </head>
@@ -1149,7 +972,7 @@ footer{
 <body>
 
 <div class="prototype">
-AMERICAN CREST BANK — FICTIONAL BANKING APPLICATION
+AMERICAN CREST BANK — FICTIONAL / DEMO BANKING APPLICATION
 </div>
 
 <div id="publicSite">
@@ -1186,11 +1009,6 @@ Open Account
 </nav>
 </header>
 
-
-<!-- ======================================================
-     HOME
-     ====================================================== -->
-
 <section class="hero" id="home">
 
 <div class="heroInner">
@@ -1198,7 +1016,7 @@ Open Account
 <div class="heroText">
 
 <div class="eyebrow">
-DIGITAL BANKING EXPERIENCE
+DIGITAL BANKING DEMO
 </div>
 
 <h1>
@@ -1207,7 +1025,7 @@ Manage with confidence.
 </h1>
 
 <p>
-Manage your fictional banking account, balances,
+Manage your fictional demo account, balances,
 transactions, notifications and digital services
 from one dashboard.
 </p>
@@ -1227,9 +1045,6 @@ Access Online Banking
 </div>
 
 </div>
-
-
-<!-- WOMAN / PHONE IMAGE -->
 
 <div class="heroVisual">
 
@@ -1261,7 +1076,7 @@ Manage your fictional account from your phone.
 
 <div class="floatCard two">
 Account access
-<b>Secure</b>
+<b>Demo Secure</b>
 </div>
 
 </div>
@@ -1269,19 +1084,15 @@ Account access
 </div>
 </section>
 
-
 <div class="trust">
 
 <span>✓ Account Management</span>
 <span>✓ Multi-Currency</span>
-<span>✓ Fund Credits</span>
+<span>✓ Demo Fund Credits</span>
 <span>✓ Transaction History</span>
 <span>✓ Customer Support</span>
 
 </div>
-
-
-<!-- SERVICES -->
 
 <section class="section" id="services">
 
@@ -1300,14 +1111,11 @@ digital services and support.
 
 </div>
 
-
 <div class="cards">
 
 <div class="card">
 
-<div class="icon">
-▣
-</div>
+<div class="icon">▣</div>
 
 <h3>
 Account Overview
@@ -1320,37 +1128,32 @@ profile and recent activity.
 
 </div>
 
-
 <div class="card">
 
-<div class="icon">
-↗
-</div>
+<div class="icon">↗</div>
 
 <h3>
 Send Money
 </h3>
 
 <p>
-Create a transaction using your selected currency.
+Create a fictional demo transaction
+using your selected currency.
 </p>
 
 </div>
 
-
 <div class="card">
 
-<div class="icon">
-¤
-</div>
+<div class="icon">¤</div>
 
 <h3>
 Multi-Currency
 </h3>
 
 <p>
-Maintain balances and transaction records
-in different currencies.
+Maintain fictional demo balances and
+transaction records in different currencies.
 </p>
 
 </div>
@@ -1360,9 +1163,6 @@ in different currencies.
 </div>
 
 </section>
-
-
-<!-- SECURITY -->
 
 <section class="section security" id="security">
 
@@ -1375,53 +1175,33 @@ Account control
 </h2>
 
 <p>
-Keep account information, balances and activity
-organized from one dashboard.
+Keep your fictional demo account information,
+balances and activity organized.
 </p>
 
 </div>
 
-
 <div class="securityGrid">
 
 <div class="securityBox">
-
-<strong>
-Account Dashboard
-</strong>
-
+<strong>Account Dashboard</strong>
 <span>
-View current balances and account information.
+View current demo balances and account information.
 </span>
-
 </div>
 
-
 <div class="securityBox">
-
-<strong>
-Credit &amp; Debit Records
-</strong>
-
+<strong>Credit &amp; Debit Records</strong>
 <span>
-Credits appear with a plus sign and debits
-with a minus sign.
+Credits and debits appear in your demo transaction history.
 </span>
-
 </div>
 
-
 <div class="securityBox">
-
-<strong>
-Digital Services
-</strong>
-
+<strong>Digital Services</strong>
 <span>
-Access the available service interfaces
-from your dashboard.
+Access available fictional service interfaces from your dashboard.
 </span>
-
 </div>
 
 </div>
@@ -1429,9 +1209,6 @@ from your dashboard.
 </div>
 
 </section>
-
-
-<!-- SUPPORT -->
 
 <section class="section" id="support">
 
@@ -1444,11 +1221,10 @@ Customer Support
 </h2>
 
 <p>
-Send a message through the account support system.
+Send a message through the fictional demo support system.
 </p>
 
 </div>
-
 
 <div class="contact">
 
@@ -1469,7 +1245,6 @@ Open Support
 
 </div>
 
-
 <div class="box">
 
 <h3>
@@ -1479,7 +1254,7 @@ Digital account services
 <p>
 Account, transfers, multi-currency balances,
 notifications and service interfaces are available
-inside the dashboard.
+inside the demo dashboard.
 </p>
 
 </div>
@@ -1490,18 +1265,13 @@ inside the dashboard.
 
 </section>
 
-
-<!-- FOOTER -->
-
 <footer>
 
 <div class="footer">
 
 <div class="logo">
 
-<span class="mark">
-AC
-</span>
+<span class="mark">AC</span>
 
 <span>
 AMERICAN CREST BANK
@@ -1511,10 +1281,11 @@ AMERICAN CREST BANK
 
 <p>
 Fictional banking application interface.
+No real banking or payment services are provided.
 </p>
 
 <div class="copy">
-© 2026 American Crest Banking.
+© 2026 American Crest Banking — Fictional Demo.
 </div>
 
 </div>
@@ -1524,9 +1295,7 @@ Fictional banking application interface.
 </div>
 
 
-<!-- ======================================================
-     DASHBOARD
-     ====================================================== -->
+<!-- DASHBOARD -->
 
 <div id="dashboard">
 
@@ -1534,16 +1303,13 @@ Fictional banking application interface.
 
 <div class="logo" style="color:white">
 
-<span class="mark">
-AC
-</span>
+<span class="mark">AC</span>
 
 <span>
 AMERICAN CREST BANK
 </span>
 
 </div>
-
 
 <div class="dashUser">
 
@@ -1570,21 +1336,17 @@ onchange="handleProfileImage(event)"
 
 </div>
 
-
 <div>
 
-<div
-id="dashName"
-style="font-weight:bold">
+<div id="dashName" style="font-weight:bold">
 Customer
 </div>
 
 <small style="color:#bdcce0">
-Online Account
+Demo Online Account
 </small>
 
 </div>
-
 
 <button
 class="btn outline"
@@ -1595,7 +1357,6 @@ Log Out
 </div>
 
 </div>
-
 
 <div class="dashWrap">
 
@@ -1621,21 +1382,34 @@ onclick="openTransfer()">
 
 </div>
 
+<div id="liveBanner" class="liveBanner">
+Demo account connection loading...
+</div>
 
 <div id="notifications"></div>
-
 
 <div class="grid">
 
 <div class="balance">
 
 <small>
-AVAILABLE BALANCE
+AVAILABLE DEMO BALANCE
 </small>
+
+<div style="display:flex;align-items:center">
 
 <h2 id="balance">
 ₦0.00
 </h2>
+
+<button
+id="balanceEye"
+class="balanceEye"
+onclick="toggleBalance()">
+👁️
+</button>
+
+</div>
 
 <small id="balanceCurrency">
 Primary currency: NGN
@@ -1643,19 +1417,17 @@ Primary currency: NGN
 
 </div>
 
-
 <div class="stat">
 
 <small>
 ACCOUNT STATUS
 </small>
 
-<h3>
+<h3 id="accountStatus">
 Active
 </h3>
 
 </div>
-
 
 <div class="stat">
 
@@ -1669,16 +1441,13 @@ TRANSACTIONS
 
 </div>
 
-
 <div class="stat">
 
 <small>
 ACCOUNT EMAIL
 </small>
 
-<h3
-id="emailStat"
-style="font-size:14px">
+<h3 id="emailStat" style="font-size:14px">
 —
 </h3>
 
@@ -1686,15 +1455,12 @@ style="font-size:14px">
 
 </div>
 
-
 <div
 class="currencyBalances"
 id="currencyBalances">
 </div>
 
-
 <div class="columns">
-
 
 <div class="panel">
 
@@ -1706,7 +1472,6 @@ Recent Activity
 </div>
 
 </div>
-
 
 <div class="panel">
 
@@ -1738,25 +1503,18 @@ Services
 
 </div>
 
-
-<!-- DASHBOARD SERVICES -->
-
 <div
 class="servicesGrid"
 id="dashboardServices">
 
 <div class="service">
 
-<div class="serviceIcon">
-📱
-</div>
+<div class="serviceIcon">📱</div>
 
-<h3>
-Buy Data
-</h3>
+<h3>Buy Data</h3>
 
 <p>
-Data bundle service interface.
+Fictional data bundle service interface.
 </p>
 
 <button
@@ -1767,19 +1525,14 @@ Open
 
 </div>
 
-
 <div class="service">
 
-<div class="serviceIcon">
-☎️
-</div>
+<div class="serviceIcon">☎️</div>
 
-<h3>
-Airtime
-</h3>
+<h3>Airtime</h3>
 
 <p>
-Mobile airtime service interface.
+Fictional mobile airtime service interface.
 </p>
 
 <button
@@ -1790,19 +1543,14 @@ Open
 
 </div>
 
-
 <div class="service">
 
-<div class="serviceIcon">
-💡
-</div>
+<div class="serviceIcon">💡</div>
 
-<h3>
-Pay Bills
-</h3>
+<h3>Pay Bills</h3>
 
 <p>
-Utility payment service interface.
+Fictional utility payment service interface.
 </p>
 
 <button
@@ -1813,19 +1561,14 @@ Open
 
 </div>
 
-
 <div class="service">
 
-<div class="serviceIcon">
-💳
-</div>
+<div class="serviceIcon">💳</div>
 
-<h3>
-Cards
-</h3>
+<h3>Cards</h3>
 
 <p>
-Card service interface.
+Fictional card service interface.
 </p>
 
 <button
@@ -1837,9 +1580,6 @@ Open
 </div>
 
 </div>
-
-
-<!-- PROFILE -->
 
 <div class="profilePanel">
 
@@ -1870,7 +1610,6 @@ Save Name
 
 </div>
 
-
 <div class="profileCard">
 
 <h3>
@@ -1900,7 +1639,7 @@ class="admin"
 id="adminPanel">
 
 <h2>
-Account Administration
+Demo Account Administration
 </h2>
 
 <p
@@ -1909,13 +1648,11 @@ font-size:13px;
 color:#718096;
 margin-bottom:10px">
 
-Local testing controls for this fictional application.
+Administrator controls for this fictional banking application.
 
 </p>
 
-
 <div class="adminGrid">
-
 
 <div class="adminBox">
 
@@ -1926,6 +1663,21 @@ Customers
 <div
 id="customerList"
 class="customerList">
+</div>
+
+</div>
+
+
+<div class="adminBox">
+
+<h3>
+Pending Customer Requests
+</h3>
+
+<div id="requestList">
+<div class="empty">
+No pending requests.
+</div>
 </div>
 
 </div>
@@ -1969,15 +1721,12 @@ AUD — Australian Dollar
 
 </select>
 
-
 <input
 id="adminAmount"
 type="number"
 min="0.01"
 step="0.01"
-placeholder="Amount"
->
-
+placeholder="Amount">
 
 <button
 class="btn primary"
@@ -1996,8 +1745,8 @@ Customer Notification
 
 <textarea
 id="adminNotification"
-placeholder="Write notification..."
-></textarea>
+placeholder="Write notification...">
+</textarea>
 
 <button
 class="btn primary"
@@ -2027,8 +1776,7 @@ Select a customer.
 <input
 id="adminReply"
 type="text"
-placeholder="Write your reply..."
->
+placeholder="Write your reply...">
 
 <button
 class="btn primary"
@@ -2048,20 +1796,11 @@ Administration
 <button
 class="btn outline"
 onclick="refreshAdmin()">
-Refresh Customer List
-</button>
-
-<br><br>
-
-<button
-class="btn outline"
-onclick="clearAllAccounts()">
-Clear Local Accounts
+Refresh
 </button>
 
 </div>
 
-
 </div>
 
 </div>
@@ -2071,9 +1810,7 @@ Clear Local Accounts
 </div>
 
 
-<!-- ======================================================
-     AUTH MODAL
-     ====================================================== -->
+<!-- AUTH -->
 
 <div
 class="modal"
@@ -2087,7 +1824,6 @@ onclick="closeModal()">
 ×
 </button>
 
-
 <div id="loginForm">
 
 <h2>
@@ -2095,14 +1831,13 @@ Welcome Back
 </h2>
 
 <p>
-Sign in to your account.
+Sign in to your fictional demo account.
 </p>
 
 <div
 class="error"
 id="loginError">
 </div>
-
 
 <div class="field">
 
@@ -2112,10 +1847,10 @@ Email
 
 <input
 id="loginEmail"
-type="email">
+type="email"
+autocomplete="email">
 
 </div>
-
 
 <div class="field">
 
@@ -2125,17 +1860,16 @@ Password
 
 <input
 id="loginPassword"
-type="password">
+type="password"
+autocomplete="current-password">
 
 </div>
-
 
 <button
 class="btn primary full"
 onclick="login()">
 Sign In
 </button>
-
 
 <div
 style="
@@ -2170,14 +1904,13 @@ Create Account
 </h2>
 
 <p>
-Create a new fictional account.
+Create a fictional demo account.
 </p>
 
 <div
 class="error"
 id="registerError">
 </div>
-
 
 <div class="field">
 
@@ -2191,7 +1924,6 @@ type="text">
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -2204,7 +1936,6 @@ type="email">
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -2216,7 +1947,6 @@ id="regPassword"
 type="password">
 
 </div>
-
 
 <div class="field">
 
@@ -2258,13 +1988,11 @@ AUD — Australian Dollar
 
 </div>
 
-
 <button
 class="btn primary full"
 onclick="register()">
 Create Account
 </button>
-
 
 <div
 style="
@@ -2294,9 +2022,7 @@ Sign In
 </div>
 
 
-<!-- ======================================================
-     TRANSFER MODAL
-     ====================================================== -->
+<!-- TRANSFER -->
 
 <div
 class="modal"
@@ -2315,15 +2041,13 @@ Send Money
 </h2>
 
 <p>
-Create a transaction using your available
-currency balance.
+Create a fictional demo transaction.
 </p>
 
 <div
 class="error"
 id="transferError">
 </div>
-
 
 <div class="field">
 
@@ -2333,38 +2057,17 @@ Currency
 
 <select id="transferCurrency">
 
-<option value="NGN">
-NGN — Nigerian Naira
-</option>
-
-<option value="USD">
-USD — US Dollar
-</option>
-
-<option value="EUR">
-EUR — Euro
-</option>
-
-<option value="GBP">
-GBP — British Pound
-</option>
-
-<option value="IDR">
-IDR — Indonesian Rupiah
-</option>
-
-<option value="CAD">
-CAD — Canadian Dollar
-</option>
-
-<option value="AUD">
-AUD — Australian Dollar
-</option>
+<option value="NGN">NGN — Nigerian Naira</option>
+<option value="USD">USD — US Dollar</option>
+<option value="EUR">EUR — Euro</option>
+<option value="GBP">GBP — British Pound</option>
+<option value="IDR">IDR — Indonesian Rupiah</option>
+<option value="CAD">CAD — Canadian Dollar</option>
+<option value="AUD">AUD — Australian Dollar</option>
 
 </select>
 
 </div>
-
 
 <div class="field">
 
@@ -2381,7 +2084,6 @@ placeholder="0.00">
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -2395,7 +2097,6 @@ placeholder="Recipient name">
 
 </div>
 
-
 <button
 class="btn primary full"
 onclick="transfer()">
@@ -2407,7 +2108,7 @@ Continue
 </div>
 
 
-<!-- SERVICE MODAL -->
+<!-- SERVICE -->
 
 <div
 class="modal"
@@ -2448,7 +2149,6 @@ onclick="toggleChat()">
 ?
 </button>
 
-
 <div
 class="chat"
 id="chat">
@@ -2471,20 +2171,17 @@ font-size:20px">
 
 </div>
 
-
 <div
 class="chatBody"
 id="chatBody">
 </div>
-
 
 <div class="chatInput">
 
 <input
 id="chatInput"
 placeholder="Type a message..."
-onkeydown="if(event.key==='Enter')sendChat()"
->
+onkeydown="if(event.key==='Enter')sendChat()">
 
 <button
 onclick="sendChat()">
@@ -2504,18 +2201,33 @@ id="toast">
 
 <script>
 
-/* =========================================================
-   LOCAL ACCOUNT DATABASE
-   ========================================================= */
+/*
+=========================================================
+AMERICAN CREST BANK — FICTIONAL DEMO FRONTEND
+=========================================================
+The frontend communicates with server.js.
+No real banking or payment processing is performed.
+=========================================================
+*/
 
-const ACCOUNTS_KEY = "acb_accounts_v3";
-const SESSION_KEY = "acb_session_v3";
+const API_BASE = "";
 
-let accounts = loadAccounts();
-let currentUserId =
- localStorage.getItem(SESSION_KEY) || null;
-
+let currentUser = null;
 let selectedCustomerId = null;
+let balanceHidden = false;
+let refreshTimer = null;
+
+const CURRENCY_INFO = {
+
+ NGN:{symbol:"₦",decimals:2},
+ USD:{symbol:"$",decimals:2},
+ EUR:{symbol:"€",decimals:2},
+ GBP:{symbol:"£",decimals:2},
+ IDR:{symbol:"Rp",decimals:0},
+ CAD:{symbol:"CA$",decimals:2},
+ AUD:{symbol:"A$",decimals:2}
+
+};
 
 
 function $(id){
@@ -2523,180 +2235,98 @@ function $(id){
 }
 
 
-function loadAccounts(){
+function escapeHtml(value){
 
- try{
-
-   return JSON.parse(
-     localStorage.getItem(ACCOUNTS_KEY)
-   ) || [];
-
- }catch(e){
-
-   return [];
-
- }
-
-}
-
-
-function saveAccounts(){
-
- localStorage.setItem(
-   ACCOUNTS_KEY,
-   JSON.stringify(accounts)
+ return String(value ?? "").replace(
+  /[&<>"']/g,
+  c=>({
+   "&":"&amp;",
+   "<":"&lt;",
+   ">":"&gt;",
+   '"':"&quot;",
+   "'":"&#039;"
+  }[c])
  );
 
 }
 
 
-function findAccount(id){
+function money(amount,currency){
 
- return accounts.find(
-   a => a.id === id
+ const info=
+  CURRENCY_INFO[currency] ||
+  CURRENCY_INFO.USD;
+
+ return info.symbol+
+ Number(amount||0).toLocaleString(
+  undefined,
+  {
+   minimumFractionDigits:info.decimals,
+   maximumFractionDigits:info.decimals
+  }
  );
-
-}
-
-
-function currentAccount(){
-
- return findAccount(currentUserId);
-
-}
-
-
-function makeId(){
-
- return Date.now().toString(36) +
-        Math.random().toString(36).slice(2,8);
-
-}
-
-
-function now(){
-
- return new Date().toLocaleString();
 
 }
 
 
 function toast(message){
 
- $("toast").textContent = message;
+ $("toast").textContent=message;
 
  $("toast").classList.add("show");
 
  setTimeout(()=>{
-
-   $("toast").classList.remove("show");
-
+  $("toast").classList.remove("show");
  },2800);
 
 }
 
 
-function escapeHtml(value){
+async function api(path,options={}){
 
- return String(value).replace(
-   /[&<>"']/g,
-   c => ({
-     "&":"&amp;",
-     "<":"&lt;",
-     ">":"&gt;",
-     '"':"&quot;",
-     "'":"&#039;"
-   }[c])
- );
+ const response=
+  await fetch(
+   API_BASE+path,
+   {
+    credentials:"include",
+    headers:{
+     "Content-Type":"application/json",
+     ...(options.headers||{})
+    },
+    ...options
+   }
+  );
 
-}
+ let data={};
 
+ try{
+  data=await response.json();
+ }catch(e){}
 
-/* =========================================================
-   CURRENCY
-   ========================================================= */
+ if(!response.ok){
 
-const CURRENCY_INFO = {
+  throw new Error(
+   data.message ||
+   "Request failed."
+  );
 
- NGN:{
-   symbol:"₦",
-   name:"Nigerian Naira",
-   decimals:2
- },
-
- USD:{
-   symbol:"$",
-   name:"US Dollar",
-   decimals:2
- },
-
- EUR:{
-   symbol:"€",
-   name:"Euro",
-   decimals:2
- },
-
- GBP:{
-   symbol:"£",
-   name:"British Pound",
-   decimals:2
- },
-
- IDR:{
-   symbol:"Rp",
-   name:"Indonesian Rupiah",
-   decimals:0
- },
-
- CAD:{
-   symbol:"CA$",
-   name:"Canadian Dollar",
-   decimals:2
- },
-
- AUD:{
-   symbol:"A$",
-   name:"Australian Dollar",
-   decimals:2
  }
 
-};
-
-
-function money(amount,currency){
-
- const info =
-   CURRENCY_INFO[currency] ||
-   CURRENCY_INFO.USD;
-
- return info.symbol +
-   Number(amount).toLocaleString(
-     undefined,
-     {
-       minimumFractionDigits:info.decimals,
-       maximumFractionDigits:info.decimals
-     }
-   );
+ return data;
 
 }
 
 
-/* =========================================================
-   AUTH
-   ========================================================= */
+/* AUTH */
 
 function openModal(type){
 
  $("authModal").classList.add("show");
 
- if(type === "register"){
-
-   showRegister();
-
+ if(type==="register"){
+  showRegister();
  }else{
-
-   showLogin();
-
+  showLogin();
  }
 
 }
@@ -2738,190 +2368,196 @@ function showError(id,message){
 }
 
 
-function register(){
+async function register(){
 
- const name =
-   $("regName").value.trim();
+ const name=
+  $("regName").value.trim();
 
- const email =
-   $("regEmail").value.trim().toLowerCase();
+ const email=
+  $("regEmail").value.trim().toLowerCase();
 
- const password =
-   $("regPassword").value;
+ const password=
+  $("regPassword").value;
 
- const currency =
-   $("regCurrency").value;
+ const primaryCurrency=
+  $("regCurrency").value;
 
 
- if(name.length < 2){
+ if(name.length<2){
 
-   return showError(
-     "registerError",
-     "Enter your full name."
-   );
+  return showError(
+   "registerError",
+   "Enter your full name."
+  );
 
  }
-
 
  if(!email.includes("@")){
 
-   return showError(
-     "registerError",
-     "Enter a valid email address."
-   );
+  return showError(
+   "registerError",
+   "Enter a valid email address."
+  );
 
  }
 
+ if(password.length<4){
 
- if(password.length < 4){
-
-   return showError(
-     "registerError",
-     "Password must contain at least 4 characters."
-   );
-
- }
-
-
- if(accounts.some(
-   a => a.email === email
- )){
-
-   return showError(
-     "registerError",
-     "An account with this email already exists."
-   );
+  return showError(
+   "registerError",
+   "Password must contain at least 4 characters."
+  );
 
  }
 
+ try{
 
- const account = {
+  const result=
+   await api(
+    "/api/auth/register",
+    {
+     method:"POST",
+     body:JSON.stringify({
+      name,
+      email,
+      password,
+      primaryCurrency
+     })
+    }
+   );
 
-   id:makeId(),
+  currentUser=result.user;
 
-   name:name,
+  closeModal();
 
-   email:email,
+  showDashboard();
 
-   password:password,
+  toast(
+   "Demo account created successfully."
+  );
 
-   status:"Active",
+ }catch(error){
 
-   primaryCurrency:currency,
+  showError(
+   "registerError",
+   error.message
+  );
 
-   balances:{
-     NGN:0,
-     USD:0,
-     EUR:0,
-     GBP:0,
-     IDR:0,
-     CAD:0,
-     AUD:0
-   },
-
-   transactions:[],
-
-   notifications:[],
-
-   support:[],
-
-   profileImage:"",
-
-   createdAt:now()
-
- };
-
-
- accounts.push(account);
-
- saveAccounts();
-
- currentUserId=account.id;
-
- localStorage.setItem(
-   SESSION_KEY,
-   currentUserId
- );
-
- closeModal();
-
- showDashboard();
-
- toast(
-   "Account created successfully."
- );
+ }
 
 }
 
 
-function login(){
+async function login(){
 
- const email =
-   $("loginEmail").value.trim().toLowerCase();
+ const email=
+  $("loginEmail").value.trim().toLowerCase();
 
- const password =
-   $("loginPassword").value;
+ const password=
+  $("loginPassword").value;
 
- const account =
-   accounts.find(
-     a => a.email === email &&
-          a.password === password
+ try{
+
+  const result=
+   await api(
+    "/api/auth/login",
+    {
+     method:"POST",
+     body:JSON.stringify({
+      email,
+      password
+     })
+    }
    );
 
+  currentUser=result.user;
 
- if(!account){
+  closeModal();
 
-   return showError(
-     "loginError",
-     "Incorrect email or password."
-   );
+  showDashboard();
 
- }
-
-
- currentUserId=account.id;
-
- localStorage.setItem(
-   SESSION_KEY,
-   currentUserId
- );
-
- closeModal();
-
- showDashboard();
-
- toast(
+  toast(
    "Signed in successfully."
- );
+  );
+
+ }catch(error){
+
+  showError(
+   "loginError",
+   error.message
+  );
+
+ }
 
 }
 
 
-/* =========================================================
-   DASHBOARD
-   ========================================================= */
+async function loadMe(){
+
+ try{
+
+  const result=
+   await api("/api/auth/me");
+
+  currentUser=result.user;
+
+  return true;
+
+ }catch(error){
+
+  currentUser=null;
+
+  return false;
+
+ }
+
+}
+
+
+/* DASHBOARD */
 
 function showDashboard(){
 
- const account=currentAccount();
-
- if(!account)return;
+ if(!currentUser)return;
 
  $("publicSite").style.display="none";
 
  $("dashboard").style.display="block";
 
+ renderDashboard();
+
+ if(refreshTimer){
+  clearInterval(refreshTimer);
+ }
+
+ refreshTimer=
+  setInterval(
+   refreshDashboard,
+   4000
+  );
+
+}
+
+
+function renderDashboard(){
+
+ if(!currentUser)return;
+
  $("welcomeName").textContent=
-   account.name;
+  currentUser.name;
 
  $("dashName").textContent=
-   account.name;
+  currentUser.name;
 
  $("emailStat").textContent=
-   account.email;
+  currentUser.email;
 
  $("profileName").value=
-   account.name;
+  currentUser.name;
+
+ $("accountStatus").textContent=
+  currentUser.status ||
+  "Active";
 
  renderAvatar();
 
@@ -2937,31 +2573,29 @@ function showDashboard(){
 
  $("adminPanel").style.display="block";
 
- renderCustomerList();
+ loadAdminData();
 
 }
 
 
 function renderAvatar(){
 
- const account=currentAccount();
+ if(!currentUser)return;
 
- if(!account)return;
+ const avatar=
+  $("avatar");
 
- const avatar=$("avatar");
+ if(currentUser.profileImage){
 
- if(account.profileImage){
+  avatar.innerHTML=
+   `<img src="${escapeHtml(currentUser.profileImage)}" alt="Profile">`;
 
-   avatar.innerHTML =
-     `<img src="${account.profileImage}" alt="Profile">`;
-
-   return;
+  return;
 
  }
 
-
- const initials =
-   account.name
+ const initials=
+  currentUser.name
    .split(/\s+/)
    .map(x=>x[0])
    .slice(0,2)
@@ -2975,174 +2609,213 @@ function renderAvatar(){
 
 function renderBalance(){
 
- const account=currentAccount();
-
- if(!account)return;
+ if(!currentUser)return;
 
  const currency=
-   account.primaryCurrency;
+  currentUser.primaryCurrency ||
+  "NGN";
 
- $("balance").textContent =
-   money(
-     account.balances[currency],
-     currency
-   );
+ const amount=
+  currentUser.balances?.[currency] ||
+  0;
 
- $("balanceCurrency").textContent =
-   "Primary currency: " + currency;
+ $("balance").textContent=
+  balanceHidden
+   ?"••••••"
+   :money(amount,currency);
+
+ $("balanceCurrency").textContent=
+  "Primary currency: "+currency;
+
+ $("balanceEye").textContent=
+  balanceHidden
+   ?"🙈"
+   :"👁️";
+
+}
+
+
+function toggleBalance(){
+
+ balanceHidden=
+  !balanceHidden;
+
+ renderBalance();
 
 }
 
 
 function renderCurrencyBalances(){
 
- const account=currentAccount();
+ if(!currentUser)return;
 
- if(!account)return;
+ $("currencyBalances").innerHTML=
+  Object.keys(CURRENCY_INFO)
+   .map(currency=>`
 
- const currencies =
-   Object.keys(CURRENCY_INFO);
-
- $("currencyBalances").innerHTML =
-   currencies.map(currency=>`
-
-   <div class="currencyCard">
+    <div class="currencyCard">
 
      <div class="currencyCode">
-       ${currency}
+      ${currency}
      </div>
 
      <div class="currencyAmount">
-
-       ${money(
-         account.balances[currency],
-         currency
-       )}
-
+      ${money(
+       currentUser.balances?.[currency]||0,
+       currency
+      )}
      </div>
 
-   </div>
+    </div>
 
- `).join("");
+   `)
+   .join("");
 
 }
 
 
 function renderTransactions(){
 
- const account=currentAccount();
+ if(!currentUser)return;
 
- if(!account)return;
-
- const list =
-   account.transactions || [];
+ const list=
+  currentUser.transactions||
+  [];
 
  $("txCount").textContent=
-   list.length;
+  list.length;
 
  if(!list.length){
 
-   $("transactions").innerHTML =
-     '<div class="empty">No transactions yet.</div>';
+  $("transactions").innerHTML=
+   '<div class="empty">No transactions yet.</div>';
 
-   return;
+  return;
 
  }
 
-
- $("transactions").innerHTML =
-   list.slice()
+ $("transactions").innerHTML=
+  list
+   .slice()
    .reverse()
    .map(t=>{
 
-     const positive =
-       t.kind === "credit";
+    const positive=
+     t.kind==="credit";
 
-     return `
+    return `
 
      <div class="tx">
 
-       <div>
+      <div>
 
-         <div class="txName">
-           ${escapeHtml(t.title)}
-         </div>
-
-         <div class="txDate">
-           ${escapeHtml(t.date)}
-         </div>
-
+       <div class="txName">
+        ${escapeHtml(t.title)}
        </div>
 
-       <div class="${positive?"in":"out"}">
-
-         ${positive?"+":"-"}
-         ${money(
-           t.amount,
-           t.currency
-         )}
-
+       <div class="txDate">
+        ${escapeHtml(t.date)}
        </div>
+
+      </div>
+
+      <div class="${positive?"in":"out"}">
+
+       ${positive?"+":"-"}
+       ${money(
+        t.amount,
+        t.currency
+       )}
+
+      </div>
 
      </div>
 
-     `;
+    `;
 
-   }).join("");
-
-}
-
-
-function addTransaction(
- account,
- kind,
- title,
- amount,
- currency
-){
-
- account.transactions.push({
-
-   id:makeId(),
-
-   kind:kind,
-
-   title:title,
-
-   amount:Number(amount),
-
-   currency:currency,
-
-   date:now()
-
- });
+   })
+   .join("");
 
 }
 
 
-/* =========================================================
-   CUSTOMER TRANSFER
-   ========================================================= */
+function renderNotifications(){
+
+ if(!currentUser)return;
+
+ const list=
+  currentUser.notifications||
+  [];
+
+ if(!list.length){
+
+  $("notifications").innerHTML="";
+
+  return;
+
+ }
+
+ $("notifications").innerHTML=
+  list
+   .slice()
+   .reverse()
+   .slice(0,10)
+   .map(n=>`
+
+    <div class="notification">
+
+     <strong>
+      Account Notification
+     </strong>
+
+     <div>
+      ${escapeHtml(n.message)}
+     </div>
+
+     <small>
+      ${escapeHtml(n.date)}
+     </small>
+
+    </div>
+
+   `)
+   .join("");
+
+}
+
+
+function renderLiveBanner(){
+
+ if(!currentUser)return;
+
+ $("liveBanner").innerHTML=
+  `<strong>Demo account connected.</strong>
+   Balance, notifications, requests and support
+   updates are synchronized with the demo server.`;
+
+}
+
+
+/* TRANSFER */
 
 function openTransfer(){
 
- if(!currentAccount()){
+ if(!currentUser){
 
-   openModal("login");
+  openModal("login");
 
-   return;
+  return;
 
  }
 
  $("transferError")
-   .classList.remove("show");
+  .classList.remove("show");
 
  $("transferAmount").value="";
-
  $("transferRecipient").value="";
 
  $("transferModal")
-   .classList.add("show");
+  .classList.add("show");
 
 }
 
@@ -3150,96 +2823,78 @@ function openTransfer(){
 function closeTransfer(){
 
  $("transferModal")
-   .classList.remove("show");
+  .classList.remove("show");
 
 }
 
 
-function transfer(){
-
- const account=currentAccount();
-
- if(!account)return;
+async function transfer(){
 
  const currency=
-   $("transferCurrency").value;
+  $("transferCurrency").value;
 
  const amount=
-   Number(
-     $("transferAmount").value
-   );
+  Number(
+   $("transferAmount").value
+  );
 
  const recipient=
-   $("transferRecipient")
+  $("transferRecipient")
    .value.trim();
 
+ if(!amount||amount<=0){
 
- if(!amount || amount <= 0){
-
-   return showError(
-     "transferError",
-     "Enter a valid amount."
-   );
-
- }
-
-
- if(recipient.length < 2){
-
-   return showError(
-     "transferError",
-     "Enter the recipient name."
-   );
+  return showError(
+   "transferError",
+   "Enter a valid amount."
+  );
 
  }
 
+ if(recipient.length<2){
 
- if(
-   amount >
-   account.balances[currency]
- ){
-
-   return showError(
-     "transferError",
-     "Insufficient balance."
-   );
+  return showError(
+   "transferError",
+   "Enter the recipient name."
+  );
 
  }
 
+ try{
 
- account.balances[currency]-=
-   amount;
+  await api(
+   "/api/transactions/transfer",
+   {
+    method:"POST",
+    body:JSON.stringify({
+     currency,
+     amount,
+     recipient
+    })
+   }
+  );
 
+  closeTransfer();
 
- addTransaction(
-   account,
-   "debit",
-   "Transfer to " + recipient,
-   amount,
-   currency
- );
+  await refreshDashboard();
 
+  toast(
+   "Demo transfer recorded."
+  );
 
- saveAccounts();
+ }catch(error){
 
- closeTransfer();
+  showError(
+   "transferError",
+   error.message
+  );
 
- renderBalance();
-
- renderCurrencyBalances();
-
- renderTransactions();
-
- toast(
-   "Transfer recorded as a debit."
- );
+ }
 
 }
 
 
-/* =========================================================
-   PROFILE IMAGE
-   ========================================================= */
+/* PROFILE */
 
 function chooseProfileImage(){
 
@@ -3248,211 +2903,199 @@ function chooseProfileImage(){
 }
 
 
-function handleProfileImage(event){
+async function handleProfileImage(event){
 
- const file =
-   event.target.files[0];
+ const file=
+  event.target.files[0];
 
  if(!file)return;
 
+ if(!file.type.startsWith("image/")){
 
- if(
-   !file.type.startsWith("image/")
- ){
+  toast(
+   "Please select an image file."
+  );
 
-   toast(
-     "Please select an image file."
-   );
-
-   return;
+  return;
 
  }
 
+ const reader=
+  new FileReader();
 
- const reader=new FileReader();
+ reader.onload=
+  async function(){
 
+   try{
 
- reader.onload=function(){
+    await api(
+     "/api/profile",
+     {
+      method:"PUT",
+      body:JSON.stringify({
+       profileImage:reader.result
+      })
+     }
+    );
 
-   const account=currentAccount();
-
-   if(!account)return;
-
-   account.profileImage=
+    currentUser.profileImage=
      reader.result;
 
-   saveAccounts();
+    renderAvatar();
 
-   renderAvatar();
+    $("profileImageInput").value="";
 
-   $("profileImageInput").value="";
-
-   toast(
+    toast(
      "Profile picture updated."
-   );
+    );
 
- };
+   }catch(error){
 
+    toast(error.message);
+
+   }
+
+  };
 
  reader.readAsDataURL(file);
 
 }
 
 
-function saveProfileName(){
-
- const account=currentAccount();
-
- if(!account)return;
+async function saveProfileName(){
 
  const name=
-   $("profileName")
+  $("profileName")
    .value.trim();
 
+ if(name.length<2){
 
- if(name.length < 2){
+  toast(
+   "Enter a valid name."
+  );
 
-   toast(
-     "Enter a valid name."
+  return;
+
+ }
+
+ try{
+
+  const result=
+   await api(
+    "/api/profile",
+    {
+     method:"PUT",
+     body:JSON.stringify({
+      name
+     })
+    }
    );
 
-   return;
+  currentUser=
+   result.user;
 
- }
+  renderDashboard();
 
-
- account.name=name;
-
- saveAccounts();
-
- $("welcomeName").textContent=
-   name;
-
- $("dashName").textContent=
-   name;
-
- renderAvatar();
-
- renderCustomerList();
-
- toast(
+  toast(
    "Profile updated."
- );
+  );
 
-}
+ }catch(error){
 
-
-/* =========================================================
-   NOTIFICATIONS
-   ========================================================= */
-
-function renderNotifications(){
-
- const account=currentAccount();
-
- if(!account)return;
-
- const list =
-   account.notifications || [];
-
-
- if(!list.length){
-
-   $("notifications").innerHTML="";
-
-   return;
+  toast(error.message);
 
  }
 
+}
 
- $("notifications").innerHTML =
-   list.slice()
-   .reverse()
-   .slice(0,10)
-   .map(n=>`
 
-   <div class="notification">
+/* ADMIN */
 
-     <strong>
-       Account Notification
-     </strong>
+async function loadAdminData(){
 
-     <div>
-       ${escapeHtml(n.message)}
-     </div>
+ try{
 
-     <small>
-       ${escapeHtml(n.date)}
-     </small>
+  const result=
+   await api("/api/admin/overview");
 
-   </div>
+  renderCustomerList(
+   result.customers||
+   []
+  );
 
- `).join("");
+  renderRequestList(
+   result.requests||
+   []
+  );
+
+  renderAdminChat();
+
+ }catch(error){
+
+  /*
+   If the logged-in account is not an administrator,
+   the server can simply return an authorization error.
+  */
+
+  $("adminPanel").style.display="none";
+
+ }
 
 }
 
 
-/* =========================================================
-   CUSTOMER LIST
-   ========================================================= */
-
-function renderCustomerList(){
+function renderCustomerList(customers){
 
  const list=
-   $("customerList");
+  $("customerList");
 
+ if(!customers.length){
 
- if(!accounts.length){
+  list.innerHTML=
+   '<div class="empty">No customers registered.</div>';
 
-   list.innerHTML =
-     '<div class="empty">No customers registered.</div>';
-
-   return;
+  return;
 
  }
-
 
  if(!selectedCustomerId){
 
-   selectedCustomerId =
-     currentUserId ||
-     accounts[0].id;
+  selectedCustomerId=
+   customers[0].id;
 
  }
 
+ list.innerHTML=
+  customers
+   .map(a=>`
 
- list.innerHTML =
-   accounts.map(a=>`
-
-   <button
+    <button
      class="customerItem ${
-       a.id===selectedCustomerId
+      a.id===selectedCustomerId
        ?"active":""
      }"
      onclick="selectCustomer('${a.id}')">
 
      <div>
 
-       <strong>
-         ${escapeHtml(a.name)}
-       </strong>
+      <strong>
+       ${escapeHtml(a.name)}
+      </strong>
 
-       <small>
-         ${escapeHtml(a.email)}
-       </small>
+      <small>
+       ${escapeHtml(a.email)}
+      </small>
 
      </div>
 
      <small>
-       ${a.primaryCurrency}
+      ${escapeHtml(a.primaryCurrency||"NGN")}
      </small>
 
-   </button>
+    </button>
 
- `).join("");
-
-
- renderAdminChat();
+   `)
+   .join("");
 
 }
 
@@ -3461,453 +3104,549 @@ function selectCustomer(id){
 
  selectedCustomerId=id;
 
- renderCustomerList();
-
- renderAdminChat();
+ loadAdminData();
 
 }
 
 
-function selectedCustomer(){
+function renderRequestList(requests){
 
- return findAccount(
-   selectedCustomerId
- );
+ const box=
+  $("requestList");
 
-}
+ if(!requests.length){
 
+  box.innerHTML=
+   '<div class="empty">No pending requests.</div>';
 
-/* =========================================================
-   ADMIN CREDIT
-   ========================================================= */
-
-function adminCredit(){
-
- const customer=
-   selectedCustomer();
-
-
- if(!customer){
-
-   toast(
-     "Select a customer first."
-   );
-
-   return;
+  return;
 
  }
 
+ box.innerHTML=
+  requests
+   .map(r=>`
+
+    <div class="requestItem">
+
+     <strong>
+      ${escapeHtml(r.customerName||"Customer")}
+     </strong>
+
+     <small>
+      ${escapeHtml(r.customerEmail||"")}
+     </small>
+
+     <div>
+      Request:
+      ${money(
+       r.amount,
+       r.currency
+      )}
+     </div>
+
+     <small>
+      ${escapeHtml(r.date||"")}
+     </small>
+
+     <div class="requestButtons">
+
+      <button
+       class="approveBtn"
+       onclick="approveRequest('${r.id}')">
+       Approve &amp; Credit
+      </button>
+
+      <button
+       class="rejectBtn"
+       onclick="rejectRequest('${r.id}')">
+       Reject
+      </button>
+
+     </div>
+
+    </div>
+
+   `)
+   .join("");
+
+}
+
+
+async function approveRequest(id){
+
+ try{
+
+  await api(
+   "/api/admin/requests/"+encodeURIComponent(id)+"/approve",
+   {
+    method:"POST"
+   }
+  );
+
+  toast(
+   "Demo request approved and credited."
+  );
+
+  await refreshDashboard();
+
+ }catch(error){
+
+  toast(error.message);
+
+ }
+
+}
+
+
+async function rejectRequest(id){
+
+ try{
+
+  await api(
+   "/api/admin/requests/"+encodeURIComponent(id)+"/reject",
+   {
+    method:"POST"
+   }
+  );
+
+  toast(
+   "Demo request rejected."
+  );
+
+  await loadAdminData();
+
+ }catch(error){
+
+  toast(error.message);
+
+ }
+
+}
+
+
+async function adminCredit(){
+
+ if(!selectedCustomerId){
+
+  toast(
+   "Select a customer first."
+  );
+
+  return;
+
+ }
 
  const currency=
-   $("adminCurrency").value;
+  $("adminCurrency").value;
 
  const amount=
-   Number(
-     $("adminAmount").value
-   );
+  Number(
+   $("adminAmount").value
+  );
 
+ if(!amount||amount<=0){
 
- if(!amount || amount <= 0){
+  toast(
+   "Enter a valid amount."
+  );
 
-   toast(
-     "Enter a valid amount."
-   );
-
-   return;
-
- }
-
-
- customer.balances[currency]+=
-   amount;
-
-
- addTransaction(
-   customer,
-   "credit",
-   "Funds credited in fictional account",
-   amount,
-   currency
- );
-
-
- saveAccounts();
-
- $("adminAmount").value="";
-
-
- if(
-   customer.id === currentUserId
- ){
-
-   renderBalance();
-
-   renderCurrencyBalances();
-
-   renderTransactions();
+  return;
 
  }
 
+ try{
 
- renderCustomerList();
+  await api(
+   "/api/admin/customers/"+
+   encodeURIComponent(selectedCustomerId)+
+   "/credit",
+   {
+    method:"POST",
+    body:JSON.stringify({
+     currency,
+     amount
+    })
+   }
+  );
 
- toast(
-   money(
-     amount,
-     currency
-   ) +
-   " credited successfully."
- );
+  $("adminAmount").value="";
+
+  toast(
+   money(amount,currency)+
+   " credited to the demo account."
+  );
+
+  await refreshDashboard();
+
+ }catch(error){
+
+  toast(error.message);
+
+ }
 
 }
 
 
-/* =========================================================
-   ADMIN NOTIFICATION
-   ========================================================= */
+async function adminNotify(){
 
-function adminNotify(){
+ if(!selectedCustomerId){
 
- const customer=
-   selectedCustomer();
+  toast(
+   "Select a customer first."
+  );
 
- if(!customer){
-
-   toast(
-     "Select a customer first."
-   );
-
-   return;
+  return;
 
  }
 
-
  const message=
-   $("adminNotification")
+  $("adminNotification")
    .value.trim();
-
 
  if(!message){
 
-   toast(
-     "Write a notification first."
-   );
+  toast(
+   "Write a notification first."
+  );
 
-   return;
-
- }
-
-
- customer.notifications.push({
-
-   id:makeId(),
-
-   message:message,
-
-   date:now()
-
- });
-
-
- saveAccounts();
-
- $("adminNotification").value="";
-
-
- if(
-   customer.id === currentUserId
- ){
-
-   renderNotifications();
+  return;
 
  }
 
+ try{
 
- toast(
+  await api(
+   "/api/admin/customers/"+
+   encodeURIComponent(selectedCustomerId)+
+   "/notify",
+   {
+    method:"POST",
+    body:JSON.stringify({
+     message
+    })
+   }
+  );
+
+  $("adminNotification").value="";
+
+  toast(
    "Notification sent."
- );
+  );
+
+  await refreshDashboard();
+
+ }catch(error){
+
+  toast(error.message);
+
+ }
 
 }
 
 
-/* =========================================================
-   SUPPORT CHAT
-   ========================================================= */
+/* CUSTOMER FUND REQUEST */
+
+async function requestDemoFunds(){
+
+ if(!currentUser){
+
+  openModal("login");
+
+  return;
+
+ }
+
+ const currency=
+  $("requestCurrency").value;
+
+ const amount=
+  Number(
+   $("requestAmount").value
+  );
+
+ if(!amount||amount<=0){
+
+  toast(
+   "Enter a valid amount."
+  );
+
+  return;
+
+ }
+
+ try{
+
+  await api(
+   "/api/requests",
+   {
+    method:"POST",
+    body:JSON.stringify({
+     currency,
+     amount
+    })
+   }
+  );
+
+  $("requestAmount").value="";
+
+  toast(
+   "Demo funding request sent to administration."
+  );
+
+  await refreshDashboard();
+
+ }catch(error){
+
+  toast(error.message);
+
+ }
+
+}
+
+
+/* SUPPORT */
 
 function renderChat(){
 
- const account=
-   currentAccount();
-
- if(!account)return;
+ if(!currentUser)return;
 
  const body=
-   $("chatBody");
+  $("chatBody");
 
  const messages=
-   account.support || [];
-
+  currentUser.support||
+  [];
 
  if(!messages.length){
 
-   body.innerHTML=`
+  body.innerHTML=`
 
    <div class="msg">
-
-     Hello. Welcome to customer support.
-     How can we help you?
-
+    Hello. Welcome to customer support.
+    How can we help you?
    </div>
 
-   `;
+  `;
 
-   return;
+  return;
 
  }
 
-
  body.innerHTML=
-   messages.map(m=>`
+  messages
+   .map(m=>`
 
-   <div class="msg ${
+    <div class="msg ${
      m.sender==="customer"
-     ?"user":""
-   }">
+      ?"user":""
+    }">
 
      ${
-       m.sender==="customer"
-
-       ? escapeHtml(m.message)
-
-       : "<strong>Support:</strong><br>"+
-         escapeHtml(m.message)
+      m.sender==="customer"
+       ?escapeHtml(m.message)
+       :"<strong>Support:</strong><br>"+
+        escapeHtml(m.message)
      }
 
      <div
-       style="
-       font-size:10px;
-       color:#718096;
-       margin-top:4px">
+      style="
+      font-size:10px;
+      color:#718096;
+      margin-top:4px">
 
-       ${escapeHtml(m.date)}
+      ${escapeHtml(m.date)}
 
      </div>
 
-   </div>
+    </div>
 
- `).join("");
-
+   `)
+   .join("");
 
  body.scrollTop=
-   body.scrollHeight;
+  body.scrollHeight;
 
 }
 
 
-function sendChat(){
-
- const account=
-   currentAccount();
-
- if(!account)return;
+async function sendChat(){
 
  const input=
-   $("chatInput");
+  $("chatInput");
 
  const text=
-   input.value.trim();
+  input.value.trim();
 
  if(!text)return;
 
+ try{
 
- account.support.push({
+  await api(
+   "/api/support",
+   {
+    method:"POST",
+    body:JSON.stringify({
+     message:text
+    })
+   }
+  );
 
-   id:makeId(),
+  input.value="";
 
-   sender:"customer",
+  await refreshDashboard();
 
-   message:text,
-
-   date:now()
-
- });
-
-
- saveAccounts();
-
- input.value="";
-
- renderChat();
-
- renderAdminChat();
-
- toast(
+  toast(
    "Message sent to support."
- );
+  );
+
+ }catch(error){
+
+  toast(error.message);
+
+ }
 
 }
 
-
-/* =========================================================
-   ADMIN SUPPORT
-   ========================================================= */
 
 function renderAdminChat(){
 
- const customer=
-   selectedCustomer();
-
  const box=
-   $("adminChat");
+  $("adminChat");
 
+ if(!selectedCustomerId){
 
- if(!customer){
+  box.innerHTML=
+   '<div class="empty">Select a customer.</div>';
 
-   box.innerHTML=
-     '<div class="empty">Select a customer.</div>';
-
-   return;
-
- }
-
-
- const messages=
-   customer.support || [];
-
-
- if(!messages.length){
-
-   box.innerHTML=
-     '<div class="empty">No support messages.</div>';
-
-   return;
+  return;
 
  }
 
+ const customer=
+  currentUser &&
+  selectedCustomerId===currentUser.id
+   ?currentUser
+   :null;
 
- box.innerHTML=
-   messages.map(m=>`
+ if(customer){
 
-   <div class="msg ${
-     m.sender==="customer"
-     ?"user":""
-   }">
+  const messages=
+   customer.support||[];
 
-     ${
+  box.innerHTML=
+   messages.length
+    ?messages.map(m=>`
+
+      <div class="msg ${
        m.sender==="customer"
+        ?"user":""
+      }">
 
-       ? "<strong>Customer:</strong><br>"+
-         escapeHtml(m.message)
+       <strong>
+        ${m.sender==="customer"
+         ?"Customer:"
+         :"Support:"}
+       </strong>
 
-       : "<strong>Support:</strong><br>"+
-         escapeHtml(m.message)
-     }
+       <br>
 
-     <div
-       style="
-       font-size:10px;
-       color:#718096;
-       margin-top:4px">
+       ${escapeHtml(m.message)}
 
-       ${escapeHtml(m.date)}
+       <div
+        style="
+        font-size:10px;
+        color:#718096;
+        margin-top:4px">
 
-     </div>
+        ${escapeHtml(m.date)}
 
-   </div>
+       </div>
 
- `).join("");
+      </div>
 
+     `).join("")
+    :'<div class="empty">No support messages.</div>';
 
- box.scrollTop=
+  box.scrollTop=
    box.scrollHeight;
+
+ }
 
 }
 
 
-function adminReplyMessage(){
+async function adminReplyMessage(){
 
- const customer=
-   selectedCustomer();
+ if(!selectedCustomerId){
 
- if(!customer){
+  toast(
+   "Select a customer first."
+  );
 
-   toast(
-     "Select a customer first."
-   );
-
-   return;
+  return;
 
  }
 
-
  const input=
-   $("adminReply");
+  $("adminReply");
 
  const text=
-   input.value.trim();
-
+  input.value.trim();
 
  if(!text){
 
-   toast(
-     "Write a reply first."
-   );
+  toast(
+   "Write a reply first."
+  );
 
-   return;
-
- }
-
-
- customer.support.push({
-
-   id:makeId(),
-
-   sender:"admin",
-
-   message:text,
-
-   date:now()
-
- });
-
-
- saveAccounts();
-
- input.value="";
-
- renderAdminChat();
-
-
- if(
-   customer.id === currentUserId
- ){
-
-   renderChat();
+  return;
 
  }
 
+ try{
 
- toast(
+  await api(
+   "/api/admin/customers/"+
+   encodeURIComponent(selectedCustomerId)+
+   "/support",
+   {
+    method:"POST",
+    body:JSON.stringify({
+     message:text
+    })
+   }
+  );
+
+  input.value="";
+
+  toast(
    "Support reply sent."
- );
+  );
+
+  await refreshDashboard();
+
+ }catch(error){
+
+  toast(error.message);
+
+ }
 
 }
 
 
-/* =========================================================
-   SERVICES
-   ========================================================= */
+/* SERVICES */
 
 function serviceUnavailable(service){
 
  $("serviceTitle").textContent=
-   service;
+  service;
 
  $("serviceText").textContent=
-   "Service currently unavailable.";
+  "This fictional demo service is currently unavailable.";
 
  $("serviceModal")
-   .classList.add("show");
+  .classList.add("show");
 
 }
 
@@ -3915,58 +3654,42 @@ function serviceUnavailable(service){
 function closeService(){
 
  $("serviceModal")
-   .classList.remove("show");
+  .classList.remove("show");
 
 }
 
 
-/* =========================================================
-   DASHBOARD UTILITIES
-   ========================================================= */
+/* UTILITIES */
 
-function refreshDashboard(){
+async function refreshDashboard(){
 
- renderBalance();
+ if(!currentUser)return;
 
- renderCurrencyBalances();
+ try{
 
- renderTransactions();
+  const result=
+   await api("/api/auth/me");
 
- renderNotifications();
+  currentUser=
+   result.user;
 
- renderChat();
+  renderDashboard();
 
- toast(
-   "Dashboard refreshed."
- );
+ }catch(error){
 
-}
-
-
-function refreshAdmin(){
-
- accounts=loadAccounts();
-
- renderCustomerList();
-
-
- if(currentAccount()){
-
-   renderBalance();
-
-   renderCurrencyBalances();
-
-   renderTransactions();
-
-   renderNotifications();
-
-   renderChat();
+  logout(false);
 
  }
 
+}
+
+
+async function refreshAdmin(){
+
+ await loadAdminData();
 
  toast(
-   "Customer list refreshed."
+  "Administration refreshed."
  );
 
 }
@@ -3975,9 +3698,9 @@ function refreshAdmin(){
 function scrollToServices(){
 
  $("dashboardServices")
-   .scrollIntoView({
-     behavior:"smooth"
-   });
+  .scrollIntoView({
+   behavior:"smooth"
+  });
 
 }
 
@@ -3985,116 +3708,73 @@ function scrollToServices(){
 function toggleChat(){
 
  $("chat")
-   .classList.toggle("show");
-
+  .classList.toggle("show");
 
  if(
-   $("chat")
+  $("chat")
    .classList
    .contains("show")
  ){
 
-   renderChat();
+  renderChat();
 
  }
 
 }
 
 
-/* =========================================================
-   LOGOUT
-   ========================================================= */
+async function logout(showToast=true){
 
-function logout(){
+ if(refreshTimer){
 
- localStorage.removeItem(
-   SESSION_KEY
- );
+  clearInterval(refreshTimer);
 
- currentUserId=null;
+  refreshTimer=null;
 
- $("dashboard")
-   .style.display="none";
+ }
 
- $("publicSite")
-   .style.display="block";
+ try{
 
- toast(
+  await api(
+   "/api/auth/logout",
+   {
+    method:"POST"
+   }
+  );
+
+ }catch(error){}
+
+ currentUser=null;
+
+ $("dashboard").style.display="none";
+
+ $("publicSite").style.display="block";
+
+ if(showToast){
+
+  toast(
    "Signed out."
- );
+  );
+
+ }
 
 }
 
 
-/* =========================================================
-   LOCAL RESET
-   ========================================================= */
-
-function clearAllAccounts(){
-
- const answer=
-   confirm(
-     "This will delete all locally stored fictional accounts, balances, transactions and support messages. Continue?"
-   );
-
-
- if(!answer)return;
-
-
- localStorage.removeItem(
-   ACCOUNTS_KEY
- );
-
- localStorage.removeItem(
-   SESSION_KEY
- );
-
- accounts=[];
-
- currentUserId=null;
-
- selectedCustomerId=null;
-
- $("dashboard")
-   .style.display="none";
-
- $("publicSite")
-   .style.display="block";
-
- toast(
-   "Local accounts cleared."
- );
-
-}
-
-
-/* =========================================================
-   START APPLICATION
-   ========================================================= */
+/* START */
 
 window.addEventListener(
  "load",
- ()=>{
+ async()=>{
 
-   accounts=loadAccounts();
+  const loggedIn=
+   await loadMe();
 
+  if(loggedIn){
 
-   if(
-     currentUserId &&
-     findAccount(currentUserId)
-   ){
+   showDashboard();
 
-     showDashboard();
-
-   }else{
-
-     currentUserId=null;
-
-     localStorage.removeItem(
-       SESSION_KEY
-     );
-
-   }
+  }
 
  }
 );
