@@ -7,491 +7,1141 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
 :root{
- --navy:#071a35;--navy2:#0d315d;--blue:#1769e0;
- --gold:#d6aa43;--light:#f4f7fb;--white:#fff;
- --text:#182536;--muted:#718096;--green:#159447;
- --red:#d93434;--border:#e3e9f1
+ --navy:#071a35;
+ --navy2:#0d315d;
+ --blue:#1769e0;
+ --gold:#d6aa43;
+ --light:#f4f7fb;
+ --white:#fff;
+ --text:#182536;
+ --muted:#718096;
+ --green:#159447;
+ --red:#d93434;
+ --border:#e3e9f1
 }
-body{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
+
+body{
+ font-family:Arial,Helvetica,sans-serif;
+ background:var(--light);
+ color:var(--text)
+}
+
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 a{text-decoration:none;color:inherit}
 
+/* FICTIONAL APP NOTICE */
+
 .prototype{
- background:#fff3cd;color:#725b13;text-align:center;padding:7px;
- font-size:11px;font-weight:bold
+ background:#fff3cd;
+ color:#725b13;
+ text-align:center;
+ padding:7px;
+ font-size:11px;
+ font-weight:bold
 }
+
+/* TOP BAR */
 
 .top{
- background:#041327;color:#dbe7f5;padding:9px 5%;
- display:flex;justify-content:space-between;font-size:12px
+ background:#041327;
+ color:#dbe7f5;
+ padding:9px 5%;
+ display:flex;
+ justify-content:space-between;
+ font-size:12px
 }
 
+/* HEADER */
+
 header{
- background:#fff;position:sticky;top:0;z-index:20;
+ background:#fff;
+ position:sticky;
+ top:0;
+ z-index:20;
  box-shadow:0 2px 15px #0001
 }
 
 .nav{
- max-width:1200px;margin:auto;min-height:72px;padding:0 5%;
- display:flex;align-items:center;justify-content:space-between;gap:20px
+ max-width:1200px;
+ margin:auto;
+ min-height:72px;
+ padding:0 5%;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:20px
 }
 
 .logo{
- display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)
+ display:flex;
+ align-items:center;
+ gap:9px;
+ font-weight:800;
+ color:var(--navy)
 }
 
 .mark{
- width:40px;height:40px;border-radius:50%;background:var(--navy);
- color:var(--gold);border:2px solid var(--gold);
- display:grid;place-items:center;font-size:12px
+ width:40px;
+ height:40px;
+ border-radius:50%;
+ background:var(--navy);
+ color:var(--gold);
+ border:2px solid var(--gold);
+ display:grid;
+ place-items:center;
+ font-size:12px
 }
 
-.links{display:flex;gap:24px;font-size:14px;font-weight:bold}
-.actions{display:flex;gap:8px}
+.links{
+ display:flex;
+ gap:24px;
+ font-size:14px;
+ font-weight:bold
+}
+
+.actions{
+ display:flex;
+ gap:8px
+}
 
 .btn{
- border:0;border-radius:8px;padding:12px 18px;font-weight:bold
+ border:0;
+ border-radius:8px;
+ padding:12px 18px;
+ font-weight:bold
 }
-.primary{background:var(--blue);color:#fff}
-.dark{background:var(--navy);color:#fff}
-.outline{background:#fff;border:1px solid #d8e0eb;color:var(--navy)}
+
+.primary{
+ background:var(--blue);
+ color:#fff
+}
+
+.dark{
+ background:var(--navy);
+ color:#fff
+}
+
+.outline{
+ background:#fff;
+ border:1px solid #d8e0eb;
+ color:var(--navy)
+}
+
 .full{width:100%}
 
+/* =========================================================
+   NEW HOME HERO
+   ========================================================= */
+
 .hero{
- min-height:560px;
+ min-height:620px;
  background:
- linear-gradient(90deg,#041327f5,#041327d9,#04132755),
+ linear-gradient(90deg,#041327f7,#041327e8,#041327b8),
  url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=85");
- background-size:cover;background-position:center;
- color:#fff;display:flex;align-items:center
+ background-size:cover;
+ background-position:center;
+ color:#fff;
+ display:flex;
+ align-items:center;
+ overflow:hidden
 }
 
-.heroInner{max-width:1200px;width:90%;margin:auto;padding:70px 0}
-.heroText{max-width:680px}
-.eyebrow{
- color:#e0bc61;font-weight:bold;letter-spacing:2px;
- font-size:12px;margin-bottom:15px
+.heroInner{
+ max-width:1200px;
+ width:90%;
+ margin:auto;
+ padding:65px 0;
+ display:grid;
+ grid-template-columns:1.05fr .95fr;
+ gap:55px;
+ align-items:center
 }
-h1{font-size:clamp(38px,6vw,68px);line-height:1.05;margin-bottom:20px}
-.hero p{font-size:18px;color:#d8e4f2;line-height:1.6;margin-bottom:28px}
-.heroButtons{display:flex;gap:12px;flex-wrap:wrap}
+
+.heroText{
+ max-width:680px
+}
+
+.eyebrow{
+ color:#e0bc61;
+ font-weight:bold;
+ letter-spacing:2px;
+ font-size:12px;
+ margin-bottom:15px
+}
+
+h1{
+ font-size:clamp(38px,6vw,68px);
+ line-height:1.05;
+ margin-bottom:20px
+}
+
+.hero p{
+ font-size:18px;
+ color:#d8e4f2;
+ line-height:1.6;
+ margin-bottom:28px
+}
+
+.heroButtons{
+ display:flex;
+ gap:12px;
+ flex-wrap:wrap
+}
+
+/* PHONE / WOMAN VISUAL */
+
+.heroVisual{
+ position:relative;
+ min-height:450px;
+ display:flex;
+ align-items:center;
+ justify-content:center
+}
+
+.phoneCard{
+ width:min(390px,88%);
+ height:440px;
+ border-radius:30px;
+ overflow:hidden;
+ position:relative;
+ transform:rotate(5deg);
+ box-shadow:0 30px 70px #0008;
+ border:8px solid #ffffff18;
+ background:#17395f;
+ z-index:2
+}
+
+.phoneCard img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ object-position:center;
+ display:block
+}
+
+.phoneCard:after{
+ content:"";
+ position:absolute;
+ inset:0;
+ background:
+ linear-gradient(
+  180deg,
+  #071a3500 40%,
+  #071a35df 100%
+ )
+}
+
+.phoneCaption{
+ position:absolute;
+ left:25px;
+ right:25px;
+ bottom:24px;
+ z-index:3
+}
+
+.phoneCaption strong{
+ display:block;
+ font-size:20px;
+ margin-bottom:6px
+}
+
+.phoneCaption span{
+ font-size:12px;
+ color:#d8e4f2
+}
+
+.floatCard{
+ position:absolute;
+ background:#fff;
+ color:var(--navy);
+ border-radius:15px;
+ padding:15px 18px;
+ box-shadow:0 18px 45px #0005;
+ font-size:12px;
+ font-weight:bold;
+ z-index:4
+}
+
+.floatCard b{
+ display:block;
+ font-size:18px;
+ margin-top:5px;
+ color:var(--blue)
+}
+
+.floatCard.one{
+ left:0;
+ top:60px
+}
+
+.floatCard.two{
+ right:0;
+ bottom:45px
+}
+
+/* TRUST */
 
 .trust{
- background:#fff;padding:20px 5%;display:flex;
- justify-content:center;gap:35px;flex-wrap:wrap;
- color:#607080;font-size:13px;font-weight:bold
+ background:#fff;
+ padding:20px 5%;
+ display:flex;
+ justify-content:center;
+ gap:35px;
+ flex-wrap:wrap;
+ color:#607080;
+ font-size:13px;
+ font-weight:bold
 }
 
-.section{padding:70px 5%}
-.inner{max-width:1150px;margin:auto}
-.head{text-align:center;max-width:700px;margin:0 auto 38px}
-.head h2{font-size:35px;color:var(--navy);margin-bottom:10px}
-.head p{color:var(--muted);line-height:1.6}
+/* GENERAL SECTIONS */
 
-.cards,.promoGrid{
- display:grid;grid-template-columns:repeat(3,1fr);gap:20px
+.section{
+ padding:70px 5%
 }
 
-.card,.promo,.box,.panel,.profileCard,.service,.adminBox{
- background:#fff;border-radius:15px;
+.inner{
+ max-width:1150px;
+ margin:auto
+}
+
+.head{
+ text-align:center;
+ max-width:700px;
+ margin:0 auto 38px
+}
+
+.head h2{
+ font-size:35px;
+ color:var(--navy);
+ margin-bottom:10px
+}
+
+.head p{
+ color:var(--muted);
+ line-height:1.6
+}
+
+.cards,
+.promoGrid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:20px
+}
+
+.card,
+.promo,
+.box,
+.panel,
+.profileCard,
+.service,
+.adminBox{
+ background:#fff;
+ border-radius:15px;
  box-shadow:0 12px 35px #071a5314
 }
 
-.card{padding:28px}
+.card{
+ padding:28px
+}
+
 .icon{
- width:50px;height:50px;border-radius:12px;background:#eaf2ff;
- color:var(--blue);display:grid;place-items:center;
- font-size:23px;margin-bottom:18px
+ width:50px;
+ height:50px;
+ border-radius:12px;
+ background:#eaf2ff;
+ color:var(--blue);
+ display:grid;
+ place-items:center;
+ font-size:23px;
+ margin-bottom:18px
 }
 
-.card h3,.promo h3,.box h3,.panel h3,.profileCard h3,.service h3{
- color:var(--navy);margin-bottom:8px
+.card h3,
+.promo h3,
+.box h3,
+.panel h3,
+.profileCard h3,
+.service h3{
+ color:var(--navy);
+ margin-bottom:8px
 }
 
-.card p,.promo p,.box p{
- color:var(--muted);font-size:14px;line-height:1.6
+.card p,
+.promo p,
+.box p{
+ color:var(--muted);
+ font-size:14px;
+ line-height:1.6
 }
 
-.security{background:var(--navy);color:#fff}
-.security .head h2{color:#fff}
-.security .head p{color:#bdcce0}
+/* SECURITY */
+
+.security{
+ background:var(--navy);
+ color:#fff
+}
+
+.security .head h2{
+ color:#fff
+}
+
+.security .head p{
+ color:#bdcce0
+}
 
 .securityGrid{
- display:grid;grid-template-columns:repeat(3,1fr);gap:18px
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:18px
 }
 
 .securityBox{
- padding:24px;border:1px solid #ffffff20;
- border-radius:14px;background:#ffffff08
+ padding:24px;
+ border:1px solid #ffffff20;
+ border-radius:14px;
+ background:#ffffff08
 }
 
-.securityBox strong{display:block;margin-bottom:7px}
+.securityBox strong{
+ display:block;
+ margin-bottom:7px
+}
+
 .securityBox span{
- font-size:13px;color:#bdcce0;line-height:1.5
+ font-size:13px;
+ color:#bdcce0;
+ line-height:1.5
 }
 
-.promo{overflow:hidden}
-.promo img{width:100%;height:170px;object-fit:cover}
-.promoBody{padding:20px}
+/* CONTACT */
 
 .contact{
- display:grid;grid-template-columns:1fr 1fr;gap:22px
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:22px
 }
-.box{padding:28px}
+
+.box{
+ padding:28px
+}
+
+/* FOOTER */
 
 footer{
- background:#041327;color:#9fb0c5;padding:40px 5%
+ background:#041327;
+ color:#9fb0c5;
+ padding:40px 5%
 }
-.footer{max-width:1150px;margin:auto}
-.footer .logo{color:#fff;margin-bottom:12px}
+
+.footer{
+ max-width:1150px;
+ margin:auto
+}
+
+.footer .logo{
+ color:#fff;
+ margin-bottom:12px
+}
+
 .copy{
- margin-top:25px;padding-top:18px;
- border-top:1px solid #ffffff15;font-size:11px
+ margin-top:25px;
+ padding-top:18px;
+ border-top:1px solid #ffffff15;
+ font-size:11px
 }
 
 /* MODALS */
 
 .modal{
- display:none;position:fixed;inset:0;background:#000a1bb8;
- z-index:100;align-items:center;justify-content:center;padding:20px
+ display:none;
+ position:fixed;
+ inset:0;
+ background:#000a1bb8;
+ z-index:100;
+ align-items:center;
+ justify-content:center;
+ padding:20px
 }
-.modal.show{display:flex}
+
+.modal.show{
+ display:flex
+}
 
 .modalBox{
- background:#fff;width:100%;max-width:470px;
- border-radius:18px;padding:30px;position:relative;
- max-height:92vh;overflow:auto
+ background:#fff;
+ width:100%;
+ max-width:470px;
+ border-radius:18px;
+ padding:30px;
+ position:relative;
+ max-height:92vh;
+ overflow:auto
 }
 
 .close{
- position:absolute;right:17px;top:12px;
- border:0;background:none;font-size:25px;color:#777
+ position:absolute;
+ right:17px;
+ top:12px;
+ border:0;
+ background:none;
+ font-size:25px;
+ color:#777
 }
 
-.modalBox h2{color:var(--navy);margin-bottom:5px}
+.modalBox h2{
+ color:var(--navy);
+ margin-bottom:5px
+}
+
 .modalBox>p{
- font-size:13px;color:var(--muted);margin-bottom:20px
+ font-size:13px;
+ color:var(--muted);
+ margin-bottom:20px
 }
 
-.field{margin-bottom:14px}
+.field{
+ margin-bottom:14px
+}
+
 .field label{
- display:block;font-size:12px;font-weight:bold;margin-bottom:6px
-}
-.field input,.field select,.field textarea{
- width:100%;padding:13px;border:1px solid #d8e0eb;
- border-radius:8px;outline:0
+ display:block;
+ font-size:12px;
+ font-weight:bold;
+ margin-bottom:6px
 }
 
-.field textarea{resize:vertical;min-height:90px}
+.field input,
+.field select,
+.field textarea{
+ width:100%;
+ padding:13px;
+ border:1px solid #d8e0eb;
+ border-radius:8px;
+ outline:0
+}
+
+.field textarea{
+ resize:vertical;
+ min-height:90px
+}
 
 .error{
- display:none;background:#ffe8e8;color:#a21d1d;
- padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px
+ display:none;
+ background:#ffe8e8;
+ color:#a21d1d;
+ padding:10px;
+ border-radius:8px;
+ font-size:12px;
+ margin-bottom:12px
 }
-.error.show{display:block}
 
-/* DASHBOARD */
+.error.show{
+ display:block
+}
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
 
 #dashboard{
- display:none;min-height:100vh;background:#f3f6fa
+ display:none;
+ min-height:100vh;
+ background:#f3f6fa
 }
 
 .dashNav{
- background:var(--navy);color:#fff;padding:14px 5%;
- display:flex;justify-content:space-between;
- align-items:center;gap:15px
+ background:var(--navy);
+ color:#fff;
+ padding:14px 5%;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:15px
 }
 
-.dashUser{display:flex;align-items:center;gap:9px}
+.dashUser{
+ display:flex;
+ align-items:center;
+ gap:9px
+}
 
 .avatarWrap{
- position:relative;width:48px;height:48px
+ position:relative;
+ width:48px;
+ height:48px
 }
 
 .avatar{
- width:48px;height:48px;border-radius:50%;
- background:var(--gold);color:var(--navy);
- display:grid;place-items:center;font-weight:bold;overflow:hidden
+ width:48px;
+ height:48px;
+ border-radius:50%;
+ background:var(--gold);
+ color:var(--navy);
+ display:grid;
+ place-items:center;
+ font-weight:bold;
+ overflow:hidden
 }
 
 .avatar img{
- width:100%;height:100%;object-fit:cover
+ width:100%;
+ height:100%;
+ object-fit:cover
 }
 
 .avatarPlus{
- position:absolute;right:-5px;bottom:-5px;
- width:22px;height:22px;border-radius:50%;
+ position:absolute;
+ right:-5px;
+ bottom:-5px;
+ width:22px;
+ height:22px;
+ border-radius:50%;
  border:2px solid var(--navy);
- background:var(--blue);color:#fff;
- display:grid;place-items:center;
- font-size:16px;font-weight:bold;line-height:1
+ background:var(--blue);
+ color:#fff;
+ display:grid;
+ place-items:center;
+ font-size:16px;
+ font-weight:bold;
+ line-height:1
 }
 
 .dashWrap{
- max-width:1200px;margin:auto;padding:35px 5%
+ max-width:1200px;
+ margin:auto;
+ padding:35px 5%
 }
 
 .dashTop{
- display:flex;justify-content:space-between;
- align-items:center;margin-bottom:25px
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:25px
 }
 
 .dashTop h1{
- font-size:32px;color:var(--navy);margin:0
+ font-size:32px;
+ color:var(--navy);
+ margin:0
 }
 
 .grid{
- display:grid;grid-template-columns:repeat(4,1fr);gap:15px
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:15px
 }
 
 .balance{
  background:linear-gradient(135deg,var(--navy),var(--navy2));
- color:#fff;padding:24px;border-radius:15px
+ color:#fff;
+ padding:24px;
+ border-radius:15px
 }
 
-.balance small{color:#bdcce0}
-.balance h2{margin:8px 0;font-size:30px}
+.balance small{
+ color:#bdcce0
+}
+
+.balance h2{
+ margin:8px 0;
+ font-size:30px
+}
 
 .stat{
- background:#fff;padding:22px;border-radius:15px
+ background:#fff;
+ padding:22px;
+ border-radius:15px
 }
-.stat small{color:var(--muted)}
-.stat h3{margin-top:7px}
+
+.stat small{
+ color:var(--muted)
+}
+
+.stat h3{
+ margin-top:7px
+}
 
 .columns{
- display:grid;grid-template-columns:1.5fr 1fr;
- gap:18px;margin-top:18px
+ display:grid;
+ grid-template-columns:1.5fr 1fr;
+ gap:18px;
+ margin-top:18px
 }
 
-.panel{padding:24px}
+.panel{
+ padding:24px
+}
 
 .tx{
- display:flex;justify-content:space-between;
- padding:13px 0;border-bottom:1px solid #edf0f4;
+ display:flex;
+ justify-content:space-between;
+ padding:13px 0;
+ border-bottom:1px solid #edf0f4;
  gap:10px
 }
 
-.tx:last-child{border:0}
-.txName{font-weight:bold;font-size:13px}
-.txDate{font-size:11px;color:var(--muted)}
-.out{color:var(--red);font-weight:bold}
-.in{color:var(--green);font-weight:bold}
-.empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
+.tx:last-child{
+ border:0
+}
+
+.txName{
+ font-weight:bold;
+ font-size:13px
+}
+
+.txDate{
+ font-size:11px;
+ color:var(--muted)
+}
+
+.out{
+ color:var(--red);
+ font-weight:bold
+}
+
+.in{
+ color:var(--green);
+ font-weight:bold
+}
+
+.empty{
+ text-align:center;
+ color:var(--muted);
+ padding:25px;
+ font-size:13px
+}
 
 .quick{
- display:grid;grid-template-columns:1fr 1fr;gap:10px
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px
 }
 
 .quick button{
- padding:14px;border:1px solid #e1e7ef;
- background:#fff;border-radius:9px;
- font-weight:bold;color:var(--navy)
+ padding:14px;
+ border:1px solid #e1e7ef;
+ background:#fff;
+ border-radius:9px;
+ font-weight:bold;
+ color:var(--navy)
 }
+
+/* PROFILE */
 
 .profilePanel{
  margin-top:18px;
- display:grid;grid-template-columns:1fr 1fr;gap:18px
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:18px
 }
 
-.profileCard{padding:24px}
+.profileCard{
+ padding:24px
+}
+
 .profileCard input{
- width:100%;padding:11px;
+ width:100%;
+ padding:11px;
  border:1px solid var(--border);
- border-radius:8px;margin-bottom:10px
+ border-radius:8px;
+ margin-bottom:10px
 }
 
 .profileNote{
- font-size:12px;color:var(--muted);margin-bottom:15px
+ font-size:12px;
+ color:var(--muted);
+ margin-bottom:15px
 }
 
 /* CURRENCY */
 
 .currencyBalances{
  margin-top:18px;
- display:grid;grid-template-columns:repeat(4,1fr);gap:14px
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:14px
 }
 
 .currencyCard{
- background:#fff;border-radius:14px;padding:18px;
+ background:#fff;
+ border-radius:14px;
+ padding:18px;
  box-shadow:0 8px 25px #071a5310
 }
 
 .currencyCode{
- font-weight:bold;color:var(--navy);font-size:13px
+ font-weight:bold;
+ color:var(--navy);
+ font-size:13px
 }
 
 .currencyAmount{
- margin-top:7px;font-size:21px;font-weight:bold
+ margin-top:7px;
+ font-size:21px;
+ font-weight:bold
 }
 
 /* SERVICES */
 
 .servicesGrid{
- display:grid;grid-template-columns:repeat(4,1fr);
- gap:14px;margin-top:18px
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:14px;
+ margin-top:18px
 }
 
-.service{padding:22px}
-.serviceIcon{font-size:28px;margin-bottom:12px}
-.service p{
- font-size:12px;color:var(--muted);line-height:1.5
+.service{
+ padding:22px
 }
-.service button{margin-top:14px;width:100%}
+
+.serviceIcon{
+ font-size:28px;
+ margin-bottom:12px
+}
+
+.service p{
+ font-size:12px;
+ color:var(--muted);
+ line-height:1.5
+}
+
+.service button{
+ margin-top:14px;
+ width:100%
+}
 
 /* NOTIFICATIONS */
 
 .notification{
- padding:13px;background:#eef5ff;
+ padding:13px;
+ background:#eef5ff;
  border-left:4px solid var(--blue);
- border-radius:8px;margin-bottom:10px;font-size:13px
+ border-radius:8px;
+ margin-bottom:10px;
+ font-size:13px
 }
 
 .notification small{
- display:block;color:var(--muted);margin-top:5px
+ display:block;
+ color:var(--muted);
+ margin-top:5px
 }
 
 /* ADMIN */
 
 .admin{
- display:none;margin-top:25px;background:#fff;
- border-radius:15px;padding:25px;
+ display:none;
+ margin-top:25px;
+ background:#fff;
+ border-radius:15px;
+ padding:25px;
  box-shadow:0 12px 35px #071a5314
 }
 
-.admin h2{color:var(--navy);margin-bottom:7px}
+.admin h2{
+ color:var(--navy);
+ margin-bottom:7px
+}
 
 .adminGrid{
- display:grid;grid-template-columns:1fr 1fr;gap:18px;
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:18px;
  margin-top:20px
 }
 
 .adminBox{
  border:1px solid var(--border);
- padding:20px;border-radius:12px;
+ padding:20px;
+ border-radius:12px;
  box-shadow:none
 }
 
 .adminBox h3{
- margin-bottom:12px;color:var(--navy)
+ margin-bottom:12px;
+ color:var(--navy)
 }
 
-.adminBox input,.adminBox select,.adminBox textarea{
- width:100%;padding:11px;margin-bottom:10px;
- border:1px solid var(--border);border-radius:8px
+.adminBox input,
+.adminBox select,
+.adminBox textarea{
+ width:100%;
+ padding:11px;
+ margin-bottom:10px;
+ border:1px solid var(--border);
+ border-radius:8px
 }
 
 .customerList{
- max-height:230px;overflow:auto;
+ max-height:230px;
+ overflow:auto;
  border:1px solid var(--border);
- border-radius:10px;margin-top:10px
+ border-radius:10px;
+ margin-top:10px
 }
 
 .customerItem{
- width:100%;border:0;border-bottom:1px solid var(--border);
- background:#fff;padding:12px;text-align:left;
- display:flex;justify-content:space-between;
+ width:100%;
+ border:0;
+ border-bottom:1px solid var(--border);
+ background:#fff;
+ padding:12px;
+ text-align:left;
+ display:flex;
+ justify-content:space-between;
  gap:10px
 }
 
-.customerItem:last-child{border-bottom:0}
-.customerItem.active{background:#eef5ff}
-.customerItem strong{display:block}
-.customerItem small{color:var(--muted)}
+.customerItem:last-child{
+ border-bottom:0
+}
+
+.customerItem.active{
+ background:#eef5ff
+}
+
+.customerItem strong{
+ display:block
+}
+
+.customerItem small{
+ color:var(--muted)
+}
 
 .adminChat{
- height:250px;overflow:auto;
- background:#f5f7fa;border-radius:10px;
- padding:12px;margin-bottom:10px
+ height:250px;
+ overflow:auto;
+ background:#f5f7fa;
+ border-radius:10px;
+ padding:12px;
+ margin-bottom:10px
 }
 
 /* CHAT */
 
 .chatBtn{
- position:fixed;right:20px;bottom:20px;
- width:56px;height:56px;border:0;border-radius:50%;
- background:var(--blue);color:#fff;font-size:23px;z-index:60
+ position:fixed;
+ right:20px;
+ bottom:20px;
+ width:56px;
+ height:56px;
+ border:0;
+ border-radius:50%;
+ background:var(--blue);
+ color:#fff;
+ font-size:23px;
+ z-index:60
 }
 
 .chat{
- display:none;position:fixed;right:20px;bottom:85px;
- width:350px;max-width:calc(100% - 40px);
- background:#fff;border-radius:15px;
+ display:none;
+ position:fixed;
+ right:20px;
+ bottom:85px;
+ width:350px;
+ max-width:calc(100% - 40px);
+ background:#fff;
+ border-radius:15px;
  box-shadow:0 15px 45px #0003;
- overflow:hidden;z-index:70
+ overflow:hidden;
+ z-index:70
 }
 
-.chat.show{display:block}
+.chat.show{
+ display:block
+}
 
 .chatHead{
- background:var(--navy);color:#fff;padding:15px;
- display:flex;justify-content:space-between
+ background:var(--navy);
+ color:#fff;
+ padding:15px;
+ display:flex;
+ justify-content:space-between
 }
 
 .chatBody{
- height:260px;padding:14px;overflow:auto;
+ height:260px;
+ padding:14px;
+ overflow:auto;
  background:#f5f7fa
 }
 
 .msg{
- padding:9px 11px;border-radius:11px;
- background:#fff;font-size:13px;margin-bottom:9px;
- max-width:85%;line-height:1.45
+ padding:9px 11px;
+ border-radius:11px;
+ background:#fff;
+ font-size:13px;
+ margin-bottom:9px;
+ max-width:85%;
+ line-height:1.45
 }
 
 .msg.user{
- margin-left:auto;background:#dceaff
+ margin-left:auto;
+ background:#dceaff
 }
 
 .chatInput{
- display:flex;border-top:1px solid #ddd
+ display:flex;
+ border-top:1px solid #ddd
 }
 
 .chatInput input{
- flex:1;border:0;padding:12px;outline:0
+ flex:1;
+ border:0;
+ padding:12px;
+ outline:0
 }
 
 .chatInput button{
- border:0;background:var(--blue);
- color:#fff;padding:0 16px
+ border:0;
+ background:var(--blue);
+ color:#fff;
+ padding:0 16px
 }
 
 /* TOAST */
 
 .toast{
- position:fixed;left:50%;bottom:25px;
+ position:fixed;
+ left:50%;
+ bottom:25px;
  transform:translate(-50%,120px);
- background:var(--navy);color:#fff;
- padding:12px 18px;border-radius:8px;
- transition:.3s;z-index:600
+ background:var(--navy);
+ color:#fff;
+ padding:12px 18px;
+ border-radius:8px;
+ transition:.3s;
+ z-index:600
 }
 
-.toast.show{transform:translate(-50%,0)}
+.toast.show{
+ transform:translate(-50%,0)
+}
 
-.hiddenFile{display:none}
+.hiddenFile{
+ display:none
+}
+
+/* RESPONSIVE */
 
 @media(max-width:900px){
- .links{display:none}
- .cards,.securityGrid,.promoGrid{grid-template-columns:1fr}
- .contact,.columns,.profilePanel{grid-template-columns:1fr}
- .grid{grid-template-columns:1fr 1fr}
- .servicesGrid{grid-template-columns:1fr 1fr}
- .currencyBalances{grid-template-columns:1fr 1fr}
- .adminGrid{grid-template-columns:1fr}
+
+ .links{
+  display:none
+ }
+
+ .heroInner{
+  grid-template-columns:1fr;
+  gap:20px
+ }
+
+ .heroVisual{
+  min-height:410px
+ }
+
+ .cards,
+ .securityGrid,
+ .promoGrid{
+  grid-template-columns:1fr
+ }
+
+ .contact,
+ .columns,
+ .profilePanel{
+  grid-template-columns:1fr
+ }
+
+ .grid{
+  grid-template-columns:1fr 1fr
+ }
+
+ .servicesGrid{
+  grid-template-columns:1fr 1fr
+ }
+
+ .currencyBalances{
+  grid-template-columns:1fr 1fr
+ }
+
+ .adminGrid{
+  grid-template-columns:1fr
+ }
+
 }
 
 @media(max-width:600px){
- .top{display:none}
- .nav{min-height:65px}
- .hero{min-height:520px}
- .hero p{font-size:15px}
- .section{padding:55px 5%}
- .grid{grid-template-columns:1fr}
- .dashTop{flex-direction:column;align-items:flex-start;gap:12px}
- .chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
- .servicesGrid,.currencyBalances{grid-template-columns:1fr 1fr}
- .dashNav .logo span:last-child{display:none}
+
+ .top{
+  display:none
+ }
+
+ .nav{
+  min-height:65px
+ }
+
+ .hero{
+  min-height:760px
+ }
+
+ .hero p{
+  font-size:15px
+ }
+
+ .section{
+  padding:55px 5%
+ }
+
+ .grid{
+  grid-template-columns:1fr
+ }
+
+ .dashTop{
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px
+ }
+
+ .chat{
+  right:10px;
+  bottom:80px;
+  max-width:calc(100% - 20px)
+ }
+
+ .servicesGrid,
+ .currencyBalances{
+  grid-template-columns:1fr 1fr
+ }
+
+ .dashNav .logo span:last-child{
+  display:none
+ }
+
+ .heroVisual{
+  min-height:360px
+ }
+
+ .phoneCard{
+  height:370px
+ }
+
+ .floatCard{
+  transform:scale(.82)
+ }
+
+ .floatCard.one{
+  left:-8px;
+  top:35px
+ }
+
+ .floatCard.two{
+  right:-8px;
+  bottom:25px
+ }
+
 }
 </style>
 </head>
@@ -524,205 +1174,384 @@ AMERICAN CREST BANK — FICTIONAL BANKING APPLICATION
 </div>
 
 <div class="actions">
-<button class="btn outline" onclick="openModal('login')">Sign In</button>
-<button class="btn primary" onclick="openModal('register')">Open Account</button>
+<button class="btn outline" onclick="openModal('login')">
+Sign In
+</button>
+
+<button class="btn primary" onclick="openModal('register')">
+Open Account
+</button>
 </div>
 
 </nav>
 </header>
 
+
+<!-- ======================================================
+     HOME
+     ====================================================== -->
+
 <section class="hero" id="home">
+
 <div class="heroInner">
+
 <div class="heroText">
 
-<div class="eyebrow">DIGITAL BANKING EXPERIENCE</div>
+<div class="eyebrow">
+DIGITAL BANKING EXPERIENCE
+</div>
 
-<h1>Bank smarter.<br>Manage with confidence.</h1>
+<h1>
+Bank smarter.<br>
+Manage with confidence.
+</h1>
 
 <p>
 Manage your fictional banking account, balances,
-transactions, notifications and digital services from one dashboard.
+transactions, notifications and digital services
+from one dashboard.
 </p>
 
 <div class="heroButtons">
-<button class="btn primary" onclick="openModal('register')">
+
+<button class="btn primary"
+onclick="openModal('register')">
 Open an Account
 </button>
 
-<button class="btn outline" onclick="openModal('login')">
+<button class="btn outline"
+onclick="openModal('login')">
 Access Online Banking
 </button>
+
 </div>
 
 </div>
+
+
+<!-- WOMAN / PHONE IMAGE -->
+
+<div class="heroVisual">
+
+<div class="floatCard one">
+Mobile banking
+<b>24/7</b>
+</div>
+
+<div class="phoneCard">
+
+<img
+src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=85"
+alt="Woman using a mobile phone"
+>
+
+<div class="phoneCaption">
+
+<strong>
+Banking on the go
+</strong>
+
+<span>
+Manage your fictional account from your phone.
+</span>
+
+</div>
+
+</div>
+
+<div class="floatCard two">
+Account access
+<b>Secure</b>
+</div>
+
+</div>
+
 </div>
 </section>
 
+
 <div class="trust">
+
 <span>✓ Account Management</span>
 <span>✓ Multi-Currency</span>
 <span>✓ Fund Credits</span>
 <span>✓ Transaction History</span>
 <span>✓ Customer Support</span>
+
 </div>
+
+
+<!-- SERVICES -->
 
 <section class="section" id="services">
 
 <div class="inner">
 
 <div class="head">
-<h2>Everything in one place</h2>
+
+<h2>
+Everything in one place
+</h2>
+
 <p>
 Account management, balances, transfers,
 digital services and support.
 </p>
+
 </div>
+
 
 <div class="cards">
 
 <div class="card">
-<div class="icon">▣</div>
-<h3>Account Overview</h3>
+
+<div class="icon">
+▣
+</div>
+
+<h3>
+Account Overview
+</h3>
+
 <p>
 View balances, account information,
 profile and recent activity.
 </p>
+
 </div>
 
+
 <div class="card">
-<div class="icon">↗</div>
-<h3>Send Money</h3>
+
+<div class="icon">
+↗
+</div>
+
+<h3>
+Send Money
+</h3>
+
 <p>
 Create a transaction using your selected currency.
 </p>
+
 </div>
 
+
 <div class="card">
-<div class="icon">¤</div>
-<h3>Multi-Currency</h3>
+
+<div class="icon">
+¤
+</div>
+
+<h3>
+Multi-Currency
+</h3>
+
 <p>
 Maintain balances and transaction records
 in different currencies.
 </p>
+
 </div>
 
 </div>
+
 </div>
+
 </section>
+
+
+<!-- SECURITY -->
 
 <section class="section security" id="security">
 
 <div class="inner">
 
 <div class="head">
-<h2>Account control</h2>
+
+<h2>
+Account control
+</h2>
+
 <p>
 Keep account information, balances and activity
 organized from one dashboard.
 </p>
+
 </div>
+
 
 <div class="securityGrid">
 
 <div class="securityBox">
-<strong>Account Dashboard</strong>
+
+<strong>
+Account Dashboard
+</strong>
+
 <span>
 View current balances and account information.
 </span>
+
 </div>
+
 
 <div class="securityBox">
-<strong>Credit & Debit Records</strong>
+
+<strong>
+Credit &amp; Debit Records
+</strong>
+
 <span>
-Credits appear with a plus sign and debits with a minus sign.
+Credits appear with a plus sign and debits
+with a minus sign.
 </span>
+
 </div>
+
 
 <div class="securityBox">
-<strong>Digital Services</strong>
+
+<strong>
+Digital Services
+</strong>
+
 <span>
-Access the available service interfaces from your dashboard.
+Access the available service interfaces
+from your dashboard.
 </span>
+
 </div>
 
 </div>
+
 </div>
+
 </section>
+
+
+<!-- SUPPORT -->
 
 <section class="section" id="support">
 
 <div class="inner">
 
 <div class="head">
-<h2>Customer Support</h2>
+
+<h2>
+Customer Support
+</h2>
+
 <p>
 Send a message through the account support system.
 </p>
+
 </div>
+
 
 <div class="contact">
 
 <div class="box">
-<h3>Need assistance?</h3>
+
+<h3>
+Need assistance?
+</h3>
+
 <p style="margin-bottom:18px">
 Open support and send your message.
 </p>
 
-<button class="btn primary" onclick="toggleChat()">
+<button class="btn primary"
+onclick="toggleChat()">
 Open Support
 </button>
+
 </div>
 
+
 <div class="box">
-<h3>Digital account services</h3>
+
+<h3>
+Digital account services
+</h3>
+
 <p>
 Account, transfers, multi-currency balances,
 notifications and service interfaces are available
 inside the dashboard.
 </p>
+
 </div>
 
 </div>
+
 </div>
+
 </section>
+
+
+<!-- FOOTER -->
 
 <footer>
 
 <div class="footer">
 
 <div class="logo">
-<span class="mark">AC</span>
-<span>AMERICAN CREST BANK</span>
+
+<span class="mark">
+AC
+</span>
+
+<span>
+AMERICAN CREST BANK
+</span>
+
 </div>
 
-<p>Fictional banking application interface.</p>
+<p>
+Fictional banking application interface.
+</p>
 
 <div class="copy">
 © 2026 American Crest Banking.
 </div>
 
 </div>
+
 </footer>
 
 </div>
 
 
-<!-- DASHBOARD -->
+<!-- ======================================================
+     DASHBOARD
+     ====================================================== -->
 
 <div id="dashboard">
 
 <div class="dashNav">
 
 <div class="logo" style="color:white">
-<span class="mark">AC</span>
-<span>AMERICAN CREST BANK</span>
+
+<span class="mark">
+AC
+</span>
+
+<span>
+AMERICAN CREST BANK
+</span>
+
 </div>
+
 
 <div class="dashUser">
 
 <div class="avatarWrap">
 
-<div class="avatar" id="avatar">AC</div>
+<div class="avatar" id="avatar">
+AC
+</div>
 
 <button
 class="avatarPlus"
@@ -741,20 +1570,30 @@ onchange="handleProfileImage(event)"
 
 </div>
 
+
 <div>
-<div id="dashName" style="font-weight:bold">
+
+<div
+id="dashName"
+style="font-weight:bold">
 Customer
 </div>
+
 <small style="color:#bdcce0">
 Online Account
 </small>
+
 </div>
 
-<button class="btn outline" onclick="logout()">
+
+<button
+class="btn outline"
+onclick="logout()">
 Log Out
 </button>
 
 </div>
+
 </div>
 
 
@@ -763,11 +1602,20 @@ Log Out
 <div class="dashTop">
 
 <div>
-<small style="color:#718096">Welcome back</small>
-<h1 id="welcomeName">Customer</h1>
+
+<small style="color:#718096">
+Welcome back
+</small>
+
+<h1 id="welcomeName">
+Customer
+</h1>
+
 </div>
 
-<button class="btn primary" onclick="openTransfer()">
+<button
+class="btn primary"
+onclick="openTransfer()">
 + New Transfer
 </button>
 
@@ -781,9 +1629,13 @@ Log Out
 
 <div class="balance">
 
-<small>AVAILABLE BALANCE</small>
+<small>
+AVAILABLE BALANCE
+</small>
 
-<h2 id="balance">₦0.00</h2>
+<h2 id="balance">
+₦0.00
+</h2>
 
 <small id="balanceCurrency">
 Primary currency: NGN
@@ -791,41 +1643,76 @@ Primary currency: NGN
 
 </div>
 
-<div class="stat">
-<small>ACCOUNT STATUS</small>
-<h3>Active</h3>
-</div>
 
 <div class="stat">
-<small>TRANSACTIONS</small>
-<h3 id="txCount">0</h3>
+
+<small>
+ACCOUNT STATUS
+</small>
+
+<h3>
+Active
+</h3>
+
 </div>
+
 
 <div class="stat">
-<small>ACCOUNT EMAIL</small>
-<h3 id="emailStat" style="font-size:14px">—</h3>
+
+<small>
+TRANSACTIONS
+</small>
+
+<h3 id="txCount">
+0
+</h3>
+
+</div>
+
+
+<div class="stat">
+
+<small>
+ACCOUNT EMAIL
+</small>
+
+<h3
+id="emailStat"
+style="font-size:14px">
+—
+</h3>
+
 </div>
 
 </div>
 
 
-<div class="currencyBalances" id="currencyBalances"></div>
+<div
+class="currencyBalances"
+id="currencyBalances">
+</div>
 
 
 <div class="columns">
 
+
 <div class="panel">
 
-<h3>Recent Activity</h3>
+<h3>
+Recent Activity
+</h3>
 
-<div id="transactions"></div>
+<div id="transactions">
+</div>
 
 </div>
 
 
 <div class="panel">
 
-<h3>Quick Actions</h3>
+<h3>
+Quick Actions
+</h3>
 
 <div class="quick">
 
@@ -852,66 +1739,131 @@ Services
 </div>
 
 
-<div class="servicesGrid" id="dashboardServices">
+<!-- DASHBOARD SERVICES -->
+
+<div
+class="servicesGrid"
+id="dashboardServices">
 
 <div class="service">
-<div class="serviceIcon">📱</div>
-<h3>Buy Data</h3>
-<p>Data bundle service interface.</p>
-<button class="btn outline"
+
+<div class="serviceIcon">
+📱
+</div>
+
+<h3>
+Buy Data
+</h3>
+
+<p>
+Data bundle service interface.
+</p>
+
+<button
+class="btn outline"
 onclick="serviceUnavailable('Data purchase')">
 Open
 </button>
+
 </div>
 
+
 <div class="service">
-<div class="serviceIcon">☎️</div>
-<h3>Airtime</h3>
-<p>Mobile airtime service interface.</p>
-<button class="btn outline"
+
+<div class="serviceIcon">
+☎️
+</div>
+
+<h3>
+Airtime
+</h3>
+
+<p>
+Mobile airtime service interface.
+</p>
+
+<button
+class="btn outline"
 onclick="serviceUnavailable('Airtime purchase')">
 Open
 </button>
+
 </div>
 
+
 <div class="service">
-<div class="serviceIcon">💡</div>
-<h3>Pay Bills</h3>
-<p>Utility payment service interface.</p>
-<button class="btn outline"
+
+<div class="serviceIcon">
+💡
+</div>
+
+<h3>
+Pay Bills
+</h3>
+
+<p>
+Utility payment service interface.
+</p>
+
+<button
+class="btn outline"
 onclick="serviceUnavailable('Bill payment')">
 Open
 </button>
+
 </div>
 
+
 <div class="service">
-<div class="serviceIcon">💳</div>
-<h3>Cards</h3>
-<p>Card service interface.</p>
-<button class="btn outline"
+
+<div class="serviceIcon">
+💳
+</div>
+
+<h3>
+Cards
+</h3>
+
+<p>
+Card service interface.
+</p>
+
+<button
+class="btn outline"
 onclick="serviceUnavailable('Card services')">
 Open
 </button>
-</div>
 
 </div>
 
+</div>
+
+
+<!-- PROFILE -->
 
 <div class="profilePanel">
 
 <div class="profileCard">
 
-<h3>My Profile</h3>
+<h3>
+My Profile
+</h3>
 
-<label style="
-display:block;font-size:12px;
-font-weight:bold;margin-bottom:6px">
+<label
+style="
+display:block;
+font-size:12px;
+font-weight:bold;
+margin-bottom:6px">
 Display Name
 </label>
 
-<input id="profileName" type="text">
+<input
+id="profileName"
+type="text">
 
-<button class="btn primary"
+<button
+class="btn primary"
 onclick="saveProfileName()">
 Save Name
 </button>
@@ -921,14 +1873,17 @@ Save Name
 
 <div class="profileCard">
 
-<h3>Profile Picture</h3>
+<h3>
+Profile Picture
+</h3>
 
 <p class="profileNote">
 Tap the + button beside your profile picture
 to choose an image from your device.
 </p>
 
-<button class="btn outline"
+<button
+class="btn outline"
 onclick="chooseProfileImage()">
 Choose Profile Picture
 </button>
@@ -940,14 +1895,22 @@ Choose Profile Picture
 
 <!-- ADMIN -->
 
-<div class="admin" id="adminPanel">
+<div
+class="admin"
+id="adminPanel">
 
-<h2>Account Administration</h2>
+<h2>
+Account Administration
+</h2>
 
-<p style="
-font-size:13px;color:#718096;margin-bottom:10px">
-Select a customer below, then use the controls
-to credit funds, send notifications or reply to support.
+<p
+style="
+font-size:13px;
+color:#718096;
+margin-bottom:10px">
+
+Local testing controls for this fictional application.
+
 </p>
 
 
@@ -956,9 +1919,13 @@ to credit funds, send notifications or reply to support.
 
 <div class="adminBox">
 
-<h3>Customers</h3>
+<h3>
+Customers
+</h3>
 
-<div id="customerList" class="customerList">
+<div
+id="customerList"
+class="customerList">
 </div>
 
 </div>
@@ -966,17 +1933,42 @@ to credit funds, send notifications or reply to support.
 
 <div class="adminBox">
 
-<h3>Credit Customer</h3>
+<h3>
+Credit Customer
+</h3>
 
 <select id="adminCurrency">
-<option value="NGN">NGN — Nigerian Naira</option>
-<option value="USD">USD — US Dollar</option>
-<option value="EUR">EUR — Euro</option>
-<option value="GBP">GBP — British Pound</option>
-<option value="IDR">IDR — Indonesian Rupiah</option>
-<option value="CAD">CAD — Canadian Dollar</option>
-<option value="AUD">AUD — Australian Dollar</option>
+
+<option value="NGN">
+NGN — Nigerian Naira
+</option>
+
+<option value="USD">
+USD — US Dollar
+</option>
+
+<option value="EUR">
+EUR — Euro
+</option>
+
+<option value="GBP">
+GBP — British Pound
+</option>
+
+<option value="IDR">
+IDR — Indonesian Rupiah
+</option>
+
+<option value="CAD">
+CAD — Canadian Dollar
+</option>
+
+<option value="AUD">
+AUD — Australian Dollar
+</option>
+
 </select>
+
 
 <input
 id="adminAmount"
@@ -986,7 +1978,9 @@ step="0.01"
 placeholder="Amount"
 >
 
-<button class="btn primary"
+
+<button
+class="btn primary"
 onclick="adminCredit()">
 Credit Customer
 </button>
@@ -996,14 +1990,17 @@ Credit Customer
 
 <div class="adminBox">
 
-<h3>Customer Notification</h3>
+<h3>
+Customer Notification
+</h3>
 
 <textarea
 id="adminNotification"
 placeholder="Write notification..."
 ></textarea>
 
-<button class="btn primary"
+<button
+class="btn primary"
 onclick="adminNotify()">
 Send Notification
 </button>
@@ -1013,12 +2010,18 @@ Send Notification
 
 <div class="adminBox">
 
-<h3>Customer Support</h3>
+<h3>
+Customer Support
+</h3>
 
-<div id="adminChat" class="adminChat">
+<div
+id="adminChat"
+class="adminChat">
+
 <div class="empty">
 Select a customer.
 </div>
+
 </div>
 
 <input
@@ -1027,7 +2030,8 @@ type="text"
 placeholder="Write your reply..."
 >
 
-<button class="btn primary"
+<button
+class="btn primary"
 onclick="adminReplyMessage()">
 Send Reply
 </button>
@@ -1037,71 +2041,118 @@ Send Reply
 
 <div class="adminBox">
 
-<h3>Administration</h3>
+<h3>
+Administration
+</h3>
 
-<button class="btn outline"
+<button
+class="btn outline"
 onclick="refreshAdmin()">
 Refresh Customer List
 </button>
 
 <br><br>
 
-<button class="btn outline"
+<button
+class="btn outline"
 onclick="clearAllAccounts()">
 Clear Local Accounts
 </button>
 
 </div>
 
-</div>
 
 </div>
 
 </div>
+
+</div>
+
 </div>
 
 
-<!-- AUTH MODAL -->
+<!-- ======================================================
+     AUTH MODAL
+     ====================================================== -->
 
-<div class="modal" id="authModal">
+<div
+class="modal"
+id="authModal">
 
 <div class="modalBox">
 
-<button class="close" onclick="closeModal()">×</button>
+<button
+class="close"
+onclick="closeModal()">
+×
+</button>
 
 
 <div id="loginForm">
 
-<h2>Welcome Back</h2>
-<p>Sign in to your account.</p>
+<h2>
+Welcome Back
+</h2>
 
-<div class="error" id="loginError"></div>
+<p>
+Sign in to your account.
+</p>
 
-<div class="field">
-<label>Email</label>
-<input id="loginEmail" type="email">
+<div
+class="error"
+id="loginError">
 </div>
 
+
 <div class="field">
-<label>Password</label>
-<input id="loginPassword" type="password">
+
+<label>
+Email
+</label>
+
+<input
+id="loginEmail"
+type="email">
+
 </div>
 
-<button class="btn primary full" onclick="login()">
+
+<div class="field">
+
+<label>
+Password
+</label>
+
+<input
+id="loginPassword"
+type="password">
+
+</div>
+
+
+<button
+class="btn primary full"
+onclick="login()">
 Sign In
 </button>
 
-<div style="
-text-align:center;font-size:13px;
-color:#718096;margin-top:15px">
+
+<div
+style="
+text-align:center;
+font-size:13px;
+color:#718096;
+margin-top:15px">
 
 Don't have an account?
 
 <button
 onclick="showRegister()"
 style="
-border:0;background:none;
-color:#1769e0;font-weight:bold">
+border:0;
+background:none;
+color:#1769e0;
+font-weight:bold">
 Create Account
 </button>
 
@@ -1110,58 +2161,127 @@ Create Account
 </div>
 
 
-<div id="registerForm" style="display:none">
+<div
+id="registerForm"
+style="display:none">
 
-<h2>Create Account</h2>
-<p>Create a new account.</p>
+<h2>
+Create Account
+</h2>
 
-<div class="error" id="registerError"></div>
+<p>
+Create a new fictional account.
+</p>
 
-<div class="field">
-<label>Full Name</label>
-<input id="regName" type="text">
+<div
+class="error"
+id="registerError">
 </div>
 
-<div class="field">
-<label>Email</label>
-<input id="regEmail" type="email">
-</div>
 
 <div class="field">
-<label>Password</label>
-<input id="regPassword" type="password">
+
+<label>
+Full Name
+</label>
+
+<input
+id="regName"
+type="text">
+
 </div>
 
+
 <div class="field">
-<label>Primary Currency</label>
+
+<label>
+Email
+</label>
+
+<input
+id="regEmail"
+type="email">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Password
+</label>
+
+<input
+id="regPassword"
+type="password">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Primary Currency
+</label>
 
 <select id="regCurrency">
-<option value="NGN">NGN — Nigerian Naira</option>
-<option value="USD">USD — US Dollar</option>
-<option value="EUR">EUR — Euro</option>
-<option value="GBP">GBP — British Pound</option>
-<option value="IDR">IDR — Indonesian Rupiah</option>
-<option value="CAD">CAD — Canadian Dollar</option>
-<option value="AUD">AUD — Australian Dollar</option>
+
+<option value="NGN">
+NGN — Nigerian Naira
+</option>
+
+<option value="USD">
+USD — US Dollar
+</option>
+
+<option value="EUR">
+EUR — Euro
+</option>
+
+<option value="GBP">
+GBP — British Pound
+</option>
+
+<option value="IDR">
+IDR — Indonesian Rupiah
+</option>
+
+<option value="CAD">
+CAD — Canadian Dollar
+</option>
+
+<option value="AUD">
+AUD — Australian Dollar
+</option>
+
 </select>
 
 </div>
 
-<button class="btn primary full" onclick="register()">
+
+<button
+class="btn primary full"
+onclick="register()">
 Create Account
 </button>
 
-<div style="
-text-align:center;font-size:13px;
-color:#718096;margin-top:15px">
+
+<div
+style="
+text-align:center;
+font-size:13px;
+color:#718096;
+margin-top:15px">
 
 Already registered?
 
 <button
 onclick="showLogin()"
 style="
-border:0;background:none;
-color:#1769e0;font-weight:bold">
+border:0;
+background:none;
+color:#1769e0;
+font-weight:bold">
 Sign In
 </button>
 
@@ -1170,36 +2290,77 @@ Sign In
 </div>
 
 </div>
+
 </div>
 
 
-<!-- TRANSFER -->
+<!-- ======================================================
+     TRANSFER MODAL
+     ====================================================== -->
 
-<div class="modal" id="transferModal">
+<div
+class="modal"
+id="transferModal">
 
 <div class="modalBox">
 
-<button class="close" onclick="closeTransfer()">×</button>
+<button
+class="close"
+onclick="closeTransfer()">
+×
+</button>
 
-<h2>Send Money</h2>
+<h2>
+Send Money
+</h2>
 
-<p>Create a transaction using your available currency balance.</p>
+<p>
+Create a transaction using your available
+currency balance.
+</p>
 
-<div class="error" id="transferError"></div>
+<div
+class="error"
+id="transferError">
+</div>
 
 
 <div class="field">
 
-<label>Currency</label>
+<label>
+Currency
+</label>
 
 <select id="transferCurrency">
-<option value="NGN">NGN — Nigerian Naira</option>
-<option value="USD">USD — US Dollar</option>
-<option value="EUR">EUR — Euro</option>
-<option value="GBP">GBP — British Pound</option>
-<option value="IDR">IDR — Indonesian Rupiah</option>
-<option value="CAD">CAD — Canadian Dollar</option>
-<option value="AUD">AUD — Australian Dollar</option>
+
+<option value="NGN">
+NGN — Nigerian Naira
+</option>
+
+<option value="USD">
+USD — US Dollar
+</option>
+
+<option value="EUR">
+EUR — Euro
+</option>
+
+<option value="GBP">
+GBP — British Pound
+</option>
+
+<option value="IDR">
+IDR — Indonesian Rupiah
+</option>
+
+<option value="CAD">
+CAD — Canadian Dollar
+</option>
+
+<option value="AUD">
+AUD — Australian Dollar
+</option>
+
 </select>
 
 </div>
@@ -1207,48 +2368,55 @@ Sign In
 
 <div class="field">
 
-<label>Amount</label>
+<label>
+Amount
+</label>
 
 <input
 id="transferAmount"
 type="number"
 min="0.01"
 step="0.01"
-placeholder="0.00"
->
+placeholder="0.00">
 
 </div>
 
 
 <div class="field">
 
-<label>Recipient</label>
+<label>
+Recipient
+</label>
 
 <input
 id="transferRecipient"
 type="text"
-placeholder="Recipient name"
->
+placeholder="Recipient name">
 
 </div>
 
 
-<button class="btn primary full"
+<button
+class="btn primary full"
 onclick="transfer()">
 Continue
 </button>
 
 </div>
+
 </div>
 
 
 <!-- SERVICE MODAL -->
 
-<div class="modal" id="serviceModal">
+<div
+class="modal"
+id="serviceModal">
 
 <div class="modalBox">
 
-<button class="close"
+<button
+class="close"
 onclick="closeService()">
 ×
 </button>
@@ -1261,37 +2429,52 @@ Service
 Service currently unavailable.
 </p>
 
-<button class="btn primary full"
+<button
+class="btn primary full"
 onclick="closeService()">
 Close
 </button>
 
 </div>
+
 </div>
 
 
 <!-- CHAT -->
 
-<button class="chatBtn" onclick="toggleChat()">?</button>
+<button
+class="chatBtn"
+onclick="toggleChat()">
+?
+</button>
 
-<div class="chat" id="chat">
+
+<div
+class="chat"
+id="chat">
 
 <div class="chatHead">
 
-<strong>Customer Support</strong>
+<strong>
+Customer Support
+</strong>
 
 <button
 onclick="toggleChat()"
 style="
-background:none;border:0;
-color:white;font-size:20px">
+background:none;
+border:0;
+color:white;
+font-size:20px">
 ×
 </button>
 
 </div>
 
 
-<div class="chatBody" id="chatBody">
+<div
+class="chatBody"
+id="chatBody">
 </div>
 
 
@@ -1303,7 +2486,8 @@ placeholder="Type a message..."
 onkeydown="if(event.key==='Enter')sendChat()"
 >
 
-<button onclick="sendChat()">
+<button
+onclick="sendChat()">
 Send
 </button>
 
@@ -1312,7 +2496,10 @@ Send
 </div>
 
 
-<div class="toast" id="toast"></div>
+<div
+class="toast"
+id="toast">
+</div>
 
 
 <script>
@@ -1325,7 +2512,9 @@ const ACCOUNTS_KEY = "acb_accounts_v3";
 const SESSION_KEY = "acb_session_v3";
 
 let accounts = loadAccounts();
-let currentUserId = localStorage.getItem(SESSION_KEY) || null;
+let currentUserId =
+ localStorage.getItem(SESSION_KEY) || null;
+
 let selectedCustomerId = null;
 
 
@@ -1337,9 +2526,15 @@ function $(id){
 function loadAccounts(){
 
  try{
-   return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || [];
+
+   return JSON.parse(
+     localStorage.getItem(ACCOUNTS_KEY)
+   ) || [];
+
  }catch(e){
+
    return [];
+
  }
 
 }
@@ -1393,7 +2588,9 @@ function toast(message){
  $("toast").classList.add("show");
 
  setTimeout(()=>{
+
    $("toast").classList.remove("show");
+
  },2800);
 
 }
@@ -1421,13 +2618,47 @@ function escapeHtml(value){
 
 const CURRENCY_INFO = {
 
- NGN:{symbol:"₦",name:"Nigerian Naira",decimals:2},
- USD:{symbol:"$",name:"US Dollar",decimals:2},
- EUR:{symbol:"€",name:"Euro",decimals:2},
- GBP:{symbol:"£",name:"British Pound",decimals:2},
- IDR:{symbol:"Rp",name:"Indonesian Rupiah",decimals:0},
- CAD:{symbol:"CA$",name:"Canadian Dollar",decimals:2},
- AUD:{symbol:"A$",name:"Australian Dollar",decimals:2}
+ NGN:{
+   symbol:"₦",
+   name:"Nigerian Naira",
+   decimals:2
+ },
+
+ USD:{
+   symbol:"$",
+   name:"US Dollar",
+   decimals:2
+ },
+
+ EUR:{
+   symbol:"€",
+   name:"Euro",
+   decimals:2
+ },
+
+ GBP:{
+   symbol:"£",
+   name:"British Pound",
+   decimals:2
+ },
+
+ IDR:{
+   symbol:"Rp",
+   name:"Indonesian Rupiah",
+   decimals:0
+ },
+
+ CAD:{
+   symbol:"CA$",
+   name:"Canadian Dollar",
+   decimals:2
+ },
+
+ AUD:{
+   symbol:"A$",
+   name:"Australian Dollar",
+   decimals:2
+ }
 
 };
 
@@ -1458,10 +2689,14 @@ function openModal(type){
 
  $("authModal").classList.add("show");
 
- if(type==="register"){
+ if(type === "register"){
+
    showRegister();
+
  }else{
+
    showLogin();
+
  }
 
 }
@@ -1497,6 +2732,7 @@ function showLogin(){
 function showError(id,message){
 
  $(id).textContent=message;
+
  $(id).classList.add("show");
 
 }
@@ -1517,7 +2753,7 @@ function register(){
    $("regCurrency").value;
 
 
- if(name.length<2){
+ if(name.length < 2){
 
    return showError(
      "registerError",
@@ -1537,7 +2773,7 @@ function register(){
  }
 
 
- if(password.length<4){
+ if(password.length < 4){
 
    return showError(
      "registerError",
@@ -1547,7 +2783,9 @@ function register(){
  }
 
 
- if(accounts.some(a=>a.email===email)){
+ if(accounts.some(
+   a => a.email === email
+ )){
 
    return showError(
      "registerError",
@@ -1609,7 +2847,9 @@ function register(){
 
  showDashboard();
 
- toast("Account created successfully.");
+ toast(
+   "Account created successfully."
+ );
 
 }
 
@@ -1624,8 +2864,8 @@ function login(){
 
  const account =
    accounts.find(
-     a => a.email===email &&
-          a.password===password
+     a => a.email === email &&
+          a.password === password
    );
 
 
@@ -1650,7 +2890,9 @@ function login(){
 
  showDashboard();
 
- toast("Signed in successfully.");
+ toast(
+   "Signed in successfully."
+ );
 
 }
 
@@ -1666,24 +2908,33 @@ function showDashboard(){
  if(!account)return;
 
  $("publicSite").style.display="none";
+
  $("dashboard").style.display="block";
 
- $("welcomeName").textContent=account.name;
- $("dashName").textContent=account.name;
- $("emailStat").textContent=account.email;
- $("profileName").value=account.name;
+ $("welcomeName").textContent=
+   account.name;
+
+ $("dashName").textContent=
+   account.name;
+
+ $("emailStat").textContent=
+   account.email;
+
+ $("profileName").value=
+   account.name;
 
  renderAvatar();
+
  renderBalance();
+
  renderCurrencyBalances();
+
  renderTransactions();
+
  renderNotifications();
+
  renderChat();
 
- /*
-   Local application administrator controls are visible
-   while testing from the same browser.
- */
  $("adminPanel").style.display="block";
 
  renderCustomerList();
@@ -1728,13 +2979,17 @@ function renderBalance(){
 
  if(!account)return;
 
- const currency=account.primaryCurrency;
+ const currency=
+   account.primaryCurrency;
 
  $("balance").textContent =
-   money(account.balances[currency],currency);
+   money(
+     account.balances[currency],
+     currency
+   );
 
  $("balanceCurrency").textContent =
-   "Primary currency: "+currency;
+   "Primary currency: " + currency;
 
 }
 
@@ -1758,10 +3013,12 @@ function renderCurrencyBalances(){
      </div>
 
      <div class="currencyAmount">
+
        ${money(
          account.balances[currency],
          currency
        )}
+
      </div>
 
    </div>
@@ -1777,9 +3034,11 @@ function renderTransactions(){
 
  if(!account)return;
 
- const list=account.transactions || [];
+ const list =
+   account.transactions || [];
 
- $("txCount").textContent=list.length;
+ $("txCount").textContent=
+   list.length;
 
  if(!list.length){
 
@@ -1797,7 +3056,7 @@ function renderTransactions(){
    .map(t=>{
 
      const positive =
-       t.kind==="credit";
+       t.kind === "credit";
 
      return `
 
@@ -1818,7 +3077,10 @@ function renderTransactions(){
        <div class="${positive?"in":"out"}">
 
          ${positive?"+":"-"}
-         ${money(t.amount,t.currency)}
+         ${money(
+           t.amount,
+           t.currency
+         )}
 
        </div>
 
@@ -1872,19 +3134,23 @@ function openTransfer(){
 
  }
 
- $("transferError").classList.remove("show");
+ $("transferError")
+   .classList.remove("show");
 
  $("transferAmount").value="";
+
  $("transferRecipient").value="";
 
- $("transferModal").classList.add("show");
+ $("transferModal")
+   .classList.add("show");
 
 }
 
 
 function closeTransfer(){
 
- $("transferModal").classList.remove("show");
+ $("transferModal")
+   .classList.remove("show");
 
 }
 
@@ -1899,13 +3165,16 @@ function transfer(){
    $("transferCurrency").value;
 
  const amount=
-   Number($("transferAmount").value);
+   Number(
+     $("transferAmount").value
+   );
 
  const recipient=
-   $("transferRecipient").value.trim();
+   $("transferRecipient")
+   .value.trim();
 
 
- if(!amount || amount<=0){
+ if(!amount || amount <= 0){
 
    return showError(
      "transferError",
@@ -1915,7 +3184,7 @@ function transfer(){
  }
 
 
- if(recipient.length<2){
+ if(recipient.length < 2){
 
    return showError(
      "transferError",
@@ -1925,7 +3194,10 @@ function transfer(){
  }
 
 
- if(amount>account.balances[currency]){
+ if(
+   amount >
+   account.balances[currency]
+ ){
 
    return showError(
      "transferError",
@@ -1935,22 +3207,27 @@ function transfer(){
  }
 
 
- account.balances[currency]-=amount;
+ account.balances[currency]-=
+   amount;
+
 
  addTransaction(
    account,
    "debit",
-   "Transfer to "+recipient,
+   "Transfer to " + recipient,
    amount,
    currency
  );
+
 
  saveAccounts();
 
  closeTransfer();
 
  renderBalance();
+
  renderCurrencyBalances();
+
  renderTransactions();
 
  toast(
@@ -1978,9 +3255,14 @@ function handleProfileImage(event){
 
  if(!file)return;
 
- if(!file.type.startsWith("image/")){
 
-   toast("Please select an image file.");
+ if(
+   !file.type.startsWith("image/")
+ ){
+
+   toast(
+     "Please select an image file."
+   );
 
    return;
 
@@ -1988,6 +3270,7 @@ function handleProfileImage(event){
 
 
  const reader=new FileReader();
+
 
  reader.onload=function(){
 
@@ -2002,16 +3285,14 @@ function handleProfileImage(event){
 
    renderAvatar();
 
-   /*
-     Clear the input so selecting the same
-     picture again is possible.
-   */
-
    $("profileImageInput").value="";
 
-   toast("Profile picture updated.");
+   toast(
+     "Profile picture updated."
+   );
 
  };
+
 
  reader.readAsDataURL(file);
 
@@ -2025,28 +3306,38 @@ function saveProfileName(){
  if(!account)return;
 
  const name=
-   $("profileName").value.trim();
+   $("profileName")
+   .value.trim();
 
- if(name.length<2){
 
-   toast("Enter a valid name.");
+ if(name.length < 2){
+
+   toast(
+     "Enter a valid name."
+   );
 
    return;
 
  }
 
+
  account.name=name;
 
  saveAccounts();
 
- $("welcomeName").textContent=name;
- $("dashName").textContent=name;
+ $("welcomeName").textContent=
+   name;
+
+ $("dashName").textContent=
+   name;
 
  renderAvatar();
 
  renderCustomerList();
 
- toast("Profile updated.");
+ toast(
+   "Profile updated."
+ );
 
 }
 
@@ -2061,8 +3352,9 @@ function renderNotifications(){
 
  if(!account)return;
 
- const list=
+ const list =
    account.notifications || [];
+
 
  if(!list.length){
 
@@ -2071,6 +3363,7 @@ function renderNotifications(){
    return;
 
  }
+
 
  $("notifications").innerHTML =
    list.slice()
@@ -2100,12 +3393,14 @@ function renderNotifications(){
 
 
 /* =========================================================
-   ADMIN CUSTOMER LIST
+   CUSTOMER LIST
    ========================================================= */
 
 function renderCustomerList(){
 
- const list=$("customerList");
+ const list=
+   $("customerList");
+
 
  if(!accounts.length){
 
@@ -2116,10 +3411,12 @@ function renderCustomerList(){
 
  }
 
+
  if(!selectedCustomerId){
 
-   selectedCustomerId=
-     currentUserId || accounts[0].id;
+   selectedCustomerId =
+     currentUserId ||
+     accounts[0].id;
 
  }
 
@@ -2129,7 +3426,8 @@ function renderCustomerList(){
 
    <button
      class="customerItem ${
-       a.id===selectedCustomerId?"active":""
+       a.id===selectedCustomerId
+       ?"active":""
      }"
      onclick="selectCustomer('${a.id}')">
 
@@ -2153,6 +3451,7 @@ function renderCustomerList(){
 
  `).join("");
 
+
  renderAdminChat();
 
 }
@@ -2171,7 +3470,9 @@ function selectCustomer(id){
 
 function selectedCustomer(){
 
- return findAccount(selectedCustomerId);
+ return findAccount(
+   selectedCustomerId
+ );
 
 }
 
@@ -2185,67 +3486,76 @@ function adminCredit(){
  const customer=
    selectedCustomer();
 
+
  if(!customer){
 
-   toast("Select a customer first.");
+   toast(
+     "Select a customer first."
+   );
 
    return;
 
  }
+
 
  const currency=
    $("adminCurrency").value;
 
  const amount=
-   Number($("adminAmount").value);
+   Number(
+     $("adminAmount").value
+   );
 
- if(!amount || amount<=0){
 
-   toast("Enter a valid amount.");
+ if(!amount || amount <= 0){
+
+   toast(
+     "Enter a valid amount."
+   );
 
    return;
 
  }
 
 
- /*
-   This is the important part:
-   the credit is written directly into
-   the selected customer's balance.
- */
+ customer.balances[currency]+=
+   amount;
 
- customer.balances[currency]+=amount;
 
  addTransaction(
    customer,
    "credit",
-   "Funds credited by account administrator",
+   "Funds credited in fictional account",
    amount,
    currency
  );
+
 
  saveAccounts();
 
  $("adminAmount").value="";
 
- /*
-   If the administrator is currently
-   viewing this same customer, update
-   the dashboard immediately.
- */
 
- if(customer.id===currentUserId){
+ if(
+   customer.id === currentUserId
+ ){
 
    renderBalance();
+
    renderCurrencyBalances();
+
    renderTransactions();
 
  }
 
+
  renderCustomerList();
 
  toast(
-   money(amount,currency)+
+   money(
+     amount,
+     currency
+   ) +
    " credited successfully."
  );
 
@@ -2263,18 +3573,25 @@ function adminNotify(){
 
  if(!customer){
 
-   toast("Select a customer first.");
+   toast(
+     "Select a customer first."
+   );
 
    return;
 
  }
 
+
  const message=
-   $("adminNotification").value.trim();
+   $("adminNotification")
+   .value.trim();
+
 
  if(!message){
 
-   toast("Write a notification first.");
+   toast(
+     "Write a notification first."
+   );
 
    return;
 
@@ -2291,17 +3608,24 @@ function adminNotify(){
 
  });
 
+
  saveAccounts();
 
  $("adminNotification").value="";
 
- if(customer.id===currentUserId){
+
+ if(
+   customer.id === currentUserId
+ ){
 
    renderNotifications();
 
  }
 
- toast("Notification sent.");
+
+ toast(
+   "Notification sent."
+ );
 
 }
 
@@ -2312,22 +3636,27 @@ function adminNotify(){
 
 function renderChat(){
 
- const account=currentAccount();
+ const account=
+   currentAccount();
 
  if(!account)return;
 
- const body=$("chatBody");
+ const body=
+   $("chatBody");
 
  const messages=
    account.support || [];
+
 
  if(!messages.length){
 
    body.innerHTML=`
 
    <div class="msg">
+
      Hello. Welcome to customer support.
      How can we help you?
+
    </div>
 
    `;
@@ -2336,43 +3665,54 @@ function renderChat(){
 
  }
 
+
  body.innerHTML=
    messages.map(m=>`
 
    <div class="msg ${
-     m.sender==="customer"?"user":""
+     m.sender==="customer"
+     ?"user":""
    }">
 
      ${
        m.sender==="customer"
+
        ? escapeHtml(m.message)
+
        : "<strong>Support:</strong><br>"+
          escapeHtml(m.message)
      }
 
-     <div style="
+     <div
+       style="
        font-size:10px;
        color:#718096;
        margin-top:4px">
+
        ${escapeHtml(m.date)}
+
      </div>
 
    </div>
 
  `).join("");
 
- body.scrollTop=body.scrollHeight;
+
+ body.scrollTop=
+   body.scrollHeight;
 
 }
 
 
 function sendChat(){
 
- const account=currentAccount();
+ const account=
+   currentAccount();
 
  if(!account)return;
 
- const input=$("chatInput");
+ const input=
+   $("chatInput");
 
  const text=
    input.value.trim();
@@ -2392,6 +3732,7 @@ function sendChat(){
 
  });
 
+
  saveAccounts();
 
  input.value="";
@@ -2400,7 +3741,9 @@ function sendChat(){
 
  renderAdminChat();
 
- toast("Message sent to support.");
+ toast(
+   "Message sent to support."
+ );
 
 }
 
@@ -2414,7 +3757,9 @@ function renderAdminChat(){
  const customer=
    selectedCustomer();
 
- const box=$("adminChat");
+ const box=
+   $("adminChat");
+
 
  if(!customer){
 
@@ -2425,8 +3770,10 @@ function renderAdminChat(){
 
  }
 
+
  const messages=
    customer.support || [];
+
 
  if(!messages.length){
 
@@ -2437,33 +3784,42 @@ function renderAdminChat(){
 
  }
 
+
  box.innerHTML=
    messages.map(m=>`
 
    <div class="msg ${
-     m.sender==="customer"?"user":""
+     m.sender==="customer"
+     ?"user":""
    }">
 
      ${
        m.sender==="customer"
+
        ? "<strong>Customer:</strong><br>"+
          escapeHtml(m.message)
+
        : "<strong>Support:</strong><br>"+
          escapeHtml(m.message)
      }
 
-     <div style="
+     <div
+       style="
        font-size:10px;
        color:#718096;
        margin-top:4px">
+
        ${escapeHtml(m.date)}
+
      </div>
 
    </div>
 
  `).join("");
 
- box.scrollTop=box.scrollHeight;
+
+ box.scrollTop=
+   box.scrollHeight;
 
 }
 
@@ -2475,11 +3831,14 @@ function adminReplyMessage(){
 
  if(!customer){
 
-   toast("Select a customer first.");
+   toast(
+     "Select a customer first."
+   );
 
    return;
 
  }
+
 
  const input=
    $("adminReply");
@@ -2487,9 +3846,12 @@ function adminReplyMessage(){
  const text=
    input.value.trim();
 
+
  if(!text){
 
-   toast("Write a reply first.");
+   toast(
+     "Write a reply first."
+   );
 
    return;
 
@@ -2508,19 +3870,26 @@ function adminReplyMessage(){
 
  });
 
+
  saveAccounts();
 
  input.value="";
 
  renderAdminChat();
 
- if(customer.id===currentUserId){
+
+ if(
+   customer.id === currentUserId
+ ){
 
    renderChat();
 
  }
 
- toast("Support reply sent.");
+
+ toast(
+   "Support reply sent."
+ );
 
 }
 
@@ -2537,14 +3906,16 @@ function serviceUnavailable(service){
  $("serviceText").textContent=
    "Service currently unavailable.";
 
- $("serviceModal").classList.add("show");
+ $("serviceModal")
+   .classList.add("show");
 
 }
 
 
 function closeService(){
 
- $("serviceModal").classList.remove("show");
+ $("serviceModal")
+   .classList.remove("show");
 
 }
 
@@ -2556,12 +3927,18 @@ function closeService(){
 function refreshDashboard(){
 
  renderBalance();
+
  renderCurrencyBalances();
+
  renderTransactions();
+
  renderNotifications();
+
  renderChat();
 
- toast("Dashboard refreshed.");
+ toast(
+   "Dashboard refreshed."
+ );
 
 }
 
@@ -2572,17 +3949,25 @@ function refreshAdmin(){
 
  renderCustomerList();
 
+
  if(currentAccount()){
 
    renderBalance();
+
    renderCurrencyBalances();
+
    renderTransactions();
+
    renderNotifications();
+
    renderChat();
 
  }
 
- toast("Customer list refreshed.");
+
+ toast(
+   "Customer list refreshed."
+ );
 
 }
 
@@ -2590,18 +3975,24 @@ function refreshAdmin(){
 function scrollToServices(){
 
  $("dashboardServices")
- .scrollIntoView({
-   behavior:"smooth"
- });
+   .scrollIntoView({
+     behavior:"smooth"
+   });
 
 }
 
 
 function toggleChat(){
 
- $("chat").classList.toggle("show");
+ $("chat")
+   .classList.toggle("show");
 
- if($("chat").classList.contains("show")){
+
+ if(
+   $("chat")
+   .classList
+   .contains("show")
+ ){
 
    renderChat();
 
@@ -2616,14 +4007,21 @@ function toggleChat(){
 
 function logout(){
 
- localStorage.removeItem(SESSION_KEY);
+ localStorage.removeItem(
+   SESSION_KEY
+ );
 
  currentUserId=null;
 
- $("dashboard").style.display="none";
- $("publicSite").style.display="block";
+ $("dashboard")
+   .style.display="none";
 
- toast("Signed out.");
+ $("publicSite")
+   .style.display="block";
+
+ toast(
+   "Signed out."
+ );
 
 }
 
@@ -2636,22 +4034,36 @@ function clearAllAccounts(){
 
  const answer=
    confirm(
-     "This will delete all locally stored accounts, balances, transactions and support messages. Continue?"
+     "This will delete all locally stored fictional accounts, balances, transactions and support messages. Continue?"
    );
+
 
  if(!answer)return;
 
- localStorage.removeItem(ACCOUNTS_KEY);
- localStorage.removeItem(SESSION_KEY);
+
+ localStorage.removeItem(
+   ACCOUNTS_KEY
+ );
+
+ localStorage.removeItem(
+   SESSION_KEY
+ );
 
  accounts=[];
+
  currentUserId=null;
+
  selectedCustomerId=null;
 
- $("dashboard").style.display="none";
- $("publicSite").style.display="block";
+ $("dashboard")
+   .style.display="none";
 
- toast("Local accounts cleared.");
+ $("publicSite")
+   .style.display="block";
+
+ toast(
+   "Local accounts cleared."
+ );
 
 }
 
@@ -2660,29 +4072,32 @@ function clearAllAccounts(){
    START APPLICATION
    ========================================================= */
 
-window.addEventListener("load",()=>{
+window.addEventListener(
+ "load",
+ ()=>{
 
- accounts=loadAccounts();
+   accounts=loadAccounts();
 
- if(currentUserId){
 
-   const account=
-     findAccount(currentUserId);
-
-   if(account){
+   if(
+     currentUserId &&
+     findAccount(currentUserId)
+   ){
 
      showDashboard();
 
    }else{
 
      currentUserId=null;
-     localStorage.removeItem(SESSION_KEY);
+
+     localStorage.removeItem(
+       SESSION_KEY
+     );
 
    }
 
  }
-
-});
+);
 
 </script>
 
