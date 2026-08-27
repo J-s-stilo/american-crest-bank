@@ -171,7 +171,10 @@ async function initDatabase() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
-
+await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT FALSE
+`);
   for (const currency of CURRENCIES) {
     await pool.query(`
   ALTER TABLE users
