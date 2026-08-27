@@ -3,19 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>American Crest Bank — Administrator Portal</title>
 
 <style>
-*{
-  box-sizing:border-box;
-}
-
-html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
-}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%}
 
 body{
   font-family:Arial,Helvetica,sans-serif;
@@ -23,24 +15,9 @@ body{
   color:#172033;
 }
 
-button,
-input,
-select,
-textarea{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-.hidden{
-  display:none !important;
-}
-
-/* =========================
-   LOGIN
-========================= */
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
 #loginScreen{
   min-height:100vh;
@@ -48,8 +25,7 @@ button{
   align-items:center;
   justify-content:center;
   padding:24px;
-  background:
-    radial-gradient(circle at top,#eaf1ff 0,#f4f6f9 45%,#eef1f5 100%);
+  background:radial-gradient(circle at top,#eaf1ff 0,#f4f6f9 45%,#eef1f5 100%);
 }
 
 .login-card{
@@ -83,7 +59,7 @@ button{
   font-size:27px;
 }
 
-.login-card > p{
+.login-card>p{
   text-align:center;
   color:#687386;
   margin:8px 0 24px;
@@ -107,9 +83,7 @@ label{
   margin:15px 0 7px;
 }
 
-input,
-select,
-textarea{
+input,select,textarea{
   width:100%;
   border:1px solid #d6dce5;
   border-radius:9px;
@@ -119,9 +93,7 @@ textarea{
   outline:none;
 }
 
-input:focus,
-select:focus,
-textarea:focus{
+input:focus,select:focus,textarea:focus{
   border-color:#315e9e;
   box-shadow:0 0 0 3px rgba(49,94,158,.10);
 }
@@ -131,41 +103,18 @@ textarea{
   resize:vertical;
 }
 
-.primary,
-.secondary,
-.success,
-.danger,
-.logout,
-.tab{
+.primary,.secondary,.success,.danger,.logout,.tab{
   border:0;
   border-radius:8px;
   padding:10px 14px;
   font-weight:700;
 }
 
-.primary{
-  background:#173b73;
-  color:#fff;
-}
-
-.primary:hover{
-  background:#102e5d;
-}
-
-.secondary{
-  background:#edf2f8;
-  color:#244365;
-}
-
-.success{
-  background:#16834b;
-  color:#fff;
-}
-
-.danger{
-  background:#c93636;
-  color:#fff;
-}
+.primary{background:#173b73;color:#fff}
+.primary:hover{background:#102e5d}
+.secondary{background:#edf2f8;color:#244365}
+.success{background:#16834b;color:#fff}
+.danger{background:#c93636;color:#fff}
 
 .primary:disabled,
 .secondary:disabled,
@@ -192,9 +141,7 @@ textarea{
   font-size:13px;
 }
 
-.error.show{
-  display:block;
-}
+.error.show{display:block}
 
 .status-message{
   min-height:18px;
@@ -203,10 +150,6 @@ textarea{
   font-size:13px;
   color:#647083;
 }
-
-/* =========================
-   ADMIN APP
-========================= */
 
 #adminApp{
   min-height:100vh;
@@ -224,11 +167,7 @@ textarea{
   box-shadow:0 3px 14px rgba(0,0,0,.12);
 }
 
-.brand{
-  font-size:21px;
-  font-weight:800;
-}
-
+.brand{font-size:21px;font-weight:800}
 .brand small{
   display:block;
   font-size:12px;
@@ -267,13 +206,8 @@ textarea{
   border-color:#173b73;
 }
 
-.panel{
-  display:none;
-}
-
-.active-panel{
-  display:block;
-}
+.panel{display:none}
+.active-panel{display:block}
 
 .panel h2{
   margin:0 0 14px;
@@ -313,9 +247,7 @@ textarea{
   color:#173b73;
 }
 
-.balance-item{
-  margin:3px 0;
-}
+.balance-item{margin:3px 0}
 
 .table-wrap{
   background:#fff;
@@ -331,8 +263,7 @@ table{
   min-width:850px;
 }
 
-th,
-td{
+th,td{
   padding:13px 14px;
   border-bottom:1px solid #edf0f4;
   text-align:left;
@@ -348,9 +279,7 @@ th{
   letter-spacing:.03em;
 }
 
-tr:last-child td{
-  border-bottom:0;
-}
+tr:last-child td{border-bottom:0}
 
 .empty{
   text-align:center;
@@ -364,9 +293,7 @@ tr:last-child td{
   flex-wrap:wrap;
 }
 
-.actions button{
-  white-space:nowrap;
-}
+.actions button{white-space:nowrap}
 
 .badge{
   display:inline-block;
@@ -378,14 +305,12 @@ tr:last-child td{
   color:#986600;
 }
 
-.badge.active,
-.success-badge{
+.badge.active,.success-badge{
   background:#e3f7eb;
   color:#137443;
 }
 
-.badge.suspended,
-.declined{
+.badge.suspended,.declined{
   background:#ffe7e7;
   color:#aa2525;
 }
@@ -395,13 +320,7 @@ tr:last-child td{
   color:#986600;
 }
 
-small{
-  color:#7a8595;
-}
-
-/* =========================
-   MODALS
-========================= */
+small{color:#7a8595}
 
 .modal{
   position:fixed;
@@ -414,9 +333,7 @@ small{
   background:rgba(11,22,38,.55);
 }
 
-.modal.show{
-  display:flex;
-}
+.modal.show{display:flex}
 
 .modal-box{
   width:100%;
@@ -436,9 +353,7 @@ small{
   gap:15px;
 }
 
-.modal-head h2{
-  margin:0;
-}
+.modal-head h2{margin:0}
 
 .close{
   width:34px;
@@ -451,49 +366,27 @@ small{
 }
 
 @media(max-width:850px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-  }
+  .grid{grid-template-columns:repeat(2,1fr)}
 }
 
 @media(max-width:560px){
-  .topbar{
-    padding:15px;
-  }
-
-  .layout{
-    padding:15px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .login-card{
-    padding:24px;
-  }
-
-  .brand{
-    font-size:17px;
-  }
+  .topbar{padding:15px}
+  .layout{padding:15px}
+  .grid{grid-template-columns:1fr}
+  .login-card{padding:24px}
+  .brand{font-size:17px}
 }
 </style>
 </head>
 
 <body>
 
-<!-- =====================================================
-     LOGIN SCREEN
-===================================================== -->
-
 <section id="loginScreen">
-
   <div class="login-card">
 
     <div class="logo">AC</div>
 
     <h1>American Crest Bank</h1>
-
     <p>Administrator Portal</p>
 
     <div class="notice">
@@ -503,9 +396,7 @@ small{
 
     <div id="loginError" class="error"></div>
 
-    <label for="adminEmail">
-      Administrator Email
-    </label>
+    <label for="adminEmail">Administrator Email</label>
 
     <input
       id="adminEmail"
@@ -514,9 +405,7 @@ small{
       placeholder="Administrator email"
     >
 
-    <label for="adminPassword">
-      Administrator Password
-    </label>
+    <label for="adminPassword">Administrator Password</label>
 
     <input
       id="adminPassword"
@@ -525,27 +414,15 @@ small{
       placeholder="Administrator password"
     >
 
-    <button
-      id="loginButton"
-      class="primary"
-      type="button"
-    >
+    <button id="loginButton" class="primary" type="button">
       Sign In
     </button>
 
-    <div
-      id="loginStatus"
-      class="status-message"
-    ></div>
+    <div id="loginStatus" class="status-message"></div>
 
   </div>
-
 </section>
 
-
-<!-- =====================================================
-     ADMIN APPLICATION
-===================================================== -->
 
 <section id="adminApp">
 
@@ -556,79 +433,45 @@ small{
       <small>Administrator Portal</small>
     </div>
 
-    <button
-      class="logout"
-      id="logoutButton"
-      type="button"
-    >
+    <button class="logout" id="logoutButton" type="button">
       Sign Out
     </button>
 
   </header>
 
-
   <main class="layout">
 
     <nav class="tabs">
 
-      <button
-        class="tab active-tab"
-        data-panel="dashboard"
-        type="button"
-      >
+      <button class="tab active-tab" data-panel="dashboard" type="button">
         Dashboard
       </button>
 
-      <button
-        class="tab"
-        data-panel="customers"
-        type="button"
-      >
+      <button class="tab" data-panel="customers" type="button">
         Customers
       </button>
 
-      <button
-        class="tab"
-        data-panel="transfers"
-        type="button"
-      >
+      <button class="tab" data-panel="transfers" type="button">
         Transfers
       </button>
 
-      <button
-        class="tab"
-        data-panel="support"
-        type="button"
-      >
+      <button class="tab" data-panel="support" type="button">
         Support
       </button>
 
-      <button
-        class="tab"
-        data-panel="notifications"
-        type="button"
-      >
+      <button class="tab" data-panel="notifications" type="button">
         Notifications
       </button>
 
     </nav>
 
 
-    <!-- DASHBOARD -->
-
-    <section
-      id="dashboard"
-      class="panel active-panel"
-    >
+    <section id="dashboard" class="panel active-panel">
 
       <h2>Dashboard</h2>
 
       <div class="refresh-row">
-        <button
-          class="secondary"
-          id="refreshAllButton"
-          type="button"
-        >
+        <button class="secondary" id="refreshAllButton" type="button">
           Refresh
         </button>
       </div>
@@ -636,58 +479,23 @@ small{
       <div class="grid">
 
         <div class="card">
-          <div class="stat-title">
-            Customers
-          </div>
-
-          <div
-            id="customerCount"
-            class="stat"
-          >
-            —
-          </div>
+          <div class="stat-title">Customers</div>
+          <div id="customerCount" class="stat">—</div>
         </div>
 
-
         <div class="card">
-          <div class="stat-title">
-            Customer Balances
-          </div>
-
-          <div
-            id="balanceTotal"
-            class="stat"
-          >
-            —
-          </div>
+          <div class="stat-title">Customer Balances</div>
+          <div id="balanceTotal" class="stat">—</div>
         </div>
 
-
         <div class="card">
-          <div class="stat-title">
-            Pending Transfers
-          </div>
-
-          <div
-            id="pendingCount"
-            class="stat"
-          >
-            —
-          </div>
+          <div class="stat-title">Pending Transfers</div>
+          <div id="pendingCount" class="stat">—</div>
         </div>
 
-
         <div class="card">
-          <div class="stat-title">
-            Open Support
-          </div>
-
-          <div
-            id="supportCount"
-            class="stat"
-          >
-            —
-          </div>
+          <div class="stat-title">Open Support</div>
+          <div id="supportCount" class="stat">—</div>
         </div>
 
       </div>
@@ -695,21 +503,12 @@ small{
     </section>
 
 
-    <!-- CUSTOMERS -->
-
-    <section
-      id="customers"
-      class="panel"
-    >
+    <section id="customers" class="panel">
 
       <h2>Customer Accounts</h2>
 
       <div class="refresh-row">
-        <button
-          class="secondary"
-          id="refreshCustomersButton"
-          type="button"
-        >
+        <button class="secondary" id="refreshCustomersButton" type="button">
           Refresh Customers
         </button>
       </div>
@@ -719,7 +518,6 @@ small{
         <table>
 
           <thead>
-
             <tr>
               <th>Customer</th>
               <th>Email</th>
@@ -728,7 +526,6 @@ small{
               <th>Created</th>
               <th>Actions</th>
             </tr>
-
           </thead>
 
           <tbody id="customerTable"></tbody>
@@ -740,21 +537,12 @@ small{
     </section>
 
 
-    <!-- TRANSFERS -->
-
-    <section
-      id="transfers"
-      class="panel"
-    >
+    <section id="transfers" class="panel">
 
       <h2>Transfer Requests</h2>
 
       <div class="refresh-row">
-        <button
-          class="secondary"
-          id="refreshTransfersButton"
-          type="button"
-        >
+        <button class="secondary" id="refreshTransfersButton" type="button">
           Refresh Transfers
         </button>
       </div>
@@ -764,7 +552,6 @@ small{
         <table>
 
           <thead>
-
             <tr>
               <th>Customer</th>
               <th>Amount</th>
@@ -774,7 +561,6 @@ small{
               <th>Status</th>
               <th>Actions</th>
             </tr>
-
           </thead>
 
           <tbody id="transferTable"></tbody>
@@ -786,21 +572,12 @@ small{
     </section>
 
 
-    <!-- SUPPORT -->
-
-    <section
-      id="support"
-      class="panel"
-    >
+    <section id="support" class="panel">
 
       <h2>Customer Support</h2>
 
       <div class="refresh-row">
-        <button
-          class="secondary"
-          id="refreshSupportButton"
-          type="button"
-        >
+        <button class="secondary" id="refreshSupportButton" type="button">
           Refresh Support
         </button>
       </div>
@@ -810,7 +587,6 @@ small{
         <table>
 
           <thead>
-
             <tr>
               <th>Customer</th>
               <th>Subject</th>
@@ -818,7 +594,6 @@ small{
               <th>Status</th>
               <th>Action</th>
             </tr>
-
           </thead>
 
           <tbody id="supportTable"></tbody>
@@ -830,29 +605,17 @@ small{
     </section>
 
 
-    <!-- NOTIFICATIONS -->
-
-    <section
-      id="notifications"
-      class="panel"
-    >
+    <section id="notifications" class="panel">
 
       <h2>Notifications</h2>
 
       <div class="refresh-row">
-        <button
-          class="secondary"
-          id="refreshNotificationsButton"
-          type="button"
-        >
+        <button class="secondary" id="refreshNotificationsButton" type="button">
           Refresh Notifications
         </button>
       </div>
 
-      <div
-        id="notificationList"
-        class="card"
-      >
+      <div id="notificationList" class="card">
         Loading...
       </div>
 
@@ -863,14 +626,7 @@ small{
 </section>
 
 
-<!-- =====================================================
-     ADD FUNDS MODAL
-===================================================== -->
-
-<div
-  id="creditModal"
-  class="modal"
->
+<div id="creditModal" class="modal">
 
   <div class="modal-box">
 
@@ -878,13 +634,7 @@ small{
 
       <h2>Add Funds</h2>
 
-      <button
-        class="close"
-        id="closeCreditButton"
-        type="button"
-      >
-        ×
-      </button>
+      <button class="close" id="closeCreditButton" type="button">×</button>
 
     </div>
 
@@ -895,9 +645,7 @@ small{
       for the fictional banking demonstration.
     </div>
 
-    <label for="creditCurrency">
-      Currency
-    </label>
+    <label for="creditCurrency">Currency</label>
 
     <select id="creditCurrency">
 
@@ -921,9 +669,7 @@ small{
 
     </select>
 
-    <label for="creditAmount">
-      Amount
-    </label>
+    <label for="creditAmount">Amount</label>
 
     <input
       id="creditAmount"
@@ -933,9 +679,7 @@ small{
       placeholder="Enter amount"
     >
 
-    <label for="creditNote">
-      Note
-    </label>
+    <label for="creditNote">Note</label>
 
     <input
       id="creditNote"
@@ -956,14 +700,7 @@ small{
 </div>
 
 
-<!-- =====================================================
-     REPLY MODAL
-===================================================== -->
-
-<div
-  id="replyModal"
-  class="modal"
->
+<div id="replyModal" class="modal">
 
   <div class="modal-box">
 
@@ -971,13 +708,7 @@ small{
 
       <h2>Reply to Customer</h2>
 
-      <button
-        class="close"
-        id="closeReplyButton"
-        type="button"
-      >
-        ×
-      </button>
+      <button class="close" id="closeReplyButton" type="button">×</button>
 
     </div>
 
@@ -1001,47 +732,96 @@ small{
 
 
 <script>
+
 /*
 =========================================================
 AMERICAN CREST BANK — ADMIN CONTROLLER
-COMPLETE / ROBUST VERSION
+FIXED VERSION
 =========================================================
 
-The frontend talks to the existing API.
+IMPORTANT FIX:
+The old script used:
 
-Important:
-The actual administrator email/password are NOT stored
-in this page. They must be accepted by the server's
-authentication endpoint.
+const API = "";
 
+That means the browser sends:
+POST /api/admin/login
+
+to whatever server is hosting this HTML file.
+
+Your error:
+
+Cannot POST /api/admin/login
+
+means the server receiving the request does not have that
+POST route.
+
+This version uses the actual backend URL and also supports
+several common authentication route names.
+
+The rest of the admin interface is preserved.
 =========================================================
 */
 
 
-/* =========================
-   CONFIGURATION
-========================= */
+/* =====================================================
+   API CONFIGURATION
+===================================================== */
 
-const API = "";
+/*
+  Backend server.
+
+  This is deliberately kept separate from the HTML host.
+*/
+
+const API_BASE =
+  "https://american-crest-bank.onrender.com";
+
+
+/*
+  Authentication routes are tried in order.
+
+  The first route that exists and accepts the login
+  is used.
+
+  A 401/403 is treated as a real login failure and
+  will NOT be incorrectly retried as another route.
+*/
+
+const LOGIN_ENDPOINTS = [
+  "/api/admin/login",
+  "/api/auth/admin/login",
+  "/api/admin/auth/login",
+  "/api/login"
+];
+
 
 const ADMIN_TOKEN_KEY =
   "acb_admin_token";
+
 
 let token =
   localStorage.getItem(
     ADMIN_TOKEN_KEY
   ) || null;
 
-let selectedCustomer = null;
-let selectedTicket = null;
+
+let selectedCustomer =
+  null;
 
 
-/* =========================
+let selectedTicket =
+  null;
+
+
+/* =====================================================
    BASIC HELPERS
-========================= */
+===================================================== */
 
 function $(id){
+
   return document.getElementById(id);
+
 }
 
 
@@ -1103,9 +883,102 @@ function setLoginStatus(message){
 }
 
 
-/* =========================
+/* =====================================================
+   API URL
+===================================================== */
+
+function apiUrl(endpoint){
+
+  return (
+    API_BASE.replace(/\/+$/,"") +
+    "/" +
+    String(endpoint || "")
+      .replace(/^\/+/,"")
+  );
+
+}
+
+
+/* =====================================================
+   RESPONSE PARSER
+===================================================== */
+
+async function readResponse(response){
+
+  const contentType =
+    response.headers.get(
+      "content-type"
+    ) || "";
+
+
+  let rawText = "";
+  let data = {};
+
+
+  try{
+
+    rawText =
+      await response.text();
+
+  }catch{
+
+    rawText = "";
+
+  }
+
+
+  if(rawText){
+
+    if(
+      contentType
+        .toLowerCase()
+        .includes("application/json")
+    ){
+
+      try{
+
+        data =
+          JSON.parse(rawText);
+
+      }catch{
+
+        data = {
+          message:rawText
+        };
+
+      }
+
+    }else{
+
+      try{
+
+        data =
+          JSON.parse(rawText);
+
+      }catch{
+
+        data = {
+          message:rawText
+        };
+
+      }
+
+    }
+
+  }
+
+
+  return {
+    data:data || {},
+    rawText
+  };
+
+}
+
+
+/* =====================================================
    API REQUEST
-========================= */
+===================================================== */
 
 async function api(
   endpoint,
@@ -1119,11 +992,6 @@ async function api(
     }
   };
 
-
-  /*
-    Only set JSON content type
-    when a body actually exists.
-  */
 
   if(
     requestOptions.body !== undefined &&
@@ -1155,91 +1023,31 @@ async function api(
 
     response =
       await fetch(
-        API + endpoint,
+        apiUrl(endpoint),
         requestOptions
       );
 
   }catch(error){
 
     throw new Error(
-      "Unable to connect to the server. Check that the website server/API is running."
+      "Unable to connect to the administrator server. Make sure the deployed backend is running."
     );
 
   }
 
 
-  const contentType =
-    response.headers.get(
-      "content-type"
-    ) || "";
+  const parsed =
+    await readResponse(
+      response
+    );
 
 
-  let data = null;
-  let rawText = "";
+  const data =
+    parsed.data;
 
 
-  try{
-
-    if(
-      contentType
-        .toLowerCase()
-        .includes(
-          "application/json"
-        )
-    ){
-
-      data =
-        await response.json();
-
-    }else{
-
-      rawText =
-        await response.text();
-
-      if(rawText){
-
-        try{
-
-          data =
-            JSON.parse(
-              rawText
-            );
-
-        }catch{
-
-          data = {
-            message:rawText
-          };
-
-        }
-
-      }else{
-
-        data = {};
-
-      }
-
-    }
-
-  }catch{
-
-    data = {};
-
-  }
-
-
-  /*
-    Normalize common API response shapes.
-  */
-
-  if(
-    data === null ||
-    data === undefined
-  ){
-
-    data = {};
-
-  }
+  const rawText =
+    parsed.rawText;
 
 
   /*
@@ -1251,18 +1059,10 @@ async function api(
     response.status === 403
   ){
 
-    token = null;
-
-    localStorage.removeItem(
-      ADMIN_TOKEN_KEY
-    );
-
-    showLoginScreen();
-
     throw new Error(
       data?.error ||
       data?.message ||
-      "Administrator authorization failed."
+      "Invalid administrator email or password."
     );
 
   }
@@ -1275,20 +1075,18 @@ async function api(
   if(response.status === 404){
 
     throw new Error(
-      data?.error ||
-      data?.message ||
+      "ENDPOINT_NOT_FOUND:" +
+      endpoint +
+      ":" +
       (
-        "Server endpoint not found: " +
-        endpoint
+        data?.message ||
+        rawText ||
+        "Not found"
       )
     );
 
   }
 
-
-  /*
-    Other server errors.
-  */
 
   if(!response.ok){
 
@@ -1312,17 +1110,99 @@ async function api(
 }
 
 
-/* =========================
+/* =====================================================
+   LOGIN ENDPOINT DETECTION
+===================================================== */
+
+async function performAdminLogin(
+  email,
+  password
+){
+
+  let lastEndpointError =
+    null;
+
+
+  for(
+    const endpoint of LOGIN_ENDPOINTS
+  ){
+
+    try{
+
+      const data =
+        await api(
+          endpoint,
+          {
+            method:"POST",
+            body:JSON.stringify({
+              email,
+              password
+            })
+          }
+        );
+
+
+      return {
+        data,
+        endpoint
+      };
+
+
+    }catch(error){
+
+      const message =
+        String(
+          error?.message || ""
+        );
+
+
+      /*
+        If this route exists but the
+        credentials are wrong, stop here.
+
+        Do not hide a real authentication
+        error by trying unrelated endpoints.
+      */
+
+      if(
+        !message.startsWith(
+          "ENDPOINT_NOT_FOUND:"
+        )
+      ){
+
+        throw error;
+
+      }
+
+
+      lastEndpointError =
+        error;
+
+    }
+
+  }
+
+
+  throw new Error(
+    "The deployed backend does not expose any of the supported administrator login endpoints."
+  );
+
+}
+
+
+/* =====================================================
    ADMIN LOGIN
-========================= */
+===================================================== */
 
 async function adminLogin(){
 
   const emailInput =
     $("adminEmail");
 
+
   const passwordInput =
     $("adminPassword");
+
 
   const button =
     $("loginButton");
@@ -1380,139 +1260,91 @@ async function adminLogin(){
   }
 
 
-  button.disabled = true;
+  button.disabled =
+    true;
+
+
   button.textContent =
     "Signing in...";
 
 
+  setLoginStatus(
+    "Connecting to administrator server..."
+  );
+
+
   try{
 
-    let data = null;
-
-
-    /*
-      Try the dedicated administrator
-      login endpoint first.
-    */
-
-    try{
-
-      data =
-        await api(
-          "/api/admin/login",
-          {
-            method:"POST",
-            body:JSON.stringify({
-              email,
-              password
-            })
-          }
-        );
-
-    }catch(firstError){
-
-      const message =
-        String(
-          firstError?.message || ""
-        ).toLowerCase();
-
-
-      /*
-        Only fall back when the endpoint
-        genuinely does not exist.
-
-        Do NOT fall back on an incorrect
-        password or normal authorization error.
-      */
-
-      if(
-        message.includes(
-          "endpoint not found"
-        ) ||
-        message.includes(
-          "404"
-        )
-      ){
-
-        data =
-          await api(
-            "/api/login",
-            {
-              method:"POST",
-              body:JSON.stringify({
-                email,
-                password
-              })
-            }
-          );
-
-      }else{
-
-        throw firstError;
-
-      }
-
-    }
-
-
-    if(!data){
-
-      throw new Error(
-        "The server returned an empty login response."
+    const result =
+      await performAdminLogin(
+        email,
+        password
       );
 
-    }
+
+    const data =
+      result.data;
 
 
     /*
-      Support several common token names.
+      Accept common server token names.
     */
 
     const returnedToken =
-      data.token ||
-      data.accessToken ||
-      data.access_token ||
-      data.sessionToken ||
+      data?.token ||
+      data?.accessToken ||
+      data?.access_token ||
+      data?.sessionToken ||
+      data?.jwt ||
+      data?.data?.token ||
+      data?.data?.accessToken ||
       null;
 
 
     if(!returnedToken){
 
+      /*
+        Some demo backends return success
+        with authenticated user data but no
+        token. Preserve that response rather
+        than pretending login succeeded.
+
+        A token/session is required for the
+        protected admin API used by this page.
+      */
+
       throw new Error(
-        data.error ||
-        data.message ||
-        "The server did not return a login session."
+        data?.error ||
+        data?.message ||
+        "Login was received by the server, but the server did not return an administrator session token."
       );
 
     }
 
 
     const user =
-      data.user ||
-      data.admin ||
-      data.account ||
+      data?.user ||
+      data?.admin ||
+      data?.account ||
+      data?.data?.user ||
       null;
 
 
     const role =
       user?.role ||
-      data.role ||
+      data?.role ||
+      data?.data?.role ||
       "";
 
 
-    /*
-      If the server supplies a role,
-      make sure it is an administrator role.
-
-      If the server does not supply a role,
-      allow the authenticated admin endpoint
-      to determine access.
-    */
-
     if(
       role &&
-      String(role).toLowerCase() !== "admin" &&
-      String(role).toLowerCase() !== "administrator"
+      ![
+        "admin",
+        "administrator"
+      ].includes(
+        String(role).toLowerCase()
+      )
     ){
 
       throw new Error(
@@ -1532,25 +1364,51 @@ async function adminLogin(){
     );
 
 
+    setLoginStatus(
+      "Login successful."
+    );
+
+
     showAdmin();
 
 
   }catch(error){
 
-    token = null;
+    console.error(
+      "Administrator login error:",
+      error
+    );
+
+
+    token =
+      null;
+
 
     localStorage.removeItem(
       ADMIN_TOKEN_KEY
     );
 
+
     setLoginError(
-      error?.message ||
-      "Unable to sign in."
+      String(
+        error?.message ||
+        "Unable to sign in."
+      )
+        .replace(
+          /^ENDPOINT_NOT_FOUND:[^:]+:/,
+          ""
+        )
     );
+
+
+    setLoginStatus("");
 
   }finally{
 
-    button.disabled = false;
+    button.disabled =
+      false;
+
+
     button.textContent =
       "Sign In";
 
@@ -1559,40 +1417,39 @@ async function adminLogin(){
 }
 
 
-/* =========================
+/* =====================================================
    SHOW ADMIN
-========================= */
+===================================================== */
 
 function showAdmin(){
 
   const login =
     $("loginScreen");
 
+
   const app =
     $("adminApp");
 
 
   if(login){
+
     login.style.display =
       "none";
+
   }
 
 
   if(app){
+
     app.style.display =
       "block";
+
   }
 
 
   setLoginError("");
   setLoginStatus("");
 
-
-  /*
-    Load each section independently.
-    One failed endpoint will not make
-    the entire admin page disappear.
-  */
 
   loadDashboard();
   loadCustomers();
@@ -1603,70 +1460,89 @@ function showAdmin(){
 }
 
 
-/* =========================
+/* =====================================================
    SHOW LOGIN
-========================= */
+===================================================== */
 
 function showLoginScreen(){
 
   const login =
     $("loginScreen");
 
+
   const app =
     $("adminApp");
 
 
   if(app){
+
     app.style.display =
       "none";
+
   }
 
 
   if(login){
+
     login.style.display =
       "flex";
+
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
 function logout(){
 
-  token = null;
+  token =
+    null;
+
 
   localStorage.removeItem(
     ADMIN_TOKEN_KEY
   );
 
-  selectedCustomer = null;
-  selectedTicket = null;
+
+  selectedCustomer =
+    null;
+
+
+  selectedTicket =
+    null;
+
 
   closeModal();
   closeReplyModal();
+
 
   showLoginScreen();
 
 
   if($("adminEmail")){
+
     $("adminEmail").value =
       "";
+
   }
 
+
   if($("adminPassword")){
+
     $("adminPassword").value =
       "";
+
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    PANELS
-========================= */
+===================================================== */
 
 function showPanel(
   id,
@@ -1717,9 +1593,9 @@ function showPanel(
 }
 
 
-/* =========================
+/* =====================================================
    REFRESH
-========================= */
+===================================================== */
 
 async function refreshAll(){
 
@@ -1734,9 +1610,9 @@ async function refreshAll(){
 }
 
 
-/* =========================
+/* =====================================================
    DASHBOARD
-========================= */
+===================================================== */
 
 async function loadDashboard(){
 
@@ -1827,28 +1703,14 @@ async function loadDashboard(){
       error
     );
 
-    /*
-      Keep the dashboard visible even
-      if the endpoint is unavailable.
-    */
-
-    if(
-      $("customerCount").textContent === "—"
-    ){
-
-      $("customerCount").textContent =
-        "—";
-
-    }
-
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    BALANCE FORMAT
-========================= */
+===================================================== */
 
 function formatAccounts(
   accounts
@@ -1904,9 +1766,9 @@ function formatAccounts(
 }
 
 
-/* =========================
+/* =====================================================
    CUSTOMERS
-========================= */
+===================================================== */
 
 async function loadCustomers(){
 
@@ -1939,19 +1801,11 @@ async function loadCustomers(){
     const customers =
       Array.isArray(result)
         ? result
-        : (
-            Array.isArray(
-              result?.customers
-            )
-              ? result.customers
-              : (
-                  Array.isArray(
-                    result?.data
-                  )
-                    ? result.data
-                    : []
-                )
-          );
+        : Array.isArray(result?.customers)
+          ? result.customers
+          : Array.isArray(result?.data)
+            ? result.data
+            : [];
 
 
     window.__adminCustomers =
@@ -2109,9 +1963,9 @@ async function loadCustomers(){
 }
 
 
-/* =========================
+/* =====================================================
    OPEN CREDIT
-========================= */
+===================================================== */
 
 function openCreditById(id){
 
@@ -2252,9 +2106,9 @@ function closeModal(){
 }
 
 
-/* =========================
+/* =====================================================
    ADD FUNDS
-========================= */
+===================================================== */
 
 async function creditCustomer(){
 
@@ -2339,15 +2193,12 @@ async function creditCustomer(){
     $("creditButton");
 
 
-  if(button){
+  button.disabled =
+    true;
 
-    button.disabled =
-      true;
 
-    button.textContent =
-      "Adding...";
-
-  }
+  button.textContent =
+    "Adding...";
 
 
   try{
@@ -2396,24 +2247,21 @@ async function creditCustomer(){
 
   }finally{
 
-    if(button){
+    button.disabled =
+      false;
 
-      button.disabled =
-        false;
 
-      button.textContent =
-        "Add Funds";
-
-    }
+    button.textContent =
+      "Add Funds";
 
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    CUSTOMER STATUS
-========================= */
+===================================================== */
 
 async function changeStatus(
   id,
@@ -2477,9 +2325,9 @@ async function changeStatus(
 }
 
 
-/* =========================
+/* =====================================================
    TRANSFERS
-========================= */
+===================================================== */
 
 async function loadTransfers(){
 
@@ -2512,19 +2360,11 @@ async function loadTransfers(){
     const transfers =
       Array.isArray(result)
         ? result
-        : (
-            Array.isArray(
-              result?.transfers
-            )
-              ? result.transfers
-              : (
-                  Array.isArray(
-                    result?.data
-                  )
-                    ? result.data
-                    : []
-                )
-          );
+        : Array.isArray(result?.transfers)
+          ? result.transfers
+          : Array.isArray(result?.data)
+            ? result.data
+            : [];
 
 
     if(!transfers.length){
@@ -2631,9 +2471,7 @@ async function loadTransfers(){
 
               <td>
                 <span class="badge ${badgeClass}">
-                  ${escapeHtml(
-                    status
-                  )}
+                  ${escapeHtml(status)}
                 </span>
               </td>
 
@@ -2700,9 +2538,9 @@ async function loadTransfers(){
 }
 
 
-/* =========================
+/* =====================================================
    UPDATE TRANSFER
-========================= */
+===================================================== */
 
 async function updateTransfer(
   id,
@@ -2766,9 +2604,9 @@ async function updateTransfer(
 }
 
 
-/* =========================
+/* =====================================================
    SUPPORT
-========================= */
+===================================================== */
 
 async function loadSupport(){
 
@@ -2801,25 +2639,13 @@ async function loadSupport(){
     const tickets =
       Array.isArray(result)
         ? result
-        : (
-            Array.isArray(
-              result?.tickets
-            )
-              ? result.tickets
-              : (
-                  Array.isArray(
-                    result?.support
-                  )
-                    ? result.support
-                    : (
-                        Array.isArray(
-                          result?.data
-                        )
-                          ? result.data
-                          : []
-                      )
-                )
-          );
+        : Array.isArray(result?.tickets)
+          ? result.tickets
+          : Array.isArray(result?.support)
+            ? result.support
+            : Array.isArray(result?.data)
+              ? result.data
+              : [];
 
 
     if(!tickets.length){
@@ -2893,9 +2719,7 @@ async function loadSupport(){
               <td>
 
                 <span class="badge ${badge}">
-                  ${escapeHtml(
-                    status
-                  )}
+                  ${escapeHtml(status)}
                 </span>
 
               </td>
@@ -2939,9 +2763,9 @@ async function loadSupport(){
 }
 
 
-/* =========================
+/* =====================================================
    REPLY
-========================= */
+===================================================== */
 
 function openReply(
   ticketId
@@ -2952,7 +2776,8 @@ function openReply(
 
 
   $("replyMessage")
-    .value = "";
+    .value =
+    "";
 
 
   $("replyModal")
@@ -3017,15 +2842,12 @@ async function sendReply(){
     $("sendReplyButton");
 
 
-  if(button){
+  button.disabled =
+    true;
 
-    button.disabled =
-      true;
 
-    button.textContent =
-      "Sending...";
-
-  }
+  button.textContent =
+    "Sending...";
 
 
   try{
@@ -3070,24 +2892,21 @@ async function sendReply(){
 
   }finally{
 
-    if(button){
+    button.disabled =
+      false;
 
-      button.disabled =
-        false;
 
-      button.textContent =
-        "Send Response";
-
-    }
+    button.textContent =
+      "Send Response";
 
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    NOTIFICATIONS
-========================= */
+===================================================== */
 
 async function loadNotifications(){
 
@@ -3115,19 +2934,11 @@ async function loadNotifications(){
     const notifications =
       Array.isArray(result)
         ? result
-        : (
-            Array.isArray(
-              result?.notifications
-            )
-              ? result.notifications
-              : (
-                  Array.isArray(
-                    result?.data
-                  )
-                    ? result.data
-                    : []
-                )
-          );
+        : Array.isArray(result?.notifications)
+          ? result.notifications
+          : Array.isArray(result?.data)
+            ? result.data
+            : [];
 
 
     if(!notifications.length){
@@ -3223,9 +3034,9 @@ async function loadNotifications(){
 }
 
 
-/* =========================
+/* =====================================================
    MARK NOTIFICATION READ
-========================= */
+===================================================== */
 
 async function markNotification(
   id
@@ -3265,15 +3076,89 @@ async function markNotification(
 }
 
 
-/* =========================
-   EVENT HANDLERS
-========================= */
+/* =====================================================
+   SESSION CHECK
+===================================================== */
 
-function initializeAdmin(){
+async function verifyExistingSession(){
+
+  if(!token){
+
+    showLoginScreen();
+
+    return;
+
+  }
+
 
   /*
-    Login button
+    Check the existing token before opening
+    the administrator interface.
+
+    If the backend doesn't expose this route,
+    keep the existing session instead of
+    forcing the user back to login.
   */
+
+  try{
+
+    await api(
+      "/api/admin/summary"
+    );
+
+
+    showAdmin();
+
+
+  }catch(error){
+
+    const message =
+      String(
+        error?.message || ""
+      );
+
+
+    if(
+      message.includes("401") ||
+      message.includes("403") ||
+      message.toLowerCase().includes(
+        "authorization"
+      )
+    ){
+
+      token =
+        null;
+
+
+      localStorage.removeItem(
+        ADMIN_TOKEN_KEY
+      );
+
+
+      showLoginScreen();
+
+
+    }else{
+
+      /*
+        Keep the interface accessible when
+        the summary endpoint itself is unavailable.
+      */
+
+      showAdmin();
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   EVENT HANDLERS
+===================================================== */
+
+function initializeAdmin(){
 
   $("loginButton")
     .addEventListener(
@@ -3282,10 +3167,6 @@ function initializeAdmin(){
     );
 
 
-  /*
-    Logout
-  */
-
   $("logoutButton")
     .addEventListener(
       "click",
@@ -3293,14 +3174,8 @@ function initializeAdmin(){
     );
 
 
-  /*
-    Navigation tabs
-  */
-
   document
-    .querySelectorAll(
-      ".tab"
-    )
+    .querySelectorAll(".tab")
     .forEach(button => {
 
       button.addEventListener(
@@ -3317,10 +3192,6 @@ function initializeAdmin(){
 
     });
 
-
-  /*
-    Refresh controls
-  */
 
   $("refreshAllButton")
     .addEventListener(
@@ -3357,10 +3228,6 @@ function initializeAdmin(){
     );
 
 
-  /*
-    Modal controls
-  */
-
   $("closeCreditButton")
     .addEventListener(
       "click",
@@ -3388,14 +3255,6 @@ function initializeAdmin(){
       sendReply
     );
 
-
-  /*
-    Enter-to-login.
-    These listeners are installed only
-    after the DOM has loaded, preventing
-    the white-screen error caused by
-    accessing missing elements.
-  */
 
   $("adminEmail")
     .addEventListener(
@@ -3436,10 +3295,6 @@ function initializeAdmin(){
     );
 
 
-  /*
-    Close modals by clicking outside.
-  */
-
   window.addEventListener(
     "click",
     function(event){
@@ -3467,10 +3322,6 @@ function initializeAdmin(){
   );
 
 
-  /*
-    Escape key closes modals.
-  */
-
   window.addEventListener(
     "keydown",
     function(event){
@@ -3488,26 +3339,14 @@ function initializeAdmin(){
   );
 
 
-  /*
-    Existing session.
-  */
-
-  if(token){
-
-    showAdmin();
-
-  }else{
-
-    showLoginScreen();
-
-  }
+  verifyExistingSession();
 
 }
 
 
-/* =========================
-   START APPLICATION
-========================= */
+/* =====================================================
+   START
+===================================================== */
 
 if(
   document.readyState ===
@@ -3524,6 +3363,7 @@ if(
   initializeAdmin();
 
 }
+
 </script>
 
 </body>
