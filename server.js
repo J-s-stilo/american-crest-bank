@@ -1837,9 +1837,7 @@ app.use(
    START
 ========================================================= */
 initDatabase()
-  .then(async () => {
-    await ensureAdminAccount();
-
+  .then(() => {
     app.listen(PORT, () => {
       console.log(
         `American Crest fictional demo server running on port ${PORT}`
