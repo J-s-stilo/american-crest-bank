@@ -174,6 +174,25 @@ async function initDatabase() {
 
   for (const currency of CURRENCIES) {
     await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT FALSE
+`);
+
+await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active'
+`);
+
+await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS profile_image TEXT DEFAULT ''
+`);
+
+await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS primary_currency VARCHAR(3) NOT NULL DEFAULT 'NGN'
+`);
+    await pool.query(`
       ALTER TABLE users
       ADD COLUMN IF NOT EXISTS
       balance_${currency.toLowerCase()}
