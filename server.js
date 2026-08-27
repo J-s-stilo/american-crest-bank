@@ -227,11 +227,6 @@ async function initDatabase() {
     )
   `);
 
-  /*
-   * FIX:
-   * The admin side uses /api/admin/requests,
-   * but the old server did not create this table.
-   */
   await pool.query(`
     CREATE TABLE IF NOT EXISTS admin_requests (
       id SERIAL PRIMARY KEY,
@@ -868,11 +863,6 @@ app.get(
         `
       );
 
-      /*
-       * FIX:
-       * Instead of only selecting seven currencies,
-       * select ALL supported currency balances.
-       */
       const balanceColumns = CURRENCIES.map(
         currency =>
           `SUM(balance_${currency.toLowerCase()}) AS "${currency.toLowerCase()}"`
@@ -1639,10 +1629,6 @@ app.get(
   requireAdmin,
   async (req, res) => {
     try {
-      /*
-       * FIX:
-       * admin_requests is now created in initDatabase().
-       */
       const result = await pool.query(`
         SELECT
           id,
@@ -1741,25 +1727,24 @@ app.post(
         );
 
       if (existing.rows.length) {
-        const result =
-          await pool.query(
-            `
-            UPDATE users
-            SET is_admin = TRUE,
-                name = $1,
-                password_hash = $2
-            WHERE email = $3
-            RETURNING *
-            `,
-            [
-              name,
-              await bcrypt.hash(
-                password,
-                12
-              ),
-              email
-            ]
-          );
+        await pool.query(
+          `
+          UPDATE users
+          SET is_admin = TRUE,
+              name = $1,
+              password_hash = $2
+          WHERE email = $3
+          RETURNING *
+          `,
+          [
+            name,
+            await bcrypt.hash(
+              password,
+              12
+            ),
+            email
+          ]
+        );
 
         return res.json({
           success: true,
@@ -1851,9 +1836,10 @@ app.use(
 /* =========================================================
    START
 ========================================================= */
-
 initDatabase()
-  .then(() => {
+  .then(async () => {
+    await ensureAdminAccount();
+
     app.listen(PORT, () => {
       console.log(
         `American Crest fictional demo server running on port ${PORT}`
