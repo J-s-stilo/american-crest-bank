@@ -1,7 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>American Crest Bank — Admin</title><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>American Crest Bank — Admin</title>
+
+<style>
 *{box-sizing:border-box}
 
 body{
@@ -11,9 +15,11 @@ body{
   color:#172033;
 }
 
+button,input,select,textarea{font:inherit}
+
 header{
   background:#071a35;
-  color:white;
+  color:#fff;
   padding:18px 22px;
   display:flex;
   justify-content:space-between;
@@ -38,7 +44,7 @@ header{
 .logout{
   border:1px solid rgba(255,255,255,.25);
   background:transparent;
-  color:white;
+  color:#fff;
   padding:9px 14px;
   border-radius:8px;
   cursor:pointer;
@@ -60,7 +66,7 @@ header{
 }
 
 .login-card{
-  background:white;
+  background:#fff;
   width:100%;
   max-width:430px;
   padding:30px;
@@ -83,6 +89,12 @@ input,select,textarea{
   outline:none;
 }
 
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#0b5cff;
+}
+
 textarea{
   min-height:100px;
   resize:vertical;
@@ -98,17 +110,17 @@ button{
 
 .primary{
   background:#0b5cff;
-  color:white;
+  color:#fff;
 }
 
 .danger{
   background:#dc3545;
-  color:white;
+  color:#fff;
 }
 
 .success{
   background:#198754;
-  color:white;
+  color:#fff;
 }
 
 .secondary{
@@ -123,8 +135,26 @@ button{
 
 .error{
   color:#c62828;
+  background:#fff0f0;
+  border:1px solid #ffd0d0;
+  border-radius:8px;
+  padding:10px;
   font-size:13px;
   margin-bottom:12px;
+  display:none;
+}
+
+.error.show{
+  display:block;
+}
+
+.notice{
+  padding:12px;
+  background:#eef5ff;
+  border:1px solid #d8e7ff;
+  border-radius:9px;
+  font-size:13px;
+  margin-bottom:15px;
 }
 
 .grid{
@@ -134,7 +164,7 @@ button{
 }
 
 .card{
-  background:white;
+  background:#fff;
   border:1px solid #e5eaf1;
   border-radius:14px;
   padding:18px;
@@ -163,7 +193,7 @@ button{
 
 .table-wrap{
   overflow-x:auto;
-  background:white;
+  background:#fff;
   border-radius:14px;
   border:1px solid #e5eaf1;
 }
@@ -179,6 +209,7 @@ th,td{
   border-bottom:1px solid #edf0f5;
   text-align:left;
   font-size:13px;
+  vertical-align:top;
 }
 
 th{
@@ -191,6 +222,7 @@ th{
   border-radius:20px;
   font-size:11px;
   font-weight:700;
+  display:inline-block;
 }
 
 .active{
@@ -262,7 +294,7 @@ th{
 }
 
 .modal-card{
-  background:white;
+  background:#fff;
   width:100%;
   max-width:480px;
   max-height:90vh;
@@ -285,15 +317,6 @@ th{
   padding:0;
 }
 
-.notice{
-  padding:12px;
-  background:#eef5ff;
-  border:1px solid #d8e7ff;
-  border-radius:9px;
-  font-size:13px;
-  margin-bottom:15px;
-}
-
 .tabs{
   display:flex;
   gap:8px;
@@ -303,13 +326,13 @@ th{
 
 .tab{
   white-space:nowrap;
-  background:white;
+  background:#fff;
   border:1px solid #dce3ed;
 }
 
 .tab.active-tab{
   background:#0b5cff;
-  color:white;
+  color:#fff;
 }
 
 .panel{
@@ -324,6 +347,19 @@ th{
   color:#748096;
   font-size:12px;
   margin-top:5px;
+}
+
+.refresh-row{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-bottom:15px;
+}
+
+.status-message{
+  font-size:12px;
+  color:#748096;
+  margin-top:8px;
 }
 
 @media(max-width:900px){
@@ -344,371 +380,622 @@ th{
   .container{
     padding:18px 12px 50px;
   }
+
+  .actions button{
+    width:100%;
+  }
 }
-</style></head><body><!-- LOGIN --><div id="loginScreen" class="login">  <div class="login-card"><h1>American Crest Bank</h1>
+</style>
+</head>
 
-<p>Administrator Portal</p>
+<body>
 
-<div class="notice">
-  Authorized administrator access only.
+<!-- =========================
+     ADMIN LOGIN
+========================= -->
+
+<div id="loginScreen" class="login">
+
+  <div class="login-card">
+
+    <h1>American Crest Bank</h1>
+
+    <p>Administrator Portal</p>
+
+    <div class="notice">
+      Authorized administrator access only.
+      This portal is for the fictional/demo banking application.
+    </div>
+
+    <div id="loginError" class="error"></div>
+
+    <label for="adminEmail">Administrator Email</label>
+
+    <input
+      id="adminEmail"
+      type="email"
+      autocomplete="username"
+      placeholder="Administrator email"
+    >
+
+    <label for="adminPassword">Administrator Password</label>
+
+    <input
+      id="adminPassword"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Administrator password"
+    >
+
+    <button
+      id="loginButton"
+      class="primary"
+      onclick="adminLogin()"
+    >
+      Sign In
+    </button>
+
+    <div
+      id="loginStatus"
+      class="status-message"
+    ></div>
+
+  </div>
+
 </div>
 
-<div id="loginError" class="error"></div>
 
-<label>Email</label>
+<!-- =========================
+     ADMIN APPLICATION
+========================= -->
 
-<input
-  id="adminEmail"
-  type="email"
-  placeholder="Administrator email"
->
+<div id="adminApp" style="display:none">
 
-<label>Password</label>
+<header>
 
-<input
-  id="adminPassword"
-  type="password"
-  placeholder="Administrator password"
->
-
-<button
-  class="primary"
-  onclick="adminLogin()"
->
-  Sign in
-</button>
-
-  </div></div><!-- ADMIN --><div id="adminApp" style="display:none"><header>  <div class="logo">
+  <div class="logo">
     American Crest Bank
     <span>Administrator Portal</span>
-  </div><button
-class="logout"
-onclick="logout()"
+  </div>
 
-«»
+  <button
+    class="logout"
+    onclick="logout()"
+  >
+    Sign Out
+  </button>
 
-Sign out
+</header>
 
-  </button></header><div class="container">  <div class="tabs"><button
-  class="tab active-tab"
-  onclick="showPanel('dashboard',this)"
->
-  Dashboard
-</button>
 
-<button
-  class="tab"
-  onclick="showPanel('customers',this)"
->
-  Customers
-</button>
+<div class="container">
 
-<button
-  class="tab"
-  onclick="showPanel('transfers',this)"
->
-  Transfers
-</button>
+  <div class="tabs">
 
-<button
-  class="tab"
-  onclick="showPanel('support',this)"
->
-  Support
-</button>
+    <button
+      class="tab active-tab"
+      onclick="showPanel('dashboard',this)"
+    >
+      Dashboard
+    </button>
 
-<button
-  class="tab"
-  onclick="showPanel('notifications',this)"
->
-  Notifications
-</button>
+    <button
+      class="tab"
+      onclick="showPanel('customers',this)"
+    >
+      Customers
+    </button>
 
-  </div>  <!-- DASHBOARD -->  <section
+    <button
+      class="tab"
+      onclick="showPanel('transfers',this)"
+    >
+      Transfers
+    </button>
+
+    <button
+      class="tab"
+      onclick="showPanel('support',this)"
+    >
+      Support
+    </button>
+
+    <button
+      class="tab"
+      onclick="showPanel('notifications',this)"
+    >
+      Notifications
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+       DASHBOARD
+  ========================= -->
+
+  <section
     id="dashboard"
     class="panel active-panel"
-  ><h2>Dashboard</h2>
+  >
 
-<div class="grid">
+    <h2>Dashboard</h2>
 
-  <div class="card">
+    <div class="refresh-row">
 
-    <div class="stat-title">
-      Customers
+      <button
+        class="secondary"
+        onclick="refreshAll()"
+      >
+        Refresh
+      </button>
+
     </div>
 
-    <div
-      id="customerCount"
-      class="stat"
-    >
-      —
+    <div class="grid">
+
+      <div class="card">
+
+        <div class="stat-title">
+          Customers
+        </div>
+
+        <div
+          id="customerCount"
+          class="stat"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="stat-title">
+          Customer Balances
+        </div>
+
+        <div
+          id="balanceTotal"
+          class="stat"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="stat-title">
+          Pending Transfers
+        </div>
+
+        <div
+          id="pendingCount"
+          class="stat"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="stat-title">
+          Open Support
+        </div>
+
+        <div
+          id="supportCount"
+          class="stat"
+        >
+          —
+        </div>
+
+      </div>
+
     </div>
 
-  </div>
+  </section>
 
 
-  <div class="card">
+  <!-- =========================
+       CUSTOMERS
+  ========================= -->
 
-    <div class="stat-title">
-      Customer Balances
-    </div>
-
-    <div
-      id="balanceTotal"
-      class="stat"
-    >
-      —
-    </div>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="stat-title">
-      Pending Transfers
-    </div>
-
-    <div
-      id="pendingCount"
-      class="stat"
-    >
-      —
-    </div>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="stat-title">
-      Open Support
-    </div>
-
-    <div
-      id="supportCount"
-      class="stat"
-    >
-      —
-    </div>
-
-  </div>
-
-</div>
-
-  </section>  <!-- CUSTOMERS -->  <section
+  <section
     id="customers"
     class="panel"
-  ><h2>Customer Accounts</h2>
+  >
 
-<div class="table-wrap">
+    <h2>Customer Accounts</h2>
 
-  <table>
+    <div class="refresh-row">
 
-    <thead>
+      <button
+        class="secondary"
+        onclick="loadCustomers()"
+      >
+        Refresh Customers
+      </button>
 
-      <tr>
-        <th>Customer</th>
-        <th>Email</th>
-        <th>Balance</th>
-        <th>Status</th>
-        <th>Created</th>
-        <th>Actions</th>
-      </tr>
+    </div>
 
-    </thead>
+    <div class="table-wrap">
 
-    <tbody id="customerTable"></tbody>
+      <table>
 
-  </table>
+        <thead>
 
-</div>
+          <tr>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
 
-  </section>  <!-- TRANSFERS -->  <section
+        </thead>
+
+        <tbody id="customerTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       TRANSFERS
+  ========================= -->
+
+  <section
     id="transfers"
     class="panel"
-  ><h2>Transfer Requests</h2>
+  >
 
-<div class="table-wrap">
+    <h2>Transfer Requests</h2>
 
-  <table>
+    <div class="refresh-row">
 
-    <thead>
+      <button
+        class="secondary"
+        onclick="loadTransfers()"
+      >
+        Refresh Transfers
+      </button>
 
-      <tr>
-        <th>Customer</th>
-        <th>Amount</th>
-        <th>Currency</th>
-        <th>Recipient</th>
-        <th>Reference</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
+    </div>
 
-    </thead>
+    <div class="table-wrap">
 
-    <tbody id="transferTable"></tbody>
+      <table>
 
-  </table>
+        <thead>
 
-</div>
+          <tr>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Recipient</th>
+            <th>Reference</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
 
-  </section>  <!-- SUPPORT -->  <section
+        </thead>
+
+        <tbody id="transferTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       SUPPORT
+  ========================= -->
+
+  <section
     id="support"
     class="panel"
-  ><h2>Customer Support</h2>
+  >
 
-<div class="table-wrap">
+    <h2>Customer Support</h2>
 
-  <table>
+    <div class="refresh-row">
 
-    <thead>
+      <button
+        class="secondary"
+        onclick="loadSupport()"
+      >
+        Refresh Support
+      </button>
 
-      <tr>
-        <th>Customer</th>
-        <th>Subject</th>
-        <th>Message</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
+    </div>
 
-    </thead>
+    <div class="table-wrap">
 
-    <tbody id="supportTable"></tbody>
+      <table>
 
-  </table>
+        <thead>
 
-</div>
+          <tr>
+            <th>Customer</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
 
-  </section>  <!-- NOTIFICATIONS -->  <section
+        </thead>
+
+        <tbody id="supportTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       NOTIFICATIONS
+  ========================= -->
+
+  <section
     id="notifications"
     class="panel"
-  ><h2>Notifications</h2>
+  >
+
+    <h2>Notifications</h2>
+
+    <div class="refresh-row">
+
+      <button
+        class="secondary"
+        onclick="loadNotifications()"
+      >
+        Refresh Notifications
+      </button>
+
+    </div>
+
+    <div
+      id="notificationList"
+      class="card"
+    >
+      Loading...
+    </div>
+
+  </section>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     CREDIT MODAL
+========================= -->
 
 <div
-  id="notificationList"
-  class="card"
->
-  Loading...
-</div>
-
-  </section></div></div><!-- CREDIT MODAL --><div
   id="creditModal"
   class="modal"
->  <div class="modal-card"><div class="modal-head">
+>
 
-  <h2>Add Funds</h2>
+  <div class="modal-card">
 
-  <button
-    class="close"
-    onclick="closeModal()"
-  >
-    ×
-  </button>
+    <div class="modal-head">
+
+      <h2>Add Funds</h2>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <p id="creditCustomerName"></p>
+
+    <div class="notice">
+      This control records a simulated account credit
+      for the fictional banking demonstration.
+    </div>
+
+    <label>Currency</label>
+
+    <select id="creditCurrency">
+
+      <option value="USD">USD — US Dollar</option>
+      <option value="NGN">NGN — Nigerian Naira</option>
+      <option value="EUR">EUR — Euro</option>
+      <option value="GBP">GBP — British Pound</option>
+      <option value="CAD">CAD — Canadian Dollar</option>
+      <option value="AUD">AUD — Australian Dollar</option>
+      <option value="CHF">CHF — Swiss Franc</option>
+      <option value="JPY">JPY — Japanese Yen</option>
+      <option value="CNY">CNY — Chinese Yuan</option>
+      <option value="INR">INR — Indian Rupee</option>
+      <option value="IDR">IDR — Indonesian Rupiah</option>
+      <option value="MYR">MYR — Malaysian Ringgit</option>
+      <option value="SGD">SGD — Singapore Dollar</option>
+      <option value="AED">AED — UAE Dirham</option>
+      <option value="ZAR">ZAR — South African Rand</option>
+      <option value="KES">KES — Kenyan Shilling</option>
+      <option value="GHS">GHS — Ghanaian Cedi</option>
+
+    </select>
+
+    <label>Amount</label>
+
+    <input
+      id="creditAmount"
+      type="number"
+      min="0"
+      step="0.01"
+      placeholder="Enter amount"
+    >
+
+    <label>Note</label>
+
+    <input
+      id="creditNote"
+      placeholder="Reason for credit"
+    >
+
+    <button
+      class="primary"
+      style="width:100%"
+      onclick="creditCustomer()"
+    >
+      Add Funds
+    </button>
+
+  </div>
 
 </div>
 
-<p id="creditCustomerName"></p>
 
-<div class="notice">
-  This control records a simulated account credit
-  for the banking demonstration.
-</div>
+<!-- =========================
+     REPLY MODAL
+========================= -->
 
-<label>Currency</label>
-
-<select id="creditCurrency">
-
-  <option value="USD">USD — US Dollar</option>
-  <option value="NGN">NGN — Nigerian Naira</option>
-  <option value="EUR">EUR — Euro</option>
-  <option value="GBP">GBP — British Pound</option>
-  <option value="CAD">CAD — Canadian Dollar</option>
-  <option value="AUD">AUD — Australian Dollar</option>
-  <option value="CHF">CHF — Swiss Franc</option>
-  <option value="JPY">JPY — Japanese Yen</option>
-  <option value="CNY">CNY — Chinese Yuan</option>
-  <option value="INR">INR — Indian Rupee</option>
-  <option value="IDR">IDR — Indonesian Rupiah</option>
-  <option value="MYR">MYR — Malaysian Ringgit</option>
-  <option value="SGD">SGD — Singapore Dollar</option>
-  <option value="AED">AED — UAE Dirham</option>
-  <option value="ZAR">ZAR — South African Rand</option>
-  <option value="KES">KES — Kenyan Shilling</option>
-  <option value="GHS">GHS — Ghanaian Cedi</option>
-
-</select>
-
-<label>Amount</label>
-
-<input
-  id="creditAmount"
-  type="number"
-  min="0"
-  step="0.01"
-  placeholder="Enter amount"
->
-
-<label>Note</label>
-
-<input
-  id="creditNote"
-  placeholder="Reason for credit"
->
-
-<button
-  class="primary"
-  style="width:100%"
-  onclick="creditCustomer()"
->
-  Add Funds
-</button>
-
-  </div></div><!-- REPLY MODAL --><div
+<div
   id="replyModal"
   class="modal"
->  <div class="modal-card"><div class="modal-head">
+>
 
-  <h2>Reply to Customer</h2>
+  <div class="modal-card">
 
-  <button
-    class="close"
-    onclick="closeReplyModal()"
-  >
-    ×
-  </button>
+    <div class="modal-head">
+
+      <h2>Reply to Customer</h2>
+
+      <button
+        class="close"
+        onclick="closeReplyModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <textarea
+      id="replyMessage"
+      placeholder="Write your response..."
+    ></textarea>
+
+    <button
+      class="primary"
+      style="width:100%"
+      onclick="sendReply()"
+    >
+      Send Response
+    </button>
+
+  </div>
 
 </div>
 
-<textarea
-  id="replyMessage"
-  placeholder="Write your response..."
-></textarea>
 
-<button
-  class="primary"
-  style="width:100%"
-  onclick="sendReply()"
->
-  Send Response
-</button>
+<script>
 
-  </div></div><script>
+/*
+=========================================================
+AMERICAN CREST BANK — ADMIN CONTROLLER
+=========================================================
+
+This page uses the server API.
+
+IMPORTANT:
+The admin account must be a real server-side account with:
+
+    role = "admin"
+
+The customer account must NOT have admin privileges.
+
+The browser must never be trusted to decide whether a
+customer is an administrator. The server must enforce this.
+=========================================================
+*/
+
+
+/* =========================
+   CONFIGURATION
+========================= */
 
 const API = "";
 
+const ADMIN_TOKEN_KEY =
+  "acb_admin_token";
+
 let token =
-  localStorage.getItem("acb_admin_token");
+  localStorage.getItem(ADMIN_TOKEN_KEY) || null;
 
 let selectedCustomer = null;
 let selectedTicket = null;
 
 
 /* =========================
-   API
+   BASIC HELPERS
 ========================= */
 
-async function api(endpoint, options = {}){
+function $(id){
+  return document.getElementById(id);
+}
+
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function setLoginError(message){
+
+  const box = $("loginError");
+
+  box.textContent = message || "";
+
+  if(message){
+    box.classList.add("show");
+  }else{
+    box.classList.remove("show");
+  }
+
+}
+
+
+function setLoginStatus(message){
+
+  $("loginStatus").textContent =
+    message || "";
+
+}
+
+
+/* =========================
+   API REQUEST
+========================= */
+
+async function api(endpoint,options={}){
 
   options.headers =
     options.headers || {};
@@ -723,92 +1010,211 @@ async function api(endpoint, options = {}){
 
   }
 
-  const response =
-    await fetch(
-      API + endpoint,
-      options
+  let response;
+
+  try{
+
+    response =
+      await fetch(
+        API + endpoint,
+        options
+      );
+
+  }catch(error){
+
+    throw new Error(
+      "Unable to connect to the server."
     );
+
+  }
+
 
   let data = {};
 
   try{
-    data = await response.json();
-  }catch{}
+
+    data =
+      await response.json();
+
+  }catch(error){
+
+    data = {};
+
+  }
+
 
   if(
     response.status === 401 ||
     response.status === 403
   ){
 
-    logout();
+    token = null;
+
+    localStorage.removeItem(
+      ADMIN_TOKEN_KEY
+    );
+
+    if(
+      $("adminApp").style.display !== "none"
+    ){
+
+      showLoginScreen();
+
+    }
 
     throw new Error(
       data.error ||
+      data.message ||
       "Administrator authorization failed."
     );
 
   }
 
+
   if(!response.ok){
 
     throw new Error(
       data.error ||
+      data.message ||
       "Request failed."
     );
 
   }
 
+
   return data;
+
 }
 
 
 /* =========================
-   LOGIN
+   ADMIN LOGIN
 ========================= */
 
 async function adminLogin(){
 
   const email =
-    document
-      .getElementById("adminEmail")
+    $("adminEmail")
       .value
-      .trim();
+      .trim()
+      .toLowerCase();
 
   const password =
-    document
-      .getElementById("adminPassword")
+    $("adminPassword")
       .value;
 
-  const loginError =
-    document.getElementById("loginError");
+  setLoginError("");
+  setLoginStatus("");
 
-  loginError.textContent = "";
+  if(!email){
 
-  if(!email || !password){
-
-    loginError.textContent =
-      "Enter your administrator email and password.";
+    setLoginError(
+      "Enter the administrator email."
+    );
 
     return;
+
   }
+
+
+  if(!password){
+
+    setLoginError(
+      "Enter the administrator password."
+    );
+
+    return;
+
+  }
+
+
+  const button =
+    $("loginButton");
+
+  button.disabled = true;
+  button.textContent = "Signing in...";
+
 
   try{
 
-    const data =
-      await api(
-        "/api/login",
-        {
-          method:"POST",
-          body:JSON.stringify({
-            email,
-            password
-          })
-        }
+    /*
+      ADMIN LOGIN ENDPOINT
+
+      The preferred endpoint is:
+
+          /api/admin/login
+
+      This prevents the admin page from accidentally
+      treating a normal customer login as an admin login.
+    */
+
+    let data;
+
+    try{
+
+      data =
+        await api(
+          "/api/admin/login",
+          {
+            method:"POST",
+            body:JSON.stringify({
+              email,
+              password
+            })
+          }
+        );
+
+    }catch(firstError){
+
+      /*
+        Compatibility fallback for servers where the
+        existing login endpoint is still /api/login.
+
+        The role is STILL checked below.
+      */
+
+      if(
+        String(firstError.message)
+          .toLowerCase()
+          .includes("not found")
+      ){
+
+        data =
+          await api(
+            "/api/login",
+            {
+              method:"POST",
+              body:JSON.stringify({
+                email,
+                password
+              })
+            }
+          );
+
+      }else{
+
+        throw firstError;
+
+      }
+
+    }
+
+
+    if(
+      !data ||
+      !data.token
+    ){
+
+      throw new Error(
+        "The server did not return an administrator session."
       );
+
+    }
+
 
     if(
       !data.user ||
-      data.user.role !== "admin"
+      String(data.user.role).toLowerCase() !== "admin"
     ){
 
       throw new Error(
@@ -817,20 +1223,35 @@ async function adminLogin(){
 
     }
 
-    token = data.token;
+
+    token =
+      data.token;
 
     localStorage.setItem(
-      "acb_admin_token",
+      ADMIN_TOKEN_KEY,
       token
     );
+
 
     showAdmin();
 
   }catch(error){
 
-    loginError.textContent =
+    token = null;
+
+    localStorage.removeItem(
+      ADMIN_TOKEN_KEY
+    );
+
+    setLoginError(
       error.message ||
-      "Unable to sign in.";
+      "Unable to sign in."
+    );
+
+  }finally{
+
+    button.disabled = false;
+    button.textContent = "Sign In";
 
   }
 
@@ -843,19 +1264,40 @@ async function adminLogin(){
 
 function showAdmin(){
 
-  document
-    .getElementById("loginScreen")
-    .style.display = "none";
+  $("loginScreen")
+    .style
+    .display = "none";
 
-  document
-    .getElementById("adminApp")
-    .style.display = "block";
+  $("adminApp")
+    .style
+    .display = "block";
+
+  setLoginError("");
+  setLoginStatus("");
 
   loadDashboard();
   loadCustomers();
   loadTransfers();
   loadSupport();
   loadNotifications();
+
+}
+
+
+/* =========================
+   SHOW LOGIN
+========================= */
+
+function showLoginScreen(){
+
+  $("adminApp")
+    .style
+    .display = "none";
+
+  $("loginScreen")
+    .style
+    .display = "flex";
+
 }
 
 
@@ -868,10 +1310,17 @@ function logout(){
   token = null;
 
   localStorage.removeItem(
-    "acb_admin_token"
+    ADMIN_TOKEN_KEY
   );
 
-  location.reload();
+  selectedCustomer = null;
+  selectedTicket = null;
+
+  showLoginScreen();
+
+  $("adminEmail").value = "";
+  $("adminPassword").value = "";
+
 }
 
 
@@ -879,27 +1328,67 @@ function logout(){
    PANELS
 ========================= */
 
-function showPanel(id, button){
+function showPanel(id,button){
 
   document
     .querySelectorAll(".panel")
     .forEach(
-      p =>
-        p.classList.remove("active-panel")
+      panel =>
+        panel.classList.remove(
+          "active-panel"
+        )
     );
 
-  document
-    .getElementById(id)
-    .classList.add("active-panel");
+
+  const target =
+    $(id);
+
+  if(target){
+
+    target.classList.add(
+      "active-panel"
+    );
+
+  }
+
 
   document
     .querySelectorAll(".tab")
     .forEach(
-      b =>
-        b.classList.remove("active-tab")
+      tab =>
+        tab.classList.remove(
+          "active-tab"
+        )
     );
 
-  button.classList.add("active-tab");
+
+  if(button){
+
+    button.classList.add(
+      "active-tab"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   REFRESH EVERYTHING
+========================= */
+
+async function refreshAll(){
+
+  await Promise.allSettled([
+
+    loadDashboard(),
+    loadCustomers(),
+    loadTransfers(),
+    loadSupport(),
+    loadNotifications()
+
+  ]);
+
 }
 
 
@@ -916,55 +1405,68 @@ async function loadDashboard(){
         "/api/admin/summary"
       );
 
-    document
-      .getElementById("customerCount")
+
+    $("customerCount")
       .textContent =
       data.customers ?? 0;
+
 
     const balances =
       Array.isArray(data.balances)
         ? data.balances
         : [];
 
+
     if(!balances.length){
 
-      document
-        .getElementById("balanceTotal")
+      $("balanceTotal")
         .textContent =
         "No funds";
 
     }else{
 
-      document
-        .getElementById("balanceTotal")
+      $("balanceTotal")
         .innerHTML =
         balances
-          .map(
-            item =>
-              `<div class="balance-item">
-                ${escapeHtml(item.currency)}
-                ${Number(item.total || 0)
-                  .toLocaleString(
-                    undefined,
-                    {
-                      minimumFractionDigits:2
-                    }
-                  )}
-              </div>`
-          )
+          .map(item => {
+
+            const currency =
+              escapeHtml(
+                item.currency
+              );
+
+            const total =
+              Number(
+                item.total || 0
+              ).toLocaleString(
+                undefined,
+                {
+                  minimumFractionDigits:2
+                }
+              );
+
+
+            return `
+              <div class="balance-item">
+                ${currency} ${total}
+              </div>
+            `;
+
+          })
           .join("");
 
     }
 
-    document
-      .getElementById("pendingCount")
+
+    $("pendingCount")
       .textContent =
       data.pendingTransfers ?? 0;
 
-    document
-      .getElementById("supportCount")
+
+    $("supportCount")
       .textContent =
       data.openSupport ?? 0;
+
 
   }catch(error){
 
@@ -979,37 +1481,57 @@ async function loadDashboard(){
 
 
 /* =========================
-   CUSTOMER BALANCES
+   BALANCE FORMAT
 ========================= */
 
 function formatAccounts(accounts){
 
-  if(!Array.isArray(accounts) || !accounts.length){
+  if(
+    !Array.isArray(accounts) ||
+    !accounts.length
+  ){
 
     return "No funds";
+
   }
+
 
   return `
     <div class="balance-list">
+
       ${
         accounts
-          .map(
-            account =>
-              `<div class="balance-item">
-                ${escapeHtml(account.currency)}
-                ${Number(account.balance || 0)
-                  .toLocaleString(
-                    undefined,
-                    {
-                      minimumFractionDigits:2
-                    }
-                  )}
-              </div>`
-          )
+          .map(account => {
+
+            const currency =
+              escapeHtml(
+                account.currency
+              );
+
+            const amount =
+              Number(
+                account.balance || 0
+              ).toLocaleString(
+                undefined,
+                {
+                  minimumFractionDigits:2
+                }
+              );
+
+
+            return `
+              <div class="balance-item">
+                ${currency} ${amount}
+              </div>
+            `;
+
+          })
           .join("")
       }
+
     </div>
   `;
+
 }
 
 
@@ -1020,16 +1542,20 @@ function formatAccounts(accounts){
 async function loadCustomers(){
 
   const body =
-    document.getElementById(
-      "customerTable"
-    );
+    $("customerTable");
 
-  body.innerHTML =
-    `<tr>
-      <td colspan="6" class="empty">
+
+  body.innerHTML = `
+    <tr>
+      <td
+        colspan="6"
+        class="empty"
+      >
         Loading customers...
       </td>
-    </tr>`;
+    </tr>
+  `;
+
 
   try{
 
@@ -1038,115 +1564,157 @@ async function loadCustomers(){
         "/api/admin/customers"
       );
 
-    if(!customers.length){
 
-      body.innerHTML =
-        `<tr>
-          <td colspan="6" class="empty">
+    if(
+      !Array.isArray(customers) ||
+      !customers.length
+    ){
+
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="6"
+            class="empty"
+          >
             No customer accounts yet.
           </td>
-        </tr>`;
+        </tr>
+      `;
 
       return;
+
     }
+
 
     body.innerHTML =
       customers
-        .map(
-          customer => {
+        .map(customer => {
 
-            const status =
-              customer.status;
+          const status =
+            String(
+              customer.status || "active"
+            ).toLowerCase();
 
-            return `
-              <tr>
 
-                <td>
-                  <strong>
-                    ${escapeHtml(
-                      customer.full_name
-                    )}
-                  </strong>
-                </td>
+          const statusClass =
+            status === "suspended"
+              ? "suspended"
+              : status === "pending"
+                ? "pending"
+                : "active";
 
-                <td>
+
+          const customerId =
+            Number(customer.id);
+
+
+          return `
+            <tr>
+
+              <td>
+                <strong>
                   ${escapeHtml(
-                    customer.email
+                    customer.full_name ||
+                    customer.name ||
+                    "Customer"
                   )}
-                </td>
+                </strong>
+              </td>
 
-                <td>
-                  ${formatAccounts(
-                    customer.accounts
-                  )}
-                </td>
+              <td>
+                ${escapeHtml(
+                  customer.email
+                )}
+              </td>
 
-                <td>
-                  <span class="badge ${escapeHtml(status)}">
-                    ${escapeHtml(status)}
-                  </span>
-                </td>
+              <td>
+                ${formatAccounts(
+                  customer.accounts
+                )}
+              </td>
 
-                <td>
-                  ${new Date(
-                    customer.created_at
-                  ).toLocaleDateString()}
-                </td>
+              <td>
+                <span
+                  class="badge ${statusClass}"
+                >
+                  ${escapeHtml(status)}
+                </span>
+              </td>
 
-                <td>
+              <td>
+                ${
+                  customer.created_at
+                    ? new Date(
+                        customer.created_at
+                      ).toLocaleDateString()
+                    : "—"
+                }
+              </td>
 
-                  <div class="actions">
+              <td>
 
+                <div class="actions">
+
+                  <button
+                    class="primary"
+                    onclick='openCredit(${JSON.stringify(customer).replace(/'/g,"&#039;")})'
+                  >
+                    Add Funds
+                  </button>
+
+                  ${
+                    status !== "active"
+                    ?
+                    `
                     <button
-                      class="primary"
-                      onclick='openCredit(${JSON.stringify(
-                        customer
-                      )})'
-                    >
-                      Add Funds
-                    </button>
-
-                    <button
-                      class="secondary"
+                      class="success"
                       onclick="changeStatus(
-                        ${customer.id},
+                        ${customerId},
                         'active'
                       )"
                     >
                       Activate
                     </button>
-
+                    `
+                    :
+                    `
                     <button
                       class="danger"
                       onclick="changeStatus(
-                        ${customer.id},
+                        ${customerId},
                         'suspended'
                       )"
                     >
                       Suspend
                     </button>
+                    `
+                  }
 
-                  </div>
+                </div>
 
-                </td>
+              </td>
 
-              </tr>
-            `;
+            </tr>
+          `;
 
-          }
-        )
+        })
         .join("");
+
 
   }catch(error){
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="6" class="empty">
+    body.innerHTML = `
+      <tr>
+        <td
+          colspan="6"
+          class="empty"
+        >
           ${escapeHtml(
             error.message
           )}
         </td>
-      </tr>`;
+      </tr>
+    `;
 
   }
 
@@ -1154,100 +1722,133 @@ async function loadCustomers(){
 
 
 /* =========================
-   CREDIT CUSTOMER
+   CREDIT MODAL
 ========================= */
 
 function openCredit(customer){
 
-  selectedCustomer = customer;
+  selectedCustomer =
+    customer;
 
-  document
-    .getElementById("creditCustomerName")
+
+  $("creditCustomerName")
     .textContent =
-      customer.full_name +
+      (
+        customer.full_name ||
+        customer.name ||
+        "Customer"
+      ) +
       " — " +
       getCustomerBalanceText(
         customer.accounts
       );
 
-  document
-    .getElementById("creditAmount")
+
+  $("creditAmount")
     .value = "";
 
-  document
-    .getElementById("creditNote")
+
+  $("creditNote")
     .value =
       "Administrator account funding";
 
-  document
-    .getElementById("creditModal")
-    .classList.add("show");
+
+  $("creditModal")
+    .classList
+    .add("show");
+
 }
 
 
 function getCustomerBalanceText(accounts){
 
-  if(!Array.isArray(accounts) || !accounts.length){
+  if(
+    !Array.isArray(accounts) ||
+    !accounts.length
+  ){
 
     return "Current balance: No funds";
+
   }
+
 
   const text =
     accounts
-      .map(
-        account =>
-          escapeHtml(account.currency) +
+      .map(account => {
+
+        const currency =
+          escapeHtml(
+            account.currency
+          );
+
+        const amount =
+          Number(
+            account.balance || 0
+          ).toLocaleString(
+            undefined,
+            {
+              minimumFractionDigits:2
+            }
+          );
+
+
+        return currency +
           " " +
-          Number(account.balance || 0)
-            .toLocaleString(
-              undefined,
-              {
-                minimumFractionDigits:2
-              }
-            )
-      )
+          amount;
+
+      })
       .join(" • ");
 
+
   return "Current balance: " + text;
+
 }
 
 
 function closeModal(){
 
-  document
-    .getElementById("creditModal")
-    .classList.remove("show");
+  $("creditModal")
+    .classList
+    .remove("show");
+
 }
 
 
 /* =========================
    ADD FUNDS
-   FIXED TO MATCH SERVER
 ========================= */
 
 async function creditCustomer(){
 
-  if(!selectedCustomer)
+  if(!selectedCustomer){
+
+    alert(
+      "Select a customer first."
+    );
+
     return;
 
+  }
+
+
   const currency =
-    document
-      .getElementById("creditCurrency")
+    $("creditCurrency")
       .value
       .toUpperCase();
 
+
   const amount =
     Number(
-      document
-        .getElementById("creditAmount")
+      $("creditAmount")
         .value
     );
 
+
   const description =
-    document
-      .getElementById("creditNote")
+    $("creditNote")
       .value
       .trim();
+
 
   if(
     !Number.isFinite(amount) ||
@@ -1259,7 +1860,9 @@ async function creditCustomer(){
     );
 
     return;
+
   }
+
 
   if(amount > 1000000000){
 
@@ -1268,39 +1871,56 @@ async function creditCustomer(){
     );
 
     return;
+
   }
 
-  const confirmed =
-    confirm(
+
+  const customerName =
+    selectedCustomer.full_name ||
+    selectedCustomer.name ||
+    "this customer";
+
+
+  if(
+    !confirm(
       "Add " +
       currency +
       " " +
       amount.toLocaleString() +
       " to " +
-      selectedCustomer.full_name +
+      customerName +
       "?"
-    );
+    )
+  ){
 
-  if(!confirmed)
     return;
+
+  }
+
 
   try{
 
     /*
-      IMPORTANT:
-      The server endpoint is /funds,
-      not /credit.
+      Server endpoint:
 
-      The server expects:
-      amount
-      currency
-      description
+      POST
+      /api/admin/customers/:id/funds
+
+      Expected body:
+
+      {
+        amount,
+        currency,
+        description
+      }
     */
 
     const result =
       await api(
         "/api/admin/customers/" +
-        selectedCustomer.id +
+        encodeURIComponent(
+          selectedCustomer.id
+        ) +
         "/funds",
         {
           method:"POST",
@@ -1308,7 +1928,6 @@ async function creditCustomer(){
           body:JSON.stringify({
 
             amount,
-
             currency,
 
             description:
@@ -1316,19 +1935,23 @@ async function creditCustomer(){
               "Administrator account funding"
 
           })
+
         }
       );
+
 
     alert(
       result.message ||
       "Customer account funded successfully."
     );
 
+
     closeModal();
 
-    await loadCustomers();
 
+    await loadCustomers();
     await loadDashboard();
+
 
   }catch(error){
 
@@ -1343,13 +1966,24 @@ async function creditCustomer(){
 
 
 /* =========================
-   STATUS
+   CUSTOMER STATUS
 ========================= */
 
 async function changeStatus(
   id,
   status
 ){
+
+  if(!id){
+
+    alert(
+      "Invalid customer."
+    );
+
+    return;
+
+  }
+
 
   if(
     !confirm(
@@ -1358,14 +1992,17 @@ async function changeStatus(
       "?"
     )
   ){
+
     return;
+
   }
+
 
   try{
 
     await api(
       "/api/admin/customers/" +
-      id +
+      encodeURIComponent(id) +
       "/status",
       {
         method:"PATCH",
@@ -1373,17 +2010,20 @@ async function changeStatus(
         body:JSON.stringify({
           status
         })
+
       }
     );
 
-    await loadCustomers();
 
+    await loadCustomers();
     await loadDashboard();
+
 
   }catch(error){
 
     alert(
-      error.message
+      error.message ||
+      "Unable to change account status."
     );
 
   }
@@ -1398,16 +2038,20 @@ async function changeStatus(
 async function loadTransfers(){
 
   const body =
-    document.getElementById(
-      "transferTable"
-    );
+    $("transferTable");
 
-  body.innerHTML =
-    `<tr>
-      <td colspan="7" class="empty">
+
+  body.innerHTML = `
+    <tr>
+      <td
+        colspan="7"
+        class="empty"
+      >
         Loading transfers...
       </td>
-    </tr>`;
+    </tr>
+  `;
+
 
   try{
 
@@ -1416,138 +2060,205 @@ async function loadTransfers(){
         "/api/admin/transfers"
       );
 
-    if(!transfers.length){
 
-      body.innerHTML =
-        `<tr>
-          <td colspan="7" class="empty">
+    if(
+      !Array.isArray(transfers) ||
+      !transfers.length
+    ){
+
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="7"
+            class="empty"
+          >
             No transfer requests.
           </td>
-        </tr>`;
+        </tr>
+      `;
 
       return;
+
     }
+
 
     body.innerHTML =
       transfers
-        .map(
-          t => `
+        .map(t => {
 
-          <tr>
+          const status =
+            String(
+              t.status || "pending"
+            ).toLowerCase();
 
-            <td>
-              <strong>
-                ${escapeHtml(
-                  t.full_name
+
+          let badgeClass =
+            "pending";
+
+
+          if(
+            status === "successful" ||
+            status === "approved"
+          ){
+
+            badgeClass =
+              "success-badge";
+
+          }else if(
+            status === "declined"
+          ){
+
+            badgeClass =
+              "declined";
+
+          }
+
+
+          return `
+
+            <tr>
+
+              <td>
+
+                <strong>
+                  ${escapeHtml(
+                    t.full_name ||
+                    "Customer"
+                  )}
+                </strong>
+
+                <br>
+
+                <small>
+                  ${escapeHtml(
+                    t.email || ""
+                  )}
+                </small>
+
+              </td>
+
+              <td>
+                ${Number(
+                  t.amount || 0
+                ).toLocaleString(
+                  undefined,
+                  {
+                    minimumFractionDigits:2
+                  }
                 )}
-              </strong>
-              <br>
-              <small>
-                ${escapeHtml(
-                  t.email
-                )}
-              </small>
-            </td>
+              </td>
 
-            <td>
-              ${Number(
-                t.amount || 0
-              ).toLocaleString(
-                undefined,
-                {
-                  minimumFractionDigits:2
+              <td>
+                ${escapeHtml(
+                  t.currency || "—"
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  t.recipient || "—"
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  t.reference || "—"
+                )}
+              </td>
+
+              <td>
+
+                <span
+                  class="badge ${badgeClass}"
+                >
+                  ${escapeHtml(status)}
+                </span>
+
+              </td>
+
+              <td>
+
+                ${
+                  status === "pending"
+                  ?
+                  `
+                  <div class="actions">
+
+                    <button
+                      class="success"
+                      onclick="updateTransfer(
+                        ${Number(t.id)},
+                        'successful'
+                      )"
+                    >
+                      Approve
+                    </button>
+
+                    <button
+                      class="danger"
+                      onclick="updateTransfer(
+                        ${Number(t.id)},
+                        'declined'
+                      )"
+                    >
+                      Decline
+                    </button>
+
+                  </div>
+                  `
+                  :
+                  "—"
                 }
-              )}
-            </td>
 
-            <td>
-              ${escapeHtml(
-                t.currency || "—"
-              )}
-            </td>
+              </td>
 
-            <td>
-              ${escapeHtml(
-                t.recipient || "—"
-              )}
-            </td>
+            </tr>
 
-            <td>
-              ${escapeHtml(
-                t.reference
-              )}
-            </td>
+          `;
 
-            <td>
-
-              <span class="badge ${
-                t.status === "successful"
-                  ? "success-badge"
-                  : escapeHtml(t.status)
-              }">
-
-                ${escapeHtml(
-                  t.status
-                )}
-
-              </span>
-
-            </td>
-
-            <td>
-
-              <div class="actions">
-
-                <button
-                  class="success"
-                  onclick="updateTransfer(
-                    ${t.id},
-                    'successful'
-                  )"
-                >
-                  Approve
-                </button>
-
-                <button
-                  class="danger"
-                  onclick="updateTransfer(
-                    ${t.id},
-                    'declined'
-                  )"
-                >
-                  Decline
-                </button>
-
-              </div>
-
-            </td>
-
-          </tr>
-
-          `
-        )
+        })
         .join("");
+
 
   }catch(error){
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="7" class="empty">
+    body.innerHTML = `
+      <tr>
+        <td
+          colspan="7"
+          class="empty"
+        >
           ${escapeHtml(
             error.message
           )}
         </td>
-      </tr>`;
+      </tr>
+    `;
 
   }
 
 }
 
 
+/* =========================
+   UPDATE TRANSFER
+========================= */
+
 async function updateTransfer(
   id,
   status
 ){
+
+  if(!id){
+
+    alert(
+      "Invalid transfer."
+    );
+
+    return;
+
+  }
+
 
   if(
     !confirm(
@@ -1556,14 +2267,17 @@ async function updateTransfer(
       "?"
     )
   ){
+
     return;
+
   }
+
 
   try{
 
     await api(
       "/api/admin/transfers/" +
-      id +
+      encodeURIComponent(id) +
       "/status",
       {
         method:"PATCH",
@@ -1571,17 +2285,20 @@ async function updateTransfer(
         body:JSON.stringify({
           status
         })
+
       }
     );
 
-    await loadTransfers();
 
+    await loadTransfers();
     await loadDashboard();
+
 
   }catch(error){
 
     alert(
-      error.message
+      error.message ||
+      "Unable to update transfer."
     );
 
   }
@@ -1596,16 +2313,20 @@ async function updateTransfer(
 async function loadSupport(){
 
   const body =
-    document.getElementById(
-      "supportTable"
-    );
+    $("supportTable");
 
-  body.innerHTML =
-    `<tr>
-      <td colspan="5" class="empty">
+
+  body.innerHTML = `
+    <tr>
+      <td
+        colspan="5"
+        class="empty"
+      >
         Loading support requests...
       </td>
-    </tr>`;
+    </tr>
+  `;
+
 
   try{
 
@@ -1614,98 +2335,122 @@ async function loadSupport(){
         "/api/admin/support"
       );
 
-    if(!tickets.length){
 
-      body.innerHTML =
-        `<tr>
-          <td colspan="5" class="empty">
+    if(
+      !Array.isArray(tickets) ||
+      !tickets.length
+    ){
+
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="5"
+            class="empty"
+          >
             No support requests.
           </td>
-        </tr>`;
+        </tr>
+      `;
 
       return;
+
     }
+
 
     body.innerHTML =
       tickets
-        .map(
-          ticket => `
+        .map(ticket => {
 
-          <tr>
+          const status =
+            String(
+              ticket.status || "pending"
+            ).toLowerCase();
 
-            <td>
 
-              ${escapeHtml(
-                ticket.full_name
-              )}
+          const badge =
+            status === "answered"
+              ? "success-badge"
+              : "pending";
 
-              <br>
 
-              <small>
-                ${escapeHtml(
-                  ticket.email
-                )}
-              </small>
+          return `
 
-            </td>
+            <tr>
 
-            <td>
-              ${escapeHtml(
-                ticket.subject
-              )}
-            </td>
-
-            <td>
-              ${escapeHtml(
-                ticket.message
-              )}
-            </td>
-
-            <td>
-
-              <span class="badge ${
-                ticket.status === "answered"
-                  ? "success-badge"
-                  : "pending"
-              }">
+              <td>
 
                 ${escapeHtml(
-                  ticket.status
+                  ticket.full_name ||
+                  "Customer"
                 )}
 
-              </span>
+                <br>
 
-            </td>
+                <small>
+                  ${escapeHtml(
+                    ticket.email || ""
+                  )}
+                </small>
 
-            <td>
+              </td>
 
-              <button
-                class="primary"
-                onclick="openReply(
-                  ${ticket.id}
-                )"
-              >
-                Reply
-              </button>
+              <td>
+                ${escapeHtml(
+                  ticket.subject || "Support"
+                )}
+              </td>
 
-            </td>
+              <td>
+                ${escapeHtml(
+                  ticket.message || ""
+                )}
+              </td>
 
-          </tr>
+              <td>
 
-          `
-        )
+                <span
+                  class="badge ${badge}"
+                >
+                  ${escapeHtml(status)}
+                </span>
+
+              </td>
+
+              <td>
+
+                <button
+                  class="primary"
+                  onclick="openReply(
+                    ${Number(ticket.id)}
+                  )"
+                >
+                  Reply
+                </button>
+
+              </td>
+
+            </tr>
+
+          `;
+
+        })
         .join("");
+
 
   }catch(error){
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="5" class="empty">
+    body.innerHTML = `
+      <tr>
+        <td
+          colspan="5"
+          class="empty"
+        >
           ${escapeHtml(
             error.message
           )}
         </td>
-      </tr>`;
+      </tr>
+    `;
 
   }
 
@@ -1718,33 +2463,40 @@ async function loadSupport(){
 
 function openReply(ticketId){
 
-  selectedTicket = ticketId;
+  selectedTicket =
+    ticketId;
 
-  document
-    .getElementById("replyMessage")
+
+  $("replyMessage")
     .value = "";
 
-  document
-    .getElementById("replyModal")
-    .classList.add("show");
+
+  $("replyModal")
+    .classList
+    .add("show");
+
 }
 
 
 function closeReplyModal(){
 
-  document
-    .getElementById("replyModal")
-    .classList.remove("show");
+  $("replyModal")
+    .classList
+    .remove("show");
+
+  selectedTicket =
+    null;
+
 }
 
 
 async function sendReply(){
 
   const message =
-    document
-      .getElementById("replyMessage")
+    $("replyMessage")
       .value
       .trim();
+
 
   if(!message){
 
@@ -1753,7 +2505,9 @@ async function sendReply(){
     );
 
     return;
+
   }
+
 
   if(!selectedTicket){
 
@@ -1762,13 +2516,17 @@ async function sendReply(){
     );
 
     return;
+
   }
+
 
   try{
 
     await api(
       "/api/admin/support/" +
-      selectedTicket +
+      encodeURIComponent(
+        selectedTicket
+      ) +
       "/reply",
       {
         method:"POST",
@@ -1776,23 +2534,28 @@ async function sendReply(){
         body:JSON.stringify({
           message
         })
+
       }
     );
 
+
     closeReplyModal();
 
-    await loadSupport();
 
+    await loadSupport();
     await loadDashboard();
+
 
     alert(
       "Response sent."
     );
 
+
   }catch(error){
 
     alert(
-      error.message
+      error.message ||
+      "Unable to send response."
     );
 
   }
@@ -1807,9 +2570,12 @@ async function sendReply(){
 async function loadNotifications(){
 
   const box =
-    document.getElementById(
-      "notificationList"
-    );
+    $("notificationList");
+
+
+  box.innerHTML =
+    "Loading notifications...";
+
 
   try{
 
@@ -1818,76 +2584,96 @@ async function loadNotifications(){
         "/api/admin/notifications"
       );
 
-    if(!notifications.length){
+
+    if(
+      !Array.isArray(notifications) ||
+      !notifications.length
+    ){
 
       box.innerHTML =
         "No notifications.";
 
       return;
+
     }
+
 
     box.innerHTML =
       notifications
-        .map(
-          n => `
+        .map(n => {
 
-          <div
-            style="
-              padding:14px 0;
-              border-bottom:1px solid #edf0f5;
-              opacity:${
-                n.is_read ? ".6" : "1"
-              };
-            "
-          >
+          const opacity =
+            n.is_read
+              ? ".6"
+              : "1";
 
-            <strong>
-              ${escapeHtml(
-                n.title
-              )}
-            </strong>
 
-            <p>
-              ${escapeHtml(
-                n.message
-              )}
-            </p>
+          return `
 
-            <small>
-              ${new Date(
-                n.created_at
-              ).toLocaleString()}
-            </small>
+            <div
+              style="
+                padding:14px 0;
+                border-bottom:1px solid #edf0f5;
+                opacity:${opacity};
+              "
+            >
 
-            ${
-              !n.is_read
-              ?
-              `<br><br>
+              <strong>
+                ${escapeHtml(
+                  n.title ||
+                  "Notification"
+                )}
+              </strong>
 
-               <button
-                 class="secondary"
-                 onclick="markNotification(
-                   ${n.id}
-                 )"
-               >
-                 Mark as read
-               </button>`
+              <p>
+                ${escapeHtml(
+                  n.message || ""
+                )}
+              </p>
 
-              :
-              ""
-            }
+              <small>
+                ${
+                  n.created_at
+                    ? new Date(
+                        n.created_at
+                      ).toLocaleString()
+                    : ""
+                }
+              </small>
 
-          </div>
+              ${
+                !n.is_read
+                ?
+                `
+                <br><br>
 
-          `
-        )
+                <button
+                  class="secondary"
+                  onclick="markNotification(
+                    ${Number(n.id)}
+                  )"
+                >
+                  Mark as read
+                </button>
+                `
+                :
+                ""
+              }
+
+            </div>
+
+          `;
+
+        })
         .join("");
+
 
   }catch(error){
 
     box.innerHTML =
       escapeHtml(
-        error.message
+        error.message ||
+        "Unable to load notifications."
       );
 
   }
@@ -1895,25 +2681,32 @@ async function loadNotifications(){
 }
 
 
+/* =========================
+   MARK NOTIFICATION READ
+========================= */
+
 async function markNotification(id){
 
   try{
 
     await api(
       "/api/admin/notifications/" +
-      id +
+      encodeURIComponent(id) +
       "/read",
       {
         method:"PATCH"
       }
     );
 
+
     await loadNotifications();
+
 
   }catch(error){
 
     alert(
-      error.message
+      error.message ||
+      "Unable to update notification."
     );
 
   }
@@ -1922,36 +2715,68 @@ async function markNotification(id){
 
 
 /* =========================
-   SECURITY
+   MODAL OUTSIDE CLICK
 ========================= */
 
-function escapeHtml(value){
+window.addEventListener(
+  "click",
+  function(event){
 
-  return String(
-    value ?? ""
-  )
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /'/g,
-    "&#039;"
+    if(
+      event.target ===
+      $("creditModal")
+    ){
+
+      closeModal();
+
+    }
+
+
+    if(
+      event.target ===
+      $("replyModal")
+    ){
+
+      closeReplyModal();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   ENTER TO LOGIN
+========================= */
+
+$("adminEmail")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Enter"){
+
+        $("adminPassword").focus();
+
+      }
+
+    }
   );
 
-}
+
+$("adminPassword")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Enter"){
+
+        adminLogin();
+
+      }
+
+    }
+  );
 
 
 /* =========================
@@ -1962,7 +2787,13 @@ if(token){
 
   showAdmin();
 
+}else{
+
+  showLoginScreen();
+
 }
 
-</script></body>
+</script>
+
+</body>
 </html>
