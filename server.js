@@ -1465,7 +1465,7 @@ app.get(
   async (_req, res) => {
 
     try {
-
+Jim
       const customers =
         await pool.query(
           `
@@ -1585,7 +1585,7 @@ app.get(
 );
 
 
-/*
+      /*
 =========================================================
 ADMIN CUSTOMERS
 =========================================================
@@ -1596,285 +1596,101 @@ app.get(
   auth,
   adminOnly,
   async (_req, res) => {
-
     try {
+      const result = await pool.query(`
+        SELECT
+          u.id,
+          u.name,
+          u.email,
+          u.role,
+          u.status,
+          u.primary_currency,
+          u.profile_image,
+          u.created_at,
 
-      const customerResult =
-        await pool.query(
-          `
-          SELECT
-            id,
-            name,
-            email,
-            status,
-            primary_currency,
-            profile_image,
-            created_at
-          FROM acb_users
-          WHERE role='customer'
-          ORDER BY created_at DESC
-          `
-        );
+          COALESCE(
+            json_agg(
+              json_build_object(
+                'currency', b.currency,
+                'balance', b.amount
+              )
+              ORDER BY b.currency
+            ) FILTER (WHERE b.currency IS NOT NULL),
+            '[]'::json
+          ) AS accounts
 
+        FROM acb_users u
 
-      const customers = [];
+        LEFT JOIN acb_balances b
+          ON b.user_id = u.id
 
+        WHERE LOWER(u.role) = 'customer'
 
-      for (
-        const customer
-        of customerResult.rows
-      ) {
+        GROUP BY
+          u.id,
+          u.name,
+          u.email,
+          u.role,
+          u.status,
+          u.primary_currency,
+          u.profile_image,
+          u.created_at
 
-        const balanceResult =
-          await pool.query(
-            `
-            SELECT
-              currency,
-              amount
-            FROM acb_balances
-            WHERE user_id=$1
-            ORDER BY currency
-            `,
-            [customer.id]
-          );
+        ORDER BY u.created_at DESC
+      `);
 
+      const customers = result.rows.map(row => ({
+        id: String(row.id),
+        name: row.name,
+        full_name: row.name,
+        email: row.email,
+        role: 'customer',
+        status: row.status,
+        primary_currency: row.primary_currency,
+        primaryCurrency: row.primary_currency,
+        profile_image: row.profile_image || '',
+        profileImage: row.profile_image || '',
+        created_at: row.created_at,
+        createdAt: row.created_at,
 
-        customers.push({
-
-          id:
-            String(customer.id),
-
-          name:
-            customer.name,
-
-          full_name:
-            customer.name,
-
-          email:
-            customer.email,
-
-          status:
-            customer.status,
-
-          primary_currency:
-            customer.primary_currency,
-
-          profile_image:
-            customer.profile_image,
-
-          created_at:
-            customer.created_at,
-
-          accounts:
-            balanceResult.rows.map(
-              balance => ({
-
-                currency:
-                  balance.currency,
-
-                balance:
-                  Number(
-                    balance.amount
-                  )
-
-              })
-            )
-
-        });
-
-      }
-      res.json({
-        customers
-      });
-
-    } catch (error) {
-
-      console.error(
-        'Admin customers error:',
-        error
-      );
-
-      res.status(500).json({
-        error:
-          'Unable to load customers.'
-      });
-
-    }
-
-  }
-);
-
-
-/*
-=========================================================
-ADMIN CUSTOMERS
-=========================================================
-*/
-
-async function loadAdminCustomers() {
-
-  const result = await pool.query(`
-    SELECT
-      u.id,
-      u.name,
-      u.email,
-      u.role,
-      u.status,
-      u.primary_currency,
-      u.profile_image,
-      u.created_at,
-
-      COALESCE(
-        json_agg(
-          json_build_object(
-            'currency', b.currency,
-            'balance', b.amount
-          )
-          ORDER BY b.currency
-        ) FILTER (WHERE b.currency IS NOT NULL),
-        '[]'::json
-      ) AS accounts
-
-    FROM acb_users u
-
-    LEFT JOIN acb_balances b
-      ON b.user_id = u.id
-
-    WHERE LOWER(u.role) = 'customer'
-
-    GROUP BY
-      u.id,
-      u.name,
-      u.email,
-      u.role,
-      u.status,
-      u.primary_currency,
-      u.profile_image,
-      u.created_at
-
-    ORDER BY u.created_at DESC
-  `);
-
-  return result.rows.map(row => ({
-    id: String(row.id),
-
-    name: row.name,
-    full_name: row.name,
-
-    email: row.email,
-
-    role: 'customer',
-
-    status: row.status,
-
-    primary_currency:
-      row.primary_currency,
-
-    primaryCurrency:
-      row.primary_currency,
-
-    profile_image:
-      row.profile_image || '',
-
-    profileImage:
-      row.profile_image || '',
-
-    created_at:
-      row.created_at,
-
-    createdAt:
-      row.created_at,
-
-    accounts:
-      Array.isArray(row.accounts)
-        ? row.accounts.map(account => ({
-            currency:
-              account.currency,
-
-            balance:
-              Number(account.balance || 0),
-
-            amount:
-              Number(account.balance || 0)
-          }))
-        : []
-  }));
-}
-
-
-/*
-=========================================================
-ADMIN CUSTOMERS
-=========================================================
-*/
-
-app.get(
-  '/api/admin/customers',
-  auth,
-  adminOnly,
-  async (_req, res) => {
-
-    try {
-
-      const customers =
-        await loadAdminCustomers();
+        accounts: Array.isArray(row.accounts)
+          ? row.accounts.map(account => ({
+              currency: account.currency,
+              balance: Number(account.balance || 0),
+              amount: Number(account.balance || 0)
+            }))
+          : []
+      }));
 
       console.log(
-        `[ADMIN CUSTOMERS] Loaded ${customers.length} customer(s)`
+        `[ADMIN CUSTOMERS] ${customers.length} customer(s) found`
       );
 
       res.json({
-
         ok: true,
-
         customers,
-
-        /*
-         * Compatibility aliases.
-         * This allows an existing admin frontend
-         * expecting users/data/items to continue working.
-         */
-
         users: customers,
-
         data: customers,
-
         items: customers,
-
-        total:
-          customers.length,
-
-        count:
-          customers.length
-
+        total: customers.length,
+        count: customers.length
       });
 
     } catch (error) {
-
-      console.error(
-        'Admin customers error:',
-        error
-      );
+      console.error('Admin customers error:', error);
 
       res.status(500).json({
         ok: false,
-
-        error:
-          'Unable to load customers.',
-
+        error: 'Unable to load customers.',
         customers: [],
-
         users: [],
-
         data: [],
-
         items: []
       });
-
     }
-
   }
 );
+
 
 
 /*
