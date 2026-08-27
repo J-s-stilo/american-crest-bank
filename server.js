@@ -1662,7 +1662,43 @@ app.get(
     }
   }
 );
+/* =========================================================
+   ADMIN SETUP PAGE
+========================================================= */
 
+app.get("/admin-setup", (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Admin Setup</title>
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+    </head>
+    <body style="font-family:Arial;padding:30px;max-width:500px;margin:auto">
+      <h2>Administrator Setup</h2>
+
+      <form method="POST" action="/api/admin/setup">
+        <input name="setupKey" placeholder="Admin Setup Key"
+          required style="width:100%;padding:12px;margin:8px 0">
+
+        <input name="name" placeholder="Admin Name"
+          required style="width:100%;padding:12px;margin:8px 0">
+
+        <input name="email" type="email" placeholder="Admin Email"
+          required style="width:100%;padding:12px;margin:8px 0">
+
+        <input name="password" type="password" placeholder="Admin Password"
+          required style="width:100%;padding:12px;margin:8px 0">
+
+        <button type="submit"
+          style="padding:12px 20px;margin-top:10px">
+          Create / Update Admin
+        </button>
+      </form>
+    </body>
+    </html>
+  `);
+});
 /* =========================================================
    ADMIN SETUP
 ========================================================= */
