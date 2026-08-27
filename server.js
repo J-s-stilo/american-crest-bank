@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
 const rateLimit = require("express-rate-limit");
+const crypto = require("crypto");
 
 const app = express();
 
@@ -12,8 +13,9 @@ app.set("trust proxy", 1);
 
 const PORT = process.env.PORT || 10000;
 const JWT_SECRET = process.env.JWT_SECRET;
+const DATABASE_URL = process.env.DATABASE_URL;
 
-if (!process.env.DATABASE_URL) {
+if (!DATABASE_URL) {
   console.error("DATABASE_URL is missing.");
   process.exit(1);
 }
@@ -24,7 +26,7 @@ if (!JWT_SECRET) {
 }
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
@@ -43,14 +45,19 @@ const apiLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30,
+  max: 40,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const writeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false
 });
 
 app.use("/api", apiLimiter);
-app.use("/api/login", authLimiter);
-app.use("/api/register", authLimiter);
 
 const CURRENCIES = [
   "NGN",
@@ -76,25 +83,36 @@ const CURRENCIES = [
    HELPERS
 ========================================================= */
 
-function balanceColumn(currency) {
-  const c = String(currency || "").toUpperCase();
+function newId() {
+  return crypto.randomUUID();
+}
 
-  if (!CURRENCIES.includes(c)) {
-    return null;
-  }
-
-  return `balance_${c.toLowerCase()}`;
+function validCurrency(currency) {
+  return CURRENCIES.includes(
+    String(currency || "").toUpperCase()
+  );
 }
 
 function formatDate(value) {
   return new Date(value).toLocaleString();
 }
 
-function makeToken(user) {
+function balanceColumn(currency) {
+  const c = String(currency || "").toUpperCase();
+
+  if (!validCurrency(c)) {
+    return null;
+  }
+
+  return `balance_${c.toLowerCase()}`;
+}
+
+function signToken(user) {
   return jwt.sign(
     {
       id: user.id,
-      isAdmin: Boolean(user.is_admin)
+      role: user.role,
+      isAdmin: user.role === "admin"
     },
     JWT_SECRET,
     {
@@ -103,44 +121,25 @@ function makeToken(user) {
   );
 }
 
-function publicUser(row) {
-  const balances = {};
+function requireAuth(req, res, next) {
+  const header = req.headers.authorization || "";
 
-  for (const currency of CURRENCIES) {
-    balances[currency] = Number(
-      row[`balance_${currency.toLowerCase()}`] || 0
-    );
+  if (!header.startsWith("Bearer ")) {
+    return res.status(401).json({
+      error: "Authentication required."
+    });
   }
 
-  return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    status: row.status,
-    primaryCurrency: row.primary_currency,
-    balances,
-    profileImage: row.profile_image || "",
-    isAdmin: Boolean(row.is_admin),
-    createdAt: formatDate(row.created_at)
-  };
-}
-
-function requireAuth(req, res, next) {
   try {
-    const header = req.headers.authorization || "";
-
-    if (!header.startsWith("Bearer ")) {
-      return res.status(401).json({
-        error: "Authentication required."
-      });
-    }
-
     const token = header.slice(7);
 
-    req.user = jwt.verify(token, JWT_SECRET);
+    req.user = jwt.verify(
+      token,
+      JWT_SECRET
+    );
 
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({
       error: "Invalid or expired session."
     });
@@ -148,7 +147,13 @@ function requireAuth(req, res, next) {
 }
 
 function requireAdmin(req, res, next) {
-  if (!req.user || !req.user.isAdmin) {
+  if (
+    !req.user ||
+    (
+      req.user.role !== "admin" &&
+      req.user.isAdmin !== true
+    )
+  ) {
     return res.status(403).json({
       error: "Administrator access required."
     });
@@ -157,24 +162,11 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-async function getUserById(id) {
-  const result = await pool.query(
-    "SELECT * FROM users WHERE id = $1",
-    [id]
-  );
-
-  return result.rows[0] || null;
-}
-
 /* =========================================================
    DATABASE
 ========================================================= */
 
 async function initDatabase() {
-  /*
-    Create the main users table.
-    Existing databases are preserved.
-  */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -189,11 +181,6 @@ async function initDatabase() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
-
-  /*
-    Keep older databases compatible.
-    These statements only add missing columns.
-  */
 
   await pool.query(`
     ALTER TABLE users
@@ -230,11 +217,6 @@ async function initDatabase() {
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   `);
 
-  /*
-    Currency balances.
-    These are added one time each.
-  */
-
   for (const currency of CURRENCIES) {
     await pool.query(`
       ALTER TABLE users
@@ -243,10 +225,6 @@ async function initDatabase() {
       NUMERIC(30,2) NOT NULL DEFAULT 0
     `);
   }
-
-  /*
-    Transactions
-  */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS transactions (
@@ -263,10 +241,6 @@ async function initDatabase() {
     )
   `);
 
-  /*
-    Notifications
-  */
-
   await pool.query(`
     CREATE TABLE IF NOT EXISTS notifications (
       id SERIAL PRIMARY KEY,
@@ -280,10 +254,6 @@ async function initDatabase() {
     )
   `);
 
-  /*
-    Support messages
-  */
-
   await pool.query(`
     CREATE TABLE IF NOT EXISTS support_messages (
       id SERIAL PRIMARY KEY,
@@ -296,10 +266,6 @@ async function initDatabase() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
-
-  /*
-    Transfers
-  */
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS transfers (
@@ -316,10 +282,6 @@ async function initDatabase() {
     )
   `);
 
-  /*
-    Admin requests
-  */
-
   await pool.query(`
     CREATE TABLE IF NOT EXISTS admin_requests (
       id SERIAL PRIMARY KEY,
@@ -330,37 +292,321 @@ async function initDatabase() {
     )
   `);
 
-  console.log("Demo database initialized successfully.");
+  /*
+    Optional automatic administrator.
+    Set ADMIN_EMAIL and ADMIN_PASSWORD in Render
+    if you want the admin created automatically.
+  */
+
+  const adminEmail = String(
+    process.env.ADMIN_EMAIL || ""
+  )
+    .trim()
+    .toLowerCase();
+
+  const adminPassword = String(
+    process.env.ADMIN_PASSWORD || ""
+  );
+
+  if (
+    adminEmail &&
+    adminPassword
+  ) {
+    const existing = await pool.query(
+      `
+      SELECT id
+      FROM users
+      WHERE email = $1
+      `,
+      [adminEmail]
+    );
+
+    const hash = await bcrypt.hash(
+      adminPassword,
+      12
+    );
+
+    if (existing.rows.length) {
+      await pool.query(
+        `
+        UPDATE users
+        SET
+          is_admin = TRUE,
+          name = COALESCE(NULLIF(name,''),'Administrator'),
+          password_hash = $1,
+          status = 'active'
+        WHERE email = $2
+        `,
+        [
+          hash,
+          adminEmail
+        ]
+      );
+    } else {
+      await pool.query(
+        `
+        INSERT INTO users
+        (
+          name,
+          email,
+          password_hash,
+          primary_currency,
+          is_admin,
+          status
+        )
+        VALUES
+        (
+          'Administrator',
+          $1,
+          $2,
+          'USD',
+          TRUE,
+          'active'
+        )
+        `,
+        [
+          adminEmail,
+          hash
+        ]
+      );
+    }
+  }
+
+  console.log(
+    "American Crest demo database initialized."
+  );
+}
+
+/* =========================================================
+   USER DATA
+========================================================= */
+
+async function getUserById(id) {
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM users
+    WHERE id = $1
+    `,
+    [id]
+  );
+
+  return result.rows[0] || null;
+}
+
+async function getUser(id) {
+
+  const userResult = await pool.query(
+    `
+    SELECT
+      id,
+      name,
+      email,
+      is_admin,
+      status,
+      primary_currency,
+      profile_image,
+      created_at
+    FROM users
+    WHERE id = $1
+    `,
+    [id]
+  );
+
+  if (!userResult.rows.length) {
+    return null;
+  }
+
+  const user = userResult.rows[0];
+
+  const [
+    transactionsResult,
+    notificationsResult,
+    supportResult,
+    transfersResult
+  ] = await Promise.all([
+
+    pool.query(
+      `
+      SELECT
+        id,
+        kind,
+        title,
+        amount,
+        currency,
+        created_at
+      FROM transactions
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT 100
+      `,
+      [id]
+    ),
+
+    pool.query(
+      `
+      SELECT
+        id,
+        title,
+        message,
+        is_read,
+        created_at
+      FROM notifications
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT 100
+      `,
+      [id]
+    ),
+
+    pool.query(
+      `
+      SELECT
+        id,
+        sender,
+        message,
+        created_at
+      FROM support_messages
+      WHERE user_id = $1
+      ORDER BY created_at ASC
+      LIMIT 200
+      `,
+      [id]
+    ),
+
+    pool.query(
+      `
+      SELECT
+        id,
+        amount,
+        currency,
+        recipient,
+        reference,
+        status,
+        created_at
+      FROM transfers
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT 100
+      `,
+      [id]
+    )
+  ]);
+
+  const balances = {};
+
+  for (const currency of CURRENCIES) {
+    balances[currency] = Number(
+      user[
+        `balance_${currency.toLowerCase()}`
+      ] || 0
+    );
+  }
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.is_admin
+      ? "admin"
+      : "customer",
+    isAdmin: Boolean(user.is_admin),
+    status: user.status,
+    primaryCurrency: user.primary_currency,
+    primary_currency: user.primary_currency,
+    profileImage: user.profile_image || "",
+    profile_image: user.profile_image || "",
+    createdAt: user.created_at,
+    created_at: user.created_at,
+
+    balances,
+
+    transactions:
+      transactionsResult.rows.map(row => ({
+        id: String(row.id),
+        kind: row.kind,
+        title: row.title,
+        amount: Number(row.amount),
+        currency: row.currency,
+        date: formatDate(row.created_at),
+        created_at: row.created_at
+      })),
+
+    notifications:
+      notificationsResult.rows.map(row => ({
+        id: String(row.id),
+        title: row.title,
+        message: row.message,
+        is_read: row.is_read,
+        date: formatDate(row.created_at),
+        created_at: row.created_at
+      })),
+
+    support:
+      supportResult.rows.map(row => ({
+        id: String(row.id),
+        sender: row.sender,
+        message: row.message,
+        date: formatDate(row.created_at),
+        created_at: row.created_at
+      })),
+
+    transfers:
+      transfersResult.rows.map(row => ({
+        id: String(row.id),
+        amount: Number(row.amount),
+        currency: row.currency,
+        recipient: row.recipient,
+        reference: row.reference,
+        status: row.status,
+        date: formatDate(row.created_at),
+        created_at: row.created_at
+      }))
+  };
 }
 
 /* =========================================================
    HEALTH
 ========================================================= */
 
-app.get("/api/health", async (req, res) => {
-  try {
-    await pool.query("SELECT 1");
+app.get(
+  "/api/health",
+  async (req, res) => {
+    try {
+      await pool.query("SELECT 1");
 
-    res.json({
-      ok: true,
-      application: "American Crest Bank — Fictional Demo",
-      mode: "fictional-demo"
-    });
-  } catch (error) {
-    console.error("HEALTH ERROR:", error);
+      res.json({
+        ok: true,
+        demo: true,
+        application:
+          "American Crest Bank — Fictional Demo",
+        mode: "fictional-demo"
+      });
 
-    res.status(500).json({
-      ok: false
-    });
+    } catch (error) {
+
+      console.error(
+        "HEALTH ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        ok: false
+      });
+    }
   }
-});
+);
 
 /* =========================================================
    REGISTER
+   NEW CUSTOMERS ARE SAVED IN THE SAME DATABASE
+   THE ADMIN USES
 ========================================================= */
 
-app.post("/api/register", async (req, res) => {
+async function registerHandler(req, res) {
+
   try {
+
     const name = String(
       req.body.name || ""
     ).trim();
@@ -376,103 +622,219 @@ app.post("/api/register", async (req, res) => {
     );
 
     const currency = String(
-      req.body.primaryCurrency || "NGN"
+      req.body.currency ||
+      req.body.primaryCurrency ||
+      "NGN"
     ).toUpperCase();
 
     if (name.length < 2) {
       return res.status(400).json({
-        error: "Enter your full name."
+        error:
+          "Enter your full name."
       });
     }
 
-    if (!email.includes("@")) {
+    if (
+      !/^\S+@\S+\.\S+$/.test(email)
+    ) {
       return res.status(400).json({
-        error: "Enter a valid email address."
+        error:
+          "Enter a valid email address."
       });
     }
 
-    if (password.length < 4) {
+    if (password.length < 6) {
       return res.status(400).json({
-        error: "Password must contain at least 4 characters."
+        error:
+          "Password must contain at least 6 characters."
       });
     }
 
-    if (!CURRENCIES.includes(currency)) {
+    if (!validCurrency(currency)) {
       return res.status(400).json({
-        error: "Invalid currency."
+        error:
+          "Invalid currency."
       });
     }
 
-    const existing = await pool.query(
-      "SELECT id FROM users WHERE email = $1",
-      [email]
-    );
+    const existing =
+      await pool.query(
+        `
+        SELECT id
+        FROM users
+        WHERE email = $1
+        `,
+        [email]
+      );
 
     if (existing.rows.length) {
       return res.status(409).json({
-        error: "An account with this email already exists."
+        error:
+          "This email is already registered."
       });
     }
 
-    const hash = await bcrypt.hash(
-      password,
-      12
-    );
+    const hash =
+      await bcrypt.hash(
+        password,
+        12
+      );
 
-    const result = await pool.query(
-      `
-      INSERT INTO users
-      (name,email,password_hash,primary_currency)
-      VALUES ($1,$2,$3,$4)
-      RETURNING *
-      `,
-      [
-        name,
-        email,
-        hash,
-        currency
-      ]
-    );
+    const result =
+      await pool.query(
+        `
+        INSERT INTO users
+        (
+          name,
+          email,
+          password_hash,
+          primary_currency,
+          is_admin,
+          status
+        )
+        VALUES
+        (
+          $1,
+          $2,
+          $3,
+          $4,
+          FALSE,
+          'active'
+        )
+        RETURNING id
+        `,
+        [
+          name,
+          email,
+          hash,
+          currency
+        ]
+      );
 
-    const user = result.rows[0];
+    const userId =
+      result.rows[0].id;
+
+    /*
+      Create every currency balance
+      so admin credit always works.
+    */
+
+    for (const c of CURRENCIES) {
+
+      await pool.query(
+        `
+        UPDATE users
+        SET balance_${c.toLowerCase()} = 0
+        WHERE id = $1
+        `,
+        [userId]
+      );
+
+    }
+
+    /*
+      Customer notification
+    */
 
     await pool.query(
       `
       INSERT INTO notifications
-      (user_id,title,message)
-      VALUES ($1,$2,$3)
+      (
+        user_id,
+        title,
+        message
+      )
+      VALUES
+      (
+        $1,
+        'Account created',
+        'Your fictional demo account has been created successfully.'
+      )
       `,
-      [
-        user.id,
-        "Account created",
-        "Your fictional demo account has been created successfully."
-      ]
+      [userId]
     );
 
-    const token = makeToken(user);
+    /*
+      Notify every administrator that
+      a new customer registered.
+    */
+
+    const admins =
+      await pool.query(
+        `
+        SELECT id
+        FROM users
+        WHERE is_admin = TRUE
+        `
+      );
+
+    for (const admin of admins.rows) {
+
+      await pool.query(
+        `
+        INSERT INTO notifications
+        (
+          user_id,
+          title,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'New customer registered',
+          $2
+        )
+        `,
+        [
+          admin.id,
+          `New demo customer registered: ${name} (${email}).`
+        ]
+      );
+
+    }
+
+    const user =
+      await getUser(userId);
 
     res.status(201).json({
-      token,
-      user: publicUser(user)
+      token: signToken(user),
+      user
     });
+
   } catch (error) {
+
     console.error(
       "REGISTER ERROR:",
       error
     );
 
     res.status(500).json({
-      error: "Unable to create account."
+      error:
+        "Unable to create account."
     });
   }
-});
+}
+
+app.post(
+  "/api/auth/register",
+  authLimiter,
+  registerHandler
+);
+
+app.post(
+  "/api/register",
+  authLimiter,
+  registerHandler
+);
 
 /* =========================================================
    LOGIN
 ========================================================= */
 
-app.post("/api/login", async (req, res) => {
+async function loginHandler(req, res) {
+
   try {
+
     const email = String(
       req.body.email || ""
     )
@@ -483,47 +845,72 @@ app.post("/api/login", async (req, res) => {
       req.body.password || ""
     );
 
-    const result = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
+    const result =
+      await pool.query(
+        `
+        SELECT *
+        FROM users
+        WHERE email = $1
+        `,
+        [email]
+      );
 
-    const user = result.rows[0];
+    const row =
+      result.rows[0];
 
-    if (!user) {
+    if (!row) {
       return res.status(401).json({
-        error: "Incorrect email or password."
+        error:
+          "Incorrect email or password."
       });
     }
 
-    const valid = await bcrypt.compare(
-      password,
-      user.password_hash
-    );
+    const valid =
+      await bcrypt.compare(
+        password,
+        row.password_hash
+      );
 
     if (!valid) {
       return res.status(401).json({
-        error: "Incorrect email or password."
+        error:
+          "Incorrect email or password."
       });
     }
 
-    const token = makeToken(user);
+    const user =
+      await getUser(row.id);
 
     res.json({
-      token,
-      user: publicUser(user)
+      token: signToken(user),
+      user
     });
+
   } catch (error) {
+
     console.error(
       "LOGIN ERROR:",
       error
     );
 
     res.status(500).json({
-      error: "Unable to sign in."
+      error:
+        "Unable to sign in."
     });
   }
-});
+}
+
+app.post(
+  "/api/auth/login",
+  authLimiter,
+  loginHandler
+);
+
+app.post(
+  "/api/login",
+  authLimiter,
+  loginHandler
+);
 
 /* =========================================================
    ME
@@ -533,28 +920,35 @@ app.get(
   "/api/me",
   requireAuth,
   async (req, res) => {
+
     try {
-      const user = await getUserById(
-        req.user.id
-      );
+
+      const user =
+        await getUser(
+          req.user.id
+        );
 
       if (!user) {
         return res.status(404).json({
-          error: "Account not found."
+          error:
+            "Account not found."
         });
       }
 
       res.json({
-        user: publicUser(user)
+        user
       });
+
     } catch (error) {
+
       console.error(
         "ME ERROR:",
         error
       );
 
       res.status(500).json({
-        error: "Unable to load account."
+        error:
+          "Unable to load account."
       });
     }
   }
@@ -568,22 +962,25 @@ app.get(
   "/api/transactions",
   requireAuth,
   async (req, res) => {
+
     try {
-      const result = await pool.query(
-        `
-        SELECT
-          id,
-          kind,
-          title,
-          amount,
-          currency,
-          created_at
-        FROM transactions
-        WHERE user_id = $1
-        ORDER BY created_at DESC
-        `,
-        [req.user.id]
-      );
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            id,
+            kind,
+            title,
+            amount,
+            currency,
+            created_at
+          FROM transactions
+          WHERE user_id = $1
+          ORDER BY created_at DESC
+          `,
+          [req.user.id]
+        );
 
       res.json({
         transactions:
@@ -595,207 +992,335 @@ app.get(
             currency: row.currency,
             date: formatDate(
               row.created_at
-            )
+            ),
+            created_at:
+              row.created_at
           }))
       });
+
     } catch (error) {
+
       console.error(
         "TRANSACTIONS ERROR:",
         error
       );
 
       res.status(500).json({
-        error: "Unable to load transactions."
+        error:
+          "Unable to load transactions."
       });
     }
   }
 );
 
 /* =========================================================
-   CUSTOMER TRANSFER — DEMO ONLY
+   CUSTOMER TRANSFER / REQUEST
 ========================================================= */
 
-app.post(
-  "/api/transfers",
-  requireAuth,
-  async (req, res) => {
-    const client =
-      await pool.connect();
+async function requestTransfer(
+  req,
+  res
+) {
 
-    try {
-      const currency = String(
+  const client =
+    await pool.connect();
+
+  try {
+
+    const currency =
+      String(
         req.body.currency || ""
       ).toUpperCase();
 
-      const amount = Number(
+    const amount =
+      Number(
         req.body.amount
       );
 
-      const recipient = String(
+    const recipient =
+      String(
         req.body.recipient || ""
       ).trim();
 
-      if (!CURRENCIES.includes(currency)) {
-        return res.status(400).json({
-          error: "Invalid currency."
-        });
-      }
+    const note =
+      String(
+        req.body.note || ""
+      ).trim()
+      .slice(0, 500);
 
-      if (
-        !Number.isFinite(amount) ||
-        amount <= 0
-      ) {
-        return res.status(400).json({
-          error: "Enter a valid amount."
-        });
-      }
+    if (!validCurrency(currency)) {
+      return res.status(400).json({
+        error:
+          "Invalid currency."
+      });
+    }
 
-      if (recipient.length < 2) {
-        return res.status(400).json({
-          error: "Enter the recipient name."
-        });
-      }
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      return res.status(400).json({
+        error:
+          "Enter a valid amount."
+      });
+    }
 
-      const column =
-        balanceColumn(currency);
+    if (recipient.length < 2) {
+      return res.status(400).json({
+        error:
+          "Enter the recipient name."
+      });
+    }
 
-      await client.query("BEGIN");
+    await client.query(
+      "BEGIN"
+    );
 
-      const result =
-        await client.query(
-          `
-          SELECT *
-          FROM users
-          WHERE id = $1
-          FOR UPDATE
-          `,
-          [req.user.id]
-        );
-
-      const user =
-        result.rows[0];
-
-      if (!user) {
-        await client.query(
-          "ROLLBACK"
-        );
-
-        return res.status(404).json({
-          error: "Account not found."
-        });
-      }
-
-      const currentBalance =
-        Number(user[column] || 0);
-
-      if (amount > currentBalance) {
-        await client.query(
-          "ROLLBACK"
-        );
-
-        return res.status(400).json({
-          error: "Insufficient demo balance."
-        });
-      }
-
+    const userResult =
       await client.query(
         `
-        UPDATE users
-        SET ${column} = ${column} - $1
-        WHERE id = $2
+        SELECT *
+        FROM users
+        WHERE id = $1
+        FOR UPDATE
         `,
-        [
-          amount,
-          req.user.id
-        ]
+        [req.user.id]
       );
 
-      const reference =
-        "DEMO-" +
-        Date.now()
-          .toString(36)
-          .toUpperCase() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2, 7)
-          .toUpperCase();
+    const user =
+      userResult.rows[0];
+
+    if (!user) {
 
       await client.query(
-        `
-        INSERT INTO transfers
-        (user_id,amount,currency,recipient,reference,status)
-        VALUES ($1,$2,$3,$4,$5,'pending')
-        `,
-        [
-          req.user.id,
-          amount,
-          currency,
-          recipient,
-          reference
-        ]
+        "ROLLBACK"
       );
 
+      return res.status(404).json({
+        error:
+          "Account not found."
+      });
+    }
+
+    const column =
+      balanceColumn(currency);
+
+    const currentBalance =
+      Number(
+        user[column] || 0
+      );
+
+    /*
+      Keep the existing demo transfer
+      balance check.
+    */
+
+    if (amount > currentBalance) {
+
+      await client.query(
+        "ROLLBACK"
+      );
+
+      return res.status(400).json({
+        error:
+          "Insufficient demo balance."
+      });
+    }
+
+    /*
+      Deduct demo balance.
+    */
+
+    await client.query(
+      `
+      UPDATE users
+      SET ${column} = ${column} - $1
+      WHERE id = $2
+      `,
+      [
+        amount,
+        req.user.id
+      ]
+    );
+
+    const reference =
+      "DEMO-" +
+      Date.now()
+        .toString(36)
+        .toUpperCase() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2, 7)
+        .toUpperCase();
+
+    await client.query(
+      `
+      INSERT INTO transfers
+      (
+        user_id,
+        amount,
+        currency,
+        recipient,
+        reference,
+        status
+      )
+      VALUES
+      (
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        'pending'
+      )
+      `,
+      [
+        req.user.id,
+        amount,
+        currency,
+        recipient,
+        reference
+      ]
+    );
+
+    await client.query(
+      `
+      INSERT INTO transactions
+      (
+        user_id,
+        kind,
+        title,
+        amount,
+        currency
+      )
+      VALUES
+      (
+        $1,
+        'debit',
+        $2,
+        $3,
+        $4
+      )
+      `,
+      [
+        req.user.id,
+        `Demo transfer to ${recipient}`,
+        amount,
+        currency
+      ]
+    );
+
+    await client.query(
+      `
+      INSERT INTO notifications
+      (
+        user_id,
+        title,
+        message
+      )
+      VALUES
+      (
+        $1,
+        'Demo transfer',
+        $2
+      )
+      `,
+      [
+        req.user.id,
+        `Your fictional demo transfer of ${amount} ${currency} to ${recipient} is pending.`
+      ]
+    );
+
+    /*
+      Notify admin about transfer.
+    */
+
+    const admins =
       await client.query(
         `
-        INSERT INTO transactions
-        (user_id,kind,title,amount,currency)
-        VALUES ($1,'debit',$2,$3,$4)
-        `,
-        [
-          req.user.id,
-          `Demo transfer to ${recipient}`,
-          amount,
-          currency
-        ]
+        SELECT id
+        FROM users
+        WHERE is_admin = TRUE
+        `
       );
+
+    for (const admin of admins.rows) {
 
       await client.query(
         `
         INSERT INTO notifications
-        (user_id,title,message)
-        VALUES ($1,$2,$3)
+        (
+          user_id,
+          title,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'New customer transfer',
+          $2
+        )
         `,
         [
-          req.user.id,
-          "Demo transfer",
-          `Your fictional demo transfer of ${amount} ${currency} to ${recipient} is pending.`
+          admin.id,
+          `New demo transfer from ${user.name}: ${amount} ${currency} to ${recipient}. Reference: ${reference}`
         ]
       );
 
-      await client.query(
-        "COMMIT"
-      );
-
-      res.json({
-        success: true,
-        message:
-          "Demo transfer recorded.",
-        amount,
-        currency,
-        reference,
-        status: "pending"
-      });
-    } catch (error) {
-      try {
-        await client.query(
-          "ROLLBACK"
-        );
-      } catch {}
-
-      console.error(
-        "TRANSFER ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Unable to process demo transfer."
-      });
-    } finally {
-      client.release();
     }
+
+    await client.query(
+      "COMMIT"
+    );
+
+    res.json({
+      success: true,
+      message:
+        "Demo transfer recorded.",
+      amount,
+      currency,
+      reference,
+      status: "pending",
+      user:
+        await getUser(req.user.id)
+    });
+
+  } catch (error) {
+
+    try {
+      await client.query(
+        "ROLLBACK"
+      );
+    } catch {}
+
+    console.error(
+      "TRANSFER ERROR:",
+      error
+    );
+
+    res.status(500).json({
+      error:
+        "Unable to process demo transfer."
+    });
+
+  } finally {
+    client.release();
   }
+}
+
+app.post(
+  "/api/requests",
+  requireAuth,
+  writeLimiter,
+  requestTransfer
+);
+
+app.post(
+  "/api/transfers",
+  requireAuth,
+  writeLimiter,
+  requestTransfer
 );
 
 /* =========================================================
@@ -806,7 +1331,9 @@ app.get(
   "/api/notifications",
   requireAuth,
   async (req, res) => {
+
     try {
+
       const result =
         await pool.query(
           `
@@ -814,27 +1341,33 @@ app.get(
             id,
             title,
             message,
+            is_read,
             created_at
           FROM notifications
           WHERE user_id = $1
           ORDER BY created_at DESC
-          LIMIT 50
+          LIMIT 100
           `,
           [req.user.id]
         );
 
       res.json({
         notifications:
-          result.rows.map(n => ({
-            id: String(n.id),
-            title: n.title,
-            message: n.message,
+          result.rows.map(row => ({
+            id: String(row.id),
+            title: row.title,
+            message: row.message,
+            is_read: row.is_read,
             date: formatDate(
-              n.created_at
-            )
+              row.created_at
+            ),
+            created_at:
+              row.created_at
           }))
       });
+
     } catch (error) {
+
       console.error(
         "NOTIFICATIONS ERROR:",
         error
@@ -855,29 +1388,39 @@ app.get(
 app.post(
   "/api/support",
   requireAuth,
+  writeLimiter,
   async (req, res) => {
+
     try {
-      const message = String(
-        req.body.message || ""
-      ).trim();
+
+      const message =
+        String(
+          req.body.message || ""
+        )
+        .trim()
+        .slice(0, 2000);
 
       if (!message) {
         return res.status(400).json({
-          error: "Write a message first."
-        });
-      }
-
-      if (message.length > 2000) {
-        return res.status(400).json({
-          error: "Message is too long."
+          error:
+            "Write a message first."
         });
       }
 
       await pool.query(
         `
         INSERT INTO support_messages
-        (user_id,sender,message)
-        VALUES ($1,'customer',$2)
+        (
+          user_id,
+          sender,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'customer',
+          $2
+        )
         `,
         [
           req.user.id,
@@ -885,25 +1428,54 @@ app.post(
         ]
       );
 
-      await pool.query(
-        `
-        INSERT INTO notifications
-        (user_id,title,message)
-        VALUES ($1,$2,$3)
-        `,
-        [
-          req.user.id,
-          "Support request",
-          "Your demo support message has been sent."
-        ]
-      );
+      const customer =
+        await getUser(
+          req.user.id
+        );
+
+      const admins =
+        await pool.query(
+          `
+          SELECT id
+          FROM users
+          WHERE is_admin = TRUE
+          `
+        );
+
+      for (const admin of admins.rows) {
+
+        await pool.query(
+          `
+          INSERT INTO notifications
+          (
+            user_id,
+            title,
+            message
+          )
+          VALUES
+          (
+            $1,
+            'New support message',
+            $2
+          )
+          `,
+          [
+            admin.id,
+            `New support message from ${customer.name} (${customer.email}).`
+          ]
+        );
+      }
 
       res.json({
         success: true,
         message:
-          "Support message sent."
+          "Support message sent.",
+        user:
+          await getUser(req.user.id)
       });
+
     } catch (error) {
+
       console.error(
         "SUPPORT ERROR:",
         error
@@ -921,7 +1493,9 @@ app.get(
   "/api/support",
   requireAuth,
   async (req, res) => {
+
     try {
+
       const result =
         await pool.query(
           `
@@ -945,10 +1519,14 @@ app.get(
             message: row.message,
             date: formatDate(
               row.created_at
-            )
+            ),
+            created_at:
+              row.created_at
           }))
       });
+
     } catch (error) {
+
       console.error(
         "SUPPORT LOAD ERROR:",
         error
@@ -969,15 +1547,20 @@ app.get(
 app.put(
   "/api/profile",
   requireAuth,
+  writeLimiter,
   async (req, res) => {
+
     try {
-      const name = String(
-        req.body.name || ""
-      ).trim();
+
+      const name =
+        String(
+          req.body.name || ""
+        ).trim();
 
       if (name.length < 2) {
         return res.status(400).json({
-          error: "Enter a valid name."
+          error:
+            "Enter a valid name."
         });
       }
 
@@ -987,7 +1570,7 @@ app.put(
           UPDATE users
           SET name = $1
           WHERE id = $2
-          RETURNING *
+          RETURNING id
           `,
           [
             name,
@@ -997,16 +1580,20 @@ app.put(
 
       if (!result.rows.length) {
         return res.status(404).json({
-          error: "Account not found."
+          error:
+            "Account not found."
         });
       }
 
       res.json({
-        user: publicUser(
-          result.rows[0]
-        )
+        user:
+          await getUser(
+            req.user.id
+          )
       });
+
     } catch (error) {
+
       console.error(
         "PROFILE ERROR:",
         error
@@ -1020,175 +1607,308 @@ app.put(
   }
 );
 
+async function updateProfileImage(
+  req,
+  res
+) {
+
+  try {
+
+    const image =
+      String(
+        req.body.profileImage ||
+        req.body.image ||
+        ""
+      );
+
+    if (
+      image &&
+      !image.startsWith(
+        "data:image/"
+      )
+    ) {
+      return res.status(400).json({
+        error:
+          "Invalid image."
+      });
+    }
+
+    if (
+      image.length >
+      3 * 1024 * 1024
+    ) {
+      return res.status(400).json({
+        error:
+          "Image is too large."
+      });
+    }
+
+    await pool.query(
+      `
+      UPDATE users
+      SET profile_image = $1
+      WHERE id = $2
+      `,
+      [
+        image,
+        req.user.id
+      ]
+    );
+
+    res.json({
+      user:
+        await getUser(
+          req.user.id
+        )
+    });
+
+  } catch (error) {
+
+    console.error(
+      "PROFILE IMAGE ERROR:",
+      error
+    );
+
+    res.status(500).json({
+      error:
+        "Unable to update profile picture."
+    });
+  }
+}
+
+app.post(
+  "/api/profile/image",
+  requireAuth,
+  writeLimiter,
+  updateProfileImage
+);
+
 app.put(
   "/api/profile-image",
   requireAuth,
-  async (req, res) => {
-    try {
-      const image = String(
-        req.body.image || ""
-      );
-
-      if (
-        image &&
-        !image.startsWith(
-          "data:image/"
-        )
-      ) {
-        return res.status(400).json({
-          error: "Invalid image."
-        });
-      }
-
-      if (
-        image.length >
-        3 * 1024 * 1024
-      ) {
-        return res.status(400).json({
-          error: "Image is too large."
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          UPDATE users
-          SET profile_image = $1
-          WHERE id = $2
-          RETURNING *
-          `,
-          [
-            image,
-            req.user.id
-          ]
-        );
-
-      if (!result.rows.length) {
-        return res.status(404).json({
-          error: "Account not found."
-        });
-      }
-
-      res.json({
-        user: publicUser(
-          result.rows[0]
-        )
-      });
-    } catch (error) {
-      console.error(
-        "PROFILE IMAGE ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Unable to update profile picture."
-      });
-    }
-  }
+  writeLimiter,
+  updateProfileImage
 );
 
 /* =========================================================
-   ADMIN SUMMARY
+   ADMIN STATE
+   CUSTOMERS + REQUESTS + SUPPORT + NOTIFICATIONS
 ========================================================= */
 
 app.get(
-  "/api/admin/summary",
+  "/api/admin/state",
   requireAuth,
   requireAdmin,
   async (req, res) => {
+
     try {
+
       const customersResult =
         await pool.query(
           `
-          SELECT COUNT(*)::INTEGER AS count
+          SELECT
+            id,
+            name,
+            email,
+            status,
+            primary_currency,
+            profile_image,
+            created_at
           FROM users
           WHERE is_admin = FALSE
+          ORDER BY created_at DESC
           `
         );
 
-      const pendingResult =
+      const requestsResult =
         await pool.query(
           `
-          SELECT COUNT(*)::INTEGER AS count
-          FROM transfers
-          WHERE status = 'pending'
+          SELECT
+            t.id,
+            t.user_id,
+            u.name,
+            u.email,
+            t.amount,
+            t.currency,
+            t.recipient,
+            '' AS note,
+            t.reference,
+            t.status,
+            t.created_at,
+            t.created_at AS handled_at
+          FROM transfers t
+          JOIN users u
+            ON u.id = t.user_id
+          ORDER BY t.created_at DESC
+          LIMIT 200
           `
         );
 
       const supportResult =
         await pool.query(
           `
-          SELECT COUNT(*)::INTEGER AS count
-          FROM support_messages sm
-          WHERE sm.sender = 'customer'
-          AND NOT EXISTS (
-            SELECT 1
-            FROM support_messages reply
-            WHERE reply.user_id = sm.user_id
-            AND reply.sender = 'admin'
-            AND reply.created_at > sm.created_at
-          )
+          SELECT
+            s.id,
+            s.user_id,
+            u.name,
+            u.email,
+            s.sender,
+            s.message,
+            s.created_at
+          FROM support_messages s
+          JOIN users u
+            ON u.id = s.user_id
+          ORDER BY s.created_at DESC
+          LIMIT 500
           `
         );
 
-      const balanceColumns =
-        CURRENCIES.map(
-          currency =>
-            `SUM(balance_${currency.toLowerCase()}) AS "${currency.toLowerCase()}"`
-        ).join(",\n");
-
-      const balanceResult =
-        await pool.query(`
+      const notificationsResult =
+        await pool.query(
+          `
           SELECT
-            ${balanceColumns}
-          FROM users
-          WHERE is_admin = FALSE
-        `);
+            n.id,
+            n.user_id,
+            u.name,
+            u.email,
+            n.title,
+            n.message,
+            n.is_read,
+            n.created_at
+          FROM notifications n
+          JOIN users u
+            ON u.id = n.user_id
+          WHERE u.is_admin = FALSE
+          ORDER BY n.created_at DESC
+          LIMIT 500
+          `
+        );
 
-      const row =
-        balanceResult.rows[0] ||
-        {};
+      const customers =
+        await Promise.all(
+          customersResult.rows.map(
+            async row => {
 
-      const balances =
-        CURRENCIES
-          .map(currency => ({
-            currency,
-            total: Number(
-              row[
-                currency.toLowerCase()
-              ] || 0
-            )
-          }))
-          .filter(
-            item =>
-              item.total !== 0
-          );
+              const balances = {};
+
+              for (
+                const currency
+                of CURRENCIES
+              ) {
+
+                const balanceResult =
+                  await pool.query(
+                    `
+                    SELECT balance_${currency.toLowerCase()}
+                    FROM users
+                    WHERE id = $1
+                    `,
+                    [row.id]
+                  );
+
+                balances[currency] =
+                  Number(
+                    balanceResult.rows[0]?.[
+                      `balance_${currency.toLowerCase()}`
+                    ] || 0
+                  );
+              }
+
+              return {
+                id: String(row.id),
+                name: row.name,
+                email: row.email,
+                status:
+                  String(
+                    row.status || "active"
+                  ).toLowerCase(),
+                primary_currency:
+                  row.primary_currency,
+                primaryCurrency:
+                  row.primary_currency,
+                profile_image:
+                  row.profile_image || "",
+                created_at:
+                  row.created_at,
+                balances
+              };
+            }
+          )
+        );
 
       res.json({
-        customers:
-          customersResult
-            .rows[0].count,
 
-        balances,
+        customers,
 
-        pendingTransfers:
-          pendingResult
-            .rows[0].count,
+        requests:
+          requestsResult.rows.map(
+            row => ({
+              id: String(row.id),
+              user_id: String(row.user_id),
+              name: row.name,
+              email: row.email,
+              amount: Number(row.amount),
+              currency: row.currency,
+              recipient: row.recipient,
+              note: row.note || "",
+              reference: row.reference,
+              status: row.status,
+              created_at: row.created_at,
+              handled_at: row.handled_at,
+              date:
+                formatDate(
+                  row.created_at
+                )
+            })
+          ),
 
-        openSupport:
-          supportResult
-            .rows[0].count
+        support:
+          supportResult.rows.map(
+            row => ({
+              id: String(row.id),
+              user_id: String(row.user_id),
+              name: row.name,
+              email: row.email,
+              sender: row.sender,
+              message: row.message,
+              created_at: row.created_at,
+              date:
+                formatDate(
+                  row.created_at
+                )
+            })
+          ),
+
+        notifications:
+          notificationsResult.rows.map(
+            row => ({
+              id: String(row.id),
+              user_id: String(row.user_id),
+              name: row.name,
+              email: row.email,
+              title: row.title,
+              message: row.message,
+              is_read: row.is_read,
+              created_at: row.created_at,
+              date:
+                formatDate(
+                  row.created_at
+                )
+            })
+          )
+
       });
+
     } catch (error) {
+
       console.error(
-        "SUMMARY ERROR:",
+        "ADMIN STATE ERROR:",
         error
       );
 
       res.status(500).json({
         error:
-          "Unable to load dashboard."
+          "Unable to load admin data."
       });
     }
   }
@@ -1203,52 +1923,80 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
+
     try {
+
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           SELECT *
           FROM users
           WHERE is_admin = FALSE
           ORDER BY created_at DESC
-        `);
+          `
+        );
+
+      const customers =
+        result.rows.map(
+          row => {
+
+            const accounts =
+              CURRENCIES
+                .map(currency => ({
+                  currency,
+                  balance:
+                    Number(
+                      row[
+                        `balance_${currency.toLowerCase()}`
+                      ] || 0
+                    )
+                }))
+                .filter(
+                  account =>
+                    account.balance !== 0
+                );
+
+            const balances = {};
+
+            for (
+              const currency
+              of CURRENCIES
+            ) {
+              balances[currency] =
+                Number(
+                  row[
+                    `balance_${currency.toLowerCase()}`
+                  ] || 0
+                );
+            }
+
+            return {
+              id: row.id,
+              name: row.name,
+              full_name: row.name,
+              email: row.email,
+              status:
+                String(
+                  row.status || "active"
+                ).toLowerCase(),
+              primary_currency:
+                row.primary_currency,
+              primaryCurrency:
+                row.primary_currency,
+              created_at:
+                row.created_at,
+              accounts,
+              balances
+            };
+          }
+        );
 
       res.json(
-        result.rows.map(row => ({
-          id: row.id,
-
-          full_name:
-            row.name,
-
-          email:
-            row.email,
-
-          status:
-            String(
-              row.status ||
-              "active"
-            ).toLowerCase(),
-
-          created_at:
-            row.created_at,
-
-          accounts:
-            CURRENCIES
-              .map(currency => ({
-                currency,
-                balance:
-                  Number(
-                    row[
-                      `balance_${currency.toLowerCase()}`
-                    ] || 0
-                  )
-              }))
-              .filter(
-                account =>
-                  account.balance !== 0
-              )
-        }))
+        customers
       );
+
     } catch (error) {
+
       console.error(
         "ADMIN CUSTOMERS ERROR:",
         error
@@ -1263,212 +2011,402 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN CUSTOMER FUNDS
+   ADMIN CREDIT CUSTOMER
 ========================================================= */
+
+async function adminCredit(
+  req,
+  res
+) {
+
+  const client =
+    await pool.connect();
+
+  try {
+
+    const customerId =
+      String(
+        req.body.userId ||
+        req.body.customerId ||
+        ""
+      ).trim();
+
+    const currency =
+      String(
+        req.body.currency || ""
+      ).toUpperCase();
+
+    const amount =
+      Number(
+        req.body.amount
+      );
+
+    const description =
+      String(
+        req.body.description ||
+        "Funds credited by demo administrator"
+      )
+      .trim()
+      .slice(0, 500);
+
+    if (!customerId) {
+      return res.status(400).json({
+        error:
+          "Select a customer first."
+      });
+    }
+
+    if (!validCurrency(currency)) {
+      return res.status(400).json({
+        error:
+          "Invalid currency."
+      });
+    }
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      return res.status(400).json({
+        error:
+          "Enter a valid amount."
+      });
+    }
+
+    if (
+      amount >
+      1000000000000
+    ) {
+      return res.status(400).json({
+        error:
+          "The amount is too large."
+      });
+    }
+
+    const column =
+      balanceColumn(currency);
+
+    await client.query(
+      "BEGIN"
+    );
+
+    const customerResult =
+      await client.query(
+        `
+        SELECT *
+        FROM users
+        WHERE id = $1
+        AND is_admin = FALSE
+        FOR UPDATE
+        `,
+        [customerId]
+      );
+
+    const customer =
+      customerResult.rows[0];
+
+    if (!customer) {
+
+      await client.query(
+        "ROLLBACK"
+      );
+
+      return res.status(404).json({
+        error:
+          "Customer not found."
+      });
+    }
+
+    await client.query(
+      `
+      UPDATE users
+      SET ${column} =
+        ${column} + $1
+      WHERE id = $2
+      `,
+      [
+        amount,
+        customerId
+      ]
+    );
+
+    await client.query(
+      `
+      INSERT INTO transactions
+      (
+        user_id,
+        kind,
+        title,
+        amount,
+        currency
+      )
+      VALUES
+      (
+        $1,
+        'credit',
+        $2,
+        $3,
+        $4
+      )
+      `,
+      [
+        customerId,
+        description,
+        amount,
+        currency
+      ]
+    );
+
+    await client.query(
+      `
+      INSERT INTO notifications
+      (
+        user_id,
+        title,
+        message
+      )
+      VALUES
+      (
+        $1,
+        'Demo account credit',
+        $2
+      )
+      `,
+      [
+        customerId,
+        `Your fictional demo account was credited with ${amount.toLocaleString()} ${currency}.`
+      ]
+    );
+
+    await client.query(
+      "COMMIT"
+    );
+
+    res.json({
+      success: true,
+      message:
+        "Customer demo account funded successfully.",
+      customerId,
+      amount,
+      currency,
+      user:
+        await getUser(customerId)
+    });
+
+  } catch (error) {
+
+    try {
+      await client.query(
+        "ROLLBACK"
+      );
+    } catch {}
+
+    console.error(
+      "ADMIN CREDIT ERROR:",
+      error
+    );
+
+    res.status(500).json({
+      error:
+        "Unable to credit customer."
+    });
+
+  } finally {
+    client.release();
+  }
+}
+
+app.post(
+  "/api/admin/credit",
+  requireAuth,
+  requireAdmin,
+  writeLimiter,
+  adminCredit
+);
 
 app.post(
   "/api/admin/customers/:id/funds",
   requireAuth,
   requireAdmin,
+  writeLimiter,
   async (req, res) => {
-    const client =
-      await pool.connect();
 
-    let transactionStarted =
-      false;
+    req.body.userId =
+      req.params.id;
+
+    return adminCredit(
+      req,
+      res
+    );
+  }
+);
+
+/* =========================================================
+   ADMIN SEND CUSTOMER NOTIFICATION
+========================================================= */
+
+app.post(
+  "/api/admin/notify",
+  requireAuth,
+  requireAdmin,
+  writeLimiter,
+  async (req, res) => {
 
     try {
+
       const customerId =
-        Number(
-          req.params.id
-        );
-
-      const currency =
         String(
-          req.body.currency ||
-          ""
-        ).toUpperCase();
-
-      const amount =
-        Number(
-          req.body.amount
-        );
-
-      const description =
-        String(
-          req.body.description ||
+          req.body.userId ||
+          req.body.customerId ||
           ""
         ).trim();
 
-      if (
-        !Number.isInteger(
-          customerId
+      const message =
+        String(
+          req.body.message || ""
         )
-      ) {
+        .trim()
+        .slice(0, 2000);
+
+      if (!customerId) {
         return res.status(400).json({
           error:
-            "Invalid customer."
+            "Select a customer first."
         });
       }
 
-      if (
-        !CURRENCIES.includes(
-          currency
-        )
-      ) {
+      if (!message) {
         return res.status(400).json({
           error:
-            "Invalid currency."
+            "Write a notification first."
         });
       }
 
-      if (
-        !Number.isFinite(
-          amount
-        ) ||
-        amount <= 0
-      ) {
-        return res.status(400).json({
-          error:
-            "Enter a valid amount."
-        });
-      }
-
-      if (
-        amount >
-        1000000000
-      ) {
-        return res.status(400).json({
-          error:
-            "The amount is too large."
-        });
-      }
-
-      const column =
-        balanceColumn(
-          currency
-        );
-
-      await client.query(
-        "BEGIN"
-      );
-
-      transactionStarted =
-        true;
-
-      const result =
-        await client.query(
+      const customer =
+        await pool.query(
           `
-          SELECT *
+          SELECT id
           FROM users
           WHERE id = $1
           AND is_admin = FALSE
-          FOR UPDATE
           `,
           [customerId]
         );
 
-      const customer =
-        result.rows[0];
-
-      if (!customer) {
-        await client.query(
-          "ROLLBACK"
-        );
-
-        transactionStarted =
-          false;
-
+      if (!customer.rows.length) {
         return res.status(404).json({
           error:
             "Customer not found."
         });
       }
 
-      await client.query(
-        `
-        UPDATE users
-        SET ${column} = ${column} + $1
-        WHERE id = $2
-        `,
-        [
-          amount,
-          customerId
-        ]
-      );
-
-      await client.query(
-        `
-        INSERT INTO transactions
-        (user_id,kind,title,amount,currency)
-        VALUES ($1,'credit',$2,$3,$4)
-        `,
-        [
-          customerId,
-
-          description ||
-            "Demo account funding",
-
-          amount,
-
-          currency
-        ]
-      );
-
-      await client.query(
+      await pool.query(
         `
         INSERT INTO notifications
-        (user_id,title,message)
-        VALUES ($1,$2,$3)
+        (
+          user_id,
+          title,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'Administrator notification',
+          $2
+        )
         `,
         [
           customerId,
-
-          "Demo account credit",
-
-          `Your fictional demo account was credited with ${amount} ${currency}.`
+          message
         ]
       );
-
-      await client.query(
-        "COMMIT"
-      );
-
-      transactionStarted =
-        false;
 
       res.json({
         success: true,
-
         message:
-          "Customer demo account funded successfully.",
-
-        customerId,
-
-        amount,
-
-        currency
+          "Notification sent."
       });
+
     } catch (error) {
-      if (transactionStarted) {
-        try {
-          await client.query(
-            "ROLLBACK"
-          );
-        } catch {}
-      }
 
       console.error(
-        "FUNDS ERROR:",
+        "ADMIN NOTIFY ERROR:",
         error
       );
 
       res.status(500).json({
         error:
-          "Unable to add funds."
+          "Unable to send notification."
       });
-    } finally {
-      client.release();
+    }
+  }
+);
+
+/* =========================================================
+   ADMIN VIEW CUSTOMER NOTIFICATIONS
+========================================================= */
+
+app.get(
+  "/api/admin/notifications",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            n.id,
+            n.user_id,
+            u.name,
+            u.email,
+            n.title,
+            n.message,
+            n.is_read,
+            n.created_at
+          FROM notifications n
+          JOIN users u
+            ON u.id = n.user_id
+          WHERE u.is_admin = FALSE
+          ORDER BY n.created_at DESC
+          LIMIT 500
+          `
+        );
+
+      res.json({
+        notifications:
+          result.rows.map(
+            row => ({
+              id: String(row.id),
+              user_id: String(row.user_id),
+              customerId: String(row.user_id),
+              name: row.name,
+              email: row.email,
+              title: row.title,
+              message: row.message,
+              is_read: row.is_read,
+              created_at: row.created_at,
+              date:
+                formatDate(
+                  row.created_at
+                )
+            })
+          )
+      });
+
+    } catch (error) {
+
+      console.error(
+        "ADMIN NOTIFICATIONS ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to load customer notifications."
+      });
     }
   }
 );
@@ -1481,8 +2419,11 @@ app.patch(
   "/api/admin/customers/:id/status",
   requireAuth,
   requireAdmin,
+  writeLimiter,
   async (req, res) => {
+
     try {
+
       const id =
         Number(
           req.params.id
@@ -1490,14 +2431,22 @@ app.patch(
 
       const status =
         String(
-          req.body.status ||
-          ""
-        ).toLowerCase();
+          req.body.status || ""
+        )
+        .toLowerCase();
+
+      if (!Number.isInteger(id)) {
+        return res.status(400).json({
+          error:
+            "Invalid customer."
+        });
+      }
 
       if (
         ![
           "active",
-          "suspended"
+          "suspended",
+          "pending"
         ].includes(status)
       ) {
         return res.status(400).json({
@@ -1521,9 +2470,7 @@ app.patch(
           ]
         );
 
-      if (
-        !result.rows.length
-      ) {
+      if (!result.rows.length) {
         return res.status(404).json({
           error:
             "Customer not found."
@@ -1534,7 +2481,9 @@ app.patch(
         success: true,
         status
       });
+
     } catch (error) {
+
       console.error(
         "STATUS ERROR:",
         error
@@ -1557,11 +2506,15 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
+
     try {
+
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           SELECT
             t.id,
+            t.user_id,
             t.amount,
             t.currency,
             t.recipient,
@@ -1569,44 +2522,42 @@ app.get(
             t.status,
             t.created_at,
             u.name AS full_name,
+            u.name,
             u.email
           FROM transfers t
           JOIN users u
             ON u.id = t.user_id
           ORDER BY
             t.created_at DESC
-        `);
+          `
+        );
 
       res.json(
-        result.rows.map(row => ({
-          id: row.id,
-
-          full_name:
-            row.full_name,
-
-          email:
-            row.email,
-
-          amount:
-            Number(row.amount),
-
-          currency:
-            row.currency,
-
-          recipient:
-            row.recipient,
-
-          reference:
-            row.reference,
-
-          status:
-            row.status,
-
-          created_at:
-            row.created_at
-        }))
+        result.rows.map(
+          row => ({
+            id: row.id,
+            user_id: row.user_id,
+            full_name: row.full_name,
+            name: row.name,
+            email: row.email,
+            amount:
+              Number(row.amount),
+            currency:
+              row.currency,
+            recipient:
+              row.recipient,
+            reference:
+              row.reference,
+            status:
+              row.status,
+            created_at:
+              row.created_at
+          })
+        )
       );
+
     } catch (error) {
+
       console.error(
         "ADMIN TRANSFERS ERROR:",
         error
@@ -1628,14 +2579,16 @@ app.patch(
   "/api/admin/transfers/:id/status",
   requireAuth,
   requireAdmin,
+  writeLimiter,
   async (req, res) => {
+
     const client =
       await pool.connect();
 
-    let transactionStarted =
-      false;
+    let started = false;
 
     try {
+
       const id =
         Number(
           req.params.id
@@ -1643,9 +2596,15 @@ app.patch(
 
       const status =
         String(
-          req.body.status ||
-          ""
+          req.body.status || ""
         ).toLowerCase();
+
+      if (!Number.isInteger(id)) {
+        return res.status(400).json({
+          error:
+            "Invalid transfer."
+        });
+      }
 
       if (
         ![
@@ -1660,21 +2619,11 @@ app.patch(
         });
       }
 
-      if (
-        !Number.isInteger(id)
-      ) {
-        return res.status(400).json({
-          error:
-            "Invalid transfer."
-        });
-      }
-
       await client.query(
         "BEGIN"
       );
 
-      transactionStarted =
-        true;
+      started = true;
 
       const result =
         await client.query(
@@ -1691,12 +2640,12 @@ app.patch(
         result.rows[0];
 
       if (!transfer) {
+
         await client.query(
           "ROLLBACK"
         );
 
-        transactionStarted =
-          false;
+        started = false;
 
         return res.status(404).json({
           error:
@@ -1704,47 +2653,27 @@ app.patch(
         });
       }
 
-      /*
-        If a pending transfer is declined,
-        return the demo amount to the customer.
-      */
-
       if (
-        transfer.status ===
-          "pending" &&
-        status ===
-          "declined"
+        transfer.status === "pending" &&
+        status === "declined"
       ) {
+
         const column =
           balanceColumn(
             transfer.currency
           );
 
-        if (!column) {
-          await client.query(
-            "ROLLBACK"
-          );
-
-          transactionStarted =
-            false;
-
-          return res.status(400).json({
-            error:
-              "Invalid transfer currency."
-          });
-        }
-
         await client.query(
           `
           UPDATE users
-          SET ${column} = ${column} + $1
+          SET ${column} =
+            ${column} + $1
           WHERE id = $2
           `,
           [
             Number(
               transfer.amount
             ),
-
             transfer.user_id
           ]
         );
@@ -1752,19 +2681,72 @@ app.patch(
         await client.query(
           `
           INSERT INTO transactions
-          (user_id,kind,title,amount,currency)
-          VALUES ($1,'credit',$2,$3,$4)
+          (
+            user_id,
+            kind,
+            title,
+            amount,
+            currency
+          )
+          VALUES
+          (
+            $1,
+            'credit',
+            'Demo transfer reversal',
+            $2,
+            $3
+          )
           `,
           [
             transfer.user_id,
-
-            "Demo transfer reversal",
-
             Number(
               transfer.amount
             ),
-
             transfer.currency
+          ]
+        );
+
+        await client.query(
+          `
+          INSERT INTO notifications
+          (
+            user_id,
+            title,
+            message
+          )
+          VALUES
+          (
+            $1,
+            'Demo transfer declined',
+            $2
+          )
+          `,
+          [
+            transfer.user_id,
+            `Your fictional demo transfer ${transfer.reference} was declined and the demo amount was returned.`
+          ]
+        );
+
+      } else {
+
+        await client.query(
+          `
+          INSERT INTO notifications
+          (
+            user_id,
+            title,
+            message
+          )
+          VALUES
+          (
+            $1,
+            'Demo transfer update',
+            $2
+          )
+          `,
+          [
+            transfer.user_id,
+            `Your fictional demo transfer ${transfer.reference} is now ${status}.`
           ]
         );
       }
@@ -1782,33 +2764,19 @@ app.patch(
       );
 
       await client.query(
-        `
-        INSERT INTO notifications
-        (user_id,title,message)
-        VALUES ($1,$2,$3)
-        `,
-        [
-          transfer.user_id,
-
-          "Demo transfer update",
-
-          `Your fictional demo transfer ${transfer.reference} is now ${status}.`
-        ]
-      );
-
-      await client.query(
         "COMMIT"
       );
 
-      transactionStarted =
-        false;
+      started = false;
 
       res.json({
         success: true,
         status
       });
+
     } catch (error) {
-      if (transactionStarted) {
+
+      if (started) {
         try {
           await client.query(
             "ROLLBACK"
@@ -1825,6 +2793,7 @@ app.patch(
         error:
           "Unable to update transfer."
       });
+
     } finally {
       client.release();
     }
@@ -1832,7 +2801,7 @@ app.patch(
 );
 
 /* =========================================================
-   ADMIN SUPPORT LIST
+   ADMIN SUPPORT
 ========================================================= */
 
 app.get(
@@ -1840,69 +2809,62 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
+
     try {
+
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           SELECT
-            sm.id,
-            sm.user_id,
-            sm.message,
-            sm.created_at,
+            s.id,
+            s.user_id,
+            s.sender,
+            s.message,
+            s.created_at,
             u.name AS full_name,
-            u.email,
-
-            COALESCE(
-              (
-                SELECT COUNT(*)
-                FROM support_messages reply
-                WHERE
-                  reply.user_id =
-                    sm.user_id
-                  AND reply.sender =
-                    'admin'
-                  AND reply.created_at >
-                    sm.created_at
-              ),
-              0
-            ) AS replies
-
-          FROM support_messages sm
-
+            u.name,
+            u.email
+          FROM support_messages s
           JOIN users u
-            ON u.id = sm.user_id
-
-          WHERE
-            sm.sender = 'customer'
-
+            ON u.id = s.user_id
+          WHERE u.is_admin = FALSE
           ORDER BY
-            sm.created_at DESC
-        `);
+            s.created_at DESC
+          LIMIT 500
+          `
+        );
 
-      res.json(
-        result.rows.map(row => ({
-          id: row.id,
+      res.json({
+        messages:
+          result.rows.map(
+            row => ({
+              id: String(row.id),
+              user_id:
+                String(row.user_id),
+              customerId:
+                String(row.user_id),
+              full_name:
+                row.full_name,
+              name:
+                row.name,
+              email:
+                row.email,
+              sender:
+                row.sender,
+              message:
+                row.message,
+              created_at:
+                row.created_at,
+              date:
+                formatDate(
+                  row.created_at
+                )
+            })
+          )
+      });
 
-          full_name:
-            row.full_name,
-
-          email:
-            row.email,
-
-          subject:
-            "Customer support",
-
-          message:
-            row.message,
-
-          status:
-            Number(
-              row.replies
-            ) > 0
-              ? "answered"
-              : "pending"
-        }))
-      );
     } catch (error) {
+
       console.error(
         "ADMIN SUPPORT ERROR:",
         error
@@ -1921,28 +2883,32 @@ app.get(
 ========================================================= */
 
 app.post(
-  "/api/admin/support/:id/reply",
+  "/api/admin/support/reply",
   requireAuth,
   requireAdmin,
+  writeLimiter,
   async (req, res) => {
-    try {
-      const id =
-        Number(
-          req.params.id
-        );
 
-      const message =
+    try {
+
+      const userId =
         String(
-          req.body.message ||
+          req.body.userId ||
+          req.body.customerId ||
           ""
         ).trim();
 
-      if (
-        !Number.isInteger(id)
-      ) {
+      const message =
+        String(
+          req.body.message || ""
+        )
+        .trim()
+        .slice(0, 2000);
+
+      if (!userId) {
         return res.status(400).json({
           error:
-            "Invalid support request."
+            "Select a customer first."
         });
       }
 
@@ -1953,45 +2919,41 @@ app.post(
         });
       }
 
-      if (message.length > 2000) {
-        return res.status(400).json({
-          error:
-            "Message is too long."
-        });
-      }
-
-      const ticket =
+      const customer =
         await pool.query(
           `
-          SELECT user_id
-          FROM support_messages
+          SELECT id
+          FROM users
           WHERE id = $1
-          AND sender = 'customer'
+          AND is_admin = FALSE
           `,
-          [id]
+          [userId]
         );
 
-      if (
-        !ticket.rows.length
-      ) {
+      if (!customer.rows.length) {
         return res.status(404).json({
           error:
-            "Support request not found."
+            "Customer not found."
         });
       }
-
-      const customerId =
-        ticket.rows[0]
-          .user_id;
 
       await pool.query(
         `
         INSERT INTO support_messages
-        (user_id,sender,message)
-        VALUES ($1,'admin',$2)
+        (
+          user_id,
+          sender,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'admin',
+          $2
+        )
         `,
         [
-          customerId,
+          userId,
           message
         ]
       );
@@ -1999,24 +2961,31 @@ app.post(
       await pool.query(
         `
         INSERT INTO notifications
-        (user_id,title,message)
-        VALUES ($1,$2,$3)
+        (
+          user_id,
+          title,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'Support response',
+          'You have received a response from demo support.'
+        )
         `,
-        [
-          customerId,
-
-          "Support response",
-
-          "You have received a response to your demo support request."
-        ]
+        [userId]
       );
 
       res.json({
         success: true,
         message:
-          "Response sent."
+          "Response sent.",
+        user:
+          await getUser(userId)
       });
+
     } catch (error) {
+
       console.error(
         "ADMIN SUPPORT REPLY ERROR:",
         error
@@ -2031,217 +3000,6 @@ app.post(
 );
 
 /* =========================================================
-   ADMIN NOTIFICATIONS
-========================================================= */
-
-app.get(
-  "/api/admin/notifications",
-  requireAuth,
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const result =
-        await pool.query(`
-          SELECT
-            n.id,
-            n.title,
-            n.message,
-            n.is_read,
-            n.created_at
-          FROM notifications n
-          ORDER BY
-            n.created_at DESC
-          LIMIT 100
-        `);
-
-      res.json(
-        result.rows.map(row => ({
-          id: row.id,
-
-          title:
-            row.title,
-
-          message:
-            row.message,
-
-          is_read:
-            row.is_read,
-
-          created_at:
-            row.created_at
-        }))
-      );
-    } catch (error) {
-      console.error(
-        "ADMIN NOTIFICATIONS ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Unable to load notifications."
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN MARK NOTIFICATION READ
-========================================================= */
-
-app.patch(
-  "/api/admin/notifications/:id/read",
-  requireAuth,
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const id =
-        Number(
-          req.params.id
-        );
-
-      if (
-        !Number.isInteger(id)
-      ) {
-        return res.status(400).json({
-          error:
-            "Invalid notification."
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          UPDATE notifications
-          SET is_read = TRUE
-          WHERE id = $1
-          RETURNING id
-          `,
-          [id]
-        );
-
-      if (
-        !result.rows.length
-      ) {
-        return res.status(404).json({
-          error:
-            "Notification not found."
-        });
-      }
-
-      res.json({
-        success: true
-      });
-    } catch (error) {
-      console.error(
-        "ADMIN READ NOTIFICATION ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Unable to mark notification as read."
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN SEND NOTIFICATION
-========================================================= */
-
-app.post(
-  "/api/admin/notify",
-  requireAuth,
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const customerId =
-        Number(
-          req.body.customerId
-        );
-
-      const message =
-        String(
-          req.body.message ||
-          ""
-        ).trim();
-
-      if (
-        !Number.isInteger(
-          customerId
-        )
-      ) {
-        return res.status(400).json({
-          error:
-            "Invalid customer."
-        });
-      }
-
-      if (!message) {
-        return res.status(400).json({
-          error:
-            "Write a notification first."
-        });
-      }
-
-      if (message.length > 2000) {
-        return res.status(400).json({
-          error:
-            "Notification is too long."
-        });
-      }
-
-      const customer =
-        await getUserById(
-          customerId
-        );
-
-      if (
-        !customer ||
-        customer.is_admin
-      ) {
-        return res.status(404).json({
-          error:
-            "Customer not found."
-        });
-      }
-
-      await pool.query(
-        `
-        INSERT INTO notifications
-        (user_id,title,message)
-        VALUES ($1,$2,$3)
-        `,
-        [
-          customerId,
-
-          "Administrator notification",
-
-          message
-        ]
-      );
-
-      res.json({
-        success: true,
-        message:
-          "Notification sent."
-      });
-    } catch (error) {
-      console.error(
-        "ADMIN NOTIFY ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Unable to send notification."
-      });
-    }
-  }
-);
-
-/* =========================================================
    ADMIN REQUESTS
 ========================================================= */
 
@@ -2250,47 +3008,64 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
+
     try {
+
       const result =
-        await pool.query(`
+        await pool.query(
+          `
           SELECT
-            id,
-            request_type,
-            message,
-            status,
-            created_at
-          FROM admin_requests
+            t.id,
+            t.user_id,
+            u.name,
+            u.email,
+            t.amount,
+            t.currency,
+            t.recipient,
+            t.status,
+            t.reference,
+            t.created_at
+          FROM transfers t
+          JOIN users u
+            ON u.id = t.user_id
           ORDER BY
-            created_at DESC
+            t.created_at DESC
           LIMIT 100
-        `);
+          `
+        );
 
       res.json({
         requests:
           result.rows.map(
             row => ({
-              id:
-                String(
-                  row.id
-                ),
-
-              type:
-                row.request_type,
-
-              message:
-                row.message,
-
+              id: String(row.id),
+              user_id:
+                String(row.user_id),
+              name: row.name,
+              email: row.email,
+              amount:
+                Number(row.amount),
+              currency:
+                row.currency,
+              recipient:
+                row.recipient,
+              note: "",
               status:
                 row.status,
-
+              reference:
+                row.reference,
               date:
                 formatDate(
                   row.created_at
-                )
+                ),
+              created_at:
+                row.created_at
             })
           )
       });
+
     } catch (error) {
+
       console.error(
         "ADMIN REQUESTS ERROR:",
         error
@@ -2305,97 +3080,594 @@ app.get(
 );
 
 /* =========================================================
+   ADMIN APPROVE REQUEST
+========================================================= */
+
+app.post(
+  "/api/admin/requests/:id/approve",
+  requireAuth,
+  requireAdmin,
+  writeLimiter,
+  async (req, res) => {
+
+    const client =
+      await pool.connect();
+
+    let started = false;
+
+    try {
+
+      const id =
+        Number(
+          req.params.id
+        );
+
+      await client.query(
+        "BEGIN"
+      );
+
+      started = true;
+
+      const result =
+        await client.query(
+          `
+          SELECT *
+          FROM transfers
+          WHERE id = $1
+          FOR UPDATE
+          `,
+          [id]
+        );
+
+      const transfer =
+        result.rows[0];
+
+      if (!transfer) {
+
+        await client.query(
+          "ROLLBACK"
+        );
+
+        started = false;
+
+        return res.status(404).json({
+          error:
+            "Request not found."
+        });
+      }
+
+      if (
+        transfer.status !==
+        "pending"
+      ) {
+
+        await client.query(
+          "ROLLBACK"
+        );
+
+        started = false;
+
+        return res.status(409).json({
+          error:
+            "This request has already been handled."
+        });
+      }
+
+      /*
+        The request itself represents a
+        customer transfer. It has already
+        reserved/deducted the demo balance.
+
+        Approval therefore only changes
+        its status.
+      */
+
+      await client.query(
+        `
+        UPDATE transfers
+        SET status = 'successful'
+        WHERE id = $1
+        `,
+        [id]
+      );
+
+      await client.query(
+        `
+        INSERT INTO notifications
+        (
+          user_id,
+          title,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'Demo transfer approved',
+          $2
+        )
+        `,
+        [
+          transfer.user_id,
+          `Your fictional demo transfer ${transfer.reference} has been approved.`
+        ]
+      );
+
+      await client.query(
+        "COMMIT"
+      );
+
+      started = false;
+
+      res.json({
+        ok: true,
+        success: true,
+        user:
+          await getUser(
+            transfer.user_id
+          )
+      });
+
+    } catch (error) {
+
+      if (started) {
+        try {
+          await client.query(
+            "ROLLBACK"
+          );
+        } catch {}
+      }
+
+      console.error(
+        "APPROVE ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to approve request."
+      });
+
+    } finally {
+      client.release();
+    }
+  }
+);
+
+/* =========================================================
+   ADMIN REJECT REQUEST
+========================================================= */
+
+app.post(
+  "/api/admin/requests/:id/reject",
+  requireAuth,
+  requireAdmin,
+  writeLimiter,
+  async (req, res) => {
+
+    const client =
+      await pool.connect();
+
+    let started = false;
+
+    try {
+
+      const id =
+        Number(
+          req.params.id
+        );
+
+      await client.query(
+        "BEGIN"
+      );
+
+      started = true;
+
+      const result =
+        await client.query(
+          `
+          SELECT *
+          FROM transfers
+          WHERE id = $1
+          FOR UPDATE
+          `,
+          [id]
+        );
+
+      const transfer =
+        result.rows[0];
+
+      if (!transfer) {
+
+        await client.query(
+          "ROLLBACK"
+        );
+
+        started = false;
+
+        return res.status(404).json({
+          error:
+            "Request not found."
+        });
+      }
+
+      if (
+        transfer.status !==
+        "pending"
+      ) {
+
+        await client.query(
+          "ROLLBACK"
+        );
+
+        started = false;
+
+        return res.status(409).json({
+          error:
+            "This request has already been handled."
+        });
+      }
+
+      const column =
+        balanceColumn(
+          transfer.currency
+        );
+
+      /*
+        Return the demo amount when
+        the transfer is declined.
+      */
+
+      await client.query(
+        `
+        UPDATE users
+        SET ${column} =
+          ${column} + $1
+        WHERE id = $2
+        `,
+        [
+          Number(
+            transfer.amount
+          ),
+          transfer.user_id
+        ]
+      );
+
+      await client.query(
+        `
+        INSERT INTO transactions
+        (
+          user_id,
+          kind,
+          title,
+          amount,
+          currency
+        )
+        VALUES
+        (
+          $1,
+          'credit',
+          'Demo transfer reversal',
+          $2,
+          $3
+        )
+        `,
+        [
+          transfer.user_id,
+          Number(
+            transfer.amount
+          ),
+          transfer.currency
+        ]
+      );
+
+      await client.query(
+        `
+        UPDATE transfers
+        SET status = 'declined'
+        WHERE id = $1
+        `,
+        [id]
+      );
+
+      await client.query(
+        `
+        INSERT INTO notifications
+        (
+          user_id,
+          title,
+          message
+        )
+        VALUES
+        (
+          $1,
+          'Demo transfer declined',
+          $2
+        )
+        `,
+        [
+          transfer.user_id,
+          `Your fictional demo transfer ${transfer.reference} was declined and the demo amount was returned.`
+        ]
+      );
+
+      await client.query(
+        "COMMIT"
+      );
+
+      started = false;
+
+      res.json({
+        ok: true,
+        success: true
+      });
+
+    } catch (error) {
+
+      if (started) {
+        try {
+          await client.query(
+            "ROLLBACK"
+          );
+        } catch {}
+      }
+
+      console.error(
+        "REJECT ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to reject request."
+      });
+
+    } finally {
+      client.release();
+    }
+  }
+);
+
+/* =========================================================
+   ADMIN MARK NOTIFICATION READ
+========================================================= */
+
+app.patch(
+  "/api/admin/notifications/:id/read",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const id =
+        Number(
+          req.params.id
+        );
+
+      const result =
+        await pool.query(
+          `
+          UPDATE notifications n
+          SET is_read = TRUE
+          FROM users u
+          WHERE n.id = $1
+          AND n.user_id = u.id
+          AND u.is_admin = FALSE
+          RETURNING n.id
+          `,
+          [id]
+        );
+
+      if (!result.rows.length) {
+        return res.status(404).json({
+          error:
+            "Notification not found."
+        });
+      }
+
+      res.json({
+        success: true
+      });
+
+    } catch (error) {
+
+      console.error(
+        "ADMIN READ NOTIFICATION ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to mark notification as read."
+      });
+    }
+  }
+);
+
+/* =========================================================
+   ADMIN SUMMARY
+========================================================= */
+
+app.get(
+  "/api/admin/summary",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const customers =
+        await pool.query(
+          `
+          SELECT COUNT(*)::INTEGER AS count
+          FROM users
+          WHERE is_admin = FALSE
+          `
+        );
+
+      const active =
+        await pool.query(
+          `
+          SELECT COUNT(*)::INTEGER AS count
+          FROM users
+          WHERE is_admin = FALSE
+          AND LOWER(status) = 'active'
+          `
+        );
+
+      const pending =
+        await pool.query(
+          `
+          SELECT COUNT(*)::INTEGER AS count
+          FROM transfers
+          WHERE status = 'pending'
+          `
+        );
+
+      const support =
+        await pool.query(
+          `
+          SELECT COUNT(*)::INTEGER AS count
+          FROM support_messages
+          WHERE sender = 'customer'
+          `
+        );
+
+      const unread =
+        await pool.query(
+          `
+          SELECT COUNT(*)::INTEGER AS count
+          FROM notifications n
+          JOIN users u
+            ON u.id = n.user_id
+          WHERE u.is_admin = FALSE
+          AND n.is_read = FALSE
+          `
+        );
+
+      res.json({
+        customers:
+          customers.rows[0].count,
+
+        activeCustomers:
+          active.rows[0].count,
+
+        pendingTransfers:
+          pending.rows[0].count,
+
+        openSupport:
+          support.rows[0].count,
+
+        unreadNotifications:
+          unread.rows[0].count
+      });
+
+    } catch (error) {
+
+      console.error(
+        "SUMMARY ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to load dashboard."
+      });
+    }
+  }
+);
+
+/* =========================================================
    ADMIN SETUP PAGE
 ========================================================= */
 
 app.get(
   "/admin-setup",
   (req, res) => {
+
     res.send(`
       <!DOCTYPE html>
-      <html lang="en">
+      <html>
       <head>
         <meta charset="UTF-8">
         <meta
           name="viewport"
           content="width=device-width,initial-scale=1"
         >
-        <title>Admin Setup</title>
+        <title>American Crest Admin Setup</title>
+        <style>
+          body{
+            font-family:Arial,sans-serif;
+            background:#f3f6fa;
+            padding:30px;
+          }
+
+          .box{
+            max-width:500px;
+            margin:auto;
+            background:#fff;
+            padding:25px;
+            border-radius:15px;
+          }
+
+          input{
+            width:100%;
+            padding:13px;
+            margin:7px 0;
+            box-sizing:border-box;
+          }
+
+          button{
+            padding:13px 20px;
+            margin-top:10px;
+          }
+        </style>
       </head>
 
-      <body
-        style="
-          font-family:Arial,sans-serif;
-          padding:30px;
-          max-width:500px;
-          margin:auto;
-        "
-      >
+      <body>
 
-        <h2>Administrator Setup</h2>
+        <div class="box">
 
-        <form
-          method="POST"
-          action="/api/admin/setup"
-        >
+          <h2>Administrator Setup</h2>
 
-          <input
-            name="setupKey"
-            placeholder="Admin Setup Key"
-            required
-            style="
-              width:100%;
-              padding:12px;
-              margin:8px 0;
-            "
+          <form
+            method="POST"
+            action="/api/admin/setup"
           >
 
-          <input
-            name="name"
-            placeholder="Admin Name"
-            required
-            style="
-              width:100%;
-              padding:12px;
-              margin:8px 0;
-            "
-          >
+            <input
+              name="setupKey"
+              placeholder="Admin Setup Key"
+              required
+            >
 
-          <input
-            name="email"
-            type="email"
-            placeholder="Admin Email"
-            required
-            style="
-              width:100%;
-              padding:12px;
-              margin:8px 0;
-            "
-          >
+            <input
+              name="name"
+              placeholder="Administrator Name"
+              required
+            >
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Admin Password"
-            required
-            style="
-              width:100%;
-              padding:12px;
-              margin:8px 0;
-            "
-          >
+            <input
+              name="email"
+              type="email"
+              placeholder="Administrator Email"
+              required
+            >
 
-          <button
-            type="submit"
-            style="
-              padding:12px 20px;
-              margin-top:10px;
-            "
-          >
-            Create / Update Admin
-          </button>
+            <input
+              name="password"
+              type="password"
+              placeholder="Administrator Password"
+              required
+            >
 
-        </form>
+            <button type="submit">
+              Create / Update Administrator
+            </button>
+
+          </form>
+
+        </div>
 
       </body>
       </html>
@@ -2409,12 +3681,14 @@ app.get(
 
 app.post(
   "/api/admin/setup",
+  authLimiter,
   async (req, res) => {
+
     try {
+
       const setupKey =
         String(
-          req.body.setupKey ||
-          ""
+          req.body.setupKey || ""
         );
 
       if (
@@ -2430,22 +3704,19 @@ app.post(
 
       const name =
         String(
-          req.body.name ||
-          ""
+          req.body.name || ""
         ).trim();
 
       const email =
         String(
-          req.body.email ||
-          ""
+          req.body.email || ""
         )
-          .trim()
-          .toLowerCase();
+        .trim()
+        .toLowerCase();
 
       const password =
         String(
-          req.body.password ||
-          ""
+          req.body.password || ""
         );
 
       if (name.length < 2) {
@@ -2455,7 +3726,9 @@ app.post(
         });
       }
 
-      if (!email.includes("@")) {
+      if (
+        !/^\S+@\S+\.\S+$/.test(email)
+      ) {
         return res.status(400).json({
           error:
             "Invalid administrator email."
@@ -2469,28 +3742,32 @@ app.post(
         });
       }
 
-      const existing =
-        await pool.query(
-          "SELECT id FROM users WHERE email = $1",
-          [email]
-        );
-
       const hash =
         await bcrypt.hash(
           password,
           12
         );
 
-      if (
-        existing.rows.length
-      ) {
+      const existing =
+        await pool.query(
+          `
+          SELECT id
+          FROM users
+          WHERE email = $1
+          `,
+          [email]
+        );
+
+      if (existing.rows.length) {
+
         await pool.query(
           `
           UPDATE users
           SET
-            is_admin = TRUE,
             name = $1,
-            password_hash = $2
+            password_hash = $2,
+            is_admin = TRUE,
+            status = 'active'
           WHERE email = $3
           `,
           [
@@ -2503,7 +3780,7 @@ app.post(
         return res.json({
           success: true,
           message:
-            "Existing account promoted to administrator."
+            "Administrator account updated."
         });
       }
 
@@ -2515,10 +3792,18 @@ app.post(
           email,
           password_hash,
           primary_currency,
-          is_admin
+          is_admin,
+          status
         )
         VALUES
-        ($1,$2,$3,'USD',TRUE)
+        (
+          $1,
+          $2,
+          $3,
+          'USD',
+          TRUE,
+          'active'
+        )
         `,
         [
           name,
@@ -2532,7 +3817,9 @@ app.post(
         message:
           "Administrator account created."
       });
+
     } catch (error) {
+
       console.error(
         "ADMIN SETUP ERROR:",
         error
@@ -2557,19 +3844,13 @@ app.use(
 );
 
 /*
-  IMPORTANT:
-  Do NOT use app.get("*") here.
-
-  Express versions using the newer
-  path-to-regexp parser can reject "*"
-  and crash the application.
-
-  This middleware safely handles the
-  frontend without breaking API routes.
+  Frontend fallback.
+  Does NOT use app.get("*").
 */
 
 app.use(
   (req, res, next) => {
+
     if (
       req.method !== "GET"
     ) {
@@ -2593,9 +3874,11 @@ app.use(
         "index.html"
       ),
       error => {
+
         if (error) {
           next(error);
         }
+
       }
     );
   }
@@ -2612,6 +3895,7 @@ app.use(
     res,
     next
   ) => {
+
     console.error(
       "SERVER ERROR:",
       error
@@ -2636,6 +3920,7 @@ app.use(
 
 initDatabase()
   .then(() => {
+
     app.listen(
       PORT,
       () => {
@@ -2644,8 +3929,10 @@ initDatabase()
         );
       }
     );
+
   })
   .catch(error => {
+
     console.error(
       "DATABASE STARTUP ERROR:",
       error
