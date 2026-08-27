@@ -3,187 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>American Crest Banking — Demo</title>
+<title>American Crest Banking — Fictional Demo</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
 :root{
---navy:#071a35;--navy2:#0d315d;--blue:#1769e0;--gold:#d6aa43;
---light:#f4f7fb;--white:#fff;--text:#182536;--muted:#718096;
---green:#159447;--red:#d93434;--border:#e3e9f1
+--navy:#071a35;
+--navy2:#0d315d;
+--blue:#1769e0;
+--gold:#d6aa43;
+--light:#f4f7fb;
+--white:#fff;
+--text:#182536;
+--muted:#718096;
+--green:#159447;
+--red:#d93434;
+--border:#e3e9f1
 }
-body{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:var(--light);
+color:var(--text)
+}
+
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 a{text-decoration:none;color:inherit}
 
 .prototype{
-background:#fff3cd;color:#725b13;text-align:center;padding:7px;
-font-size:11px;font-weight:bold
+background:#fff3cd;
+color:#725b13;
+text-align:center;
+padding:7px;
+font-size:11px;
+font-weight:bold
 }
 
 .top{
-background:#041327;color:#dbe7f5;padding:9px 5%;display:flex;
-justify-content:space-between;font-size:12px
+background:#041327;
+color:#dbe7f5;
+padding:9px 5%;
+display:flex;
+justify-content:space-between;
+font-size:12px
 }
 
 header{
-background:#fff;position:sticky;top:0;z-index:20;
+background:#fff;
+position:sticky;
+top:0;
+z-index:20;
 box-shadow:0 2px 15px #0001
 }
 
 .nav{
-max-width:1200px;margin:auto;min-height:72px;padding:0 5%;
-display:flex;align-items:center;justify-content:space-between;gap:20px
+max-width:1200px;
+margin:auto;
+min-height:72px;
+padding:0 5%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:20px
 }
 
 .logo{
-display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)
+display:flex;
+align-items:center;
+gap:9px;
+font-weight:800;
+color:var(--navy)
 }
 
 .mark{
-width:40px;height:40px;border-radius:50%;background:var(--navy);
-color:var(--gold);border:2px solid var(--gold);display:grid;
-place-items:center;font-size:12px
+width:40px;
+height:40px;
+border-radius:50%;
+background:var(--navy);
+color:var(--gold);
+border:2px solid var(--gold);
+display:grid;
+place-items:center;
+font-size:12px
 }
 
-.links{display:flex;gap:24px;font-size:14px;font-weight:bold}
-.actions{display:flex;gap:8px}
+.links{
+display:flex;
+gap:24px;
+font-size:14px;
+font-weight:bold
+}
+
+.actions{
+display:flex;
+gap:8px
+}
 
 .btn{
-border:0;border-radius:8px;padding:12px 18px;font-weight:bold
+border:0;
+border-radius:8px;
+padding:12px 18px;
+font-weight:bold
 }
-.primary{background:var(--blue);color:#fff}
-.dark{background:var(--navy);color:#fff}
-.outline{background:#fff;border:1px solid #d8e0eb;color:var(--navy)}
+
+.primary{
+background:var(--blue);
+color:#fff
+}
+
+.dark{
+background:var(--navy);
+color:#fff
+}
+
+.outline{
+background:#fff;
+border:1px solid #d8e0eb;
+color:var(--navy)
+}
+
 .full{width:100%}
 
-/* FRONT PAGE */
+/* FRONT */
+
 .hero{
 min-height:560px;
 background:linear-gradient(135deg,#f7faff,#eef4fb);
 color:var(--text);
-display:flex;align-items:center;padding:38px 0
+display:flex;
+align-items:center;
+padding:38px 0
 }
 
 .heroInner{
-max-width:1200px;width:90%;margin:auto;
-display:grid;grid-template-columns:1.05fr .95fr;
-gap:34px;align-items:center
+max-width:1200px;
+width:90%;
+margin:auto;
+display:grid;
+grid-template-columns:1.05fr .95fr;
+gap:34px;
+align-items:center
 }
 
 .heroText{max-width:650px}
 
 .eyebrow{
-color:#b1872f;font-weight:bold;letter-spacing:2px;
-font-size:12px;margin-bottom:15px
+color:#b1872f;
+font-weight:bold;
+letter-spacing:2px;
+font-size:12px;
+margin-bottom:15px
 }
 
 .heroVisual{
-min-height:420px;border-radius:24px;overflow:hidden;
-box-shadow:0 24px 60px #071a5320;background:#dfe8f5
+min-height:420px;
+border-radius:24px;
+overflow:hidden;
+box-shadow:0 24px 60px #071a5320;
+background:#dfe8f5
 }
 
 .heroVisual img{
-width:100%;height:100%;min-height:420px;
-object-fit:cover;display:block
+width:100%;
+height:100%;
+min-height:420px;
+object-fit:cover;
+display:block
 }
 
 .hero h1{color:var(--navy)}
 
 .hero p{
-color:#5f7185;font-size:18px;line-height:1.6;margin-bottom:28px
+color:#5f7185;
+font-size:18px;
+line-height:1.6;
+margin-bottom:28px
 }
 
 h1{
 font-size:clamp(38px,6vw,68px);
-line-height:1.05;margin-bottom:20px
+line-height:1.05;
+margin-bottom:20px
 }
 
-.heroButtons{display:flex;gap:12px;flex-wrap:wrap}
+.heroButtons{
+display:flex;
+gap:12px;
+flex-wrap:wrap
+}
 
 .trust{
-background:#fff;padding:20px 5%;display:flex;
-justify-content:center;gap:35px;flex-wrap:wrap;
-color:#607080;font-size:13px;font-weight:bold
+background:#fff;
+padding:20px 5%;
+display:flex;
+justify-content:center;
+gap:35px;
+flex-wrap:wrap;
+color:#607080;
+font-size:13px;
+font-weight:bold
 }
 
 .section{padding:70px 5%}
 .inner{max-width:1150px;margin:auto}
 
-.head{text-align:center;max-width:700px;margin:0 auto 38px}
-.head h2{font-size:35px;color:var(--navy);margin-bottom:10px}
-.head p{color:var(--muted);line-height:1.6}
-
-.cards,.securityGrid{
-display:grid;grid-template-columns:repeat(3,1fr);gap:20px
+.head{
+text-align:center;
+max-width:700px;
+margin:0 auto 38px
 }
 
-.card,.box,.panel,.profileCard,.service,.adminBox{
-background:#fff;border-radius:15px;
+.head h2{
+font-size:35px;
+color:var(--navy);
+margin-bottom:10px
+}
+
+.head p{
+color:var(--muted);
+line-height:1.6
+}
+
+.cards,
+.securityGrid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px
+}
+
+.card,
+.box,
+.panel,
+.profileCard,
+.service,
+.adminBox{
+background:#fff;
+border-radius:15px;
 box-shadow:0 12px 35px #071a5314
 }
 
 .card{padding:28px}
 
 .icon{
-width:50px;height:50px;border-radius:12px;background:#eaf2ff;
-color:var(--blue);display:grid;place-items:center;
-font-size:23px;margin-bottom:18px
+width:50px;
+height:50px;
+border-radius:12px;
+background:#eaf2ff;
+color:var(--blue);
+display:grid;
+place-items:center;
+font-size:23px;
+margin-bottom:18px
 }
 
-.card h3,.box h3,.panel h3,.profileCard h3,.service h3{
-color:var(--navy);margin-bottom:8px
+.card h3,
+.box h3,
+.panel h3,
+.profileCard h3,
+.service h3{
+color:var(--navy);
+margin-bottom:8px
 }
 
-.card p,.box p{
-color:var(--muted);font-size:14px;line-height:1.6
+.card p,
+.box p{
+color:var(--muted);
+font-size:14px;
+line-height:1.6
 }
 
-.security{background:var(--navy);color:#fff}
+.security{
+background:var(--navy);
+color:#fff
+}
+
 .security .head h2{color:#fff}
 .security .head p{color:#bdcce0}
 
 .securityBox{
-padding:24px;border:1px solid #ffffff20;
-border-radius:14px;background:#ffffff08
+padding:24px;
+border:1px solid #ffffff20;
+border-radius:14px;
+background:#ffffff08
 }
 
-.securityBox strong{display:block;margin-bottom:7px}
+.securityBox strong{
+display:block;
+margin-bottom:7px
+}
+
 .securityBox span{
-font-size:13px;color:#bdcce0;line-height:1.5
+font-size:13px;
+color:#bdcce0;
+line-height:1.5
 }
 
 .contact{
-display:grid;grid-template-columns:1fr 1fr;gap:22px
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:22px
 }
 
 .box{padding:28px}
 
 footer{
-background:#041327;color:#9fb0c5;padding:40px 5%
+background:#041327;
+color:#9fb0c5;
+padding:40px 5%
 }
 
-.footer{max-width:1150px;margin:auto}
-.footer .logo{color:#fff;margin-bottom:12px}
+.footer{
+max-width:1150px;
+margin:auto
+}
+
+.footer .logo{
+color:#fff;
+margin-bottom:12px
+}
 
 .copy{
-margin-top:25px;padding-top:18px;
-border-top:1px solid #ffffff15;font-size:11px
+margin-top:25px;
+padding-top:18px;
+border-top:1px solid #ffffff15;
+font-size:11px
 }
 
 /* MODALS */
+
 .modal{
-display:none;position:fixed;inset:0;background:#000a1bb8;
-z-index:100;align-items:center;justify-content:center;padding:20px
+display:none;
+position:fixed;
+inset:0;
+background:#000a1bb8;
+z-index:100;
+align-items:center;
+justify-content:center;
+padding:20px
 }
 
 .modal.show{display:flex}
 
 .modalBox{
-background:#fff;width:100%;max-width:820px;border-radius:18px;
-padding:0;position:relative;max-height:92vh;overflow:auto;
-display:grid;grid-template-columns:1fr 1.05fr
+background:#fff;
+width:100%;
+max-width:820px;
+border-radius:18px;
+padding:0;
+position:relative;
+max-height:92vh;
+overflow:auto;
+display:grid;
+grid-template-columns:1fr 1.05fr
 }
 
 .authImage{
@@ -192,390 +365,703 @@ background:
 linear-gradient(180deg,#071a3580,#071a35e8),
 url("https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1000&q=85")
 center/cover;
-display:flex;align-items:flex-end;padding:30px;color:#fff
+display:flex;
+align-items:flex-end;
+padding:30px;
+color:#fff
 }
 
-.authImage h3{font-size:25px;margin-bottom:8px}
-.authImage p{color:#d8e4f2;font-size:13px;line-height:1.5}
+.authImage h3{
+font-size:25px;
+margin-bottom:8px
+}
+
+.authImage p{
+color:#d8e4f2;
+font-size:13px;
+line-height:1.5
+}
 
 .authForm{padding:30px}
 
 .close{
-position:absolute;right:17px;top:12px;border:0;background:none;
-font-size:25px;color:#777;z-index:2
+position:absolute;
+right:17px;
+top:12px;
+border:0;
+background:none;
+font-size:25px;
+color:#777;
+z-index:2
 }
 
-.modalBox h2{color:var(--navy);margin-bottom:5px}
+.modalBox h2{
+color:var(--navy);
+margin-bottom:5px
+}
 
-.modalBox>p,.authForm>p{
-font-size:13px;color:var(--muted);margin-bottom:20px
+.modalBox>p,
+.authForm>p{
+font-size:13px;
+color:var(--muted);
+margin-bottom:20px
 }
 
 .field{margin-bottom:14px}
 
 .field label{
-display:block;font-size:12px;font-weight:bold;margin-bottom:6px
+display:block;
+font-size:12px;
+font-weight:bold;
+margin-bottom:6px
 }
 
-.field input,.field select,.field textarea{
-width:100%;padding:13px;border:1px solid #d8e0eb;
-border-radius:8px;outline:0
+.field input,
+.field select,
+.field textarea{
+width:100%;
+padding:13px;
+border:1px solid #d8e0eb;
+border-radius:8px;
+outline:0
 }
 
-.field textarea{resize:vertical;min-height:90px}
+.field textarea{
+resize:vertical;
+min-height:90px
+}
 
 .error{
-display:none;background:#ffe8e8;color:#a21d1d;
-padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px
+display:none;
+background:#ffe8e8;
+color:#a21d1d;
+padding:10px;
+border-radius:8px;
+font-size:12px;
+margin-bottom:12px
 }
 
 .error.show{display:block}
 
 /* DASHBOARD */
+
 #dashboard{
-display:none;min-height:100vh;background:#f3f6fa
+display:none;
+min-height:100vh;
+background:#f3f6fa
 }
 
 .dashNav{
-background:var(--navy);color:#fff;padding:14px 5%;
-display:flex;justify-content:space-between;align-items:center;gap:15px
+background:var(--navy);
+color:#fff;
+padding:14px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px
 }
 
-.dashUser{display:flex;align-items:center;gap:9px}
+.dashUser{
+display:flex;
+align-items:center;
+gap:9px
+}
 
-.avatarWrap{position:relative;width:48px;height:48px}
+.avatarWrap{
+position:relative;
+width:48px;
+height:48px
+}
 
 .avatar{
-width:48px;height:48px;border-radius:50%;background:var(--gold);
-color:var(--navy);display:grid;place-items:center;
-font-weight:bold;overflow:hidden
+width:48px;
+height:48px;
+border-radius:50%;
+background:var(--gold);
+color:var(--navy);
+display:grid;
+place-items:center;
+font-weight:bold;
+overflow:hidden
 }
 
 .avatar img{
-width:100%;height:100%;object-fit:cover
+width:100%;
+height:100%;
+object-fit:cover
 }
 
 .avatarPlus{
-position:absolute;right:-5px;bottom:-5px;width:22px;height:22px;
-border-radius:50%;border:2px solid var(--navy);
-background:var(--blue);color:#fff;display:grid;
-place-items:center;font-size:16px;font-weight:bold;line-height:1
+position:absolute;
+right:-5px;
+bottom:-5px;
+width:22px;
+height:22px;
+border-radius:50%;
+border:2px solid var(--navy);
+background:var(--blue);
+color:#fff;
+display:grid;
+place-items:center;
+font-size:16px;
+font-weight:bold;
+line-height:1
 }
 
 .dashWrap{
-max-width:1200px;margin:auto;padding:35px 5%
+max-width:1200px;
+margin:auto;
+padding:35px 5%
 }
 
 .dashTop{
-display:flex;justify-content:space-between;
-align-items:center;margin-bottom:25px
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px
 }
 
 .dashTop h1{
-font-size:32px;color:var(--navy);margin:0
+font-size:32px;
+color:var(--navy);
+margin:0
+}
+
+.liveBanner{
+background:#eaf7ef;
+border:1px solid #ccebd8;
+color:#126c36;
+border-radius:10px;
+padding:12px 15px;
+margin-bottom:18px;
+font-size:13px
 }
 
 .grid{
-display:grid;grid-template-columns:repeat(4,1fr);gap:15px
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px
 }
 
 .balance{
 background:linear-gradient(135deg,var(--navy),var(--navy2));
-color:#fff;padding:24px;border-radius:15px
+color:#fff;
+padding:24px;
+border-radius:15px;
+position:relative
 }
 
 .balance small{color:#bdcce0}
-.balance h2{margin:8px 0;font-size:30px}
+
+.balance h2{
+margin:8px 0;
+font-size:30px;
+padding-right:48px;
+word-break:break-word
+}
+
+.balanceHead{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px
+}
+
+.balanceEye{
+width:38px;
+height:38px;
+border:1px solid #ffffff35;
+background:#ffffff12;
+color:#fff;
+border-radius:9px;
+display:grid;
+place-items:center;
+font-size:18px;
+flex:none
+}
 
 .stat{
-background:#fff;padding:22px;border-radius:15px
+background:#fff;
+padding:22px;
+border-radius:15px
 }
 
 .stat small{color:var(--muted)}
 .stat h3{margin-top:7px}
 
 .columns{
-display:grid;grid-template-columns:1.5fr 1fr;
-gap:18px;margin-top:18px
+display:grid;
+grid-template-columns:1.5fr 1fr;
+gap:18px;
+margin-top:18px
 }
 
 .panel{padding:24px}
 
 .tx{
-display:flex;justify-content:space-between;
-padding:13px 0;border-bottom:1px solid #edf0f4;
+display:flex;
+justify-content:space-between;
+padding:13px 0;
+border-bottom:1px solid #edf0f4;
 gap:10px
 }
 
 .tx:last-child{border:0}
-.txName{font-weight:bold;font-size:13px}
-.txDate{font-size:11px;color:var(--muted)}
-.out{color:var(--red);font-weight:bold}
-.in{color:var(--green);font-weight:bold}
+
+.txName{
+font-weight:bold;
+font-size:13px
+}
+
+.txDate{
+font-size:11px;
+color:var(--muted)
+}
+
+.out{
+color:var(--red);
+font-weight:bold
+}
+
+.in{
+color:var(--green);
+font-weight:bold
+}
 
 .empty{
-text-align:center;color:var(--muted);
-padding:25px;font-size:13px
+text-align:center;
+color:var(--muted);
+padding:25px;
+font-size:13px
 }
 
 .quick{
-display:grid;grid-template-columns:1fr 1fr;gap:10px
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px
 }
 
 .quick button{
-padding:14px;border:1px solid #e1e7ef;background:#fff;
-border-radius:9px;font-weight:bold;color:var(--navy)
+padding:14px;
+border:1px solid #e1e7ef;
+background:#fff;
+border-radius:9px;
+font-weight:bold;
+color:var(--navy)
 }
 
 .profilePanel{
-margin-top:18px;display:grid;
-grid-template-columns:1fr 1fr;gap:18px
+margin-top:18px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px
 }
 
 .profileCard{padding:24px}
 
 .profileCard input{
-width:100%;padding:11px;border:1px solid var(--border);
-border-radius:8px;margin-bottom:10px
+width:100%;
+padding:11px;
+border:1px solid var(--border);
+border-radius:8px;
+margin-bottom:10px
 }
 
 .profileNote{
-font-size:12px;color:var(--muted);margin-bottom:15px
+font-size:12px;
+color:var(--muted);
+margin-bottom:15px
 }
 
 .currencyBalances{
-margin-top:18px;display:grid;
-grid-template-columns:repeat(4,1fr);gap:14px
+margin-top:18px;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:14px
 }
 
 .currencyCard{
-background:#fff;border-radius:14px;padding:18px;
+background:#fff;
+border-radius:14px;
+padding:18px;
 box-shadow:0 8px 25px #071a5310
 }
 
 .currencyCode{
-font-weight:bold;color:var(--navy);font-size:13px
+font-weight:bold;
+color:var(--navy);
+font-size:13px
 }
 
 .currencyAmount{
-margin-top:7px;font-size:21px;font-weight:bold
+margin-top:7px;
+font-size:21px;
+font-weight:bold
 }
 
 .servicesGrid{
-display:grid;grid-template-columns:repeat(4,1fr);
-gap:14px;margin-top:18px
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:14px;
+margin-top:18px
 }
 
 .service{padding:22px}
-.serviceIcon{font-size:28px;margin-bottom:12px}
+
+.serviceIcon{
+font-size:28px;
+margin-bottom:12px
+}
 
 .service p{
-font-size:12px;color:var(--muted);line-height:1.5
+font-size:12px;
+color:var(--muted);
+line-height:1.5
 }
 
 .service button{
-margin-top:14px;width:100%
+margin-top:14px;
+width:100%
+}
+
+.serviceLive{
+background:#f7f9fc;
+border:1px solid var(--border);
+padding:12px;
+border-radius:9px;
+margin-top:10px;
+font-size:12px;
+color:var(--muted)
 }
 
 .notification{
-padding:13px;background:#eef5ff;
+padding:13px;
+background:#eef5ff;
 border-left:4px solid var(--blue);
-border-radius:8px;margin-bottom:10px;font-size:13px
+border-radius:8px;
+margin-bottom:10px;
+font-size:13px
 }
 
 .notification small{
-display:block;color:var(--muted);margin-top:5px
+display:block;
+color:var(--muted);
+margin-top:5px
 }
 
+/* ADMIN */
+
 .admin{
-display:none;margin-top:25px;background:#fff;
-border-radius:15px;padding:25px;
+display:none;
+margin-top:25px;
+background:#fff;
+border-radius:15px;
+padding:25px;
 box-shadow:0 12px 35px #071a5314
 }
 
-.admin h2{color:var(--navy);margin-bottom:7px}
+.admin h2{
+color:var(--navy);
+margin-bottom:7px
+}
 
 .adminGrid{
-display:grid;grid-template-columns:1fr 1fr;
-gap:18px;margin-top:20px
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+margin-top:20px
 }
 
 .adminBox{
 border:1px solid var(--border);
-padding:20px;border-radius:12px;box-shadow:none
+padding:20px;
+border-radius:12px;
+box-shadow:none
 }
 
 .adminBox h3{
-margin-bottom:12px;color:var(--navy)
+margin-bottom:12px;
+color:var(--navy)
 }
 
-.adminBox input,.adminBox select,.adminBox textarea{
-width:100%;padding:11px;margin-bottom:10px;
-border:1px solid var(--border);border-radius:8px
+.adminBox input,
+.adminBox select,
+.adminBox textarea{
+width:100%;
+padding:11px;
+margin-bottom:10px;
+border:1px solid var(--border);
+border-radius:8px
 }
 
 .customerList{
-max-height:230px;overflow:auto;
-border:1px solid var(--border);border-radius:10px;margin-top:10px
+max-height:230px;
+overflow:auto;
+border:1px solid var(--border);
+border-radius:10px;
+margin-top:10px
 }
 
 .customerItem{
-width:100%;border:0;border-bottom:1px solid var(--border);
-background:#fff;padding:12px;text-align:left;
-display:flex;justify-content:space-between;gap:10px
+width:100%;
+border:0;
+border-bottom:1px solid var(--border);
+background:#fff;
+padding:12px;
+text-align:left;
+display:flex;
+justify-content:space-between;
+gap:10px
 }
 
 .customerItem:last-child{border-bottom:0}
+
 .customerItem.active{background:#eef5ff}
 
 .customerItem strong{display:block}
 .customerItem small{color:var(--muted)}
 
 .adminChat{
-height:250px;overflow:auto;
-background:#f5f7fa;border-radius:10px;padding:12px
+height:250px;
+overflow:auto;
+background:#f5f7fa;
+border-radius:10px;
+padding:12px
+}
+
+.adminOnlyBadge{
+display:inline-block;
+background:#eaf2ff;
+color:#1769e0;
+font-size:11px;
+font-weight:bold;
+padding:5px 8px;
+border-radius:20px;
+margin-bottom:10px
 }
 
 /* CHAT */
+
 .chatBtn{
-position:fixed;right:20px;bottom:20px;width:56px;height:56px;
-border:0;border-radius:50%;background:var(--blue);
-color:#fff;font-size:23px;z-index:60
+position:fixed;
+right:20px;
+bottom:20px;
+width:56px;
+height:56px;
+border:0;
+border-radius:50%;
+background:var(--blue);
+color:#fff;
+font-size:23px;
+z-index:60
 }
 
 .chat{
-display:none;position:fixed;right:20px;bottom:85px;width:350px;
-max-width:calc(100% - 40px);background:#fff;border-radius:15px;
-box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70
+display:none;
+position:fixed;
+right:20px;
+bottom:85px;
+width:350px;
+max-width:calc(100% - 40px);
+background:#fff;
+border-radius:15px;
+box-shadow:0 15px 45px #0003;
+overflow:hidden;
+z-index:70
 }
 
 .chat.show{display:block}
 
 .chatHead{
-background:var(--navy);color:#fff;padding:15px;
-display:flex;justify-content:space-between
+background:var(--navy);
+color:#fff;
+padding:15px;
+display:flex;
+justify-content:space-between
 }
 
 .chatBody{
-height:260px;padding:14px;overflow:auto;background:#f5f7fa
+height:260px;
+padding:14px;
+overflow:auto;
+background:#f5f7fa
 }
 
 .msg{
-padding:9px 11px;border-radius:11px;background:#fff;
-font-size:13px;margin-bottom:9px;max-width:85%;line-height:1.45
+padding:9px 11px;
+border-radius:11px;
+background:#fff;
+font-size:13px;
+margin-bottom:9px;
+max-width:85%;
+line-height:1.45
 }
 
 .msg.user{
-margin-left:auto;background:#dceaff
+margin-left:auto;
+background:#dceaff
 }
 
 .chatInput{
-display:flex;border-top:1px solid #ddd
+display:flex;
+border-top:1px solid #ddd
 }
 
 .chatInput input{
-flex:1;border:0;padding:12px;outline:0
+flex:1;
+border:0;
+padding:12px;
+outline:0
 }
 
 .chatInput button{
-border:0;background:var(--blue);
-color:#fff;padding:0 16px
+border:0;
+background:var(--blue);
+color:#fff;
+padding:0 16px
 }
 
 .toast{
-position:fixed;left:50%;bottom:25px;
+position:fixed;
+left:50%;
+bottom:25px;
 transform:translate(-50%,120px);
-background:var(--navy);color:#fff;padding:12px 18px;
-border-radius:8px;transition:.3s;z-index:600
+background:var(--navy);
+color:#fff;
+padding:12px 18px;
+border-radius:8px;
+transition:.3s;
+z-index:600
 }
 
-.toast.show{transform:translate(-50%,0)}
+.toast.show{
+transform:translate(-50%,0)
+}
+
 .hiddenFile{display:none}
 
-.liveBanner{
-background:#eaf7ef;border:1px solid #ccebd8;color:#126c36;
-border-radius:10px;padding:12px 15px;margin-bottom:18px;font-size:13px
-}
-
-.serviceLive{
-background:#f7f9fc;border:1px solid var(--border);
-padding:12px;border-radius:9px;margin-top:10px;
-font-size:12px;color:var(--muted)
-}
-
-.promoGrid{
-display:grid;grid-template-columns:repeat(3,1fr);gap:18px
-}
-
-.promo{
-background:#fff;border-radius:16px;overflow:hidden;
-box-shadow:0 10px 30px #071a5312;
-border:1px solid #e8edf4
-}
-
-.promo img{
-width:100%;height:170px;object-fit:cover;display:block
-}
-
-.promoBody{padding:16px}
-
-.promoBody h3{
-color:var(--navy);margin-bottom:6px;font-size:17px
-}
-
-.promoBody p{
-color:var(--muted);font-size:13px;line-height:1.5
-}
-
-.heroDots{
-display:flex;gap:6px;margin-top:22px
-}
-
-.heroDots span{
-width:7px;height:7px;border-radius:50%;background:#b7c1cf
-}
-
-.heroDots span:first-child{
-width:22px;border-radius:10px;background:var(--blue)
-}
-
 /* RESPONSIVE */
+
 @media(max-width:900px){
+
 .links{display:none}
-.heroInner{grid-template-columns:1fr}
-.heroVisual{min-height:330px}
-.heroVisual img{min-height:330px}
-.promoGrid{grid-template-columns:1fr 1fr}
-.cards,.securityGrid{grid-template-columns:1fr}
-.contact,.columns,.profilePanel{grid-template-columns:1fr}
-.grid{grid-template-columns:1fr 1fr}
-.servicesGrid{grid-template-columns:1fr 1fr}
-.currencyBalances{grid-template-columns:1fr 1fr}
-.adminGrid{grid-template-columns:1fr}
-.modalBox{grid-template-columns:1fr}
-.authImage{display:none}
+
+.heroInner{
+grid-template-columns:1fr
+}
+
+.heroVisual{
+min-height:330px
+}
+
+.heroVisual img{
+min-height:330px
+}
+
+.cards,
+.securityGrid{
+grid-template-columns:1fr
+}
+
+.contact,
+.columns,
+.profilePanel{
+grid-template-columns:1fr
+}
+
+.grid{
+grid-template-columns:1fr 1fr
+}
+
+.servicesGrid{
+grid-template-columns:1fr 1fr
+}
+
+.currencyBalances{
+grid-template-columns:1fr 1fr
+}
+
+.adminGrid{
+grid-template-columns:1fr
+}
+
+.modalBox{
+grid-template-columns:1fr
+}
+
+.authImage{
+display:none
+}
 }
 
 @media(max-width:600px){
+
 .top{display:none}
-.hero{padding:18px 0 35px}
+
+.hero{
+padding:18px 0 35px;
+min-height:520px
+}
+
 .heroInner{width:92%}
-.heroVisual{min-height:300px}
-.heroVisual img{min-height:300px}
-.promoGrid{grid-template-columns:1fr}
+
+.heroVisual{
+min-height:300px
+}
+
+.heroVisual img{
+min-height:300px
+}
+
 .nav{min-height:65px}
-.hero{min-height:520px}
+
 .hero p{font-size:15px}
+
 .section{padding:55px 5%}
-.grid{grid-template-columns:1fr}
+
+.grid{
+grid-template-columns:1fr
+}
+
 .dashTop{
 flex-direction:column;
 align-items:flex-start;
 gap:12px
 }
-.chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
-.servicesGrid,.currencyBalances{grid-template-columns:1fr 1fr}
-.dashNav .logo span:last-child{display:none}
+
+.chat{
+right:10px;
+bottom:80px;
+max-width:calc(100% - 20px)
+}
+
+.servicesGrid,
+.currencyBalances{
+grid-template-columns:1fr 1fr
+}
+
+.dashNav .logo span:last-child{
+display:none
+}
+
+.dashUser>div:last-of-type{
+display:none
+}
+
+}
+
+@media(max-width:390px){
+
+.servicesGrid,
+.currencyBalances{
+grid-template-columns:1fr
+}
+
+.actions .btn{
+padding:10px 11px;
+font-size:12px
+}
+
 }
 </style>
 </head>
@@ -634,6 +1120,7 @@ notifications and digital services from one dashboard.
 </p>
 
 <div class="heroButtons">
+
 <button class="btn primary" onclick="openModal('register')">
 Open an Account
 </button>
@@ -641,6 +1128,7 @@ Open an Account
 <button class="btn outline" onclick="openModal('login')">
 Access Online Banking
 </button>
+
 </div>
 
 <div class="heroDots">
@@ -855,13 +1343,14 @@ notifications and service interfaces are available inside the dashboard.
 <p>Online banking services and account management.</p>
 
 <div class="copy">
-©️ 2026 American Crest Banking — Demo only.
+© 2026 American Crest Banking — Demo only.
 </div>
 
 </div>
 </footer>
 
 </div>
+
 
 <!-- DASHBOARD -->
 
@@ -927,9 +1416,25 @@ onchange="handleProfileImage(event)"
 <div class="grid">
 
 <div class="balance">
+
 <small>AVAILABLE DEMO BALANCE</small>
+
+<div class="balanceHead">
+
 <h2 id="balance">₦0.00</h2>
+
+<button
+id="balanceEye"
+class="balanceEye"
+onclick="toggleBalanceVisibility()"
+title="Hide balance"
+aria-label="Hide or show balance"
+>◉</button>
+
+</div>
+
 <small id="balanceCurrency">Primary currency: NGN</small>
+
 </div>
 
 <div class="stat">
@@ -1049,7 +1554,12 @@ Choose Profile Picture
 
 </div>
 
+
+<!-- ADMIN PANEL IS HIDDEN FOR CUSTOMERS -->
+
 <div class="admin" id="adminPanel">
+
+<span class="adminOnlyBadge">ADMINISTRATOR AREA</span>
 
 <h2>Demo Account Administration</h2>
 
@@ -1153,6 +1663,7 @@ Clear Local Demo Accounts
 </div>
 </div>
 
+
 <!-- LOGIN / REGISTER -->
 
 <div class="modal" id="authModal">
@@ -1189,7 +1700,19 @@ payment, transfer or funds are created.
 
 <div class="field">
 <label>Password</label>
-<input id="loginPassword" type="password" autocomplete="current-password">
+<div style="position:relative">
+<input
+id="loginPassword"
+type="password"
+autocomplete="current-password"
+style="padding-right:48px"
+>
+<button
+type="button"
+onclick="togglePassword('loginPassword',this)"
+style="position:absolute;right:5px;top:5px;width:38px;height:38px;border:0;background:transparent;color:#536273;font-size:18px"
+>◉</button>
+</div>
 </div>
 
 <button class="btn primary full" onclick="login()">
@@ -1197,13 +1720,29 @@ Sign In
 </button>
 
 <div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+
 Don't have an account?
-<button onclick="showRegister()" style="border:0;background:none;color:#1769e0;font-weight:bold">
+
+<button
+onclick="showRegister()"
+style="border:0;background:none;color:#1769e0;font-weight:bold"
+>
 Create Account
+</button>
+
+</div>
+
+<div style="text-align:center;margin-top:13px">
+<button
+onclick="showAdminLogin()"
+style="border:0;background:none;color:#718096;font-size:12px"
+>
+Administrator
 </button>
 </div>
 
 </div>
+
 
 <div id="registerForm" style="display:none">
 
@@ -1224,7 +1763,23 @@ Create Account
 
 <div class="field">
 <label>Password</label>
-<input id="regPassword" type="password" autocomplete="new-password">
+
+<div style="position:relative">
+
+<input
+id="regPassword"
+type="password"
+autocomplete="new-password"
+style="padding-right:48px"
+>
+
+<button
+type="button"
+onclick="togglePassword('regPassword',this)"
+style="position:absolute;right:5px;top:5px;width:38px;height:38px;border:0;background:transparent;color:#536273;font-size:18px"
+>◉</button>
+
+</div>
 </div>
 
 <div class="field">
@@ -1247,9 +1802,69 @@ Create Account
 </button>
 
 <div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+
 Already registered?
-<button onclick="showLogin()" style="border:0;background:none;color:#1769e0;font-weight:bold">
+
+<button
+onclick="showLogin()"
+style="border:0;background:none;color:#1769e0;font-weight:bold"
+>
 Sign In
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ADMIN LOGIN -->
+
+<div id="adminLoginForm" style="display:none">
+
+<h2>Administrator Login</h2>
+
+<p>
+Administrator access is separate from customer accounts.
+</p>
+
+<div class="error" id="adminLoginError"></div>
+
+<div class="field">
+<label>Administrator Username</label>
+<input id="adminUsername" type="text" autocomplete="username">
+</div>
+
+<div class="field">
+<label>Administrator Password</label>
+
+<div style="position:relative">
+
+<input
+id="adminPassword"
+type="password"
+autocomplete="current-password"
+style="padding-right:48px"
+>
+
+<button
+type="button"
+onclick="togglePassword('adminPassword',this)"
+style="position:absolute;right:5px;top:5px;width:38px;height:38px;border:0;background:transparent;color:#536273;font-size:18px"
+>◉</button>
+
+</div>
+</div>
+
+<button class="btn dark full" onclick="adminLogin()">
+Administrator Sign In
+</button>
+
+<div style="text-align:center;margin-top:15px">
+<button
+onclick="showLogin()"
+style="border:0;background:none;color:#1769e0;font-weight:bold;font-size:13px"
+>
+Back to Customer Login
 </button>
 </div>
 
@@ -1258,6 +1873,7 @@ Sign In
 </div>
 </div>
 </div>
+
 
 <!-- TRANSFER -->
 
@@ -1289,6 +1905,7 @@ Sign In
 
 <div class="field">
 <label>Amount</label>
+
 <input
 id="transferAmount"
 type="number"
@@ -1296,6 +1913,7 @@ min="0.01"
 step="0.01"
 placeholder="0.00"
 >
+
 </div>
 
 <div class="field">
@@ -1309,6 +1927,7 @@ Continue
 
 </div>
 </div>
+
 
 <!-- SERVICE -->
 
@@ -1333,6 +1952,7 @@ Submit Demo Request
 
 </div>
 </div>
+
 
 <!-- SUPPORT -->
 
@@ -1369,15 +1989,21 @@ onkeydown="if(event.key==='Enter')sendChat()"
 
 <div class="toast" id="toast"></div>
 
+
 <script>
 
-/* DEMO DATA: browser-local only.
-   No real banking, payments, or funds. */
+/* =========================================================
+   FICTIONAL / LOCAL DEMO BANKING APPLICATION
+   No real banking, payments, transfers or financial accounts.
+   ========================================================= */
 
-const ACCOUNTS_KEY="acb_accounts_v4";
-const SESSION_KEY="acb_session_v4";
+const ACCOUNTS_KEY="acb_accounts_v5";
+const SESSION_KEY="acb_session_v5";
+const ADMIN_SESSION_KEY="acb_admin_session_v5";
+const BALANCE_VISIBILITY_KEY="acb_balance_visibility_v5";
 
 const OLD_KEYS=[
+"acb_accounts_v4",
 "acb_accounts_v3",
 "acb_accounts_v2",
 "acb_accounts",
@@ -1389,6 +2015,10 @@ let accounts=[];
 let currentUserId=localStorage.getItem(SESSION_KEY)||null;
 let selectedCustomerId=null;
 let liveTimer=null;
+let balanceVisible=true;
+
+const ADMIN_USERNAME="admin";
+const ADMIN_PASSWORD="admin-demo-2026";
 
 function $(id){
 return document.getElementById(id)
@@ -1403,15 +2033,19 @@ return new Date().toLocaleString()
 }
 
 function toast(m){
+
 $("toast").textContent=m;
+
 $("toast").classList.add("show");
 
 setTimeout(()=>{
 $("toast").classList.remove("show")
 },2800)
+
 }
 
 function escapeHtml(v){
+
 return String(v??"").replace(
 /[&<>"']/g,
 c=>({
@@ -1422,6 +2056,7 @@ c=>({
 "'":"&#039;"
 }[c])
 )
+
 }
 
 const CURRENCY_INFO={
@@ -1443,6 +2078,7 @@ Number(a||0).toLocaleString(undefined,{
 minimumFractionDigits:i.decimals,
 maximumFractionDigits:i.decimals
 })
+
 }
 
 function normaliseAccount(a){
@@ -1474,20 +2110,29 @@ notifications:Array.isArray(a.notifications)?a.notifications:[],
 support:Array.isArray(a.support)?a.support:[],
 profileImage:a.profileImage||"",
 createdAt:a.createdAt||now()
-};
+}
+
 }
 
 function saveAccounts(){
-localStorage.setItem(ACCOUNTS_KEY,JSON.stringify(accounts))
+
+localStorage.setItem(
+ACCOUNTS_KEY,
+JSON.stringify(accounts)
+)
+
 }
 
 function readJSON(k){
 
 try{
-return JSON.parse(localStorage.getItem(k)||"null")
+return JSON.parse(
+localStorage.getItem(k)||"null"
+)
 }catch(e){
 return null
 }
+
 }
 
 function loadAccounts(){
@@ -1506,6 +2151,7 @@ break
 }
 
 }
+
 }
 
 const cleaned=
@@ -1518,61 +2164,168 @@ const unique=[];
 
 for(const a of cleaned){
 
-if(!seen.has(a.email)){
-seen.add(a.email);
+const email=a.email;
+
+if(!seen.has(email)){
+seen.add(email);
 unique.push(a)
 }
 
 }
 
 accounts=unique;
+
 saveAccounts();
 
 return accounts
+
 }
 
 function findAccount(id){
+
 return accounts.find(a=>a.id===id)
+
 }
 
 function currentAccount(){
+
 return findAccount(currentUserId)
+
 }
+
+
+/* =========================================================
+   PASSWORD EYE
+   ========================================================= */
+
+function togglePassword(id,button){
+
+const input=$(id);
+
+if(!input)return;
+
+if(input.type==="password"){
+
+input.type="text";
+
+if(button)
+button.textContent="◉";
+
+}else{
+
+input.type="password";
+
+if(button)
+button.textContent="◉";
+
+}
+
+}
+
+
+/* =========================================================
+   BALANCE EYE
+   ========================================================= */
+
+function loadBalanceVisibility(){
+
+const saved=
+localStorage.getItem(BALANCE_VISIBILITY_KEY);
+
+balanceVisible=saved!=="0";
+
+}
+
+function saveBalanceVisibility(){
+
+localStorage.setItem(
+BALANCE_VISIBILITY_KEY,
+balanceVisible?"1":"0"
+)
+
+}
+
+function toggleBalanceVisibility(){
+
+balanceVisible=!balanceVisible;
+
+saveBalanceVisibility();
+
+renderBalance();
+
+}
+
+
+/* =========================================================
+   AUTH MODAL
+   ========================================================= */
 
 function openModal(type){
 
 $("authModal").classList.add("show");
 
-type==="register"
-?showRegister()
-:showLogin()
+if(type==="register"){
+showRegister()
+}else{
+showLogin()
+}
+
 }
 
 function closeModal(){
+
 $("authModal").classList.remove("show")
+
 }
 
 function showRegister(){
 
 $("loginForm").style.display="none";
 $("registerForm").style.display="block";
+$("adminLoginForm").style.display="none";
+
 $("registerError").classList.remove("show")
+
 }
 
 function showLogin(){
 
 $("registerForm").style.display="none";
 $("loginForm").style.display="block";
+$("adminLoginForm").style.display="none";
+
 $("loginError").classList.remove("show")
+
+}
+
+function showAdminLogin(){
+
+$("registerForm").style.display="none";
+$("loginForm").style.display="none";
+$("adminLoginForm").style.display="block";
+
+$("adminLoginError").classList.remove("show");
+
+$("adminUsername").value="";
+$("adminPassword").value="";
+
 }
 
 function showError(id,m){
 
 $(id).textContent=m;
 $(id).classList.add("show")
+
 }
 
+
+/* =========================================================
+   CUSTOMER REGISTRATION
+   ========================================================= */
+
 function register(){
+
+accounts=loadAccounts();
 
 const name=$("regName").value.trim();
 const email=$("regEmail").value.trim().toLowerCase();
@@ -1580,10 +2333,16 @@ const password=$("regPassword").value;
 const currency=$("regCurrency").value;
 
 if(name.length<2)
-return showError("registerError","Enter your full name.");
+return showError(
+"registerError",
+"Enter your full name."
+);
 
 if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-return showError("registerError","Enter a valid email address.");
+return showError(
+"registerError",
+"Enter a valid email address."
+);
 
 if(password.length<4)
 return showError(
@@ -1591,66 +2350,246 @@ return showError(
 "Password must contain at least 4 characters."
 );
 
+
+/* ONE EMAIL = ONE ACCOUNT */
+
 if(accounts.some(a=>a.email===email))
 return showError(
 "registerError",
-"This email has already been used. Please use a different email or sign in."
+"This email has already been used. Please sign in instead."
 );
+
 
 const a=normaliseAccount({
 id:makeId(),
-name,
-email,
-password,
+name:name,
+email:email,
+password:password,
 status:"Active",
 primaryCurrency:currency,
+balances:{
+NGN:0,
+USD:0,
+EUR:0,
+GBP:0,
+IDR:0,
+CAD:0,
+AUD:0
+},
+transactions:[],
+notifications:[],
+support:[],
+profileImage:"",
 createdAt:now()
 });
 
+
 accounts.push(a);
+
 saveAccounts();
 
 currentUserId=a.id;
-localStorage.setItem(SESSION_KEY,a.id);
+
+localStorage.setItem(
+SESSION_KEY,
+a.id
+);
 
 closeModal();
+
 showDashboard();
 
 toast("Account created successfully.")
+
 }
 
+
+/* =========================================================
+   CUSTOMER LOGIN
+   ========================================================= */
+
 function login(){
+
+accounts=loadAccounts();
 
 const email=$("loginEmail").value.trim().toLowerCase();
 const password=$("loginPassword").value;
 
+if(!email||!password)
+return showError(
+"loginError",
+"Enter your email and password."
+);
+
 const a=accounts.find(
-x=>x.email===email&&x.password===password
+x=>x.email===email
 );
 
 if(!a)
 return showError(
 "loginError",
-accounts.some(x=>x.email===email)
-?"Password is incorrect. Please try again."
-:"No account was found for that email. If you created it in an older version, the app will attempt to recover saved demo accounts automatically."
+"No account was found for that email."
+);
+
+if(a.password!==password)
+return showError(
+"loginError",
+"Password is incorrect. Please try again."
 );
 
 currentUserId=a.id;
 
-localStorage.setItem(SESSION_KEY,a.id);
+localStorage.setItem(
+SESSION_KEY,
+a.id
+);
 
 closeModal();
+
 showDashboard();
 
 toast("Signed in successfully.")
+
 }
+
+
+/* =========================================================
+   ADMIN LOGIN
+   ========================================================= */
+
+function adminLogin(){
+
+const username=
+$("adminUsername").value.trim();
+
+const password=
+$("adminPassword").value;
+
+if(
+username!==ADMIN_USERNAME||
+password!==ADMIN_PASSWORD
+){
+
+return showError(
+"adminLoginError",
+"Invalid administrator username or password."
+)
+
+}
+
+
+/* ADMIN SESSION IS SEPARATE */
+
+localStorage.setItem(
+ADMIN_SESSION_KEY,
+"1"
+);
+
+currentUserId=null;
+
+localStorage.removeItem(SESSION_KEY);
+
+closeModal();
+
+showAdminDashboard();
+
+toast("Administrator signed in.")
+
+}
+
+
+/* =========================================================
+   ADMIN DASHBOARD
+   ========================================================= */
+
+function isAdmin(){
+
+return localStorage.getItem(
+ADMIN_SESSION_KEY
+)==="1"
+
+}
+
+function showAdminDashboard(){
+
+accounts=loadAccounts();
+
+$("publicSite").style.display="none";
+$("dashboard").style.display="block";
+
+$("welcomeName").textContent="Administrator";
+$("dashName").textContent="Administrator";
+$("emailStat").textContent="Admin";
+$("statusStat").textContent="Administrator";
+
+$("avatar").textContent="AD";
+
+$("profileName").value="Administrator";
+
+$("adminPanel").style.display="block";
+
+selectedCustomerId=
+selectedCustomerId||
+(accounts[0]?.id||null);
+
+renderAdminDashboard();
+
+if(liveTimer)
+clearInterval(liveTimer);
+
+liveTimer=setInterval(()=>{
+
+accounts=loadAccounts();
+
+renderAdminDashboard()
+
+},2000)
+
+}
+
+function renderAdminDashboard(){
+
+renderCustomerList();
+
+renderAdminChat();
+
+if(selectedCustomerId){
+
+const c=selectedCustomer();
+
+if(c){
+
+$("txCount").textContent=
+(c.transactions||[]).length;
+
+$("balance").textContent=
+"ADMIN";
+
+$("balanceCurrency").textContent=
+"Administrator controls";
+
+}
+
+}
+
+}
+
+
+/* =========================================================
+   CUSTOMER DASHBOARD
+   ========================================================= */
 
 function showDashboard(){
 
 const a=currentAccount();
 
-if(!a)return;
+if(!a){
+
+localStorage.removeItem(SESSION_KEY);
+
+return
+
+}
 
 $("publicSite").style.display="none";
 $("dashboard").style.display="block";
@@ -1661,14 +2600,11 @@ $("emailStat").textContent=a.email;
 $("profileName").value=a.name;
 $("statusStat").textContent=a.status;
 
+$("adminPanel").style.display="none";
+
 renderAvatar();
+
 refreshDashboard(false);
-
-$("adminPanel").style.display="block";
-
-selectedCustomerId=selectedCustomerId||currentUserId;
-
-renderCustomerList();
 
 if(liveTimer)
 clearInterval(liveTimer);
@@ -1677,13 +2613,22 @@ liveTimer=setInterval(()=>{
 
 accounts=loadAccounts();
 
-if(currentAccount()){
-refreshDashboard(false);
-renderCustomerList()
+const fresh=currentAccount();
+
+if(fresh){
+
+refreshDashboard(false)
+
 }
 
 },1500)
+
 }
+
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
 
 function renderAvatar(){
 
@@ -1699,6 +2644,7 @@ av.innerHTML=
 `<img src="${a.profileImage}" alt="Profile">`;
 
 return
+
 }
 
 av.textContent=
@@ -1708,7 +2654,13 @@ a.name
 .slice(0,2)
 .join("")
 .toUpperCase()
+
 }
+
+
+/* =========================================================
+   BALANCE
+   ========================================================= */
 
 function renderBalance(){
 
@@ -1718,12 +2670,40 @@ if(!a)return;
 
 const c=a.primaryCurrency;
 
+if(balanceVisible){
+
 $("balance").textContent=
 money(a.balances[c],c);
 
+$("balanceEye").textContent="◉";
+$("balanceEye").title="Hide balance";
+$("balanceEye").setAttribute(
+"aria-label",
+"Hide balance"
+);
+
+}else{
+
+$("balance").textContent="••••••";
+
+$("balanceEye").textContent="◎";
+$("balanceEye").title="Show balance";
+$("balanceEye").setAttribute(
+"aria-label",
+"Show balance"
+);
+
+}
+
 $("balanceCurrency").textContent=
 "Primary currency: "+c
+
 }
+
+
+/* =========================================================
+   CURRENCY BALANCES
+   ========================================================= */
 
 function renderCurrencyBalances(){
 
@@ -1734,15 +2714,32 @@ if(!a)return;
 $("currencyBalances").innerHTML=
 Object.keys(CURRENCY_INFO)
 .map(c=>`
+
 <div class="currencyCard">
+
 <div class="currencyCode">${c}</div>
+
 <div class="currencyAmount">
-${money(a.balances[c],c)}
+
+${
+balanceVisible
+?money(a.balances[c],c)
+:"••••••"
+}
+
 </div>
+
 </div>
+
 `)
 .join("")
+
 }
+
+
+/* =========================================================
+   TRANSACTIONS
+   ========================================================= */
 
 function renderTransactions(){
 
@@ -1760,17 +2757,23 @@ $("transactions").innerHTML=
 '<div class="empty">No transactions yet.</div>';
 
 return
+
 }
 
 $("transactions").innerHTML=
-list.slice().reverse().map(t=>{
+list
+.slice()
+.reverse()
+.map(t=>{
 
 let p=t.kind==="credit";
 
 return `
+
 <div class="tx">
 
 <div>
+
 <div class="txName">
 ${escapeHtml(t.title)}
 </div>
@@ -1778,17 +2781,29 @@ ${escapeHtml(t.title)}
 <div class="txDate">
 ${escapeHtml(t.date)}
 </div>
+
 </div>
 
 <div class="${p?"in":"out"}">
-${p?"+":"-"} ${money(t.amount,t.currency)}
+
+${p?"+":"-"}
+${money(t.amount,t.currency)}
+
 </div>
 
 </div>
+
 `
 
-}).join("")
+})
+.join("")
+
 }
+
+
+/* =========================================================
+   NOTIFICATIONS
+   ========================================================= */
 
 function renderNotifications(){
 
@@ -1806,19 +2821,31 @@ list
 .reverse()
 .slice(0,10)
 .map(n=>`
+
 <div class="notification">
 
 <strong>Account Notification</strong>
 
-<div>${escapeHtml(n.message)}</div>
+<div>
+${escapeHtml(n.message)}
+</div>
 
-<small>${escapeHtml(n.date)}</small>
+<small>
+${escapeHtml(n.date)}
+</small>
 
 </div>
+
 `)
 .join("")
 :""
+
 }
+
+
+/* =========================================================
+   LIVE BANNER
+   ========================================================= */
 
 function renderLiveBanner(){
 
@@ -1827,45 +2854,90 @@ const a=currentAccount();
 if(!a)return;
 
 $("liveBanner").innerHTML=`
+
 <strong>
-Welcome to live demo banking, ${escapeHtml(a.name)}.
+Welcome to live demo banking,
+${escapeHtml(a.name)}.
 </strong>
-Your demo account is active. Balance updates, notifications
-and support messages appear automatically in this browser.
+
+Your demo account is active.
+Balance updates, notifications and
+support messages appear automatically
+in this browser.
+
 `
+
 }
 
-function addTransaction(a,kind,title,amount,currency){
 
-a.transactions.push({
-id:makeId(),
+/* =========================================================
+   TRANSACTION HELPER
+   ========================================================= */
+
+function addTransaction(
+a,
 kind,
 title,
+amount,
+currency
+){
+
+a.transactions.push({
+
+id:makeId(),
+kind:kind,
+title:title,
 amount:Number(amount),
-currency,
+currency:currency,
 date:now()
+
 })
+
 }
 
+
+/* =========================================================
+   TRANSFER
+   ========================================================= */
+
 function openTransfer(){
+
+if(isAdmin()){
+
+return toast(
+"Administrator accounts cannot make customer transfers."
+)
+
+}
 
 if(!currentAccount())
 return openModal("login");
 
 $("transferError").classList.remove("show");
+
 $("transferAmount").value="";
 $("transferRecipient").value="";
 
+$("transferCurrency").value=
+currentAccount().primaryCurrency;
+
 $("transferModal").classList.add("show")
+
 }
 
 function closeTransfer(){
+
 $("transferModal").classList.remove("show")
+
 }
 
 function transfer(){
 
 const a=currentAccount();
+
+if(!a)
+return openModal("login");
+
 const c=$("transferCurrency").value;
 const amt=Number($("transferAmount").value);
 const r=$("transferRecipient").value.trim();
@@ -1901,13 +2973,22 @@ c
 saveAccounts();
 
 closeTransfer();
+
 refreshDashboard(false);
 
 toast("Demo transfer recorded.")
+
 }
 
+
+/* =========================================================
+   PROFILE IMAGE
+   ========================================================= */
+
 function chooseProfileImage(){
+
 $("profileImageInput").click()
+
 }
 
 function handleProfileImage(e){
@@ -1917,7 +2998,9 @@ const f=e.target.files[0];
 if(!f)return;
 
 if(!f.type.startsWith("image/"))
-return toast("Please select an image file.");
+return toast(
+"Please select an image file."
+);
 
 const reader=new FileReader();
 
@@ -1936,14 +3019,22 @@ renderAvatar();
 $("profileImageInput").value="";
 
 toast("Profile picture updated.")
+
 };
 
 reader.readAsDataURL(f)
+
 }
+
+
+/* =========================================================
+   PROFILE NAME
+   ========================================================= */
 
 function saveProfileName(){
 
 const a=currentAccount();
+
 const n=$("profileName").value.trim();
 
 if(!a||n.length<2)
@@ -1957,14 +3048,21 @@ $("welcomeName").textContent=n;
 $("dashName").textContent=n;
 
 renderAvatar();
-renderCustomerList();
 
 toast("Profile updated.")
+
 }
+
+
+/* =========================================================
+   ADMIN CUSTOMER LIST
+   ========================================================= */
 
 function renderCustomerList(){
 
 const box=$("customerList");
+
+if(!box)return;
 
 if(!accounts.length){
 
@@ -1972,15 +3070,16 @@ box.innerHTML=
 '<div class="empty">No customers registered.</div>';
 
 return
+
 }
 
 selectedCustomerId=
 selectedCustomerId||
-currentUserId||
 accounts[0].id;
 
 box.innerHTML=
-accounts.map(a=>`
+accounts
+.map(a=>`
 
 <button
 class="customerItem ${a.id===selectedCustomerId?"active":""}"
@@ -1999,32 +3098,72 @@ ${escapeHtml(a.email)}
 
 </div>
 
-<small>${a.primaryCurrency}</small>
+<small>
+${escapeHtml(a.primaryCurrency)}
+</small>
 
 </button>
 
-`).join("");
+`)
+.join("");
 
-renderAdminChat()
 }
+
+
+/* =========================================================
+   SELECT CUSTOMER
+   ========================================================= */
 
 function selectCustomer(id){
 
 selectedCustomerId=id;
 
-renderCustomerList()
+renderCustomerList();
+
+renderAdminChat();
+
+const c=selectedCustomer();
+
+if(c){
+
+$("adminCurrency").value=
+c.primaryCurrency;
+
 }
+
+}
+
+
+/* =========================================================
+   SELECTED CUSTOMER
+   ========================================================= */
 
 function selectedCustomer(){
-return findAccount(selectedCustomerId)
+
+return findAccount(
+selectedCustomerId
+)
+
 }
 
+
+/* =========================================================
+   ADMIN CREDIT
+   ========================================================= */
+
 function adminCredit(){
+
+if(!isAdmin())
+return toast(
+"Administrator authentication required."
+);
 
 const c=selectedCustomer();
 
 if(!c)
-return toast("Select a customer first.");
+return toast(
+"Select a customer first."
+);
 
 const cur=$("adminCurrency").value;
 const amt=Number($("adminAmount").value);
@@ -2044,53 +3183,78 @@ cur
 );
 
 c.notifications.push({
+
 id:makeId(),
+
 message:
 `A demo credit of ${money(amt,cur)} was added to your ${cur} balance.`,
+
 date:now()
+
 });
 
 saveAccounts();
 
 $("adminAmount").value="";
 
-if(c.id===currentUserId)
-refreshDashboard(false);
-
 renderCustomerList();
+
+renderAdminChat();
 
 toast(
 money(amt,cur)+
 " credited and recorded."
 )
+
 }
 
+
+/* =========================================================
+   ADMIN NOTIFICATION
+   ========================================================= */
+
 function adminNotify(){
+
+if(!isAdmin())
+return toast(
+"Administrator authentication required."
+);
 
 const c=selectedCustomer();
 const m=$("adminNotification").value.trim();
 
 if(!c)
-return toast("Select a customer first.");
+return toast(
+"Select a customer first."
+);
 
 if(!m)
-return toast("Write a notification first.");
+return toast(
+"Write a notification first."
+);
 
 c.notifications.push({
+
 id:makeId(),
 message:m,
 date:now()
+
 });
 
 saveAccounts();
 
 $("adminNotification").value="";
 
-if(c.id===currentUserId)
-renderNotifications();
+toast(
+"Notification sent to the selected demo account."
+)
 
-toast("Notification sent to the selected demo account.")
 }
+
+
+/* =========================================================
+   CUSTOMER CHAT
+   ========================================================= */
 
 function renderChat(){
 
@@ -2104,41 +3268,66 @@ const ms=a.support||[];
 body.innerHTML=
 ms.length
 ?
-ms.map(m=>`
+ms
+.map(m=>`
+
 <div class="msg ${m.sender==="customer"?"user":""}">
 
 ${
 m.sender==="customer"
 ?escapeHtml(m.message)
-:"<strong>Support:</strong><br>"+escapeHtml(m.message)
+:"<strong>Support:</strong><br>"+
+escapeHtml(m.message)
 }
 
-<div style="font-size:10px;color:#718096;margin-top:4px">
+<div style="
+font-size:10px;
+color:#718096;
+margin-top:4px
+">
+
 ${escapeHtml(m.date)}
+
 </div>
 
 </div>
+
 `)
 .join("")
 :
 '<div class="msg">Welcome to demo support. How can we help you?</div>';
 
 body.scrollTop=body.scrollHeight
+
 }
+
+
+/* =========================================================
+   SEND CUSTOMER CHAT
+   ========================================================= */
 
 function sendChat(){
 
+if(isAdmin())
+return toast(
+"Customer support chat is not available from administrator view."
+);
+
 const a=currentAccount();
+
 const i=$("chatInput");
+
 const t=i.value.trim();
 
 if(!a||!t)return;
 
 a.support.push({
+
 id:makeId(),
 sender:"customer",
 message:t,
 date:now()
+
 });
 
 saveAccounts();
@@ -2146,15 +3335,25 @@ saveAccounts();
 i.value="";
 
 renderChat();
-renderAdminChat();
 
-toast("Message sent to demo support.")
+toast(
+"Message sent to demo support."
+)
+
 }
+
+
+/* =========================================================
+   ADMIN CHAT
+   ========================================================= */
 
 function renderAdminChat(){
 
 const c=selectedCustomer();
+
 const box=$("adminChat");
+
+if(!box)return;
 
 if(!c){
 
@@ -2162,6 +3361,7 @@ box.innerHTML=
 '<div class="empty">Select a customer.</div>';
 
 return
+
 }
 
 const ms=c.support||[];
@@ -2169,7 +3369,9 @@ const ms=c.support||[];
 box.innerHTML=
 ms.length
 ?
-ms.map(m=>`
+ms
+.map(m=>`
+
 <div class="msg ${m.sender==="customer"?"user":""}">
 
 ${
@@ -2180,42 +3382,70 @@ m.sender==="customer"
 
 ${escapeHtml(m.message)}
 
-<div style="font-size:10px;color:#718096;margin-top:4px">
+<div style="
+font-size:10px;
+color:#718096;
+margin-top:4px
+">
+
 ${escapeHtml(m.date)}
+
 </div>
 
 </div>
+
 `)
 .join("")
 :
 '<div class="empty">No support messages.</div>';
 
 box.scrollTop=box.scrollHeight
+
 }
+
+
+/* =========================================================
+   ADMIN REPLY
+   ========================================================= */
 
 function adminReplyMessage(){
 
+if(!isAdmin())
+return toast(
+"Administrator authentication required."
+);
+
 const c=selectedCustomer();
+
 const i=$("adminReply");
+
 const t=i.value.trim();
 
 if(!c)
-return toast("Select a customer first.");
+return toast(
+"Select a customer first."
+);
 
 if(!t)
-return toast("Write a reply first.");
+return toast(
+"Write a reply first."
+);
 
 c.support.push({
+
 id:makeId(),
 sender:"admin",
 message:t,
 date:now()
+
 });
 
 c.notifications.push({
+
 id:makeId(),
 message:"Support has replied to your message.",
 date:now()
+
 });
 
 saveAccounts();
@@ -2224,13 +3454,21 @@ i.value="";
 
 renderAdminChat();
 
-if(c.id===currentUserId)
-refreshDashboard(false);
+toast(
+"Reply sent and notification added."
+)
 
-toast("Reply sent and notification added.")
 }
 
+
+/* =========================================================
+   DEMO SERVICES
+   ========================================================= */
+
 function openDemoService(name){
+
+if(!currentAccount())
+return openModal("login");
 
 $("serviceTitle").textContent=name;
 
@@ -2241,39 +3479,69 @@ name+
 $("serviceInput").value="";
 
 $("serviceModal").classList.add("show")
+
 }
 
 function submitDemoService(){
 
 const a=currentAccount();
+
 const t=$("serviceInput").value.trim();
 
-if(!t)
-return toast("Enter request details.");
+if(!a)
+return openModal("login");
 
-if(a){
+if(!t)
+return toast(
+"Enter request details."
+);
 
 a.notifications.push({
+
 id:makeId(),
+
 message:
 `Demo ${$("serviceTitle").textContent} request received: ${t}`,
+
 date:now()
+
 });
 
 saveAccounts();
-renderNotifications()
-}
 
 closeService();
 
-toast("Demo service request received.")
+refreshDashboard(false);
+
+toast(
+"Demo service request received."
+)
+
 }
 
 function closeService(){
+
 $("serviceModal").classList.remove("show")
+
 }
 
+
+/* =========================================================
+   DASHBOARD REFRESH
+   ========================================================= */
+
 function refreshDashboard(showToast=true){
+
+if(isAdmin()){
+
+renderAdminDashboard();
+
+if(showToast)
+toast("Administrator dashboard refreshed.");
+
+return
+
+}
 
 renderBalance();
 renderCurrencyBalances();
@@ -2284,24 +3552,49 @@ renderLiveBanner();
 
 if(showToast)
 toast("Dashboard refreshed.")
+
 }
 
+
+/* =========================================================
+   ADMIN REFRESH
+   ========================================================= */
+
 function refreshAdmin(){
+
+if(!isAdmin())
+return toast(
+"Administrator authentication required."
+);
 
 accounts=loadAccounts();
 
 renderCustomerList();
-refreshDashboard(false);
+renderAdminChat();
 
-toast("Customer list refreshed.")
+toast(
+"Customer list refreshed."
+)
+
 }
+
+
+/* =========================================================
+   SERVICES SCROLL
+   ========================================================= */
 
 function scrollToServices(){
 
 $("dashboardServices").scrollIntoView({
 behavior:"smooth"
 })
+
 }
+
+
+/* =========================================================
+   CHAT
+   ========================================================= */
 
 function toggleChat(){
 
@@ -2309,24 +3602,57 @@ $("chat").classList.toggle("show");
 
 if($("chat").classList.contains("show"))
 renderChat()
+
 }
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
 
 function logout(){
 
-if(liveTimer)
+if(liveTimer){
+
 clearInterval(liveTimer);
 
+liveTimer=null
+
+}
+
+const wasAdmin=isAdmin();
+
 localStorage.removeItem(SESSION_KEY);
+localStorage.removeItem(ADMIN_SESSION_KEY);
 
 currentUserId=null;
+
+selectedCustomerId=null;
 
 $("dashboard").style.display="none";
 $("publicSite").style.display="block";
 
-toast("Signed out.")
+$("chat").classList.remove("show");
+
+toast(
+wasAdmin
+?"Administrator signed out."
+:"Signed out."
+)
+
 }
 
+
+/* =========================================================
+   CLEAR ACCOUNTS
+   ========================================================= */
+
 function clearAllAccounts(){
+
+if(!isAdmin())
+return toast(
+"Administrator authentication required."
+);
 
 if(!confirm(
 "Delete all local demo accounts, balances, transactions and support messages?"
@@ -2343,26 +3669,107 @@ selectedCustomerId=null;
 $("dashboard").style.display="none";
 $("publicSite").style.display="block";
 
-toast("Local demo accounts cleared.")
+localStorage.removeItem(
+ADMIN_SESSION_KEY
+);
+
+toast(
+"Local demo accounts cleared."
+)
+
 }
 
-window.addEventListener("load",()=>{
+
+/* =========================================================
+   CLOSE MODALS WHEN CLICKING OUTSIDE
+   ========================================================= */
+
+window.addEventListener(
+"click",
+function(e){
+
+if(e.target===$("authModal"))
+closeModal();
+
+if(e.target===$("transferModal"))
+closeTransfer();
+
+if(e.target===$("serviceModal"))
+closeService();
+
+}
+);
+
+
+/* =========================================================
+   ESCAPE KEY
+   ========================================================= */
+
+window.addEventListener(
+"keydown",
+function(e){
+
+if(e.key==="Escape"){
+
+closeModal();
+closeTransfer();
+closeService();
+
+}
+
+}
+);
+
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+window.addEventListener(
+"load",
+()=>{
+
+loadBalanceVisibility();
 
 accounts=loadAccounts();
 
-if(currentUserId&&findAccount(currentUserId)){
+const adminSession=
+localStorage.getItem(
+ADMIN_SESSION_KEY
+)==="1";
 
-showDashboard()
+if(adminSession){
+
+currentUserId=null;
+
+showAdminDashboard();
+
+return
+
+}
+
+if(
+currentUserId&&
+findAccount(currentUserId)
+){
+
+showDashboard();
 
 }else{
 
 currentUserId=null;
 
-localStorage.removeItem(SESSION_KEY)
+localStorage.removeItem(
+SESSION_KEY
+);
+
+$("publicSite").style.display="block";
+$("dashboard").style.display="none";
 
 }
 
-});
+}
+);
 
 </script>
 
