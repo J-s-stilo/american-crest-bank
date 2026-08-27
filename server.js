@@ -25,7 +25,9 @@ if (!JWT_SECRET) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 app.use(cors());
@@ -51,15 +53,31 @@ app.use("/api/login", authLimiter);
 app.use("/api/register", authLimiter);
 
 const CURRENCIES = [
-  "NGN","USD","EUR","GBP","IDR","CAD","AUD",
-  "CHF","JPY","CNY","INR","MYR","SGD","AED",
-  "ZAR","KES","GHS"
+  "NGN",
+  "USD",
+  "EUR",
+  "GBP",
+  "IDR",
+  "CAD",
+  "AUD",
+  "CHF",
+  "JPY",
+  "CNY",
+  "INR",
+  "MYR",
+  "SGD",
+  "AED",
+  "ZAR",
+  "KES",
+  "GHS"
 ];
 
 function balanceColumn(currency) {
   const c = String(currency || "").toUpperCase();
 
-  if (!CURRENCIES.includes(c)) return null;
+  if (!CURRENCIES.includes(c)) {
+    return null;
+  }
 
   return `balance_${c.toLowerCase()}`;
 }
@@ -75,7 +93,9 @@ function makeToken(user) {
       isAdmin: Boolean(user.is_admin)
     },
     JWT_SECRET,
-    { expiresIn: "7d" }
+    {
+      expiresIn: "7d"
+    }
   );
 }
 
@@ -112,6 +132,7 @@ function requireAuth(req, res, next) {
     }
 
     const token = header.slice(7);
+
     req.user = jwt.verify(token, JWT_SECRET);
 
     next();
@@ -132,18 +153,9 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-async function getUserById(id) {
-  const result = await pool.query(
-    "SELECT * FROM users WHERE id = $1",
-    [id]
-  );
-
-  return result.rows[0] || null;
-}
-
 /* =========================================================
    DATABASE
-   ========================================================= */
+========================================================= */
 
 async function initDatabase() {
   await pool.query(`
@@ -215,12 +227,27 @@ async function initDatabase() {
     )
   `);
 
+  /*
+   * FIX:
+   * The admin side uses /api/admin/requests,
+   * but the old server did not create this table.
+   */
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS admin_requests (
+      id SERIAL PRIMARY KEY,
+      request_type TEXT NOT NULL DEFAULT 'general',
+      message TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+
   console.log("Demo database initialized.");
 }
 
 /* =========================================================
    HEALTH
-   ========================================================= */
+========================================================= */
 
 app.get("/api/health", async (req, res) => {
   try {
@@ -232,19 +259,26 @@ app.get("/api/health", async (req, res) => {
       mode: "fictional-demo"
     });
   } catch {
-    res.status(500).json({ ok: false });
+    res.status(500).json({
+      ok: false
+    });
   }
 });
 
 /* =========================================================
    REGISTER
-   ========================================================= */
+========================================================= */
 
 app.post("/api/register", async (req, res) => {
   try {
     const name = String(req.body.name || "").trim();
-    const email = String(req.body.email || "").trim().toLowerCase();
+
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+
     const password = String(req.body.password || "");
+
     const currency = String(
       req.body.primaryCurrency || "NGN"
     ).toUpperCase();
@@ -328,7 +362,7 @@ app.post("/api/register", async (req, res) => {
 
 /* =========================================================
    LOGIN
-   ========================================================= */
+========================================================= */
 
 app.post("/api/login", async (req, res) => {
   try {
@@ -379,7 +413,7 @@ app.post("/api/login", async (req, res) => {
 
 /* =========================================================
    ME
-   ========================================================= */
+========================================================= */
 
 app.get("/api/me", requireAuth, async (req, res) => {
   try {
@@ -402,8 +436,21 @@ app.get("/api/me", requireAuth, async (req, res) => {
 });
 
 /* =========================================================
+   HELPER
+========================================================= */
+
+async function getUserById(id) {
+  const result = await pool.query(
+    "SELECT * FROM users WHERE id = $1",
+    [id]
+  );
+
+  return result.rows[0] || null;
+}
+
+/* =========================================================
    TRANSACTIONS
-   ========================================================= */
+========================================================= */
 
 app.get("/api/transactions", requireAuth, async (req, res) => {
   try {
@@ -436,7 +483,7 @@ app.get("/api/transactions", requireAuth, async (req, res) => {
 
 /* =========================================================
    CUSTOMER TRANSFER — DEMO ONLY
-   ========================================================= */
+========================================================= */
 
 app.post("/api/transfers", requireAuth, async (req, res) => {
   const client = await pool.connect();
@@ -447,6 +494,7 @@ app.post("/api/transfers", requireAuth, async (req, res) => {
     ).toUpperCase();
 
     const amount = Number(req.body.amount);
+
     const recipient = String(
       req.body.recipient || ""
     ).trim();
@@ -518,7 +566,8 @@ app.post("/api/transfers", requireAuth, async (req, res) => {
       "DEMO-" +
       Date.now().toString(36).toUpperCase() +
       "-" +
-      Math.random().toString(36)
+      Math.random()
+        .toString(36)
         .slice(2, 7)
         .toUpperCase();
 
@@ -589,7 +638,7 @@ app.post("/api/transfers", requireAuth, async (req, res) => {
 
 /* =========================================================
    CUSTOMER NOTIFICATIONS
-   ========================================================= */
+========================================================= */
 
 app.get("/api/notifications", requireAuth, async (req, res) => {
   try {
@@ -621,7 +670,7 @@ app.get("/api/notifications", requireAuth, async (req, res) => {
 
 /* =========================================================
    CUSTOMER SUPPORT
-   ========================================================= */
+========================================================= */
 
 app.post("/api/support", requireAuth, async (req, res) => {
   try {
@@ -703,7 +752,7 @@ app.get("/api/support", requireAuth, async (req, res) => {
 
 /* =========================================================
    PROFILE
-   ========================================================= */
+========================================================= */
 
 app.put("/api/profile", requireAuth, async (req, res) => {
   try {
@@ -780,7 +829,7 @@ app.put("/api/profile-image", requireAuth, async (req, res) => {
 
 /* =========================================================
    ADMIN SUMMARY
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/api/admin/summary",
@@ -789,7 +838,11 @@ app.get(
   async (req, res) => {
     try {
       const customersResult = await pool.query(
-        "SELECT COUNT(*)::INTEGER AS count FROM users WHERE is_admin = FALSE"
+        `
+        SELECT COUNT(*)::INTEGER AS count
+        FROM users
+        WHERE is_admin = FALSE
+        `
       );
 
       const pendingResult = await pool.query(
@@ -815,20 +868,24 @@ app.get(
         `
       );
 
+      /*
+       * FIX:
+       * Instead of only selecting seven currencies,
+       * select ALL supported currency balances.
+       */
+      const balanceColumns = CURRENCIES.map(
+        currency =>
+          `SUM(balance_${currency.toLowerCase()}) AS "${currency.toLowerCase()}"`
+      ).join(",\n");
+
       const balanceResult = await pool.query(`
         SELECT
-          SUM(balance_ngn) AS ngn,
-          SUM(balance_usd) AS usd,
-          SUM(balance_eur) AS eur,
-          SUM(balance_gbp) AS gbp,
-          SUM(balance_idr) AS idr,
-          SUM(balance_cad) AS cad,
-          SUM(balance_aud) AS aud
+          ${balanceColumns}
         FROM users
         WHERE is_admin = FALSE
       `);
 
-      const row = balanceResult.rows[0];
+      const row = balanceResult.rows[0] || {};
 
       const balances = CURRENCIES
         .map(currency => ({
@@ -857,7 +914,7 @@ app.get(
 
 /* =========================================================
    ADMIN CUSTOMERS
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/api/admin/customers",
@@ -872,28 +929,34 @@ app.get(
         ORDER BY created_at DESC
       `);
 
-      /*
-       * The admin HTML expects the ARRAY directly.
-       */
       res.json(
         result.rows.map(row => ({
           id: row.id,
           full_name: row.name,
           email: row.email,
-          status: String(row.status || "active").toLowerCase(),
+          status: String(
+            row.status || "active"
+          ).toLowerCase(),
           created_at: row.created_at,
-          accounts: CURRENCIES.map(currency => ({
-            currency,
-            balance: Number(
-              row[
-                `balance_${currency.toLowerCase()}`
-              ] || 0
+          accounts: CURRENCIES
+            .map(currency => ({
+              currency,
+              balance: Number(
+                row[
+                  `balance_${currency.toLowerCase()}`
+                ] || 0
+              )
+            }))
+            .filter(
+              account => account.balance !== 0
             )
-          })).filter(account => account.balance !== 0)
         }))
       );
     } catch (error) {
-      console.error("ADMIN CUSTOMERS ERROR:", error);
+      console.error(
+        "ADMIN CUSTOMERS ERROR:",
+        error
+      );
 
       res.status(500).json({
         error: "Unable to load customers."
@@ -904,7 +967,7 @@ app.get(
 
 /* =========================================================
    ADMIN CUSTOMER FUNDS
-   ========================================================= */
+========================================================= */
 
 app.post(
   "/api/admin/customers/:id/funds",
@@ -1020,7 +1083,8 @@ app.post(
 
       res.json({
         success: true,
-        message: "Customer demo account funded successfully.",
+        message:
+          "Customer demo account funded successfully.",
         customerId,
         amount,
         currency
@@ -1041,7 +1105,7 @@ app.post(
 
 /* =========================================================
    ADMIN CUSTOMER STATUS
-   ========================================================= */
+========================================================= */
 
 app.patch(
   "/api/admin/customers/:id/status",
@@ -1049,13 +1113,19 @@ app.patch(
   requireAdmin,
   async (req, res) => {
     try {
-      const id = Number(req.params.id);
+      const id = Number(
+        req.params.id
+      );
 
       const status = String(
         req.body.status || ""
       ).toLowerCase();
 
-      if (!["active","suspended"].includes(status)) {
+      if (
+        !["active", "suspended"].includes(
+          status
+        )
+      ) {
         return res.status(400).json({
           error: "Invalid customer status."
         });
@@ -1092,7 +1162,7 @@ app.patch(
 
 /* =========================================================
    ADMIN TRANSFERS
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/api/admin/transfers",
@@ -1137,7 +1207,7 @@ app.get(
 
 /* =========================================================
    ADMIN TRANSFER STATUS
-   ========================================================= */
+========================================================= */
 
 app.patch(
   "/api/admin/transfers/:id/status",
@@ -1147,13 +1217,21 @@ app.patch(
     const client = await pool.connect();
 
     try {
-      const id = Number(req.params.id);
+      const id = Number(
+        req.params.id
+      );
 
       const status = String(
         req.body.status || ""
       ).toLowerCase();
 
-      if (!["successful","declined","pending"].includes(status)) {
+      if (
+        ![
+          "successful",
+          "declined",
+          "pending"
+        ].includes(status)
+      ) {
         return res.status(400).json({
           error: "Invalid transfer status."
         });
@@ -1186,7 +1264,9 @@ app.patch(
         status === "declined"
       ) {
         const column =
-          balanceColumn(transfer.currency);
+          balanceColumn(
+            transfer.currency
+          );
 
         await client.query(
           `
@@ -1246,7 +1326,10 @@ app.patch(
     } catch (error) {
       await client.query("ROLLBACK");
 
-      console.error("TRANSFER STATUS ERROR:", error);
+      console.error(
+        "TRANSFER STATUS ERROR:",
+        error
+      );
 
       res.status(500).json({
         error: "Unable to update transfer."
@@ -1259,7 +1342,7 @@ app.patch(
 
 /* =========================================================
    ADMIN SUPPORT LIST
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/api/admin/support",
@@ -1282,7 +1365,8 @@ app.get(
               WHERE reply.user_id = sm.user_id
               AND reply.sender = 'admin'
               AND reply.created_at > sm.created_at
-            ),0
+            ),
+            0
           ) AS replies
         FROM support_messages sm
         JOIN users u ON u.id = sm.user_id
@@ -1305,7 +1389,8 @@ app.get(
       );
     } catch {
       res.status(500).json({
-        error: "Unable to load support requests."
+        error:
+          "Unable to load support requests."
       });
     }
   }
@@ -1313,7 +1398,7 @@ app.get(
 
 /* =========================================================
    ADMIN SUPPORT REPLY
-   ========================================================= */
+========================================================= */
 
 app.post(
   "/api/admin/support/:id/reply",
@@ -1321,7 +1406,9 @@ app.post(
   requireAdmin,
   async (req, res) => {
     try {
-      const id = Number(req.params.id);
+      const id = Number(
+        req.params.id
+      );
 
       const message = String(
         req.body.message || ""
@@ -1394,7 +1481,7 @@ app.post(
 
 /* =========================================================
    ADMIN NOTIFICATIONS
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/api/admin/notifications",
@@ -1425,7 +1512,8 @@ app.get(
       );
     } catch {
       res.status(500).json({
-        error: "Unable to load notifications."
+        error:
+          "Unable to load notifications."
       });
     }
   }
@@ -1433,7 +1521,7 @@ app.get(
 
 /* =========================================================
    ADMIN MARK NOTIFICATION READ
-   ========================================================= */
+========================================================= */
 
 app.patch(
   "/api/admin/notifications/:id/read",
@@ -1441,7 +1529,9 @@ app.patch(
   requireAdmin,
   async (req, res) => {
     try {
-      const id = Number(req.params.id);
+      const id = Number(
+        req.params.id
+      );
 
       const result = await pool.query(
         `
@@ -1464,7 +1554,8 @@ app.patch(
       });
     } catch {
       res.status(500).json({
-        error: "Unable to mark notification as read."
+        error:
+          "Unable to mark notification as read."
       });
     }
   }
@@ -1472,7 +1563,7 @@ app.patch(
 
 /* =========================================================
    ADMIN SEND NOTIFICATION
-   ========================================================= */
+========================================================= */
 
 app.post(
   "/api/admin/notify",
@@ -1503,7 +1594,10 @@ app.post(
       const customer =
         await getUserById(customerId);
 
-      if (!customer || customer.is_admin) {
+      if (
+        !customer ||
+        customer.is_admin
+      ) {
         return res.status(404).json({
           error: "Customer not found."
         });
@@ -1528,7 +1622,8 @@ app.post(
       });
     } catch {
       res.status(500).json({
-        error: "Unable to send notification."
+        error:
+          "Unable to send notification."
       });
     }
   }
@@ -1536,7 +1631,7 @@ app.post(
 
 /* =========================================================
    ADMIN REQUESTS
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/api/admin/requests",
@@ -1544,6 +1639,10 @@ app.get(
   requireAdmin,
   async (req, res) => {
     try {
+      /*
+       * FIX:
+       * admin_requests is now created in initDatabase().
+       */
       const result = await pool.query(`
         SELECT
           id,
@@ -1565,7 +1664,12 @@ app.get(
           date: formatDate(row.created_at)
         }))
       });
-    } catch {
+    } catch (error) {
+      console.error(
+        "ADMIN REQUESTS ERROR:",
+        error
+      );
+
       res.status(500).json({
         error: "Unable to load requests."
       });
@@ -1575,111 +1679,136 @@ app.get(
 
 /* =========================================================
    ADMIN SETUP
-   ========================================================= */
+========================================================= */
 
-app.post("/api/admin/setup", async (req, res) => {
-  try {
-    const setupKey = String(
-      req.body.setupKey || ""
-    );
+app.post(
+  "/api/admin/setup",
+  async (req, res) => {
+    try {
+      const setupKey = String(
+        req.body.setupKey || ""
+      );
 
-    if (
-      !process.env.ADMIN_SETUP_KEY ||
-      setupKey !== process.env.ADMIN_SETUP_KEY
-    ) {
-      return res.status(403).json({
-        error: "Invalid setup key."
-      });
-    }
+      if (
+        !process.env.ADMIN_SETUP_KEY ||
+        setupKey !==
+          process.env.ADMIN_SETUP_KEY
+      ) {
+        return res.status(403).json({
+          error: "Invalid setup key."
+        });
+      }
 
-    const name = String(
-      req.body.name || ""
-    ).trim();
+      const name = String(
+        req.body.name || ""
+      ).trim();
 
-    const email = String(
-      req.body.email || ""
-    ).trim().toLowerCase();
+      const email = String(
+        req.body.email || ""
+      )
+        .trim()
+        .toLowerCase();
 
-    const password = String(
-      req.body.password || ""
-    );
+      const password = String(
+        req.body.password || ""
+      );
 
-    if (name.length < 2) {
-      return res.status(400).json({
-        error: "Invalid administrator name."
-      });
-    }
+      if (name.length < 2) {
+        return res.status(400).json({
+          error:
+            "Invalid administrator name."
+        });
+      }
 
-    if (!email.includes("@")) {
-      return res.status(400).json({
-        error: "Invalid administrator email."
-      });
-    }
+      if (!email.includes("@")) {
+        return res.status(400).json({
+          error:
+            "Invalid administrator email."
+        });
+      }
 
-    if (password.length < 8) {
-      return res.status(400).json({
-        error: "Administrator password must contain at least 8 characters."
-      });
-    }
+      if (password.length < 8) {
+        return res.status(400).json({
+          error:
+            "Administrator password must contain at least 8 characters."
+        });
+      }
 
-    const existing = await pool.query(
-      "SELECT id FROM users WHERE email = $1",
-      [email]
-    );
+      const existing =
+        await pool.query(
+          "SELECT id FROM users WHERE email = $1",
+          [email]
+        );
 
-    if (existing.rows.length) {
-      const result = await pool.query(
+      if (existing.rows.length) {
+        const result =
+          await pool.query(
+            `
+            UPDATE users
+            SET is_admin = TRUE,
+                name = $1,
+                password_hash = $2
+            WHERE email = $3
+            RETURNING *
+            `,
+            [
+              name,
+              await bcrypt.hash(
+                password,
+                12
+              ),
+              email
+            ]
+          );
+
+        return res.json({
+          success: true,
+          message:
+            "Existing account promoted to administrator."
+        });
+      }
+
+      const hash =
+        await bcrypt.hash(
+          password,
+          12
+        );
+
+      await pool.query(
         `
-        UPDATE users
-        SET is_admin = TRUE,
-            name = $1,
-            password_hash = $2
-        WHERE email = $3
-        RETURNING *
+        INSERT INTO users
+        (name,email,password_hash,primary_currency,is_admin)
+        VALUES ($1,$2,$3,'USD',TRUE)
         `,
         [
           name,
-          await bcrypt.hash(password, 12),
-          email
+          email,
+          hash
         ]
       );
 
-      return res.json({
+      res.status(201).json({
         success: true,
-        message: "Existing account promoted to administrator."
+        message:
+          "Administrator account created."
+      });
+    } catch (error) {
+      console.error(
+        "ADMIN SETUP ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to create administrator."
       });
     }
-
-    const hash = await bcrypt.hash(
-      password,
-      12
-    );
-
-    await pool.query(
-      `
-      INSERT INTO users
-      (name,email,password_hash,primary_currency,is_admin)
-      VALUES ($1,$2,$3,'USD',TRUE)
-      `,
-      [name, email, hash]
-    );
-
-    res.status(201).json({
-      success: true,
-      message: "Administrator account created."
-    });
-  } catch (error) {
-    console.error("ADMIN SETUP ERROR:", error);
-
-    res.status(500).json({
-      error: "Unable to create administrator."
-    });
   }
-});
+);
 
 /* =========================================================
    STATIC FILES
-   ========================================================= */
+========================================================= */
 
 app.use(
   express.static(
@@ -1695,25 +1824,33 @@ app.get("*", (req, res) => {
   }
 
   res.sendFile(
-    path.join(__dirname, "index.html")
+    path.join(
+      __dirname,
+      "index.html"
+    )
   );
 });
 
 /* =========================================================
    ERROR HANDLER
-   ========================================================= */
+========================================================= */
 
-app.use((error, req, res, next) => {
-  console.error("SERVER ERROR:", error);
+app.use(
+  (error, req, res, next) => {
+    console.error(
+      "SERVER ERROR:",
+      error
+    );
 
-  res.status(500).json({
-    error: "Internal server error."
-  });
-});
+    res.status(500).json({
+      error: "Internal server error."
+    });
+  }
+);
 
 /* =========================================================
    START
-   ========================================================= */
+========================================================= */
 
 initDatabase()
   .then(() => {
