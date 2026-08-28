@@ -1102,6 +1102,14 @@ Continue
 <div id="loginVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
 <button id="loginVerifyBtn" class="btn primary full" onclick="verifyLoginCode()">Verify &amp; Continue</button>
 </div>
+</div><div class="modal" id="registrationVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelRegistrationVerification()">×</button>
+<h2>Verify Account</h2>
+<p>Enter the 6-digit demo verification code to complete your account creation.</p>
+<div class="error" id="registrationVerifyError"></div>
+<div class="field"><label>Verification Code</label><input id="registrationVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
+<div id="registrationVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<button id="registrationVerifyBtn" class="btn primary full" onclick="verifyRegistrationCode()">Verify &amp; Continue</button>
+</div>
 </div><div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
 <h2 id="serviceTitle">Service</h2>
@@ -1169,6 +1177,7 @@ let publicSupportRequested=false;
 let knownNotificationIds=new Set();
 let notificationPopupTimer=null;
 let pendingLoginVerification=null;
+let pendingRegistrationVerification=null;
 
 const CURRENCY_INFO={
 
@@ -1604,6 +1613,36 @@ currency:currency
 
 );
 
+if(data&&data.verificationRequired&&data.verificationId){
+
+pendingRegistrationVerification={
+
+verificationId:String(data.verificationId),
+
+demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
+
+};
+
+closeModal();
+
+clearError('registrationVerifyError');
+
+$('registrationVerifyCode').value='';
+
+$('registrationVerifyDemoCode').textContent=pendingRegistrationVerification.demoCode
+
+? 'Demo verification code: '+pendingRegistrationVerification.demoCode
+
+: 'A verification code has been generated for this demo.';
+
+$('registrationVerifyModal').classList.add('show');
+
+setTimeout(()=>$('registrationVerifyCode').focus(),100);
+
+return;
+
+}
+
 if(!data||!data.token||!data.user){
 
 throw new Error(
@@ -1763,6 +1802,42 @@ function cancelLoginVerification(){
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 openModal('login');
+}
+
+function cancelRegistrationVerification(){
+pendingRegistrationVerification=null;
+$('registrationVerifyModal').classList.remove('show');
+openModal('register');
+}
+
+async function verifyRegistrationCode(){
+if(!pendingRegistrationVerification)return;
+const buttonId='registrationVerifyBtn';
+const code=$('registrationVerifyCode').value.trim();
+clearError('registrationVerifyError');
+if(!/^\d{6}$/.test(code)){
+return showError('registrationVerifyError','Enter the 6-digit verification code.');
+}
+setLoading(buttonId,true,'Verifying');
+try{
+const verified=await api('/auth/verify-registration',{
+method:'POST',
+body:JSON.stringify({verificationId:pendingRegistrationVerification.verificationId,code:code})
+});
+if(!verified||!verified.token||!verified.user){
+throw new Error('Verification succeeded but no login session was returned.');
+}
+token=String(verified.token);
+me=verified.user;
+pendingRegistrationVerification=null;
+$('registrationVerifyModal').classList.remove('show');
+showDashboard();
+toast('Demo account created successfully.');
+}catch(error){
+showError('registrationVerifyError',error.message||'Unable to verify the account.');
+}finally{
+setLoading(buttonId,false);
+}
 }
 
 async function loadMe(){
