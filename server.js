@@ -800,8 +800,16 @@ async function resolveSupportCustomerFromRequest(req) {
 DATABASE INITIALIZATION
 =========================================================
 */
-
 async function initDb() {
+  /*
+  =========================================================
+  DATABASE INITIALIZATION
+  =========================================================
+  Each CREATE TABLE is executed separately because some
+  PostgreSQL/Render configurations reject multiple commands
+  in a single prepared statement.
+  */
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS acb_users (
       id UUID PRIMARY KEY,
@@ -813,159 +821,95 @@ async function initDb() {
       primary_currency TEXT NOT NULL DEFAULT 'NGN',
       profile_image TEXT NOT NULL DEFAULT '',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
+    )
+  `);
 
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS acb_balances (
       user_id UUID NOT NULL
         REFERENCES acb_users(id)
         ON DELETE CASCADE,
-
       currency TEXT NOT NULL,
+      amount NUMERIC(24,2) NOT NULL DEFAULT 0,
+      PRIMARY KEY(user_id, currency)
+    )
+  `);
 
-      amount NUMERIC(24,2)
-        NOT NULL DEFAULT 0,
-
-      PRIMARY KEY(user_id,currency)
-    );
-
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS acb_transactions (
       id UUID PRIMARY KEY,
-
       user_id UUID NOT NULL
         REFERENCES acb_users(id)
         ON DELETE CASCADE,
-
       kind TEXT NOT NULL,
       title TEXT NOT NULL,
       amount NUMERIC(24,2) NOT NULL,
       currency TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
 
-      created_at TIMESTAMPTZ
-        NOT NULL DEFAULT NOW()
-    );
-
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS acb_notifications (
       id UUID PRIMARY KEY,
-
       user_id UUID NOT NULL
         REFERENCES acb_users(id)
         ON DELETE CASCADE,
-
       message TEXT NOT NULL,
-
-      created_at TIMESTAMPTZ
-        NOT NULL DEFAULT NOW(),
-
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       read_at TIMESTAMPTZ
-    );
+    )
+  `);
 
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS acb_requests (
       id UUID PRIMARY KEY,
-
       user_id UUID NOT NULL
         REFERENCES acb_users(id)
         ON DELETE CASCADE,
-
       currency TEXT NOT NULL,
       amount NUMERIC(24,2) NOT NULL,
       recipient TEXT NOT NULL,
       note TEXT NOT NULL DEFAULT '',
       status TEXT NOT NULL DEFAULT 'pending',
-
-      created_at TIMESTAMPTZ
-        NOT NULL DEFAULT NOW(),
-
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       handled_at TIMESTAMPTZ
-    );
+    )
+  `);
 
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS acb_support (
       id UUID PRIMARY KEY,
-
       user_id UUID NOT NULL
         REFERENCES acb_users(id)
         ON DELETE CASCADE,
-
       sender TEXT NOT NULL,
       message TEXT NOT NULL,
-
-      created_at TIMESTAMPTZ
-        NOT NULL DEFAULT NOW()
-    );
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
   `);
 
   /*
-  IMPORTANT:
-  Repair columns if an older database was created by a
-  previous version of the server.
+  =========================================================
+  REPAIR BALANCE ACCOUNTS
+  =========================================================
   */
-  await pool.query(`
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS name TEXT;
 
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS email TEXT;
-
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS password_hash TEXT;
-
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'customer';
-
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Active';
-
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS primary_currency TEXT DEFAULT 'NGN';
-
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS profile_image TEXT DEFAULT '';
-
-    ALTER TABLE acb_users
-      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+  const existingUsers = await pool.query(`
+    SELECT id
+    FROM acb_users
   `);
-
-  /*
-  Repair defaults/null values from older records.
-  */
-  await pool.query(`
-    UPDATE acb_users
-    SET role='customer'
-    WHERE role IS NULL OR TRIM(role)='';
-
-    UPDATE acb_users
-    SET status='Active'
-    WHERE status IS NULL OR TRIM(status)='';
-
-    UPDATE acb_users
-    SET primary_currency='NGN'
-    WHERE primary_currency IS NULL
-       OR TRIM(primary_currency)=''
-       OR NOT (
-         UPPER(TRIM(primary_currency)) = ANY($1)
-       );
-
-    UPDATE acb_users
-    SET profile_image=''
-    WHERE profile_image IS NULL;
-  `, [CURRENCIES]);
-
-  /*
-  Repair existing users.
-  */
-  const existingUsers =
-    await pool.query(`
-      SELECT id
-      FROM acb_users
-      WHERE id IS NOT NULL
-    `);
 
   for (const row of existingUsers.rows) {
     await ensureBalances(row.id);
   }
 
   /*
+  =========================================================
   ADMIN ACCOUNT
+  =========================================================
   */
+
   if (ADMIN_EMAIL && ADMIN_PASSWORD) {
     const existing = await pool.query(
       `
@@ -977,11 +921,10 @@ async function initDb() {
       [ADMIN_EMAIL]
     );
 
-    const passwordHash =
-      await bcrypt.hash(
-        ADMIN_PASSWORD,
-        12
-      );
+    const passwordHash = await bcrypt.hash(
+      ADMIN_PASSWORD,
+      12
+    );
 
     if (existing.rowCount) {
       await pool.query(
@@ -991,9 +934,7 @@ async function initDb() {
           name=$1,
           password_hash=$2,
           role='admin',
-          status='Active',
-          primary_currency='NGN',
-          profile_image=COALESCE(profile_image,'')
+          status='Active'
         WHERE id=$3
         `,
         [
@@ -1053,8 +994,10 @@ async function initDb() {
       );
     }
   }
-}
 
+  console.log('Database initialization completed successfully.');
+}
+    
 /*
 =========================================================
 HEALTH
