@@ -1697,6 +1697,45 @@ password:password
 
 );
 
+/* Complete the server's demo verification step automatically for customer login. */
+if(data && data.verificationRequired && data.verificationId){
+
+if(!data.demoVerificationCode){
+
+throw new Error('The server requires login verification, but no demo verification code was returned.');
+
+}
+
+const verified=await api(
+
+'/auth/verify-login',
+
+{
+
+method:'POST',
+
+body:JSON.stringify({
+
+verificationId:data.verificationId,
+
+code:String(data.demoVerificationCode)
+
+})
+
+}
+
+);
+
+if(!verified||!verified.token||!verified.user){
+
+throw new Error('The server returned an invalid login verification response.');
+
+}
+
+data=verified;
+
+}
+
 if(!data||!data.token||!data.user){
 
 throw new Error('The server returned an invalid login response.');
