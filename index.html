@@ -245,58 +245,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .notification{padding:13px;background:#eef5ff;border-left:4px solid var(--blue);border-radius:8px;margin-bottom:10px;font-size:13px}
 
 .notification small{display:block;color:var(--muted);margin-top:5px}
-
-.admin{display:none;margin-top:25px;background:#fff;border-radius:15px;padding:25px;box-shadow:0 12px 35px #071a5314}
-
-.admin h2{color:var(--navy);margin-bottom:7px}
-
-.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
-
-.adminBox{border:1px solid var(--border);padding:20px;border-radius:12px;box-shadow:none}
-
-.adminBox h3{margin-bottom:12px;color:var(--navy)}
-
-.adminBox input,.adminBox select,.adminBox textarea{width:100%;padding:11px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px}
-
-.customerList{max-height:300px;overflow:auto;border:1px solid var(--border);border-radius:10px;margin-top:10px}
-
-.customerItem{width:100%;border:0;border-bottom:1px solid var(--border);background:#fff;padding:12px;text-align:left;display:flex;justify-content:space-between;gap:10px}
-
-.customerItem:last-child{border-bottom:0}
-
-.customerItem.active{background:#eef5ff}
-
-.customerItem strong{display:block}
-
-.customerItem small{color:var(--muted)}
-
-.adminChat{height:250px;overflow:auto;background:#f5f7fa;border-radius:10px;padding:12px;margin-bottom:10px}
-
-.requestItem{padding:12px;border-bottom:1px solid var(--border)}
-
-.requestItem:last-child{border-bottom:0}
-
-.requestButtons{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
-
-.chatBtn{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:23px;z-index:60}
-
-.chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;max-width:calc(100% - 40px);background:#fff;border-radius:15px;box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
-
-.chat.show{display:block}
-
-.chatHead{background:var(--navy);color:#fff;padding:15px;display:flex;justify-content:space-between}
-
-.chatBody{height:260px;padding:14px;overflow:auto;background:#f5f7fa}
-
-.msg{padding:9px 11px;border-radius:11px;background:#fff;font-size:13px;margin-bottom:9px;max-width:85%;line-height:1.45}
-
-.msg.user{margin-left:auto;background:#dceaff}
-
-.chatInput{display:flex;border-top:1px solid #ddd}
-
-.chatInput input{flex:1;border:0;padding:12px;outline:0}
-
-.chatInput button{border:0;background:var(--blue);color:#fff;padding:0 16px}
+.notificationCenter{position:relative;margin:0 0 18px;display:flex;justify-content:flex-end;background:transparent;border:0;box-shadow:none;overflow:visible}.notificationCenterHead{position:relative;display:block}.notificationCenterHead h3,.notificationCenterHead span{display:none}.notificationBell{width:46px;height:46px;border:1px solid #d8e0eb;border-radius:50%;background:#fff;color:var(--navy);display:grid;place-items:center;font-size:22px;position:relative;box-shadow:0 6px 18px #071a5312}.notificationBell.hasUnread{animation:notificationBellPulse 1.15s ease-in-out infinite}.notificationBell.hasUnread:after{content:"";position:absolute;right:2px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--red);border:2px solid #fff}.notificationBadge{position:absolute;right:-5px;top:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--red);color:#fff;font-size:10px;font-weight:bold;display:none;align-items:center;justify-content:center;border:2px solid #fff}.notificationBadge.show{display:flex}.notificationBoard{display:none;position:absolute;right:0;top:52px;width:390px;max-width:calc(100vw - 30px);background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 18px 50px #071a5330;z-index:300;padding:0;overflow:hidden}.notificationBoard.show{display:block}.notificationBoardHead{display:flex;align-items:center;justify-content:space-between;background:var(--navy);color:#fff;padding:14px 15px}.notificationBoardHead strong{font-size:14px}.notificationBoardClose{border:0;background:none;color:#fff;font-size:20px;line-height:1}.notificationList{padding:10px;max-height:420px;overflow:auto}.notificationItem{background:#f7faff;border:1px solid #e2eaf5;border-radius:12px;padding:14px;margin-bottom:10px}.notificationItem:last-child{margin-bottom:0}.notificationItem.unread{border-left:4px solid var(--red);background:#eef5ff}.notificationItemMessage{font-size:14px;line-height:1.5;color:var(--text);white-space:pre-wrap;word-break:break-word}.notificationItemDate{font-size:11px;color:var(--muted);margin-top:6px}.notificationActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.notificationActions button{padding:7px 10px;border-radius:7px;font-size:11px}.notificationReply{display:none;margin-top:10px;gap:7px}.notificationReply.show{display:flex}.notificationReply input{flex:1;min-width:0;padding:10px;border:1px solid var(--border);border-radius:8px;outline:0}.notificationReply button{border:0;background:var(--blue);color:#fff;padding:0 12px;border-radius:8px;font-weight:bold}.notificationEmpty{text-align:center;color:var(--muted);font-size:13px;padding:25px 10px}@keyframes notificationBellPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}@media(max-width:600px){.notificationBoard{right:-8px;width:calc(100vw - 25px)}}
 
 .toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,120px);background:var(--navy);color:#fff;padding:12px 18px;border-radius:8px;transition:.3s;z-index:600}
 
@@ -682,7 +631,7 @@ onchange="handleProfileImage(event)">
 
 </div><div id="liveBanner" class="liveBanner"></div>
 
-<div id="notifications"></div><div class="grid"><div class="balance"><small>AVAILABLE DEMO BALANCE</small>
+<div id="notificationCenter" class="notificationCenter"><div class="notificationCenterHead"><button id="notificationBell" class="notificationBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications" title="Notifications">🔔<span id="notificationCount" class="notificationBadge">0</span></button><div id="notificationBoard" class="notificationBoard"><div class="notificationBoardHead"><strong>Notifications</strong><button class="notificationBoardClose" type="button" onclick="toggleNotificationBoard(false)" aria-label="Close">×</button></div><div id="notifications" class="notificationList"></div></div></div></div><div class="grid"><div class="balance"><small>AVAILABLE DEMO BALANCE</small>
 
 <div style="display:flex;align-items:center;gap:10px"><h2 id="balance">₦0.00</h2><button
 
@@ -804,7 +753,12 @@ Customers and customer activity are loaded directly from the server database.
 
 Nothing is stored as customer data in browser localStorage.
 
-</p><div class="adminGrid"><div class="adminBox"><h3>Customers</h3><div id="customerList" class="customerList">
+</p><div class="adminStats">
+<div class="adminStat"><small>CUSTOMERS</small><strong id="adminCustomersCount">0</strong></div>
+<div class="adminStat"><small>CUSTOMER BALANCES</small><strong id="adminBalancesTotal">0.00</strong></div>
+<div class="adminStat"><small>PENDING TRANSFERS</small><strong id="adminPendingCount">0</strong></div>
+<div class="adminStat"><small>OPEN SUPPORT</small><strong id="adminSupportCount">0</strong></div>
+</div><div class="adminGrid"><div class="adminBox"><h3>Customers</h3><div id="customerList" class="customerList">
 
 <div class="empty">Loading customers...</div>
 
@@ -890,9 +844,9 @@ No real bank account, payment, transfer or funds are created.
 
 <p>Sign in to your demo account.</p><div class="error" id="loginError"></div><div class="field">
 
-<label>Email or Phone</label>
+<label>Email</label>
 
-<input id="loginEmail" type="text" inputmode="email" autocomplete="username">
+<input id="loginEmail" type="email" autocomplete="username">
 
 </div><div class="field">
 
@@ -922,15 +876,9 @@ Create Account
 
 </div><div class="field">
 
-<label>Email (optional if using phone)</label>
+<label>Email</label>
 
 <input id="regEmail" type="email" autocomplete="username">
-
-</div><div class="field">
-
-<label>Phone (optional if using email)</label>
-
-<input id="regPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+2348012345678">
 
 </div><div class="field">
 
@@ -992,35 +940,7 @@ Sign In
 
 </div>
 
-</div><div id="verificationForm" style="display:none;position:fixed;z-index:1001;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,470px);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;padding:30px;box-shadow:0 20px 60px #0004">
-
-<h2>Verify Account</h2>
-
-<p>Enter the 6-digit verification code shown for this demo.</p>
-
-<div class="error" id="verificationError"></div>
-
-<div class="field">
-
-<label>Verification Code</label>
-
-<input id="verificationCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
-
-</div>
-
-<div id="demoVerificationCode" style="display:none;margin:10px 0;padding:10px;border-radius:8px;background:#eef4fb;color:#0d315d;font-weight:bold;text-align:center"></div>
-
-<button id="verificationBtn" class="btn primary full" onclick="submitVerification()">Verify &amp; Continue</button>
-
-<div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
-
-<button onclick="returnToAuth()" style="border:0;background:none;color:#1769e0;font-weight:bold">Back</button>
-
-</div>
-
-</div>
-
-<div class="modal" id="transferModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeTransfer()">×</button>
+</div><div class="modal" id="transferModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeTransfer()">×</button>
 
 <h2>Send Money</h2>
 
@@ -1090,6 +1010,22 @@ Continue
 
 </button></div>
 
+</div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+<h2>Verify Sign In</h2>
+<p>Enter the 6-digit demo verification code to continue.</p>
+<div class="error" id="loginVerifyError"></div>
+<div class="field"><label>Verification Code</label><input id="loginVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
+<div id="loginVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<button id="loginVerifyBtn" class="btn primary full" onclick="verifyLoginCode()">Verify &amp; Continue</button>
+</div>
+</div><div class="modal" id="registrationVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelRegistrationVerification()">×</button>
+<h2>Verify Account</h2>
+<p>Enter the 6-digit demo verification code to complete your account creation.</p>
+<div class="error" id="registrationVerifyError"></div>
+<div class="field"><label>Verification Code</label><input id="registrationVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
+<div id="registrationVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<button id="registrationVerifyBtn" class="btn primary full" onclick="verifyRegistrationCode()">Verify &amp; Continue</button>
+</div>
 </div><div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
 <h2 id="serviceTitle">Service</h2>
@@ -1120,7 +1056,7 @@ style="background:none;border:0;color:white;font-size:20px">
 
 </button>
 
-</div><div class="chatBody" id="chatBody"></div><div class="chatInput"><input
+</div><div class="chatBody" id="chatBody"></div><div class="chatImagePreview" id="chatImagePreview"><img id="chatImagePreviewImg" alt="Selected image"><button type="button" onclick="clearChatImage()">Remove image</button></div><div class="chatInput"><button type="button" class="chatAttach" onclick="chooseChatImage()" aria-label="Add image" title="Add image">📎</button><input id="chatImageInput" class="hiddenFile" type="file" accept="image/*" onchange="handleChatImage(event)"><input
 
 id="chatInput"
 
@@ -1143,13 +1079,18 @@ let me=null;
 let selectedCustomerId=null;
 
 let adminState=null;
-let verificationContext=null;
 
 let liveTimer=null;
 
 let balanceHidden=false;
 
 let publicSupportRequested=false;
+let knownNotificationIds=new Set();
+let notificationInitialized=false;
+let notificationAudioContext=null;
+let pendingLoginVerification=null;
+let pendingRegistrationVerification=null;
+let pendingChatImage=null;
 
 const CURRENCY_INFO={
 
@@ -1257,6 +1198,24 @@ $(id).classList.add('show');
 
 }
 
+function notificationPopup(message){
+
+$('toast').textContent=message;
+
+$('toast').classList.add('show');
+
+clearTimeout(window.__notificationToast);
+
+window.__notificationToast=setTimeout(
+
+()=>$('toast').classList.remove('show'),
+
+5600
+
+);
+
+}
+
 function clearError(id){
 
 $(id).textContent='';
@@ -1311,7 +1270,9 @@ function getCustomerIdentifiers(customer){
 
 if(!customer)return [];
 
-const values=[customer.id,
+const values=[
+
+customer.id,
 
 customer.user_id,
 
@@ -1506,29 +1467,131 @@ REGISTRATION
 async function register(){
 
 const buttonId='registerBtn';
+
 if($(buttonId).disabled)return;
+
 const name=$('regName').value.trim();
+
 const email=$('regEmail').value.trim().toLowerCase();
-const phone=$('regPhone').value.trim();
+
 const password=$('regPassword').value;
+
 const currency=$('regCurrency').value;
+
 clearError('registerError');
-if(name.length<2)return showError('registerError','Enter your full name.');
-if(!email&&!phone)return showError('registerError','Enter an email address or phone number.');
-if(email&&!/^\S+@\S+\.\S+$/.test(email))return showError('registerError','Enter a valid email address.');
-if(phone&&!/^\+?[0-9\s().-]{7,20}$/.test(phone))return showError('registerError','Enter a valid phone number.');
-if(password.length<6)return showError('registerError','Password must contain at least 6 characters.');
-setLoading(buttonId,true,'Creating account');
-try{
-const data=await api('/auth/register',{method:'POST',body:JSON.stringify({name,email,phone,password,currency})});
-if(data&&data.verificationRequired){
-verificationContext={purpose:'registration',verificationId:String(data.verificationId||''),identifier:email||phone};
-showVerification(data); toast('Verification code generated for the demo.'); return;
+
+if(name.length<2){
+
+return showError('registerError','Enter your full name.');
+
 }
-if(!data||!data.token||!data.user)throw new Error('Account was created, but the server did not return a valid login session.');
-token=String(data.token); me=data.user; closeModal(); showDashboard(); toast('Demo account created successfully.');
-}catch(error){showError('registerError',error.message||'Unable to create the account.');}
-finally{setLoading(buttonId,false);}
+
+if(!/^\S+@\S+\.\S+$/.test(email)){
+
+return showError('registerError','Enter a valid email address.');
+
+}
+
+if(password.length<6){
+
+return showError('registerError','Password must contain at least 6 characters.');
+
+}
+
+setLoading(buttonId,true,'Creating account');
+
+try{
+
+const data=await api(
+
+'/auth/register',
+
+{
+
+method:'POST',
+
+body:JSON.stringify({
+
+name:name,
+
+email:email,
+
+password:password,
+
+currency:currency
+
+})
+
+}
+
+);
+
+if(data&&data.verificationRequired&&data.verificationId){
+
+pendingRegistrationVerification={
+
+verificationId:String(data.verificationId),
+
+demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
+
+};
+
+closeModal();
+
+clearError('registrationVerifyError');
+
+$('registrationVerifyCode').value='';
+
+$('registrationVerifyDemoCode').textContent=pendingRegistrationVerification.demoCode
+
+? 'Demo verification code: '+pendingRegistrationVerification.demoCode
+
+: 'A verification code has been generated for this demo.';
+
+$('registrationVerifyModal').classList.add('show');
+
+setTimeout(()=>$('registrationVerifyCode').focus(),100);
+
+return;
+
+}
+
+if(!data||!data.token||!data.user){
+
+throw new Error(
+
+'Account was created, but the server did not return a valid login session.'
+
+);
+
+}
+
+token=String(data.token);
+
+me=data.user;
+
+closeModal();
+
+showDashboard();
+
+toast('Demo account created successfully.');
+
+}catch(error){
+
+showError(
+
+'registerError',
+
+error.message||'Unable to create the account.'
+
+);
+
+}finally{
+
+setLoading(buttonId,false);
+
+}
+
 }
 
 /*
@@ -1544,51 +1607,150 @@ Only the email is normalized.
 async function login(){
 
 const buttonId='loginBtn';
+
 if($(buttonId).disabled)return;
-const identifier=$('loginEmail').value.trim();
+
+const email=$('loginEmail').value.trim().toLowerCase();
 const password=$('loginPassword').value;
+
 clearError('loginError');
-if(!identifier)return showError('loginError','Enter your email address or phone number.');
-if(!password)return showError('loginError','Enter your password.');
+
+if(!email){
+return showError('loginError','Enter your email address.');
+}
+
+if(!/^\S+@\S+\.\S+$/.test(email)){
+return showError('loginError','Enter a valid email address.');
+}
+
+if(!password){
+return showError('loginError','Enter your password.');
+}
+
 setLoading(buttonId,true,'Signing in');
+
 try{
-const data=await api('/auth/login',{method:'POST',body:JSON.stringify({identifier,password})});
-if(data&&data.verificationRequired){
-verificationContext={purpose:'login',verificationId:String(data.verificationId||''),identifier};
-showVerification(data); toast('Verification code generated for the demo.'); return;
+const data=await api('/auth/login',{
+method:'POST',
+body:JSON.stringify({email:email,password:password})
+});
+
+if(data&&data.verificationRequired&&data.verificationId){
+  pendingLoginVerification={
+    verificationId:String(data.verificationId),
+    email:email,
+    password:password,
+    demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
+  };
+  closeModal();
+  clearError('loginVerifyError');
+  $('loginVerifyCode').value='';
+  $('loginVerifyDemoCode').textContent=pendingLoginVerification.demoCode
+    ? 'Demo verification code: '+pendingLoginVerification.demoCode
+    : 'A verification code has been generated for this demo.';
+  $('loginVerifyModal').classList.add('show');
+  setTimeout(()=>$('loginVerifyCode').focus(),100);
+  return;
 }
-if(!data||!data.token||!data.user)throw new Error('The server returned an invalid login response.');
-token=String(data.token); me=data.user; closeModal(); showDashboard();
+
+if(!data||!data.token||!data.user){
+throw new Error('The server returned an invalid login response.');
+}
+
+completeLogin(data);
+
+}catch(error){
+showError('loginError',error.message||'Unable to sign in.');
+}finally{
+setLoading(buttonId,false);
+}
+}
+
+function completeLogin(data){
+if(!data||!data.token||!data.user){
+throw new Error('The server returned an invalid login response.');
+}
+
+token=String(data.token);
+me=data.user;
+pendingLoginVerification=null;
+$('loginVerifyModal').classList.remove('show');
+closeModal();
+showDashboard();
+
 toast(String(me.role||'').toLowerCase()==='admin'?'Administrator signed in.':'Signed in successfully.');
-if(publicSupportRequested){publicSupportRequested=false;setTimeout(()=>{toggleChat();},250);}
-}catch(error){showError('loginError',error.message||'Unable to sign in.');}
-finally{setLoading(buttonId,false);}
+
+if(publicSupportRequested){
+publicSupportRequested=false;
+setTimeout(()=>toggleChat(),250);
+}
 }
 
-function showVerification(data){
-$('loginForm').style.display='none'; $('registerForm').style.display='none'; $('verificationForm').style.display='block';
-clearError('verificationError'); $('verificationCode').value='';
-const demo=String(data?.demoVerificationCode||data?.verificationCode||''); const box=$('demoVerificationCode');
-if(demo){box.textContent='Demo verification code: '+demo;box.style.display='block';}else{box.textContent='';box.style.display='none';}
-setTimeout(()=>$('verificationCode').focus(),100);
+async function verifyLoginCode(){
+if(!pendingLoginVerification)return;
+const buttonId='loginVerifyBtn';
+const code=$('loginVerifyCode').value.trim();
+clearError('loginVerifyError');
+if(!/^\d{6}$/.test(code)){
+return showError('loginVerifyError','Enter the 6-digit verification code.');
 }
-
-function returnToAuth(){verificationContext=null;$('verificationForm').style.display='none';showLogin();}
-
-async function submitVerification(){
-const buttonId='verificationBtn'; if($(buttonId).disabled)return;
-const code=$('verificationCode').value.trim(); clearError('verificationError');
-if(!verificationContext?.verificationId)return showError('verificationError','Your verification session is missing. Start again.');
-if(!/^\d{6}$/.test(code))return showError('verificationError','Enter the 6-digit verification code.');
 setLoading(buttonId,true,'Verifying');
 try{
-const endpoint=verificationContext.purpose==='registration'?'/auth/verify-registration':'/auth/verify-login';
-const data=await api(endpoint,{method:'POST',body:JSON.stringify({verificationId:verificationContext.verificationId,code})});
-if(!data||!data.token||!data.user)throw new Error('Verification succeeded but no login session was returned.');
-token=String(data.token); me=data.user; verificationContext=null; closeModal(); showDashboard(); toast('Verified and signed in successfully.');
-if(publicSupportRequested){publicSupportRequested=false;setTimeout(()=>toggleChat(),250);}
-}catch(error){showError('verificationError',error.message||'Unable to verify the account.');}
-finally{setLoading(buttonId,false);}
+const verified=await api('/auth/verify-login',{
+method:'POST',
+body:JSON.stringify({verificationId:pendingLoginVerification.verificationId,code:code})
+});
+if(!verified||!verified.token||!verified.user){
+throw new Error('The server returned an invalid verification response.');
+}
+completeLogin(verified);
+}catch(error){
+showError('loginVerifyError',error.message||'Unable to verify the sign in.');
+}finally{
+setLoading(buttonId,false);
+}
+}
+
+function cancelLoginVerification(){
+pendingLoginVerification=null;
+$('loginVerifyModal').classList.remove('show');
+openModal('login');
+}
+
+function cancelRegistrationVerification(){
+pendingRegistrationVerification=null;
+$('registrationVerifyModal').classList.remove('show');
+openModal('register');
+}
+
+async function verifyRegistrationCode(){
+if(!pendingRegistrationVerification)return;
+const buttonId='registrationVerifyBtn';
+const code=$('registrationVerifyCode').value.trim();
+clearError('registrationVerifyError');
+if(!/^\d{6}$/.test(code)){
+return showError('registrationVerifyError','Enter the 6-digit verification code.');
+}
+setLoading(buttonId,true,'Verifying');
+try{
+const verified=await api('/auth/verify-registration',{
+method:'POST',
+body:JSON.stringify({verificationId:pendingRegistrationVerification.verificationId,code:code})
+});
+if(!verified||!verified.token||!verified.user){
+throw new Error('Verification succeeded but no login session was returned.');
+}
+token=String(verified.token);
+me=verified.user;
+pendingRegistrationVerification=null;
+$('registrationVerifyModal').classList.remove('show');
+showDashboard();
+toast('Demo account created successfully.');
+}catch(error){
+showError('registrationVerifyError',error.message||'Unable to verify the account.');
+}finally{
+setLoading(buttonId,false);
+}
 }
 
 async function loadMe(){
@@ -1632,6 +1794,10 @@ DASHBOARD
 function showDashboard(){
 
 if(!me)return;
+
+// Seed the current notification set so existing notifications do not pop up on login.
+knownNotificationIds=new Set();
+lastNotificationId=null;
 
 $('publicSite').style.display='none';
 
@@ -1881,106 +2047,115 @@ ${money(transaction.amount,transaction.currency)}
 
 }
 
-function renderNotifications(){
-
-if(!me)return;
-
-const list=Array.isArray(me.notifications)
-
-?me.notifications
-
-:[];
-
-$('notifications').innerHTML=
-
-list.length
-
-?
-
-list.slice(0,10).map(notification=>`
-
-<div class="notification">
-
-<strong>Account Notification</strong>
-
-<div>${esc(notification.message)}</div>
-
-<small>${esc(notification.date||notification.created_at||'')}</small>
-
-</div>
-
-`).join('')
-
-:'';
-
+function notificationKey(notification,index){
+  return String(notification?.id||notification?.notification_id||notification?.uuid||((notification?.created_at||notification?.date||'')+'|'+(notification?.message||'')+'|'+index));
 }
 
-function renderChat(){
-
-if(!me)return;
-
-const body=$('chatBody');
-
-const list=Array.isArray(me.support)
-
-?me.support
-
-:[];
-
-body.innerHTML=
-
-list.length
-
-?
-
-list.map(message=>`
-
-<div class="msg ${
-
-String(message.sender||'').toLowerCase()==='customer'
-
-?'user'
-
-:''
-
-}">
-
-${
-
-String(message.sender||'').toLowerCase()==='customer'
-
-?
-
-esc(message.message)
-
-:
-
-'<strong>Support:</strong><br>'+esc(message.message)
-
+function getNotificationAudioContext(){
+  try{
+    const AudioContext=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContext)return null;
+    if(!notificationAudioContext)notificationAudioContext=new AudioContext();
+    return notificationAudioContext;
+  }catch{return null;}
 }
 
-<div style="
+function unlockNotificationAudio(){
+  const ctx=getNotificationAudioContext();
+  if(ctx&&ctx.state==='suspended'){try{ctx.resume();}catch{}}
+}
 
-font-size:10px;
+function playNotificationDing(){
+  try{
+    const ctx=getNotificationAudioContext();
+    if(!ctx)return;
+    const play=()=>{
+      try{
+        const oscillator=ctx.createOscillator();
+        const gain=ctx.createGain();
+        oscillator.type='sine';
+        oscillator.frequency.setValueAtTime(880,ctx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1320,ctx.currentTime+0.12);
+        gain.gain.setValueAtTime(0.0001,ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.16,ctx.currentTime+0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.35);
+        oscillator.connect(gain); gain.connect(ctx.destination);
+        oscillator.start(); oscillator.stop(ctx.currentTime+0.36);
+      }catch{}
+    };
+    if(ctx.state==='suspended'){ctx.resume().then(play).catch(()=>{});}else{play();}
+  }catch{}
+}
 
-color:#718096;
+if(typeof window!=='undefined'){
+  ['pointerdown','touchstart','keydown'].forEach(type=>window.addEventListener(type,unlockNotificationAudio,{once:true,passive:true}));
+}
 
-margin-top:4px">
+function formatNotificationDate(value){
+  if(!value)return '';
+  const date=new Date(value);
+  return Number.isNaN(date.getTime())?String(value):date.toLocaleString();
+}
+function toggleNotificationBoard(force){const board=$('notificationBoard');if(!board)return;const show=typeof force==='boolean'?force:!board.classList.contains('show');board.classList.toggle('show',show);if(show)renderNotifications();}
 
-${esc(message.date||message.created_at||'')}
+function updateNotificationIndicator(list){const items=Array.isArray(list)?list:[];const unread=items.filter(n=>!n.read_at&&!n.is_read).length;const count=$('notificationCount');const bell=$('notificationBell');if(count){count.textContent=String(unread);count.classList.toggle('show',unread>0);}if(bell)bell.classList.toggle('hasUnread',unread>0);}
 
-</div>
+function renderNotifications(){if(!me)return;const list=Array.isArray(me.notifications)?me.notifications:[];updateNotificationIndicator(list);const target=$('notifications');if(!target)return;target.innerHTML=list.length?list.slice(0,100).map((notification,index)=>{const id=notificationKey(notification,index);const unread=!notification.read_at&&!notification.is_read;return `<div class="notificationItem ${unread?'unread':''}"><strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:4px">Account Notification</strong><div class="notificationItemMessage">${esc(notification.message)}</div><div class="notificationItemDate">${esc(formatNotificationDate(notification.date||notification.created_at))}</div>${Array.isArray(notification.replies)&&notification.replies.length?notification.replies.map(reply=>`<div style="margin-top:10px;padding:9px 11px;background:#fff;border:1px solid var(--border);border-radius:9px;font-size:12px"><strong style="color:var(--navy)">Your reply</strong><div style="margin-top:3px">${esc(reply.message)}</div><small style="display:block;color:var(--muted);margin-top:4px">${esc(formatNotificationDate(reply.date||reply.created_at))}</small></div>`).join(''):''}<div class="notificationActions"><button type="button" class="outline notificationReplyBtn" data-key="${esc(id)}">Reply</button><button type="button" class="outline notificationDeleteBtn" data-id="${esc(notification.id||'')}">Delete</button></div><div class="notificationReply" id="reply-${esc(id)}"><input id="replyInput-${esc(id)}" maxlength="1000" placeholder="Reply to this notification..."><button type="button" class="notificationSendReplyBtn" data-id="${esc(notification.id||'')}" data-key="${esc(id)}">Send</button></div></div>`}).join(''):'<div class="notificationEmpty">No saved notifications.</div>';setupNotificationActions();const currentIds=new Set();list.forEach((notification,index)=>{const id=notificationKey(notification,index);currentIds.add(id);if(notificationInitialized&&!knownNotificationIds.has(id))playNotificationDing();});knownNotificationIds=currentIds;notificationInitialized=true;}
 
-</div>
+function setupNotificationActions(){
+const list=$('notifications');
+if(!list||list.dataset.bound==='1')return;
+list.dataset.bound='1';
+list.addEventListener('click',event=>{
+const reply=event.target.closest('.notificationReplyBtn');
+if(reply){
+ event.preventDefault(); event.stopPropagation();
+ toggleNotificationReply(reply.dataset.key); return;
+}
+const del=event.target.closest('.notificationDeleteBtn');
+if(del){
+ event.preventDefault(); event.stopPropagation();
+ deleteNotification(del.dataset.id); return;
+}
+const send=event.target.closest('.notificationSendReplyBtn');
+if(send){
+ event.preventDefault(); event.stopPropagation();
+ replyToNotification(send.dataset.id,send.dataset.key); return;
+}
+});
+}
 
-`).join('')
+function toggleNotificationReply(id){
+  const box=$('reply-'+id);
+  if(!box)return;
+  box.classList.toggle('show');
+  if(box.classList.contains('show')){
+    const input=$('replyInput-'+id);
+    if(input)setTimeout(()=>input.focus(),50);
+  }
+}
 
-:
+async function deleteNotification(notificationId){
+  if(!notificationId)return toast('This notification cannot be deleted.');
+  try{
+    await api('/notifications/'+encodeURIComponent(notificationId),{method:'DELETE'});
+    me.notifications=(Array.isArray(me.notifications)?me.notifications:[]).filter(n=>String(n.id)!==String(notificationId));
+    renderNotifications();
+    toast('Notification deleted.');
+  }catch(error){toast(error.message||'Unable to delete notification.');}
+}
 
-'<div class="msg">Welcome to demo support. How can we help you?</div>';
-
-body.scrollTop=body.scrollHeight;
-
+async function replyToNotification(notificationId,key){
+  if(!notificationId)return toast('This notification cannot receive a reply.');
+  const input=$('replyInput-'+key);
+  const message=input?.value.trim()||'';
+  if(!message)return toast('Write a reply first.');
+  try{
+    const data=await api('/notifications/'+encodeURIComponent(notificationId)+'/reply',{method:'POST',body:JSON.stringify({message})});
+    if(data.user)me=data.user;
+    renderNotifications();
+    toast('Reply sent.');
+  }catch(error){toast(error.message||'Unable to send reply.');}
 }
 
 async function refreshDashboard(showToast=true){
@@ -2253,6 +2428,22 @@ CUSTOMER SUPPORT
 
 */
 
+function renderChat(){
+if(!me)return;
+const list=Array.isArray(me.support)?me.support:[];
+const body=$('chatBody');
+if(!body)return;
+if(!list.length){
+body.innerHTML='<div style="padding:22px;text-align:center;color:var(--muted);font-size:13px">No messages yet. Send a message to customer support.</div>';
+return;
+}
+body.innerHTML=list.map(item=>{
+const mine=String(item.sender||'').toLowerCase()==='customer';
+const image=item.image||item.image_url||item.attachment_url||item.attachment; const imageHtml=image?`<img src="${esc(image)}" alt="Support attachment" style="display:block;max-width:100%;max-height:220px;border-radius:9px;margin-top:7px;object-fit:contain">`:''; return `<div style="display:flex;justify-content:${mine?'flex-end':'flex-start'};margin:8px 0"><div style="max-width:82%;padding:10px 12px;border-radius:12px;background:${mine?'#eaf2ff':'#fff'};border:1px solid var(--border);color:var(--text)"><div style="font-size:11px;font-weight:bold;color:var(--navy);margin-bottom:3px">${mine?'You':'American Crest Bank'}</div><div style="white-space:pre-wrap;word-break:break-word">${esc(item.message||'')}</div>${imageHtml}<small style="display:block;color:var(--muted);margin-top:5px">${esc(formatNotificationDate(item.date||item.created_at))}</small></div></div>`;
+}).join('');
+body.scrollTop=body.scrollHeight;
+}
+
 function toggleChat(){
 
 if(!me){
@@ -2279,6 +2470,38 @@ $('chatInput').focus();
 
 }
 
+}
+
+function chooseChatImage(){
+  const input=$('chatImageInput');
+  if(input)input.click();
+}
+
+function clearChatImage(){
+  pendingChatImage=null;
+  const input=$('chatImageInput');
+  const preview=$('chatImagePreview');
+  const image=$('chatImagePreviewImg');
+  if(input)input.value='';
+  if(image)image.removeAttribute('src');
+  if(preview)preview.classList.remove('show');
+}
+
+function handleChatImage(event){
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){clearChatImage();return toast('Please select an image file.');}
+  if(file.size>4*1024*1024){clearChatImage();return toast('Please choose an image smaller than 4 MB.');}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    pendingChatImage=String(reader.result||'');
+    const image=$('chatImagePreviewImg');
+    const preview=$('chatImagePreview');
+    if(image)image.src=pendingChatImage;
+    if(preview)preview.classList.add('show');
+  };
+  reader.onerror=()=>{clearChatImage();toast('Unable to read that image.');};
+  reader.readAsDataURL(file);
 }
 
 async function sendChat(){
@@ -2317,7 +2540,8 @@ method:'POST',
 
 body:JSON.stringify({
 
-message:text
+message:text,
+image:pendingChatImage||null
 
 })
 
@@ -2332,6 +2556,8 @@ me=data.user;
 }
 
 input.value='';
+
+clearChatImage();
 
 renderChat();
 
@@ -2415,6 +2641,32 @@ ADMIN DATA
 
 */
 
+function renderAdminSummary(){
+  const customers=adminState?.customers||[];
+  const requests=Array.isArray(adminState?.requests)?adminState.requests:[];
+  const support=Array.isArray(adminState?.support)?adminState.support:[];
+  $('adminCustomersCount').textContent=String(customers.length);
+  const totals={};
+  customers.forEach(customer=>{
+    const accounts=Array.isArray(customer.accounts)?customer.accounts:[];
+    const balanceMap=customer.balances&&typeof customer.balances==='object'?customer.balances:{};
+    const rows=Object.keys(balanceMap).length
+      ?Object.keys(balanceMap).map(currency=>({currency,balance:Number(balanceMap[currency]||0)}))
+      :accounts;
+    rows.forEach(account=>{
+      const currency=String(account.currency||'NGN');
+      const amount=Number(account.balance??account.amount??0);
+      totals[currency]=(totals[currency]||0)+amount;
+    });
+  });
+  const nonZero=Object.keys(totals).filter(currency=>totals[currency]!==0);
+  $('adminBalancesTotal').textContent=nonZero.length
+    ?nonZero.slice(0,2).map(currency=>money(totals[currency],currency)).join(' • ')
+    :'0.00';
+  $('adminPendingCount').textContent=String(requests.filter(r=>String(r.status||'').toLowerCase()==='pending').length);
+  $('adminSupportCount').textContent=String(support.length);
+}
+
 async function refreshAdmin(showToast=true){
 
 if(
@@ -2454,6 +2706,7 @@ Array.isArray(customerResponse.customers)
 :[];
 
 adminState.customers=customers;
+renderAdminSummary();
 
 if(
 
@@ -2545,25 +2798,11 @@ identifiers[0]||
 
 const active=customerMatches(customer,selectedCustomerId);
 
-const accounts=
-
-Array.isArray(customer.accounts)
-
-?customer.accounts
-
-:[];
-
-const totalBalances=
-
-accounts
-
-.filter(account=>Number(account.balance||0)!==0)
-
-.slice(0,3)
-
-.map(account=>money(account.balance,account.currency))
-
-.join(' • ');
+const accounts=Array.isArray(customer.accounts)?customer.accounts:[];
+const balanceMap=customer.balances&&typeof customer.balances==='object'?customer.balances:{};
+const normalizedAccounts=Object.keys(balanceMap).length?Object.keys(balanceMap).map(currency=>({currency,balance:Number(balanceMap[currency]||0)})):accounts;
+const nonZeroBalances=normalizedAccounts.filter(account=>Number(account.balance??account.amount??0)!==0);
+const totalBalances=nonZeroBalances.length?nonZeroBalances.slice(0,5).map(account=>money(Number(account.balance??account.amount??0),String(account.currency||'NGN'))).join(' • '):'All balances: 0';
 
 return `
 
@@ -3097,15 +3336,18 @@ rows.length
 
 ?
 
-rows.map(message=>`
-
-<div class="msg ${
+rows.map(message=>{
+const image=message.image||message.image_url||message.attachment_url||message.attachment;
+const imageHtml=image?`<img src="${esc(image)}" alt="Support attachment" style="display:block;max-width:100%;max-height:220px;border-radius:9px;margin-top:7px;object-fit:contain">`:'';
+return `<div class="msg ${
 
 String(message.sender||'').toLowerCase()==='customer'
 
 ?'user'
 
-:''}">
+:''
+
+}">
 
 ${
 
@@ -3113,13 +3355,13 @@ String(message.sender||'').toLowerCase()==='customer'
 
 ?
 
-'<strong>Customer:</strong><br>'+esc(message.message)
+'<strong>Customer:</strong><br>'+esc(message.message||'')
 
 :
 
-'<strong>Support:</strong><br>'+esc(message.message)
+'<strong>Support:</strong><br>'+esc(message.message||'')
 
-}
+}${imageHtml}
 
 <div style="
 
@@ -3133,9 +3375,8 @@ ${esc(message.date||message.created_at||'')}
 
 </div>
 
-</div>
-
-`).join('')
+</div>`;
+}).join('')
 
 :
 
@@ -3256,6 +3497,10 @@ me=null;
 selectedCustomerId=null;
 
 adminState=null;
+
+lastNotificationId=null;
+
+notificationInitialized=false;
 
 publicSupportRequested=false;
 
