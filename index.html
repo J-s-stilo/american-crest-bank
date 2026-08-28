@@ -890,9 +890,9 @@ No real bank account, payment, transfer or funds are created.
 
 <p>Sign in to your demo account.</p><div class="error" id="loginError"></div><div class="field">
 
-<label>Email</label>
+<label>Email or Phone</label>
 
-<input id="loginEmail" type="email" autocomplete="username">
+<input id="loginEmail" type="text" inputmode="email" autocomplete="username">
 
 </div><div class="field">
 
@@ -922,9 +922,15 @@ Create Account
 
 </div><div class="field">
 
-<label>Email</label>
+<label>Email (optional if using phone)</label>
 
 <input id="regEmail" type="email" autocomplete="username">
+
+</div><div class="field">
+
+<label>Phone (optional if using email)</label>
+
+<input id="regPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+2348012345678">
 
 </div><div class="field">
 
@@ -986,7 +992,35 @@ Sign In
 
 </div>
 
-</div><div class="modal" id="transferModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeTransfer()">×</button>
+</div><div id="verificationForm" style="display:none">
+
+<h2>Verify Account</h2>
+
+<p>Enter the 6-digit verification code shown for this demo.</p>
+
+<div class="error" id="verificationError"></div>
+
+<div class="field">
+
+<label>Verification Code</label>
+
+<input id="verificationCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+
+</div>
+
+<div id="demoVerificationCode" style="display:none;margin:10px 0;padding:10px;border-radius:8px;background:#eef4fb;color:#0d315d;font-weight:bold;text-align:center"></div>
+
+<button id="verificationBtn" class="btn primary full" onclick="submitVerification()">Verify &amp; Continue</button>
+
+<div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+
+<button onclick="returnToAuth()" style="border:0;background:none;color:#1769e0;font-weight:bold">Back</button>
+
+</div>
+
+</div>
+
+<div class="modal" id="transferModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeTransfer()">×</button>
 
 <h2>Send Money</h2>
 
@@ -1109,8 +1143,7 @@ let me=null;
 let selectedCustomerId=null;
 
 let adminState=null;
-let lastNotificationId=null;
-let notificationInitialized=false;
+let verificationContext=null;
 
 let liveTimer=null;
 
@@ -1224,24 +1257,6 @@ $(id).classList.add('show');
 
 }
 
-function notificationPopup(message){
-
-$('toast').textContent=message;
-
-$('toast').classList.add('show');
-
-clearTimeout(window.__notificationToast);
-
-window.__notificationToast=setTimeout(
-
-()=>$('toast').classList.remove('show'),
-
-5600
-
-);
-
-}
-
 function clearError(id){
 
 $(id).textContent='';
@@ -1296,9 +1311,7 @@ function getCustomerIdentifiers(customer){
 
 if(!customer)return [];
 
-const values=[
-
-customer.id,
+const values=[customer.id,
 
 customer.user_id,
 
@@ -1493,101 +1506,29 @@ REGISTRATION
 async function register(){
 
 const buttonId='registerBtn';
-
 if($(buttonId).disabled)return;
-
 const name=$('regName').value.trim();
-
 const email=$('regEmail').value.trim().toLowerCase();
-
+const phone=$('regPhone').value.trim();
 const password=$('regPassword').value;
-
 const currency=$('regCurrency').value;
-
 clearError('registerError');
-
-if(name.length<2){
-
-return showError('registerError','Enter your full name.');
-
-}
-
-if(!/^\S+@\S+\.\S+$/.test(email)){
-
-return showError('registerError','Enter a valid email address.');
-
-}
-
-if(password.length<6){
-
-return showError('registerError','Password must contain at least 6 characters.');
-
-}
-
+if(name.length<2)return showError('registerError','Enter your full name.');
+if(!email&&!phone)return showError('registerError','Enter an email address or phone number.');
+if(email&&!/^\S+@\S+\.\S+$/.test(email))return showError('registerError','Enter a valid email address.');
+if(phone&&!/^\+?[0-9\s().-]{7,20}$/.test(phone))return showError('registerError','Enter a valid phone number.');
+if(password.length<6)return showError('registerError','Password must contain at least 6 characters.');
 setLoading(buttonId,true,'Creating account');
-
 try{
-
-const data=await api(
-
-'/auth/register',
-
-{
-
-method:'POST',
-
-body:JSON.stringify({
-
-name:name,
-
-email:email,
-
-password:password,
-
-currency:currency
-
-})
-
+const data=await api('/auth/register',{method:'POST',body:JSON.stringify({name,email,phone,password,currency})});
+if(data&&data.verificationRequired){
+verificationContext={purpose:'registration',verificationId:String(data.verificationId||''),identifier:email||phone};
+showVerification(data); toast('Verification code generated for the demo.'); return;
 }
-
-);
-
-if(!data||!data.token||!data.user){
-
-throw new Error(
-
-'Account was created, but the server did not return a valid login session.'
-
-);
-
-}
-
-token=String(data.token);
-
-me=data.user;
-
-closeModal();
-
-showDashboard();
-
-toast('Demo account created successfully.');
-
-}catch(error){
-
-showError(
-
-'registerError',
-
-error.message||'Unable to create the account.'
-
-);
-
-}finally{
-
-setLoading(buttonId,false);
-
-}
-
+if(!data||!data.token||!data.user)throw new Error('Account was created, but the server did not return a valid login session.');
+token=String(data.token); me=data.user; closeModal(); showDashboard(); toast('Demo account created successfully.');
+}catch(error){showError('registerError',error.message||'Unable to create the account.');}
+finally{setLoading(buttonId,false);}
 }
 
 /*
@@ -1603,109 +1544,51 @@ Only the email is normalized.
 async function login(){
 
 const buttonId='loginBtn';
-
 if($(buttonId).disabled)return;
-
-const email=$('loginEmail').value.trim().toLowerCase();
-
+const identifier=$('loginEmail').value.trim();
 const password=$('loginPassword').value;
-
 clearError('loginError');
-
-if(!email){
-
-return showError('loginError','Enter your email address.');
-
-}
-
-if(!/^\S+@\S+\.\S+$/.test(email)){
-
-return showError('loginError','Enter a valid email address.');
-
-}
-
-if(!password){
-
-return showError('loginError','Enter your password.');
-
-}
-
+if(!identifier)return showError('loginError','Enter your email address or phone number.');
+if(!password)return showError('loginError','Enter your password.');
 setLoading(buttonId,true,'Signing in');
-
 try{
-
-const data=await api(
-
-'/auth/login',
-
-{
-
-method:'POST',
-
-body:JSON.stringify({
-
-email:email,
-
-password:password
-
-})
-
+const data=await api('/auth/login',{method:'POST',body:JSON.stringify({identifier,password})});
+if(data&&data.verificationRequired){
+verificationContext={purpose:'login',verificationId:String(data.verificationId||''),identifier};
+showVerification(data); toast('Verification code generated for the demo.'); return;
+}
+if(!data||!data.token||!data.user)throw new Error('The server returned an invalid login response.');
+token=String(data.token); me=data.user; closeModal(); showDashboard();
+toast(String(me.role||'').toLowerCase()==='admin'?'Administrator signed in.':'Signed in successfully.');
+if(publicSupportRequested){publicSupportRequested=false;setTimeout(()=>{toggleChat();},250);}
+}catch(error){showError('loginError',error.message||'Unable to sign in.');}
+finally{setLoading(buttonId,false);}
 }
 
-);
-
-if(!data||!data.token||!data.user){
-
-throw new Error('The server returned an invalid login response.');
-
+function showVerification(data){
+$('loginForm').style.display='none'; $('registerForm').style.display='none'; $('verificationForm').style.display='block';
+clearError('verificationError'); $('verificationCode').value='';
+const demo=String(data?.demoVerificationCode||data?.verificationCode||''); const box=$('demoVerificationCode');
+if(demo){box.textContent='Demo verification code: '+demo;box.style.display='block';}else{box.textContent='';box.style.display='none';}
+setTimeout(()=>$('verificationCode').focus(),100);
 }
 
-token=String(data.token);
+function returnToAuth(){verificationContext=null;$('verificationForm').style.display='none';showLogin();}
 
-me=data.user;
-
-closeModal();
-
-showDashboard();
-
-toast(
-
-String(me.role||'').toLowerCase()==='admin'
-
-?'Administrator signed in.'
-
-:'Signed in successfully.'
-
-);
-
-if(publicSupportRequested){
-
-publicSupportRequested=false;
-
-setTimeout(()=>{
-
-toggleChat();
-
-},250);
-
-}
-
-}catch(error){
-
-showError(
-
-'loginError',
-
-error.message||'Unable to sign in.'
-
-);
-
-}finally{
-
-setLoading(buttonId,false);
-
-}
-
+async function submitVerification(){
+const buttonId='verificationBtn'; if($(buttonId).disabled)return;
+const code=$('verificationCode').value.trim(); clearError('verificationError');
+if(!verificationContext?.verificationId)return showError('verificationError','Your verification session is missing. Start again.');
+if(!/^\d{6}$/.test(code))return showError('verificationError','Enter the 6-digit verification code.');
+setLoading(buttonId,true,'Verifying');
+try{
+const endpoint=verificationContext.purpose==='registration'?'/auth/verify-registration':'/auth/verify-login';
+const data=await api(endpoint,{method:'POST',body:JSON.stringify({verificationId:verificationContext.verificationId,code})});
+if(!data||!data.token||!data.user)throw new Error('Verification succeeded but no login session was returned.');
+token=String(data.token); me=data.user; verificationContext=null; closeModal(); showDashboard(); toast('Verified and signed in successfully.');
+if(publicSupportRequested){publicSupportRequested=false;setTimeout(()=>toggleChat(),250);}
+}catch(error){showError('verificationError',error.message||'Unable to verify the account.');}
+finally{setLoading(buttonId,false);}
 }
 
 async function loadMe(){
@@ -1749,10 +1632,6 @@ DASHBOARD
 function showDashboard(){
 
 if(!me)return;
-
-lastNotificationId=null;
-
-notificationInitialized=false;
 
 $('publicSite').style.display='none';
 
@@ -2033,28 +1912,6 @@ list.slice(0,10).map(notification=>`
 `).join('')
 
 :'';
-
-const latest=list[0];
-
-const latestId=latest?String(latest.id||latest.created_at||latest.date||''):'';
-
-if(!notificationInitialized){
-
-lastNotificationId=latestId;
-
-notificationInitialized=true;
-
-return;
-
-}
-
-if(latestId&&latestId!==lastNotificationId){
-
-lastNotificationId=latestId;
-
-notificationPopup(String(latest.message||'New account notification received.'));
-
-}
 
 }
 
@@ -3399,10 +3256,6 @@ me=null;
 selectedCustomerId=null;
 
 adminState=null;
-
-lastNotificationId=null;
-
-notificationInitialized=false;
 
 publicSupportRequested=false;
 
