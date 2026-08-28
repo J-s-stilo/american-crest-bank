@@ -319,7 +319,7 @@ async function getUser(userId) {
 
   await ensureBalances(user.id);
 
-  const [balances, transactions, notifications, support, requests] =
+  const [balances, transactions, notifications, support, requests, notificationRepliesResult] =
 
     await Promise.all([
 
@@ -423,6 +423,26 @@ async function getUser(userId) {
 
         [userId]
 
+      ),
+
+      pool.query(
+
+        `
+
+        SELECT id,notification_id,message,created_at
+
+        FROM acb_notification_replies
+
+        WHERE user_id=$1
+
+        ORDER BY created_at ASC
+
+        LIMIT 500
+
+        `,
+
+        [userId]
+
       )
 
     ]);
@@ -439,6 +459,19 @@ async function getUser(userId) {
 
     balanceObject[row.currency] = Number(row.amount || 0);
 
+  }
+
+  const notificationReplies = new Map();
+
+  for (const row of notificationRepliesResult.rows) {
+    const key = String(row.notification_id);
+    if (!notificationReplies.has(key)) notificationReplies.set(key, []);
+    notificationReplies.get(key).push({
+      id: String(row.id),
+      message: row.message,
+      created_at: row.created_at,
+      date: row.created_at
+    });
   }
 
   return {
@@ -511,7 +544,9 @@ async function getUser(userId) {
 
       is_read: !!row.read_at,
 
-      date: row.created_at
+      date: row.created_at,
+
+      replies: notificationReplies.get(String(row.id)) || []
 
     })),
 
@@ -1381,6 +1416,28 @@ async function initDb() {
 
   await pool.query(`
 
+    CREATE TABLE IF NOT EXISTS acb_notification_replies (
+
+      id UUID PRIMARY KEY,
+
+      notification_id UUID NOT NULL
+        REFERENCES acb_notifications(id)
+        ON DELETE CASCADE,
+
+      user_id UUID NOT NULL
+        REFERENCES acb_users(id)
+        ON DELETE CASCADE,
+
+      message TEXT NOT NULL,
+
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+    )
+
+  `);
+
+  await pool.query(`
+
     CREATE TABLE IF NOT EXISTS acb_requests (
 
       id UUID PRIMARY KEY,
@@ -1843,6 +1900,117 @@ PROFILE
 
 */
 
+app.delete('/api/notifications/:id', auth, writeLimiter, async (req, res) => {
+  try {
+    const notificationId = String(req.params.id || '').trim();
+
+    if (!validUUID(notificationId)) {
+      return res.status(400).json({ok:false,error:'Invalid notification.'});
+    }
+
+    const result = await pool.query(
+      `
+      DELETE FROM acb_notifications
+      WHERE id=$1 AND user_id=$2
+      RETURNING id
+      `,
+      [notificationId, req.user.id]
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).json({ok:false,error:'Notification not found.'});
+    }
+
+    return res.json({
+      ok:true,
+      success:true,
+      deletedId:String(result.rows[0].id)
+    });
+  } catch (error) {
+    console.error('Notification delete error:', error);
+    return res.status(500).json({ok:false,error:'Unable to delete notification.'});
+  }
+});
+
+app.post('/api/notifications/:id/reply', auth, writeLimiter, async (req, res) => {
+  try {
+    const notificationId = String(req.params.id || '').trim();
+    const message = normalizeText(req.body.message).slice(0, 1000);
+
+    if (!validUUID(notificationId)) {
+      return res.status(400).json({ok:false,error:'Invalid notification.'});
+    }
+
+    if (!message) {
+      return res.status(400).json({ok:false,error:'Write a reply first.'});
+    }
+
+    const notification = await pool.query(
+      `
+      SELECT id
+      FROM acb_notifications
+      WHERE id=$1 AND user_id=$2
+      LIMIT 1
+      `,
+      [notificationId, req.user.id]
+    );
+
+    if (!notification.rowCount) {
+      return res.status(404).json({ok:false,error:'Notification not found.'});
+    }
+
+    await pool.query(
+      `
+      INSERT INTO acb_notification_replies
+        (id,notification_id,user_id,message)
+      VALUES ($1,$2,$3,$4)
+      `,
+      [uuid(),notificationId,req.user.id,message]
+    );
+
+    await pool.query(
+      `
+      UPDATE acb_notifications
+      SET read_at=COALESCE(read_at,NOW())
+      WHERE id=$1 AND user_id=$2
+      `,
+      [notificationId,req.user.id]
+    );
+
+    const admin = await pool.query(
+      `SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`
+    );
+
+    if (admin.rowCount) {
+      const customer = await pool.query(
+        `SELECT name,email,phone FROM acb_users WHERE id=$1 LIMIT 1`,
+        [req.user.id]
+      );
+      const customerName =
+        customer.rows[0]?.name ||
+        customer.rows[0]?.email ||
+        customer.rows[0]?.phone ||
+        'Customer';
+
+      await pool.query(
+        `INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`,
+        [
+          uuid(),
+          admin.rows[0].id,
+          `Customer ${customerName} replied to an account notification: ${message}`
+        ]
+      );
+    }
+
+    const user = await getUser(req.user.id);
+
+    return res.json({ok:true,success:true,user,customer:user});
+  } catch (error) {
+    console.error('Notification reply error:', error);
+    return res.status(500).json({ok:false,error:'Unable to send notification reply.'});
+  }
+});
+
 app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
   try {
@@ -1881,7 +2049,7 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
       `,
 
-      [name, req.user.id]
+      name, [req.user.id]
 
     );
 
@@ -1967,7 +2135,7 @@ app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
 
       `,
 
-      [image, req.user.id]
+      image, [req.user.id]
 
     );
 
@@ -2093,13 +2261,20 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
       `,
 
-      [
+      
+
         requestId,
-        req.user.id,
+
+        [req.user.id,
+
         currency,
+
         amount,
+
         recipient,
+
         note
+
       ]
 
     );
@@ -4073,10 +4248,14 @@ app.post('/api/support', auth, writeLimiter, async (req, res) => {
 
       `,
 
-      [
+      
+
         supportId,
-        req.user.id,
+
+        [req.user.id,
+
         message
+
       ]
 
     );
