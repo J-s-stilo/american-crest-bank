@@ -1094,6 +1094,14 @@ Continue
 
 </button></div>
 
+</div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+<h2>Verify Sign In</h2>
+<p>Enter the 6-digit demo verification code to continue.</p>
+<div class="error" id="loginVerifyError"></div>
+<div class="field"><label>Verification Code</label><input id="loginVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
+<div id="loginVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<button id="loginVerifyBtn" class="btn primary full" onclick="verifyLoginCode()">Verify &amp; Continue</button>
+</div>
 </div><div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
 <h2 id="serviceTitle">Service</h2>
@@ -1160,6 +1168,7 @@ let balanceHidden=false;
 let publicSupportRequested=false;
 let knownNotificationIds=new Set();
 let notificationPopupTimer=null;
+let pendingLoginVerification=null;
 
 const CURRENCY_INFO={
 
@@ -1650,144 +1659,110 @@ const buttonId='loginBtn';
 if($(buttonId).disabled)return;
 
 const email=$('loginEmail').value.trim().toLowerCase();
-
 const password=$('loginPassword').value;
 
 clearError('loginError');
 
 if(!email){
-
 return showError('loginError','Enter your email address.');
-
 }
 
 if(!/^\S+@\S+\.\S+$/.test(email)){
-
 return showError('loginError','Enter a valid email address.');
-
 }
 
 if(!password){
-
 return showError('loginError','Enter your password.');
-
 }
 
 setLoading(buttonId,true,'Signing in');
 
 try{
-
-let data=await api(
-
-'/auth/login',
-
-{
-
+const data=await api('/auth/login',{
 method:'POST',
+body:JSON.stringify({email:email,password:password})
+});
 
-body:JSON.stringify({
-
-email:email,
-
-password:password
-
-})
-
-}
-
-);
-
-/* Complete the server's demo verification step automatically for customer login. */
-if(data && data.verificationRequired && data.verificationId){
-
-if(!data.demoVerificationCode){
-
-throw new Error('The server requires login verification, but no demo verification code was returned.');
-
-}
-
-const verified=await api(
-
-'/auth/verify-login',
-
-{
-
-method:'POST',
-
-body:JSON.stringify({
-
-verificationId:data.verificationId,
-
-code:String(data.demoVerificationCode)
-
-})
-
-}
-
-);
-
-if(!verified||!verified.token||!verified.user){
-
-throw new Error('The server returned an invalid login verification response.');
-
-}
-
-data=verified;
-
+if(data&&data.verificationRequired&&data.verificationId){
+  pendingLoginVerification={
+    verificationId:String(data.verificationId),
+    email:email,
+    password:password,
+    demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
+  };
+  closeModal();
+  clearError('loginVerifyError');
+  $('loginVerifyCode').value='';
+  $('loginVerifyDemoCode').textContent=pendingLoginVerification.demoCode
+    ? 'Demo verification code: '+pendingLoginVerification.demoCode
+    : 'A verification code has been generated for this demo.';
+  $('loginVerifyModal').classList.add('show');
+  setTimeout(()=>$('loginVerifyCode').focus(),100);
+  return;
 }
 
 if(!data||!data.token||!data.user){
-
 throw new Error('The server returned an invalid login response.');
+}
 
+completeLogin(data);
+
+}catch(error){
+showError('loginError',error.message||'Unable to sign in.');
+}finally{
+setLoading(buttonId,false);
+}
+}
+
+function completeLogin(data){
+if(!data||!data.token||!data.user){
+throw new Error('The server returned an invalid login response.');
 }
 
 token=String(data.token);
-
 me=data.user;
-
+pendingLoginVerification=null;
+$('loginVerifyModal').classList.remove('show');
 closeModal();
-
 showDashboard();
 
-toast(
-
-String(me.role||'').toLowerCase()==='admin'
-
-?'Administrator signed in.'
-
-:'Signed in successfully.'
-
-);
+toast(String(me.role||'').toLowerCase()==='admin'?'Administrator signed in.':'Signed in successfully.');
 
 if(publicSupportRequested){
-
 publicSupportRequested=false;
-
-setTimeout(()=>{
-
-toggleChat();
-
-},250);
-
+setTimeout(()=>toggleChat(),250);
+}
 }
 
+async function verifyLoginCode(){
+if(!pendingLoginVerification)return;
+const buttonId='loginVerifyBtn';
+const code=$('loginVerifyCode').value.trim();
+clearError('loginVerifyError');
+if(!/^\d{6}$/.test(code)){
+return showError('loginVerifyError','Enter the 6-digit verification code.');
+}
+setLoading(buttonId,true,'Verifying');
+try{
+const verified=await api('/auth/verify-login',{
+method:'POST',
+body:JSON.stringify({verificationId:pendingLoginVerification.verificationId,code:code})
+});
+if(!verified||!verified.token||!verified.user){
+throw new Error('The server returned an invalid verification response.');
+}
+completeLogin(verified);
 }catch(error){
-
-showError(
-
-'loginError',
-
-error.message||'Unable to sign in.'
-
-);
-
+showError('loginVerifyError',error.message||'Unable to verify the sign in.');
 }finally{
-
 setLoading(buttonId,false);
-
+}
 }
 
+function cancelLoginVerification(){
+pendingLoginVerification=null;
+$('loginVerifyModal').classList.remove('show');
+openModal('login');
 }
 
 async function loadMe(){
@@ -2149,15 +2124,17 @@ function renderNotifications(){
           <small style="display:block;color:var(--muted);margin-top:4px">${esc(formatNotificationDate(reply.date||reply.created_at))}</small>
         </div>`).join(''):''}
       <div class="notificationActions">
-        <button class="outline" onclick="toggleNotificationReply(${JSON.stringify(id)})">Reply</button>
-        <button class="outline" onclick="deleteNotification(${JSON.stringify(notification.id||'')})">Delete</button>
+        <button type="button" class="outline notificationReplyBtn" data-key="${esc(id)}">Reply</button>
+        <button type="button" class="outline notificationDeleteBtn" data-id="${esc(notification.id||'')}">Delete</button>
       </div>
       <div class="notificationReply" id="reply-${esc(id)}">
         <input id="replyInput-${esc(id)}" maxlength="1000" placeholder="Reply to this notification...">
-        <button onclick="replyToNotification(${JSON.stringify(notification.id||'')},${JSON.stringify(id)})">Send</button>
+        <button type="button" class="notificationSendReplyBtn" data-id="${esc(notification.id||'')}" data-key="${esc(id)}">Send</button>
       </div>
     </div>`;
   }).join(''):'<div class="notificationEmpty">No saved notifications.</div>';
+
+  setupNotificationActions();
 
   const currentIds=new Set();
   list.forEach((notification,index)=>{
@@ -2167,6 +2144,29 @@ function renderNotifications(){
   });
   knownNotificationIds=currentIds;
   notificationInitialized=true;
+}
+
+function setupNotificationActions(){
+const list=$('notifications');
+if(!list||list.dataset.bound==='1')return;
+list.dataset.bound='1';
+list.addEventListener('click',event=>{
+const reply=event.target.closest('.notificationReplyBtn');
+if(reply){
+ event.preventDefault(); event.stopPropagation();
+ toggleNotificationReply(reply.dataset.key); return;
+}
+const del=event.target.closest('.notificationDeleteBtn');
+if(del){
+ event.preventDefault(); event.stopPropagation();
+ deleteNotification(del.dataset.id); return;
+}
+const send=event.target.closest('.notificationSendReplyBtn');
+if(send){
+ event.preventDefault(); event.stopPropagation();
+ replyToNotification(send.dataset.id,send.dataset.key); return;
+}
+});
 }
 
 function toggleNotificationReply(id){
@@ -2471,6 +2471,22 @@ reader.readAsDataURL(file);
 CUSTOMER SUPPORT
 
 */
+
+function renderChat(){
+if(!me)return;
+const list=Array.isArray(me.support)?me.support:[];
+const body=$('chatBody');
+if(!body)return;
+if(!list.length){
+body.innerHTML='<div style="padding:22px;text-align:center;color:var(--muted);font-size:13px">No messages yet. Send a message to customer support.</div>';
+return;
+}
+body.innerHTML=list.map(item=>{
+const mine=String(item.sender||'').toLowerCase()==='customer';
+return `<div style="display:flex;justify-content:${mine?'flex-end':'flex-start'};margin:8px 0"><div style="max-width:82%;padding:10px 12px;border-radius:12px;background:${mine?'#eaf2ff':'#fff'};border:1px solid var(--border);color:var(--text)"><div style="font-size:11px;font-weight:bold;color:var(--navy);margin-bottom:3px">${mine?'You':'American Crest Bank'}</div><div style="white-space:pre-wrap;word-break:break-word">${esc(item.message)}</div><small style="display:block;color:var(--muted);margin-top:5px">${esc(formatNotificationDate(item.date||item.created_at))}</small></div></div>`;
+}).join('');
+body.scrollTop=body.scrollHeight;
+}
 
 function toggleChat(){
 
