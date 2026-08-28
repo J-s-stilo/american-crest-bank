@@ -311,11 +311,21 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 .msg.user{margin-left:auto;background:#dceaff}
 
-.chatInput{display:flex;border-top:1px solid #ddd}
+.chatInput{display:flex;align-items:center;border-top:1px solid #ddd}
 
-.chatInput input{flex:1;border:0;padding:12px;outline:0}
+.chatInput input{flex:1;border:0;padding:12px;outline:0;min-width:0}
 
 .chatInput button{border:0;background:var(--blue);color:#fff;padding:0 16px}
+
+.chatAttach{width:44px;height:44px;border:0;background:#fff;color:var(--navy);font-size:20px;display:grid;place-items:center}
+
+.chatImagePreview{display:none;padding:8px 10px;border-top:1px solid #eee;background:#fafcff}
+
+.chatImagePreview.show{display:block}
+
+.chatImagePreview img{display:block;max-width:120px;max-height:90px;border-radius:8px;border:1px solid var(--border);object-fit:cover}
+
+.chatImagePreview button{margin-top:5px;border:0;background:none;color:var(--red);font-size:11px;padding:0}
 
 
 .notificationPopup{position:fixed;top:85px;right:20px;width:360px;max-width:calc(100% - 40px);background:#fff;border:1px solid #e2e8f0;border-top:3px solid var(--gold);border-radius:12px;box-shadow:0 18px 50px #071a5330;z-index:1000;transform:translateX(120%);opacity:0;transition:transform .35s ease,opacity .35s ease;overflow:hidden}
@@ -1140,7 +1150,7 @@ style="background:none;border:0;color:white;font-size:20px">
 
 </button>
 
-</div><div class="chatBody" id="chatBody"></div><div class="chatInput"><input
+</div><div class="chatBody" id="chatBody"></div><div class="chatImagePreview" id="chatImagePreview"><img id="chatImagePreviewImg" alt="Selected image"><button type="button" onclick="clearChatImage()">Remove image</button></div><div class="chatInput"><button type="button" class="chatAttach" onclick="chooseChatImage()" aria-label="Add image" title="Add image">📎</button><input id="chatImageInput" class="hiddenFile" type="file" accept="image/*" onchange="handleChatImage(event)"><input
 
 id="chatInput"
 
@@ -1176,8 +1186,10 @@ let balanceHidden=false;
 let publicSupportRequested=false;
 let knownNotificationIds=new Set();
 let notificationPopupTimer=null;
+let notificationAudioContext=null;
 let pendingLoginVerification=null;
 let pendingRegistrationVerification=null;
+let pendingChatImage=null;
 
 const CURRENCY_INFO={
 
@@ -2138,23 +2150,44 @@ function notificationKey(notification,index){
   return String(notification?.id||notification?.notification_id||notification?.uuid||((notification?.created_at||notification?.date||'')+'|'+(notification?.message||'')+'|'+index));
 }
 
-function playNotificationDing(){
+function getNotificationAudioContext(){
   try{
     const AudioContext=window.AudioContext||window.webkitAudioContext;
-    if(!AudioContext)return;
-    const ctx=new AudioContext();
-    const oscillator=ctx.createOscillator();
-    const gain=ctx.createGain();
-    oscillator.type='sine';
-    oscillator.frequency.setValueAtTime(880,ctx.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(1320,ctx.currentTime+0.12);
-    gain.gain.setValueAtTime(0.0001,ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.16,ctx.currentTime+0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.35);
-    oscillator.connect(gain); gain.connect(ctx.destination);
-    oscillator.start(); oscillator.stop(ctx.currentTime+0.36);
-    setTimeout(()=>{try{ctx.close();}catch{}},500);
+    if(!AudioContext)return null;
+    if(!notificationAudioContext)notificationAudioContext=new AudioContext();
+    return notificationAudioContext;
+  }catch{return null;}
+}
+
+function unlockNotificationAudio(){
+  const ctx=getNotificationAudioContext();
+  if(ctx&&ctx.state==='suspended'){try{ctx.resume();}catch{}}
+}
+
+function playNotificationDing(){
+  try{
+    const ctx=getNotificationAudioContext();
+    if(!ctx)return;
+    const play=()=>{
+      try{
+        const oscillator=ctx.createOscillator();
+        const gain=ctx.createGain();
+        oscillator.type='sine';
+        oscillator.frequency.setValueAtTime(880,ctx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1320,ctx.currentTime+0.12);
+        gain.gain.setValueAtTime(0.0001,ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.16,ctx.currentTime+0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.35);
+        oscillator.connect(gain); gain.connect(ctx.destination);
+        oscillator.start(); oscillator.stop(ctx.currentTime+0.36);
+      }catch{}
+    };
+    if(ctx.state==='suspended'){ctx.resume().then(play).catch(()=>{});}else{play();}
   }catch{}
+}
+
+if(typeof window!=='undefined'){
+  ['pointerdown','touchstart','keydown'].forEach(type=>window.addEventListener(type,unlockNotificationAudio,{once:true,passive:true}));
 }
 
 function formatNotificationDate(value){
@@ -2558,7 +2591,7 @@ return;
 }
 body.innerHTML=list.map(item=>{
 const mine=String(item.sender||'').toLowerCase()==='customer';
-return `<div style="display:flex;justify-content:${mine?'flex-end':'flex-start'};margin:8px 0"><div style="max-width:82%;padding:10px 12px;border-radius:12px;background:${mine?'#eaf2ff':'#fff'};border:1px solid var(--border);color:var(--text)"><div style="font-size:11px;font-weight:bold;color:var(--navy);margin-bottom:3px">${mine?'You':'American Crest Bank'}</div><div style="white-space:pre-wrap;word-break:break-word">${esc(item.message)}</div><small style="display:block;color:var(--muted);margin-top:5px">${esc(formatNotificationDate(item.date||item.created_at))}</small></div></div>`;
+const image=item.image||item.image_url||item.attachment_url||item.attachment; const imageHtml=image?`<img src="${esc(image)}" alt="Support attachment" style="display:block;max-width:100%;max-height:220px;border-radius:9px;margin-top:7px;object-fit:contain">`:''; return `<div style="display:flex;justify-content:${mine?'flex-end':'flex-start'};margin:8px 0"><div style="max-width:82%;padding:10px 12px;border-radius:12px;background:${mine?'#eaf2ff':'#fff'};border:1px solid var(--border);color:var(--text)"><div style="font-size:11px;font-weight:bold;color:var(--navy);margin-bottom:3px">${mine?'You':'American Crest Bank'}</div><div style="white-space:pre-wrap;word-break:break-word">${esc(item.message||'')}</div>${imageHtml}<small style="display:block;color:var(--muted);margin-top:5px">${esc(formatNotificationDate(item.date||item.created_at))}</small></div></div>`;
 }).join('');
 body.scrollTop=body.scrollHeight;
 }
@@ -2589,6 +2622,38 @@ $('chatInput').focus();
 
 }
 
+}
+
+function chooseChatImage(){
+  const input=$('chatImageInput');
+  if(input)input.click();
+}
+
+function clearChatImage(){
+  pendingChatImage=null;
+  const input=$('chatImageInput');
+  const preview=$('chatImagePreview');
+  const image=$('chatImagePreviewImg');
+  if(input)input.value='';
+  if(image)image.removeAttribute('src');
+  if(preview)preview.classList.remove('show');
+}
+
+function handleChatImage(event){
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){clearChatImage();return toast('Please select an image file.');}
+  if(file.size>4*1024*1024){clearChatImage();return toast('Please choose an image smaller than 4 MB.');}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    pendingChatImage=String(reader.result||'');
+    const image=$('chatImagePreviewImg');
+    const preview=$('chatImagePreview');
+    if(image)image.src=pendingChatImage;
+    if(preview)preview.classList.add('show');
+  };
+  reader.onerror=()=>{clearChatImage();toast('Unable to read that image.');};
+  reader.readAsDataURL(file);
 }
 
 async function sendChat(){
@@ -2627,7 +2692,8 @@ method:'POST',
 
 body:JSON.stringify({
 
-message:text
+message:text,
+image:pendingChatImage||null
 
 })
 
@@ -2642,6 +2708,8 @@ me=data.user;
 }
 
 input.value='';
+
+clearChatImage();
 
 renderChat();
 
@@ -3420,15 +3488,18 @@ rows.length
 
 ?
 
-rows.map(message=>`
-
-<div class="msg ${
+rows.map(message=>{
+const image=message.image||message.image_url||message.attachment_url||message.attachment;
+const imageHtml=image?`<img src="${esc(image)}" alt="Support attachment" style="display:block;max-width:100%;max-height:220px;border-radius:9px;margin-top:7px;object-fit:contain">`:'';
+return `<div class="msg ${
 
 String(message.sender||'').toLowerCase()==='customer'
 
 ?'user'
 
-:''}">
+:''
+
+}">
 
 ${
 
@@ -3436,13 +3507,13 @@ String(message.sender||'').toLowerCase()==='customer'
 
 ?
 
-'<strong>Customer:</strong><br>'+esc(message.message)
+'<strong>Customer:</strong><br>'+esc(message.message||'')
 
 :
 
-'<strong>Support:</strong><br>'+esc(message.message)
+'<strong>Support:</strong><br>'+esc(message.message||'')
 
-}
+}${imageHtml}
 
 <div style="
 
@@ -3456,9 +3527,8 @@ ${esc(message.date||message.created_at||'')}
 
 </div>
 
-</div>
-
-`).join('')
+</div>`;
+}).join('')
 
 :
 
