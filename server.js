@@ -1840,7 +1840,8 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
       WHERE id=$2
 
       `,
-      [name, req.user.id]
+
+      name, [req.user.id]
 
     );
 
@@ -1925,6 +1926,7 @@ app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
       WHERE id=$2
 
       `,
+
       [image, req.user.id]
 
     );
@@ -2050,7 +2052,22 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
         ($1,$2,$3,$4,$5,$6,'pending')
 
       `,
-      [requestId, req.user.id, currency, amount, recipient, note]
+
+      
+
+        requestId,
+
+        [req.user.id,
+
+        currency,
+
+        amount,
+
+        recipient,
+
+        note
+
+      ]
 
     );
 
@@ -3999,7 +4016,16 @@ app.post('/api/support', auth, writeLimiter, async (req, res) => {
         ($1,$2,'customer',$3)
 
       `,
-      [supportId, req.user.id, message]
+
+      
+
+        supportId,
+
+        [req.user.id,
+
+        message
+
+      ]
 
     );
 
