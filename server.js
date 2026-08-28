@@ -16,7 +16,6 @@ const crypto = require('crypto');
 
 const app = express();
 
-app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
 app.use(cors({
@@ -73,7 +72,7 @@ const authLimiter = rateLimit({
 
   windowMs: 15 * 60 * 1000,
 
-  max: 60,
+  max: 100,
 
   standardHeaders: true,
 
@@ -90,23 +89,6 @@ const writeLimiter = rateLimit({
   standardHeaders: true,
 
   legacyHeaders: false
-
-});
-
-const verificationLimiter = rateLimit({
-
-  windowMs: 15 * 60 * 1000,
-
-  max: 20,
-
-  standardHeaders: true,
-
-  legacyHeaders: false,
-
-  message: {
-    ok: false,
-    error: 'Too many verification attempts. Please try again later.'
-  }
 
 });
 
@@ -1696,31 +1678,9 @@ app.post('/api/auth/register', authLimiter, registerHandler);
 app.post('/api/register', authLimiter, registerHandler);
 app.post('/api/signup', authLimiter, registerHandler);
 app.post('/api/auth/signup', authLimiter, registerHandler);
-app.post('/api/auth/verify-registration', verificationLimiter, verifyRegistrationHandler);
-app.post('/api/verify-registration', verificationLimiter, verifyRegistrationHandler);
+app.post('/api/auth/verify-registration', authLimiter, verifyRegistrationHandler);
+app.post('/api/verify-registration', authLimiter, verifyRegistrationHandler);
 
-
-
-async function resendRegistrationVerificationHandler(req, res) {
-  try {
-    const identifier = normalizeText(req.body.identifier || req.body.email || req.body.phone || req.body.userId || req.body.user_id);
-    if (!identifier) return res.status(400).json({ ok:false, error:'Enter your email address or phone number.' });
-    const existing = await pool.query(`SELECT id FROM acb_users WHERE (LOWER(email)=LOWER($1) AND $1<>'') OR (phone=$2 AND $2<>'') LIMIT 1`, [normalizeEmail(identifier), normalizePhone(identifier)]);
-    if (existing.rowCount) return res.status(409).json({ ok:false, error:'That account is already registered. Use login verification instead.' });
-    const pending = await pool.query(`SELECT id FROM acb_verification_codes WHERE identifier=$1 AND purpose='registration' AND verified_at IS NULL AND expires_at>NOW() ORDER BY created_at DESC LIMIT 1`, [identifier]);
-    if (!pending.rowCount) return res.status(404).json({ ok:false, error:'No active registration verification was found. Start registration again.' });
-    const code = String(crypto.randomInt(100000,1000000));
-    const codeHash = await bcrypt.hash(code,10);
-    await pool.query(`UPDATE acb_verification_codes SET code_hash=$1,attempts=0,expires_at=NOW()+INTERVAL '10 minutes' WHERE id=$2`, [codeHash,pending.rows[0].id]);
-    return res.json({ ok:true, success:true, verificationRequired:true, verificationId:String(pending.rows[0].id), demoVerificationCode:code, message:'A new verification code was generated.' });
-  } catch (error) {
-    console.error('Resend registration verification error:',error);
-    return res.status(500).json({ ok:false, error:'Unable to generate a new verification code.' });
-  }
-}
-
-app.post('/api/auth/resend-verification', verificationLimiter, resendRegistrationVerificationHandler);
-app.post('/api/resend-verification', verificationLimiter, resendRegistrationVerificationHandler);
 
 /*
 
@@ -1771,8 +1731,8 @@ app.post('/api/auth/login', authLimiter, loginHandler);
 app.post('/api/login', authLimiter, loginHandler);
 app.post('/api/signin', authLimiter, loginHandler);
 app.post('/api/auth/signin', authLimiter, loginHandler);
-app.post('/api/auth/verify-login', verificationLimiter, verifyLoginHandler);
-app.post('/api/verify-login', verificationLimiter, verifyLoginHandler);
+app.post('/api/auth/verify-login', authLimiter, verifyLoginHandler);
+app.post('/api/verify-login', authLimiter, verifyLoginHandler);
 
 
 /*
@@ -2325,29 +2285,6 @@ app.post('/api/admin/login', authLimiter, async (req, res) => {
 
   }
 
-});
-
-
-app.post('/api/auth/admin/login', authLimiter, async (req, res) => {
-  try {
-    const email = normalizeEmail(req.body.email || req.body.emailAddress || req.body.email_address || req.body.identifier);
-    const password = typeof req.body.password === 'string' ? req.body.password : typeof req.body.passcode === 'string' ? req.body.passcode : '';
-    if (!email || !password) return res.status(400).json({ ok:false, error:'Enter your administrator email and password.' });
-    const result = await pool.query(`SELECT * FROM acb_users WHERE LOWER(email)=LOWER($1) AND LOWER(role)='admin' LIMIT 1`, [email]);
-    if (!result.rowCount || !(await bcrypt.compare(password, result.rows[0].password_hash))) {
-      return res.status(401).json({ ok:false, error:'Invalid administrator email or password.' });
-    }
-    if (String(result.rows[0].status || '').toLowerCase() === 'suspended') {
-      return res.status(403).json({ ok:false, error:'This administrator account is suspended.' });
-    }
-    await ensureBalances(result.rows[0].id);
-    const user = await getUser(String(result.rows[0].id));
-    const token = signToken(user);
-    return res.json({ ok:true, success:true, token, accessToken:token, user, customer:user, account:user, redirect:'admin' });
-  } catch (error) {
-    console.error('Admin compatibility login error:', error);
-    return res.status(500).json({ ok:false, error:'Unable to sign in as administrator.' });
-  }
 });
 
 /*
@@ -5268,13 +5205,13 @@ SPA FALLBACK
 
 */
 
-app.use((req, res, next) => {
+app.get('/*', (req, res) => {
 
-  if (req.method === 'GET' && !req.path.startsWith('/api/')) {
-    return res.sendFile(path.join(__dirname, 'index.html'));
-  }
+  res.sendFile(
 
-  next();
+    path.join(__dirname, 'index.html')
+
+  );
 
 });
 
