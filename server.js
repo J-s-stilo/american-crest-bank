@@ -1927,7 +1927,7 @@ app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
 
       `,
 
-      [image, req.user.id]
+      image, [req.user.id]
 
     );
 
@@ -4019,13 +4019,7 @@ app.post('/api/support', auth, writeLimiter, async (req, res) => {
 
       
 
-        supportId,
-
-        [req.user.id,
-
-        message
-
-      ]
+        [supportId, req.user.id, message]
 
     );
 
