@@ -4019,13 +4019,7 @@ app.post('/api/support', auth, writeLimiter, async (req, res) => {
 
       
 
-        supportId,
-
-        [req.user.id,
-
-        message
-
-      ]
+        [supportId, req.user.id, message]
 
     );
 
