@@ -203,6 +203,99 @@ async function ensureBalances(userId) {
 
 /*
 =========================================================
+ADMIN CUSTOMER LOADER
+=========================================================
+*/
+
+async function loadAdminCustomers() {
+
+  const result = await pool.query(`
+    SELECT
+      u.id,
+      u.name,
+      u.email,
+      u.role,
+      u.status,
+      u.primary_currency,
+      u.profile_image,
+      u.created_at,
+
+      COALESCE(
+        json_agg(
+          json_build_object(
+            'currency', b.currency,
+            'balance', b.amount
+          )
+          ORDER BY b.currency
+        ) FILTER (WHERE b.currency IS NOT NULL),
+        '[]'::json
+      ) AS accounts
+
+    FROM acb_users u
+
+    LEFT JOIN acb_balances b
+      ON b.user_id = u.id
+
+    WHERE LOWER(u.role) = 'customer'
+
+    GROUP BY
+      u.id,
+      u.name,
+      u.email,
+      u.role,
+      u.status,
+      u.primary_currency,
+      u.profile_image,
+      u.created_at
+
+    ORDER BY u.created_at DESC
+  `);
+
+  return result.rows.map(row => ({
+    id: String(row.id),
+    name: row.name,
+    full_name: row.name,
+    email: row.email,
+    role: 'customer',
+    status: row.status,
+
+    primary_currency:
+      row.primary_currency,
+
+    primaryCurrency:
+      row.primary_currency,
+
+    profile_image:
+      row.profile_image || '',
+
+    profileImage:
+      row.profile_image || '',
+
+    created_at:
+      row.created_at,
+
+    createdAt:
+      row.created_at,
+
+    accounts:
+      Array.isArray(row.accounts)
+        ? row.accounts.map(account => ({
+            currency:
+              account.currency,
+
+            balance:
+              Number(account.balance || 0),
+
+            amount:
+              Number(account.balance || 0)
+          }))
+        : []
+  }));
+}
+
+
+/*
+=========================================================
 GET USER
 =========================================================
 */
@@ -527,14 +620,6 @@ async function initDb() {
 
     if (existing.rowCount) {
 
-      /*
-        IMPORTANT FIX:
-
-        If this email already existed as a
-        customer, convert that exact configured
-        account into the administrator account.
-      */
-
       await pool.query(
         `
         UPDATE acb_users
@@ -798,12 +883,6 @@ app.post(
         ]
       );
 
-
-      /*
-      =====================================================
-      ADMIN REGISTRATION NOTIFICATION
-      =====================================================
-      */
 
       const admin =
         await pool.query(
@@ -1358,11 +1437,6 @@ app.post(
         );
 
 
-      /*
-        Only an account with role=admin can
-        authenticate through this route.
-      */
-
       const result =
         await pool.query(
           `
@@ -1465,7 +1539,7 @@ app.get(
   async (_req, res) => {
 
     try {
-Jim
+
       const customers =
         await pool.query(
           `
@@ -1585,7 +1659,7 @@ Jim
 );
 
 
-      /*
+/*
 =========================================================
 ADMIN CUSTOMERS
 =========================================================
@@ -1596,71 +1670,11 @@ app.get(
   auth,
   adminOnly,
   async (_req, res) => {
+
     try {
-      const result = await pool.query(`
-        SELECT
-          u.id,
-          u.name,
-          u.email,
-          u.role,
-          u.status,
-          u.primary_currency,
-          u.profile_image,
-          u.created_at,
 
-          COALESCE(
-            json_agg(
-              json_build_object(
-                'currency', b.currency,
-                'balance', b.amount
-              )
-              ORDER BY b.currency
-            ) FILTER (WHERE b.currency IS NOT NULL),
-            '[]'::json
-          ) AS accounts
-
-        FROM acb_users u
-
-        LEFT JOIN acb_balances b
-          ON b.user_id = u.id
-
-        WHERE LOWER(u.role) = 'customer'
-
-        GROUP BY
-          u.id,
-          u.name,
-          u.email,
-          u.role,
-          u.status,
-          u.primary_currency,
-          u.profile_image,
-          u.created_at
-
-        ORDER BY u.created_at DESC
-      `);
-
-      const customers = result.rows.map(row => ({
-        id: String(row.id),
-        name: row.name,
-        full_name: row.name,
-        email: row.email,
-        role: 'customer',
-        status: row.status,
-        primary_currency: row.primary_currency,
-        primaryCurrency: row.primary_currency,
-        profile_image: row.profile_image || '',
-        profileImage: row.profile_image || '',
-        created_at: row.created_at,
-        createdAt: row.created_at,
-
-        accounts: Array.isArray(row.accounts)
-          ? row.accounts.map(account => ({
-              currency: account.currency,
-              balance: Number(account.balance || 0),
-              amount: Number(account.balance || 0)
-            }))
-          : []
-      }));
+      const customers =
+        await loadAdminCustomers();
 
       console.log(
         `[ADMIN CUSTOMERS] ${customers.length} customer(s) found`
@@ -1677,20 +1691,26 @@ app.get(
       });
 
     } catch (error) {
-      console.error('Admin customers error:', error);
+
+      console.error(
+        'Admin customers error:',
+        error
+      );
 
       res.status(500).json({
         ok: false,
-        error: 'Unable to load customers.',
+        error:
+          'Unable to load customers.',
         customers: [],
         users: [],
         data: [],
         items: []
       });
+
     }
+
   }
 );
-
 
 
 /*
@@ -1755,6 +1775,7 @@ app.get(
 
   }
 );
+
 
 /*
 =========================================================
@@ -1911,11 +1932,6 @@ app.get(
   async (req, res) => {
 
     try {
-
-      /*
-        Only return notifications belonging
-        to the currently authenticated admin.
-      */
 
       const result =
         await pool.query(
