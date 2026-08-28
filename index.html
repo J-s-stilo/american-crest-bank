@@ -7,7 +7,6 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
 :root{
   --navy:#071a35;
   --navy2:#0d315d;
@@ -21,972 +20,191 @@
   --red:#d93434;
   --border:#e3e9f1
 }
-
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--light);
-  color:var(--text)
-}
-
+body{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.6;cursor:not-allowed}
 a{text-decoration:none;color:inherit}
-
-.prototype{
-  background:#fff3cd;
-  color:#725b13;
-  text-align:center;
-  padding:7px;
-  font-size:11px;
-  font-weight:bold
-}
-
-.top{
-  background:#041327;
-  color:#dbe7f5;
-  padding:9px 5%;
-  display:flex;
-  justify-content:space-between;
-  font-size:12px
-}
-
-header{
-  background:#fff;
-  position:sticky;
-  top:0;
-  z-index:20;
-  box-shadow:0 2px 15px #0001
-}
-
-.nav{
-  max-width:1200px;
-  margin:auto;
-  min-height:72px;
-  padding:0 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  font-weight:800;
-  color:var(--navy)
-}
-
-.mark{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  background:var(--navy);
-  color:var(--gold);
-  border:2px solid var(--gold);
-  display:grid;
-  place-items:center;
-  font-size:12px
-}
-
-.links{
-  display:flex;
-  gap:24px;
-  font-size:14px;
-  font-weight:bold
-}
-
-.actions{
-  display:flex;
-  gap:8px
-}
-
-.btn{
-  border:0;
-  border-radius:8px;
-  padding:12px 18px;
-  font-weight:bold
-}
-
-.primary{
-  background:var(--blue);
-  color:#fff
-}
-
-.dark{
-  background:var(--navy);
-  color:#fff
-}
-
-.outline{
-  background:#fff;
-  border:1px solid #d8e0eb;
-  color:var(--navy)
-}
-
+button:disabled{opacity:.6;cursor:not-allowed}
+.prototype{background:#fff3cd;color:#725b13;text-align:center;padding:7px;font-size:11px;font-weight:bold}
+.top{background:#041327;color:#dbe7f5;padding:9px 5%;display:flex;justify-content:space-between;font-size:12px}
+header{background:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 15px #0001}
+.nav{max-width:1200px;margin:auto;min-height:72px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)}
+.mark{width:40px;height:40px;border-radius:50%;background:var(--navy);color:var(--gold);border:2px solid var(--gold);display:grid;place-items:center;font-size:12px}
+.links{display:flex;gap:24px;font-size:14px;font-weight:bold}
+.actions{display:flex;gap:8px}
+.btn{border:0;border-radius:8px;padding:12px 18px;font-weight:bold}
+.primary{background:var(--blue);color:#fff}
+.dark{background:var(--navy);color:#fff}
+.outline{background:#fff;border:1px solid #d8e0eb;color:var(--navy)}
 .full{width:100%}
 
-.hero{
-  min-height:560px;
-  background:linear-gradient(135deg,#f7faff,#eef4fb);
-  display:flex;
-  align-items:center;
-  padding:38px 0
-}
-
-.heroInner{
-  max-width:1200px;
-  width:90%;
-  margin:auto;
-  display:grid;
-  grid-template-columns:1.05fr .95fr;
-  gap:34px;
-  align-items:center
-}
-
+.hero{min-height:560px;background:linear-gradient(135deg,#f7faff,#eef4fb);color:var(--text);display:flex;align-items:center;padding:38px 0}
+.heroInner{max-width:1200px;width:90%;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
 .heroText{max-width:650px}
-
-.eyebrow{
-  color:#b1872f;
-  font-weight:bold;
-  letter-spacing:2px;
-  font-size:12px;
-  margin-bottom:15px
-}
-
-.hero h1{
-  color:var(--navy);
-  font-size:clamp(38px,6vw,68px);
-  line-height:1.05;
-  margin-bottom:20px
-}
-
-.hero p{
-  color:#5f7185;
-  font-size:18px;
-  line-height:1.6;
-  margin-bottom:28px
-}
-
-.heroButtons{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap
-}
-
-.heroVisual{
-  min-height:420px;
-  border-radius:24px;
-  overflow:hidden;
-  box-shadow:0 24px 60px #071a5320;
-  background:#dfe8f5
-}
-
-.heroVisual img{
-  width:100%;
-  height:100%;
-  min-height:420px;
-  object-fit:cover;
-  display:block
-}
-
-.trust{
-  background:#fff;
-  padding:20px 5%;
-  display:flex;
-  justify-content:center;
-  gap:35px;
-  flex-wrap:wrap;
-  color:#607080;
-  font-size:13px;
-  font-weight:bold
-}
+.eyebrow{color:#b1872f;font-weight:bold;letter-spacing:2px;font-size:12px;margin-bottom:15px}
+.heroVisual{min-height:420px;border-radius:24px;overflow:hidden;box-shadow:0 24px 60px #071a5320;background:#dfe8f5}
+.heroVisual img{width:100%;height:100%;min-height:420px;object-fit:cover;display:block}
+.hero h1{color:var(--navy)}
+.hero p{color:#5f7185}
+h1{font-size:clamp(38px,6vw,68px);line-height:1.05;margin-bottom:20px}
+.hero p{font-size:18px;line-height:1.6;margin-bottom:28px}
+.heroButtons{display:flex;gap:12px;flex-wrap:wrap}
+.trust{background:#fff;padding:20px 5%;display:flex;justify-content:center;gap:35px;flex-wrap:wrap;color:#607080;font-size:13px;font-weight:bold}
 
 .section{padding:70px 5%}
-
-.inner{
-  max-width:1150px;
-  margin:auto
-}
-
-.head{
-  text-align:center;
-  max-width:700px;
-  margin:0 auto 38px
-}
-
-.head h2{
-  font-size:35px;
-  color:var(--navy);
-  margin-bottom:10px
-}
-
-.head p{
-  color:var(--muted);
-  line-height:1.6
-}
-
-.promoGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px
-}
-
-.promo{
-  background:#fff;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 10px 30px #071a5312;
-  border:1px solid #e8edf4
-}
-
-.promo img{
-  width:100%;
-  height:190px;
-  object-fit:cover;
-  display:block
-}
-
+.inner{max-width:1150px;margin:auto}
+.head{text-align:center;max-width:700px;margin:0 auto 38px}
+.head h2{font-size:35px;color:var(--navy);margin-bottom:10px}
+.head p{color:var(--muted);line-height:1.6}
+.promoGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.promo{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px #071a5312;border:1px solid #e8edf4}
+.promo img{width:100%;height:190px;object-fit:cover;display:block}
 .promoBody{padding:16px}
-
-.promoBody h3{
-  color:var(--navy);
-  font-size:17px
-}
-
-.cards,.securityGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px
-}
-
-.card{
-  background:#fff;
-  border-radius:15px;
-  box-shadow:0 12px 35px #071a5314;
-  padding:28px
-}
-
-.icon{
-  width:50px;
-  height:50px;
-  border-radius:12px;
-  background:#eaf2ff;
-  color:var(--blue);
-  display:grid;
-  place-items:center;
-  font-size:23px;
-  margin-bottom:18px
-}
-
-.card h3,.box h3,.panel h3,.profileCard h3,.service h3{
-  color:var(--navy);
-  margin-bottom:8px
-}
-
-.card p,.box p{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.6
-}
-
-.security{
-  background:var(--navy);
-  color:#fff
-}
-
+.promoBody h3{color:var(--navy);font-size:17px}
+.cards,.securityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card,.box,.panel,.profileCard,.service,.adminBox{background:#fff;border-radius:15px;box-shadow:0 12px 35px #071a5314}
+.card{padding:28px}
+.icon{width:50px;height:50px;border-radius:12px;background:#eaf2ff;color:var(--blue);display:grid;place-items:center;font-size:23px;margin-bottom:18px}
+.card h3,.box h3,.panel h3,.profileCard h3,.service h3{color:var(--navy);margin-bottom:8px}
+.card p,.box p{color:var(--muted);font-size:14px;line-height:1.6}
+.security{background:var(--navy);color:#fff}
 .security .head h2{color:#fff}
 .security .head p{color:#bdcce0}
+.securityBox{padding:24px;border:1px solid #ffffff20;border-radius:14px;background:#ffffff08}
+.securityBox strong{display:block;margin-bottom:7px}
+.securityBox span{font-size:13px;color:#bdcce0;line-height:1.5}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.box{padding:28px}
+footer{background:#041327;color:#9fb0c5;padding:40px 5%}
+.footer{max-width:1150px;margin:auto}
+.footer .logo{color:#fff;margin-bottom:12px}
+.copy{margin-top:25px;padding-top:18px;border-top:1px solid #ffffff15;font-size:11px}
 
-.securityBox{
-  padding:24px;
-  border:1px solid #ffffff20;
-  border-radius:14px;
-  background:#ffffff08
-}
-
-.securityBox strong{
-  display:block;
-  margin-bottom:7px
-}
-
-.securityBox span{
-  font-size:13px;
-  color:#bdcce0;
-  line-height:1.5
-}
-
-.contact{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:22px
-}
-
-.box{
-  background:#fff;
-  padding:28px;
-  border-radius:15px;
-  box-shadow:0 12px 35px #071a5314
-}
-
-footer{
-  background:#041327;
-  color:#9fb0c5;
-  padding:40px 5%
-}
-
-.footer{
-  max-width:1150px;
-  margin:auto
-}
-
-.footer .logo{
-  color:#fff;
-  margin-bottom:12px
-}
-
-.copy{
-  margin-top:25px;
-  padding-top:18px;
-  border-top:1px solid #ffffff15;
-  font-size:11px
-}
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#000a1bb8;
-  z-index:100;
-  align-items:center;
-  justify-content:center;
-  padding:20px
-}
-
+.modal{display:none;position:fixed;inset:0;background:#000a1bb8;z-index:100;align-items:center;justify-content:center;padding:20px}
 .modal.show{display:flex}
-
-.modalBox{
-  background:#fff;
-  width:100%;
-  max-width:820px;
-  border-radius:18px;
-  position:relative;
-  max-height:92vh;
-  overflow:auto;
-  display:grid;
-  grid-template-columns:1fr 1.05fr
-}
-
-.authImage{
-  min-height:480px;
-  background:
-    linear-gradient(180deg,#071a3580,#071a35e8),
-    url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=85")
-    center/cover;
-  display:flex;
-  align-items:flex-end;
-  padding:30px;
-  color:#fff
-}
-
-.authImage h3{
-  font-size:25px;
-  margin-bottom:8px
-}
-
-.authImage p{
-  color:#d8e4f2;
-  font-size:13px;
-  line-height:1.5
-}
-
+.modalBox{background:#fff;width:100%;max-width:820px;border-radius:18px;padding:0;position:relative;max-height:92vh;overflow:auto;display:grid;grid-template-columns:1fr 1.05fr}
+.authImage{min-height:480px;background:linear-gradient(180deg,#071a3580,#071a35e8),url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=85") center/cover;display:flex;align-items:flex-end;padding:30px;color:#fff}
+.authImage h3{font-size:25px;margin-bottom:8px}
+.authImage p{color:#d8e4f2;font-size:13px;line-height:1.5}
 .authForm{padding:30px}
-
-.close{
-  position:absolute;
-  right:17px;
-  top:12px;
-  border:0;
-  background:none;
-  font-size:25px;
-  color:#777;
-  z-index:2
-}
-
-.modalBox h2{
-  color:var(--navy);
-  margin-bottom:5px
-}
-
-.authForm>p{
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:20px
-}
-
+.close{position:absolute;right:17px;top:12px;border:0;background:none;font-size:25px;color:#777;z-index:2}
+.modalBox h2{color:var(--navy);margin-bottom:5px}
+.modalBox>p,.authForm>p{font-size:13px;color:var(--muted);margin-bottom:20px}
 .field{margin-bottom:14px}
-
-.field label{
-  display:block;
-  font-size:12px;
-  font-weight:bold;
-  margin-bottom:6px
-}
-
-.field input,.field select,.field textarea{
-  width:100%;
-  padding:13px;
-  border:1px solid #d8e0eb;
-  border-radius:8px;
-  outline:0
-}
-
-.field textarea{
-  resize:vertical;
-  min-height:90px
-}
-
-.error{
-  display:none;
-  background:#ffe8e8;
-  color:#a21d1d;
-  padding:10px;
-  border-radius:8px;
-  font-size:12px;
-  margin-bottom:12px
-}
-
+.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:13px;border:1px solid #d8e0eb;border-radius:8px;outline:0}
+.field textarea{resize:vertical;min-height:90px}
+.error{display:none;background:#ffe8e8;color:#a21d1d;padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px}
 .error.show{display:block}
 
-#dashboard{
-  display:none;
-  min-height:100vh;
-  background:#f3f6fa
-}
-
-.dashNav{
-  background:var(--navy);
-  color:#fff;
-  padding:14px 5%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px
-}
-
-.dashUser{
-  display:flex;
-  align-items:center;
-  gap:9px
-}
-
-.avatarWrap{
-  position:relative;
-  width:48px;
-  height:48px
-}
-
-.avatar{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  background:var(--gold);
-  color:var(--navy);
-  display:grid;
-  place-items:center;
-  font-weight:bold;
-  overflow:hidden
-}
-
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover
-}
-
-.avatarPlus{
-  position:absolute;
-  right:-5px;
-  bottom:-5px;
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  border:2px solid var(--navy);
-  background:var(--blue);
-  color:#fff;
-  display:grid;
-  place-items:center;
-  font-size:16px;
-  font-weight:bold;
-  line-height:1
-}
-
-.dashWrap{
-  max-width:1200px;
-  margin:auto;
-  padding:35px 5%
-}
-
-.dashTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:25px
-}
-
-.dashTop h1{
-  font-size:32px;
-  color:var(--navy);
-  margin:0
-}
-
-.liveBanner{
-  background:#eaf7ef;
-  border:1px solid #ccebd8;
-  color:#126c36;
-  border-radius:10px;
-  padding:12px 15px;
-  margin-bottom:18px;
-  font-size:13px
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px
-}
-
-.balance{
-  background:linear-gradient(135deg,var(--navy),var(--navy2));
-  color:#fff;
-  padding:24px;
-  border-radius:15px
-}
-
+#dashboard{display:none;min-height:100vh;background:#f3f6fa}
+.dashNav{background:var(--navy);color:#fff;padding:14px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.dashUser{display:flex;align-items:center;gap:9px}
+.avatarWrap{position:relative;width:48px;height:48px}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-weight:bold;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatarPlus{position:absolute;right:-5px;bottom:-5px;width:22px;height:22px;border-radius:50%;border:2px solid var(--navy);background:var(--blue);color:#fff;display:grid;place-items:center;font-size:16px;font-weight:bold;line-height:1}
+.dashWrap{max-width:1200px;margin:auto;padding:35px 5%}
+.dashTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.dashTop h1{font-size:32px;color:var(--navy);margin:0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.balance{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:24px;border-radius:15px}
 .balance small{color:#bdcce0}
-
-.balance h2{
-  margin:8px 0;
-  font-size:30px
-}
-
-.stat{
-  background:#fff;
-  padding:22px;
-  border-radius:15px
-}
-
+.balance h2{margin:8px 0;font-size:30px}
+.stat{background:#fff;padding:22px;border-radius:15px}
 .stat small{color:var(--muted)}
 .stat h3{margin-top:7px}
-
-.currencyBalances{
-  margin-top:18px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px
-}
-
-.currencyCard{
-  background:#fff;
-  border-radius:14px;
-  padding:18px;
-  box-shadow:0 8px 25px #071a5310
-}
-
-.currencyCode{
-  font-weight:bold;
-  color:var(--navy);
-  font-size:13px
-}
-
-.currencyAmount{
-  margin-top:7px;
-  font-size:21px;
-  font-weight:bold
-}
-
-.columns{
-  display:grid;
-  grid-template-columns:1.5fr 1fr;
-  gap:18px;
-  margin-top:18px
-}
-
-.panel{
-  padding:24px
-}
-
-.tx{
-  display:flex;
-  justify-content:space-between;
-  padding:13px 0;
-  border-bottom:1px solid #edf0f4;
-  gap:10px
-}
-
+.columns{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
+.panel{padding:24px}
+.tx{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #edf0f4;gap:10px}
 .tx:last-child{border:0}
-
-.txName{
-  font-weight:bold;
-  font-size:13px
-}
-
-.txDate{
-  font-size:11px;
-  color:var(--muted)
-}
-
-.out{
-  color:var(--red);
-  font-weight:bold
-}
-
-.in{
-  color:var(--green);
-  font-weight:bold
-}
-
-.empty{
-  text-align:center;
-  color:var(--muted);
-  padding:25px;
-  font-size:13px
-}
-
-.quick{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px
-}
-
-.quick button{
-  padding:14px;
-  border:1px solid #e1e7ef;
-  background:#fff;
-  border-radius:9px;
-  font-weight:bold;
-  color:var(--navy)
-}
-
-.servicesGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-  margin-top:18px
-}
-
-.service{
-  padding:22px
-}
-
-.serviceIcon{
-  font-size:28px;
-  margin-bottom:12px
-}
-
-.service p{
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5
-}
-
-.service button{
-  margin-top:14px;
-  width:100%
-}
-
-.serviceLive{
-  background:#f7f9fc;
-  border:1px solid var(--border);
-  padding:12px;
-  border-radius:9px;
-  margin-top:10px;
-  font-size:12px;
-  color:var(--muted)
-}
-
-.profilePanel{
-  margin-top:18px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px
-}
-
-.profileCard{
-  padding:24px
-}
-
-.profileCard input{
-  width:100%;
-  padding:11px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  margin-bottom:10px
-}
-
-.profileNote{
-  font-size:12px;
-  color:var(--muted);
-  margin-bottom:15px
-}
-
-.notification{
-  padding:13px;
-  background:#eef5ff;
-  border-left:4px solid var(--blue);
-  border-radius:8px;
-  margin-bottom:10px;
-  font-size:13px
-}
-
-.notification small{
-  display:block;
-  color:var(--muted);
-  margin-top:5px
-}
-
-.admin{
-  display:none;
-  margin-top:25px;
-  background:#fff;
-  border-radius:15px;
-  padding:25px;
-  box-shadow:0 12px 35px #071a5314
-}
-
-.admin h2{
-  color:var(--navy);
-  margin-bottom:7px
-}
-
-.adminGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-  margin-top:20px
-}
-
-.adminBox{
-  border:1px solid var(--border);
-  padding:20px;
-  border-radius:12px
-}
-
-.adminBox h3{
-  margin-bottom:12px;
-  color:var(--navy)
-}
-
-.adminBox input,
-.adminBox select,
-.adminBox textarea{
-  width:100%;
-  padding:11px;
-  margin-bottom:10px;
-  border:1px solid var(--border);
-  border-radius:8px
-}
-
-.customerList{
-  max-height:300px;
-  overflow:auto;
-  border:1px solid var(--border);
-  border-radius:10px;
-  margin-top:10px
-}
-
-.customerItem{
-  width:100%;
-  border:0;
-  border-bottom:1px solid var(--border);
-  background:#fff;
-  padding:12px;
-  text-align:left;
-  display:flex;
-  justify-content:space-between;
-  gap:10px
-}
-
+.txName{font-weight:bold;font-size:13px}
+.txDate{font-size:11px;color:var(--muted)}
+.out{color:var(--red);font-weight:bold}
+.in{color:var(--green);font-weight:bold}
+.empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick button{padding:14px;border:1px solid #e1e7ef;background:#fff;border-radius:9px;font-weight:bold;color:var(--navy)}
+.profilePanel{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.profileCard{padding:24px}
+.profileCard input{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;margin-bottom:10px}
+.profileNote{font-size:12px;color:var(--muted);margin-bottom:15px}
+.currencyBalances{margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.currencyCard{background:#fff;border-radius:14px;padding:18px;box-shadow:0 8px 25px #071a5310}
+.currencyCode{font-weight:bold;color:var(--navy);font-size:13px}
+.currencyAmount{margin-top:7px;font-size:21px;font-weight:bold}
+.servicesGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.service{padding:22px}
+.serviceIcon{font-size:28px;margin-bottom:12px}
+.service p{font-size:12px;color:var(--muted);line-height:1.5}
+.service button{margin-top:14px;width:100%}
+.admin{display:none;margin-top:25px;background:#fff;border-radius:15px;padding:25px;box-shadow:0 12px 35px #071a5314}
+.admin h2{color:var(--navy);margin-bottom:7px}
+.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+.adminBox{border:1px solid var(--border);padding:20px;border-radius:12px;box-shadow:none}
+.adminBox h3{margin-bottom:12px;color:var(--navy)}
+.adminBox input,.adminBox select,.adminBox textarea{width:100%;padding:11px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px}
+.customerList{max-height:300px;overflow:auto;border:1px solid var(--border);border-radius:10px;margin-top:10px}
+.customerItem{width:100%;border:0;border-bottom:1px solid var(--border);background:#fff;padding:12px;text-align:left;display:flex;justify-content:space-between;gap:10px}
 .customerItem:last-child{border-bottom:0}
-
 .customerItem.active{background:#eef5ff}
-
 .customerItem strong{display:block}
 .customerItem small{color:var(--muted)}
-
-.adminChat{
-  height:250px;
-  overflow:auto;
-  background:#f5f7fa;
-  border-radius:10px;
-  padding:12px;
-  margin-bottom:10px
-}
-
-.requestItem{
-  padding:12px;
-  border-bottom:1px solid var(--border)
-}
-
+.adminChat{height:250px;overflow:auto;background:#f5f7fa;border-radius:10px;padding:12px;margin-bottom:10px}
+.requestItem{padding:12px;border-bottom:1px solid var(--border)}
 .requestItem:last-child{border-bottom:0}
-
-.requestButtons{
-  display:flex;
-  gap:7px;
-  margin-top:9px;
-  flex-wrap:wrap
-}
-
-.chatBtn{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  width:56px;
-  height:56px;
-  border:0;
-  border-radius:50%;
-  background:var(--blue);
-  color:#fff;
-  font-size:23px;
-  z-index:60
-}
-
-.chat{
-  display:none;
-  position:fixed;
-  right:20px;
-  bottom:85px;
-  width:350px;
-  max-width:calc(100% - 40px);
-  background:#fff;
-  border-radius:15px;
-  box-shadow:0 15px 45px #0003;
-  overflow:hidden;
-  z-index:70
-}
-
+.requestButtons{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.chatBtn{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:23px;z-index:60}
+.chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;max-width:calc(100% - 40px);background:#fff;border-radius:15px;box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
 .chat.show{display:block}
-
-.chatHead{
-  background:var(--navy);
-  color:#fff;
-  padding:15px;
-  display:flex;
-  justify-content:space-between
-}
-
-.chatBody{
-  height:260px;
-  padding:14px;
-  overflow:auto;
-  background:#f5f7fa
-}
-
-.msg{
-  padding:9px 11px;
-  border-radius:11px;
-  background:#fff;
-  font-size:13px;
-  margin-bottom:9px;
-  max-width:85%;
-  line-height:1.45
-}
-
-.msg.user{
-  margin-left:auto;
-  background:#dceaff
-}
-
-.chatInput{
-  display:flex;
-  border-top:1px solid #ddd
-}
-
-.chatInput input{
-  flex:1;
-  border:0;
-  padding:12px;
-  outline:0
-}
-
-.chatInput button{
-  border:0;
-  background:var(--blue);
-  color:#fff;
-  padding:0 16px
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:25px;
-  transform:translate(-50%,120px);
-  background:var(--navy);
-  color:#fff;
-  padding:12px 18px;
-  border-radius:8px;
-  transition:.3s;
-  z-index:600
-}
-
-.toast.show{
-  transform:translate(-50%,0)
-}
-
+.chatHead{background:var(--navy);color:#fff;padding:15px;display:flex;justify-content:space-between}
+.chatBody{height:260px;padding:14px;overflow:auto;background:#f5f7fa}
+.msg{padding:9px 11px;border-radius:11px;background:#fff;font-size:13px;margin-bottom:9px;max-width:85%;line-height:1.45}
+.msg.user{margin-left:auto;background:#dceaff}
+.chatInput{display:flex;border-top:1px solid #ddd}
+.chatInput input{flex:1;border:0;padding:12px;outline:0}
+.chatInput button{border:0;background:var(--blue);color:#fff;padding:0 16px}
+.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,120px);background:var(--navy);color:#fff;padding:12px 18px;border-radius:8px;transition:.3s;z-index:600}
+.toast.show{transform:translate(-50%,0)}
 .hiddenFile{display:none}
-
-.loadingBtn{
-  position:relative;
-  pointer-events:none
-}
-
-.loadingBtn:after{
-  content:"";
-  display:inline-block;
-  width:13px;
-  height:13px;
-  margin-left:8px;
-  border:2px solid currentColor;
-  border-right-color:transparent;
-  border-radius:50%;
-  vertical-align:-2px;
-  animation:spin .7s linear infinite
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
+.liveBanner{background:#eaf7ef;border:1px solid #ccebd8;color:#126c36;border-radius:10px;padding:12px 15px;margin-bottom:18px;font-size:13px}
+.serviceLive{background:#f7f9fc;border:1px solid var(--border);padding:12px;border-radius:9px;margin-top:10px;font-size:12px;color:var(--muted)}
+.loadingBtn{position:relative;pointer-events:none}
+.loadingBtn:after{content:"";display:inline-block;width:13px;height:13px;margin-left:8px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:-2px;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 @media(max-width:900px){
-  .links{display:none}
-  .heroInner{grid-template-columns:1fr}
-  .heroVisual,.heroVisual img{min-height:330px}
-  .promoGrid{grid-template-columns:1fr 1fr}
-  .cards,.securityGrid{grid-template-columns:1fr}
-  .contact,.columns,.profilePanel{grid-template-columns:1fr}
-  .grid{grid-template-columns:1fr 1fr}
-  .servicesGrid{grid-template-columns:1fr 1fr}
-  .currencyBalances{grid-template-columns:1fr 1fr}
-  .adminGrid{grid-template-columns:1fr}
-  .modalBox{grid-template-columns:1fr}
-  .authImage{display:none}
+.links{display:none}
+.heroInner{grid-template-columns:1fr}
+.heroVisual{min-height:330px}
+.heroVisual img{min-height:330px}
+.promoGrid{grid-template-columns:1fr 1fr}
+.cards,.securityGrid{grid-template-columns:1fr}
+.contact,.columns,.profilePanel{grid-template-columns:1fr}
+.grid{grid-template-columns:1fr 1fr}
+.servicesGrid{grid-template-columns:1fr 1fr}
+.currencyBalances{grid-template-columns:1fr 1fr}
+.adminGrid{grid-template-columns:1fr}
+.modalBox{grid-template-columns:1fr}
+.authImage{display:none}
 }
-
 @media(max-width:600px){
-  .top{display:none}
-  .hero{padding:18px 0 35px;min-height:520px}
-  .heroInner{width:92%}
-  .heroVisual,.heroVisual img{min-height:300px}
-  .promoGrid{grid-template-columns:1fr}
-  .nav{min-height:65px}
-  .hero p{font-size:15px}
-  .section{padding:55px 5%}
-  .grid{grid-template-columns:1fr}
-  .dashTop{flex-direction:column;align-items:flex-start;gap:12px}
-  .chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
-  .servicesGrid,.currencyBalances{grid-template-columns:1fr 1fr}
-  .dashNav .logo span:last-child{display:none}
+.top{display:none}
+.hero{padding:18px 0 35px}
+.heroInner{width:92%}
+.heroVisual{min-height:300px}
+.heroVisual img{min-height:300px}
+.promoGrid{grid-template-columns:1fr}
+.nav{min-height:65px}
+.hero{min-height:520px}
+.hero p{font-size:15px}
+.section{padding:55px 5%}
+.grid{grid-template-columns:1fr}
+.dashTop{flex-direction:column;align-items:flex-start;gap:12px}
+.chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
+.servicesGrid,.currencyBalances{grid-template-columns:1fr 1fr}
+.dashNav .logo span:last-child{display:none}
 }
 </style>
 </head>
@@ -1190,6 +408,7 @@ alt="Customer using online banking">
 <p style="margin-bottom:18px">
 Sign in to send a support message and continue the conversation with the administrator.
 </p>
+
 <button class="btn primary" onclick="openSupportFromHome()">
 Open Customer Support
 </button>
@@ -1217,17 +436,12 @@ notifications and service interfaces are available inside the dashboard.
 
 <p>Online banking services and account management.</p>
 
-<div class="copy">
-© 2026 American Crest Banking — Demo only.
-</div>
+<div class="copy">© 2026 American Crest Banking — Demo only.</div>
 
 </div>
 </footer>
 
 </div>
-
-
-<!-- DASHBOARD -->
 
 <div id="dashboard">
 
@@ -1261,4 +475,2260 @@ onchange="handleProfileImage(event)">
 <small style="color:#bdcce0">Online Account</small>
 </div>
 
+<button class="btn outline" onclick="logout()">Log Out</button>
+
+</div>
+</div>
+
+<div class="dashWrap">
+
+<div class="dashTop">
+
+<div>
+<small style="color:#718096">Welcome back</small>
+<h1 id="welcomeName">Customer</h1>
+</div>
+
+<button class="btn primary" onclick="openTransfer()">+ New Transfer</button>
+
+</div>
+
+<div id="liveBanner" class="liveBanner"></div>
+<div id="notifications"></div>
+
+<div class="grid">
+
+<div class="balance">
+
+<small>AVAILABLE DEMO BALANCE</small>
+
+<div style="display:flex;align-items:center;gap:10px">
+
+<h2 id="balance">₦0.00</h2>
+
 <button
+id="balanceEye"
+onclick="toggleBalance()"
+aria-label="Hide balance"
+style="border:0;background:none;color:#fff;font-size:20px;padding:4px">
+👁️
+</button>
+
+</div>
+
+<small id="balanceCurrency">Primary currency: NGN</small>
+
+</div>
+
+<div class="stat">
+<small>ACCOUNT STATUS</small>
+<h3 id="statusStat">Active</h3>
+</div>
+
+<div class="stat">
+<small>TRANSACTIONS</small>
+<h3 id="txCount">0</h3>
+</div>
+
+<div class="stat">
+<small>ACCOUNT EMAIL</small>
+<h3 id="emailStat" style="font-size:14px">—</h3>
+</div>
+
+</div>
+
+<div class="currencyBalances" id="currencyBalances"></div>
+
+<div class="columns">
+
+<div class="panel">
+<h3>Recent Activity</h3>
+<div id="transactions"></div>
+</div>
+
+<div class="panel">
+
+<h3>Quick Actions</h3>
+
+<div class="quick">
+
+<button onclick="openTransfer()">Send Money</button>
+<button onclick="refreshDashboard()">Refresh</button>
+<button onclick="toggleChat()">Support</button>
+<button onclick="scrollToServices()">Services</button>
+
+</div>
+</div>
+
+</div>
+
+<div class="servicesGrid" id="dashboardServices">
+
+<div class="service">
+<div class="serviceIcon">📱</div>
+<h3>Buy Data</h3>
+<p>Demo data bundle interface.</p>
+<button class="btn outline" onclick="openDemoService('Buy Data')">Open</button>
+<div class="serviceLive">Demo request ready — no real purchase is made.</div>
+</div>
+
+<div class="service">
+<div class="serviceIcon">☎️</div>
+<h3>Airtime</h3>
+<p>Demo mobile airtime interface.</p>
+<button class="btn outline" onclick="openDemoService('Airtime')">Open</button>
+<div class="serviceLive">Demo request ready — no real purchase is made.</div>
+</div>
+
+<div class="service">
+<div class="serviceIcon">💡</div>
+<h3>Pay Bills</h3>
+<p>Demo utility payment interface.</p>
+<button class="btn outline" onclick="openDemoService('Pay Bills')">Open</button>
+<div class="serviceLive">Demo request ready — no real payment is made.</div>
+</div>
+
+<div class="service">
+<div class="serviceIcon">💳</div>
+<h3>Cards</h3>
+<p>Demo card service interface.</p>
+<button class="btn outline" onclick="openDemoService('Cards')">Open</button>
+<div class="serviceLive">Demo card interface — no real card is issued.</div>
+</div>
+
+</div>
+
+<div class="profilePanel">
+
+<div class="profileCard">
+<h3>My Profile</h3>
+
+<label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
+Display Name
+</label>
+
+<input id="profileName" type="text">
+
+<button class="btn primary" onclick="saveProfileName()">Save Name</button>
+</div>
+
+<div class="profileCard">
+<h3>Profile Picture</h3>
+
+<p class="profileNote">
+Tap the + button beside your profile picture or choose an image below.
+</p>
+
+<button class="btn outline" onclick="chooseProfileImage()">
+Choose Profile Picture
+</button>
+
+</div>
+</div>
+
+<div class="admin" id="adminPanel">
+
+<h2>Demo Account Administration</h2>
+
+<p style="font-size:13px;color:#718096;margin-bottom:10px">
+Customers and customer activity are loaded directly from the server database.
+Nothing is stored as customer data in browser localStorage.
+</p>
+
+<div class="adminGrid">
+
+<div class="adminBox">
+
+<h3>Customers</h3>
+
+<div id="customerList" class="customerList">
+<div class="empty">Loading customers...</div>
+</div>
+
+</div>
+
+<div class="adminBox">
+
+<h3>Customer Requests</h3>
+
+<div id="adminRequests" class="customerList">
+<div class="empty">Loading requests...</div>
+</div>
+
+</div>
+
+<div class="adminBox">
+
+<h3>Credit Customer</h3>
+
+<select id="adminCurrency">
+
+<option value="NGN">NGN — Nigerian Naira</option>
+<option value="USD">USD — US Dollar</option>
+<option value="EUR">EUR — Euro</option>
+<option value="GBP">GBP — British Pound</option>
+<option value="IDR">IDR — Indonesian Rupiah</option>
+<option value="CAD">CAD — Canadian Dollar</option>
+<option value="AUD">AUD — Australian Dollar</option>
+<option value="CHF">CHF — Swiss Franc</option>
+<option value="JPY">JPY — Japanese Yen</option>
+<option value="CNY">CNY — Chinese Yuan</option>
+<option value="INR">INR — Indian Rupee</option>
+<option value="MYR">MYR — Malaysian Ringgit</option>
+<option value="SGD">SGD — Singapore Dollar</option>
+<option value="AED">AED — UAE Dirham</option>
+<option value="ZAR">ZAR — South African Rand</option>
+<option value="KES">KES — Kenyan Shilling</option>
+<option value="GHS">GHS — Ghanaian Cedi</option>
+
+</select>
+
+<input id="adminAmount" type="number" min="0.01" step="0.01" placeholder="Amount">
+
+<button id="adminCreditBtn" class="btn primary" onclick="adminCredit()">
+Credit Customer
+</button>
+
+</div>
+
+<div class="adminBox">
+
+<h3>Customer Notification</h3>
+
+<textarea id="adminNotification" placeholder="Write notification..."></textarea>
+
+<button id="adminNotifyBtn" class="btn primary" onclick="adminNotify()">
+Send Notification
+</button>
+
+</div>
+
+<div class="adminBox">
+
+<h3>Customer Support</h3>
+
+<div id="adminChat" class="adminChat">
+<div class="empty">Select a customer.</div>
+</div>
+
+<input id="adminReply" type="text" placeholder="Write your reply...">
+
+<button id="adminReplyBtn" class="btn primary" onclick="adminReplyMessage()">
+Send Reply
+</button>
+
+</div>
+
+<div class="adminBox">
+
+<h3>Administration</h3>
+
+<button class="btn outline" onclick="refreshAdmin()">
+Refresh Customer List
+</button>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="modal" id="authModal">
+
+<div class="modalBox">
+
+<button class="close" onclick="closeModal()">×</button>
+
+<div class="authImage">
+<div>
+<h3>Welcome to the demo</h3>
+<p>
+A simple fictional banking demo.
+No real bank account, payment, transfer or funds are created.
+</p>
+</div>
+</div>
+
+<div class="authForm">
+
+<div id="loginForm">
+
+<h2>Welcome Back</h2>
+<p>Sign in to your demo account.</p>
+
+<div class="error" id="loginError"></div>
+
+<div class="field">
+<label>Email or Phone</label>
+<input id="loginEmail" type="text" autocomplete="username">
+</div>
+
+<div class="field">
+<label>Password</label>
+<input id="loginPassword" type="password" autocomplete="current-password">
+</div>
+
+<button id="loginBtn" class="btn primary full" onclick="login()">
+Sign In
+</button>
+
+<div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+Don't have an account?
+
+<button onclick="showRegister()" style="border:0;background:none;color:#1769e0;font-weight:bold">
+Create Account
+</button>
+
+</div>
+</div>
+
+<div id="registerForm" style="display:none">
+
+<h2>Create Account</h2>
+<p>Create a new demo account.</p>
+
+<div class="error" id="registerError"></div>
+
+<div class="field">
+<label>Full Name</label>
+<input id="regName" type="text">
+</div>
+
+<div class="field">
+<label>Email (optional if phone is used)</label>
+<input id="regEmail" type="email" autocomplete="username">
+</div>
+
+<div class="field">
+<label>Phone (optional if email is used)</label>
+<input id="regPhone" type="tel" autocomplete="tel" placeholder="Phone number">
+</div>
+
+<div class="field">
+<label>Password</label>
+<input id="regPassword" type="password" autocomplete="new-password">
+</div>
+
+<div class="field">
+<label>Primary Currency</label>
+
+<select id="regCurrency">
+<option value="NGN">NGN — Nigerian Naira</option>
+<option value="USD">USD — US Dollar</option>
+<option value="EUR">EUR — Euro</option>
+<option value="GBP">GBP — British Pound</option>
+<option value="IDR">IDR — Indonesian Rupiah</option>
+<option value="CAD">CAD — Canadian Dollar</option>
+<option value="AUD">AUD — Australian Dollar</option>
+<option value="CHF">CHF — Swiss Franc</option>
+<option value="JPY">JPY — Japanese Yen</option>
+<option value="CNY">CNY — Chinese Yuan</option>
+<option value="INR">INR — Indian Rupee</option>
+<option value="MYR">MYR — Malaysian Ringgit</option>
+<option value="SGD">SGD — Singapore Dollar</option>
+<option value="AED">AED — UAE Dirham</option>
+<option value="ZAR">ZAR — South African Rand</option>
+<option value="KES">KES — Kenyan Shilling</option>
+<option value="GHS">GHS — Ghanaian Cedi</option>
+</select>
+
+</div>
+
+<button id="registerBtn" class="btn primary full" onclick="register()">
+Create Account
+</button>
+
+<div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+Already registered?
+
+<button onclick="showLogin()" style="border:0;background:none;color:#1769e0;font-weight:bold">
+Sign In
+</button>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="verificationModal">
+
+<div class="modalBox" style="display:block;max-width:470px;padding:30px">
+
+<button class="close" onclick="returnToAuthForm()">×</button>
+
+<h2>Verify Your Account</h2>
+
+<p id="verificationText">
+Enter the 6-digit verification code before accessing your demo account.
+</p>
+
+<div class="error" id="verificationError"></div>
+
+<div class="field">
+<label>Verification Code</label>
+<input
+id="verificationCode"
+type="text"
+inputmode="numeric"
+maxlength="6"
+autocomplete="one-time-code"
+placeholder="6-digit code">
+</div>
+
+<div
+id="verificationDemoCode"
+style="display:none;background:#eef5ff;border-radius:8px;padding:10px;margin-bottom:12px;font-size:13px;font-weight:bold">
+</div>
+
+<button id="verificationBtn" class="btn primary full" onclick="verifyCode()">
+Verify &amp; Continue
+</button>
+
+<button
+id="resendVerificationBtn"
+class="btn outline full"
+style="margin-top:10px"
+onclick="resendVerification()">
+Resend Code
+</button>
+
+<div style="text-align:center;font-size:12px;color:#718096;margin-top:14px">
+Verification is required before entering the demo account.
+</div>
+
+</div>
+</div>
+
+<div class="modal" id="transferModal">
+
+<div class="modalBox" style="display:block;max-width:500px;padding:30px">
+
+<button class="close" onclick="closeTransfer()">×</button>
+
+<h2>Send Money</h2>
+<p>Create a demo transfer.</p>
+
+<div class="error" id="transferError"></div>
+
+<div class="field">
+<label>Currency</label>
+<select id="transferCurrency"></select>
+</div>
+
+<div class="field">
+<label>Recipient</label>
+<input id="transferRecipient" type="text" placeholder="Recipient name, email or phone">
+</div>
+
+<div class="field">
+<label>Amount</label>
+<input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00">
+</div>
+
+<div class="field">
+<label>Note</label>
+<textarea id="transferNote" placeholder="Optional note"></textarea>
+</div>
+
+<button id="transferBtn" class="btn primary full" onclick="submitTransfer()">
+Send Demo Transfer
+</button>
+
+</div>
+</div>
+
+<div class="modal" id="serviceModal">
+
+<div class="modalBox" style="display:block;max-width:500px;padding:30px">
+
+<button class="close" onclick="closeService()">×</button>
+
+<h2 id="serviceTitle">Service</h2>
+
+<p id="serviceDescription">Demo service.</p>
+
+<div class="error" id="serviceError"></div>
+
+<div class="field">
+<label>Account / Phone / Reference</label>
+<input id="serviceReference" type="text">
+</div>
+
+<div class="field">
+<label>Amount</label>
+<input id="serviceAmount" type="number" min="0.01" step="0.01">
+</div>
+
+<button class="btn primary full" onclick="submitDemoService()">
+Continue
+</button>
+
+</div>
+</div>
+
+<div class="chat" id="customerChat">
+
+<div class="chatHead">
+<strong>Customer Support</strong>
+<button
+onclick="toggleChat()"
+style="border:0;background:none;color:#fff;font-size:20px">
+×
+</button>
+</div>
+
+<div class="chatBody" id="customerChatBody">
+<div class="empty">Loading support messages...</div>
+</div>
+
+<div class="chatInput">
+<input id="customerChatInput" type="text" placeholder="Write a message...">
+<button onclick="sendSupportMessage()">Send</button>
+</div>
+
+</div>
+
+<button class="chatBtn" id="chatButton" onclick="toggleChat()">💬</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   CLIENT CONFIGURATION
+   ========================================================= */
+
+const API_BASE = "";
+
+let authToken = "";
+let currentUser = null;
+let pendingVerification = null;
+let selectedAdminCustomer = null;
+let balanceHidden = false;
+let supportOpen = false;
+
+/*
+   The verification code is intentionally handled by the server.
+   The frontend never treats a user as authenticated until the
+   verification endpoint confirms the code.
+*/
+
+const CURRENCIES = [
+  "NGN","USD","EUR","GBP","IDR","CAD","AUD","CHF","JPY",
+  "CNY","INR","MYR","SGD","AED","ZAR","KES","GHS"
+];
+
+const currencySymbols = {
+  NGN:"₦",
+  USD:"$",
+  EUR:"€",
+  GBP:"£",
+  IDR:"Rp",
+  CAD:"C$",
+  AUD:"A$",
+  CHF:"CHF ",
+  JPY:"¥",
+  CNY:"¥",
+  INR:"₹",
+  MYR:"RM",
+  SGD:"S$",
+  AED:"د.إ ",
+  ZAR:"R",
+  KES:"KSh ",
+  GHS:"GH₵ "
+};
+
+function $(id){
+  return document.getElementById(id);
+}
+
+function show(el){
+  if(el) el.style.display = "";
+}
+
+function hide(el){
+  if(el) el.style.display = "none";
+}
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function normalizePhone(value){
+  return String(value || "")
+    .trim()
+    .replace(/[^\d+]/g,"");
+}
+
+function isPhone(value){
+  const phone = normalizePhone(value);
+  return /^\+?\d{7,15}$/.test(phone);
+}
+
+function isEmail(value){
+  return /^\S+@\S+\.\S+$/.test(String(value || "").trim());
+}
+
+function formatMoney(amount,currency){
+  const number = Number(amount || 0);
+  const symbol = currencySymbols[currency] || (currency + " ");
+
+  return symbol + number.toLocaleString(undefined,{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
+
+function formatDate(value){
+  if(!value) return "";
+  const date = new Date(value);
+
+  if(Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleString();
+}
+
+function toast(message){
+  const el = $("toast");
+
+  if(!el) return;
+
+  el.textContent = message;
+  el.classList.add("show");
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer = setTimeout(()=>{
+    el.classList.remove("show");
+  },3000);
+}
+
+function setError(id,message){
+  const el = $(id);
+
+  if(!el) return;
+
+  if(message){
+    el.textContent = message;
+    el.classList.add("show");
+  }else{
+    el.textContent = "";
+    el.classList.remove("show");
+  }
+}
+
+function setButtonLoading(buttonId,loading,text){
+  const button = $(buttonId);
+
+  if(!button) return;
+
+  if(loading){
+    if(!button.dataset.originalText){
+      button.dataset.originalText = button.textContent;
+    }
+
+    button.disabled = true;
+    button.classList.add("loadingBtn");
+  }else{
+    button.disabled = false;
+    button.classList.remove("loadingBtn");
+
+    if(button.dataset.originalText){
+      button.textContent = button.dataset.originalText;
+      delete button.dataset.originalText;
+    }
+
+    if(text) button.textContent = text;
+  }
+}
+
+/* =========================================================
+   API HELPER
+   ========================================================= */
+
+async function api(url,options = {}){
+  const headers = {
+    ...(options.headers || {})
+  };
+
+  if(options.body && typeof options.body !== "string"){
+    headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify(options.body);
+  }
+
+  if(authToken){
+    headers.Authorization = "Bearer " + authToken;
+  }
+
+  const response = await fetch(API_BASE + url,{
+    ...options,
+    headers
+  });
+
+  let data = {};
+
+  try{
+    data = await response.json();
+  }catch{
+    data = {};
+  }
+
+  if(response.status === 401 && authToken){
+    /*
+      A failed authenticated request must not leave a stale
+      session in the browser.
+    */
+    if(
+      !url.includes("/api/login") &&
+      !url.includes("/api/register") &&
+      !url.includes("/api/verify")
+    ){
+      clearSession(false);
+    }
+  }
+
+  if(!response.ok){
+    const error = new Error(
+      data.error ||
+      data.message ||
+      "The server could not complete the request."
+    );
+
+    error.status = response.status;
+    error.data = data;
+
+    throw error;
+  }
+
+  return data;
+}
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+function openModal(type){
+  const modal = $("authModal");
+
+  if(!modal) return;
+
+  modal.classList.add("show");
+
+  if(type === "register"){
+    showRegister();
+  }else{
+    showLogin();
+  }
+}
+
+function closeModal(){
+  const modal = $("authModal");
+
+  if(modal) modal.classList.remove("show");
+
+  setError("loginError","");
+  setError("registerError","");
+}
+
+function showLogin(){
+  $("loginForm").style.display = "";
+  $("registerForm").style.display = "none";
+  setError("loginError","");
+  setError("registerError","");
+}
+
+function showRegister(){
+  $("loginForm").style.display = "none";
+  $("registerForm").style.display = "";
+  setError("loginError","");
+  setError("registerError","");
+}
+
+function returnToAuthForm(){
+  $("verificationModal").classList.remove("show");
+  $("authModal").classList.add("show");
+  pendingVerification = null;
+  setError("verificationError","");
+}
+
+/* =========================================================
+   SESSION
+   ========================================================= */
+
+function saveSession(token,user){
+  authToken = String(token || "");
+  currentUser = user || null;
+
+  /*
+    Token only is kept for this browser session. Customer data
+    itself is always refreshed from the server.
+  */
+  if(authToken){
+    sessionStorage.setItem("acb_demo_token",authToken);
+  }
+}
+
+function clearSession(showPublic = true){
+  authToken = "";
+  currentUser = null;
+  pendingVerification = null;
+
+  sessionStorage.removeItem("acb_demo_token");
+
+  if(showPublic){
+    showPublicSite();
+  }
+}
+
+async function restoreSession(){
+  const saved = sessionStorage.getItem("acb_demo_token");
+
+  if(!saved) return false;
+
+  authToken = saved;
+
+  try{
+    const data = await api("/api/me");
+
+    if(!data || !data.user){
+      clearSession(false);
+      return false;
+    }
+
+    currentUser = data.user;
+    showDashboard();
+
+    return true;
+  }catch{
+    clearSession(false);
+    return false;
+  }
+}
+
+/* =========================================================
+   REGISTER
+   ========================================================= */
+
+async function register(){
+  setError("registerError","");
+
+  const name = String($("regName").value || "").trim();
+  const email = String($("regEmail").value || "").trim();
+  const phone = normalizePhone($("regPhone").value);
+  const password = String($("regPassword").value || "");
+  const currency = String($("regCurrency").value || "NGN").toUpperCase();
+
+  if(name.length < 2){
+    setError("registerError","Enter your full name.");
+    return;
+  }
+
+  /*
+    At least one login identifier is required.
+    The server accepts either email or phone.
+  */
+  if(!email && !phone){
+    setError("registerError","Enter either an email address or a phone number.");
+    return;
+  }
+
+  if(email && !isEmail(email)){
+    setError("registerError","Enter a valid email address.");
+    return;
+  }
+
+  if(phone && !isPhone(phone)){
+    setError("registerError","Enter a valid phone number.");
+    return;
+  }
+
+  if(password.length < 6){
+    setError("registerError","Password must contain at least 6 characters.");
+    return;
+  }
+
+  setButtonLoading("registerBtn",true);
+
+  try{
+    const data = await api("/api/register",{
+      method:"POST",
+      body:{
+        name,
+        email:email || null,
+        phone:phone || null,
+        password,
+        currency
+      }
+    });
+
+    /*
+      Registration does NOT automatically enter the account.
+      The verification step must succeed first.
+    */
+    pendingVerification = {
+      mode:"register",
+      identifier:email || phone,
+      verificationId:data.verificationId || data.verification_id || null
+    };
+
+    $("authModal").classList.remove("show");
+    $("verificationModal").classList.add("show");
+
+    $("verificationText").textContent =
+      data.message ||
+      "Enter the 6-digit verification code to activate your demo account.";
+
+    if(data.demoCode){
+      $("verificationDemoCode").style.display = "block";
+      $("verificationDemoCode").textContent =
+        "Demo verification code: " + data.demoCode;
+    }else{
+      $("verificationDemoCode").style.display = "none";
+    }
+
+    $("verificationCode").value = "";
+    $("verificationCode").focus();
+
+  }catch(error){
+    setError(
+      "registerError",
+      error.message || "Unable to create the account."
+    );
+  }finally{
+    setButtonLoading("registerBtn",false);
+  }
+}
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+async function login(){
+  setError("loginError","");
+
+  const identifier = String($("loginEmail").value || "").trim();
+  const password = String($("loginPassword").value || "");
+
+  if(!identifier){
+    setError("loginError","Enter your email or phone number.");
+    return;
+  }
+
+  if(!password){
+    setError("loginError","Enter your password.");
+    return;
+  }
+
+  setButtonLoading("loginBtn",true);
+
+  try{
+    const data = await api("/api/login",{
+      method:"POST",
+      body:{
+        identifier,
+        email:isEmail(identifier) ? identifier : undefined,
+        phone:isPhone(identifier) ? normalizePhone(identifier) : undefined,
+        password
+      }
+    });
+
+    /*
+      If the server requires verification, no JWT is saved yet.
+    */
+    if(
+      data.requiresVerification ||
+      data.requires_verification ||
+      data.verificationRequired ||
+      data.verification_required
+    ){
+
+      pendingVerification = {
+        mode:"login",
+        identifier,
+        verificationId:
+          data.verificationId ||
+          data.verification_id ||
+          null
+      };
+
+      $("authModal").classList.remove("show");
+      $("verificationModal").classList.add("show");
+
+      $("verificationText").textContent =
+        data.message ||
+        "Enter the 6-digit verification code before entering your account.";
+
+      if(data.demoCode){
+        $("verificationDemoCode").style.display = "block";
+        $("verificationDemoCode").textContent =
+          "Demo verification code: " + data.demoCode;
+      }else{
+        $("verificationDemoCode").style.display = "none";
+      }
+
+      $("verificationCode").value = "";
+      $("verificationCode").focus();
+
+      return;
+    }
+
+    /*
+      Backward-compatible path if the server returns a verified
+      session directly for an already verified account.
+    */
+    if(data.token){
+      saveSession(data.token,data.user);
+      closeModal();
+      showDashboard();
+      return;
+    }
+
+    throw new Error(
+      data.error ||
+      "Verification is required before entering the account."
+    );
+
+  }catch(error){
+    setError(
+      "loginError",
+      error.message || "Unable to sign in."
+    );
+  }finally{
+    setButtonLoading("loginBtn",false);
+  }
+}
+
+/* =========================================================
+   VERIFICATION
+   ========================================================= */
+
+async function verifyCode(){
+  setError("verificationError","");
+
+  const code = String($("verificationCode").value || "")
+    .replace(/\D/g,"")
+    .slice(0,6);
+
+  $("verificationCode").value = code;
+
+  if(!/^\d{6}$/.test(code)){
+    setError(
+      "verificationError",
+      "Enter the 6-digit verification code."
+    );
+    return;
+  }
+
+  if(!pendingVerification){
+    setError(
+      "verificationError",
+      "Verification session expired. Please start again."
+    );
+    return;
+  }
+
+  setButtonLoading("verificationBtn",true);
+
+  try{
+    const data = await api("/api/verify",{
+      method:"POST",
+      body:{
+        code,
+        identifier:pendingVerification.identifier,
+        verificationId:pendingVerification.verificationId
+      }
+    });
+
+    if(!data.token){
+      throw new Error(
+        data.error ||
+        "Verification succeeded but no account session was returned."
+      );
+    }
+
+    saveSession(data.token,data.user);
+
+    pendingVerification = null;
+
+    $("verificationModal").classList.remove("show");
+
+    toast("Account verified successfully.");
+
+    showDashboard();
+
+  }catch(error){
+    setError(
+      "verificationError",
+      error.message || "Invalid verification code."
+    );
+  }finally{
+    setButtonLoading("verificationBtn",false);
+  }
+}
+
+async function resendVerification(){
+  setError("verificationError","");
+
+  if(!pendingVerification){
+    setError(
+      "verificationError",
+      "Verification session expired. Please start again."
+    );
+    return;
+  }
+
+  setButtonLoading("resendVerificationBtn",true);
+
+  try{
+    const data = await api("/api/resend-verification",{
+      method:"POST",
+      body:{
+        identifier:pendingVerification.identifier,
+        verificationId:pendingVerification.verificationId
+      }
+    });
+
+    pendingVerification.verificationId =
+      data.verificationId ||
+      data.verification_id ||
+      pendingVerification.verificationId;
+
+    if(data.demoCode){
+      $("verificationDemoCode").style.display = "block";
+      $("verificationDemoCode").textContent =
+        "Demo verification code: " + data.demoCode;
+    }
+
+    toast(
+      data.message ||
+      "A new verification code has been generated."
+    );
+
+  }catch(error){
+    setError(
+      "verificationError",
+      error.message || "Unable to resend verification code."
+    );
+  }finally{
+    setButtonLoading("resendVerificationBtn",false);
+  }
+}
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+function showDashboard(){
+  $("publicSite").style.display = "none";
+  $("dashboard").style.display = "block";
+
+  updateUserInterface();
+
+  refreshDashboard();
+}
+
+function showPublicSite(){
+  $("dashboard").style.display = "none";
+  $("publicSite").style.display = "block";
+}
+
+function updateUserInterface(){
+  if(!currentUser) return;
+
+  const name =
+    currentUser.name ||
+    currentUser.full_name ||
+    currentUser.fullName ||
+    "Customer";
+
+  $("dashName").textContent = name;
+  $("welcomeName").textContent = name;
+
+  $("emailStat").textContent =
+    currentUser.email ||
+    currentUser.phone ||
+    "—";
+
+  $("statusStat").textContent =
+    currentUser.status ||
+    "Active";
+
+  $("profileName").value = name;
+
+  const avatar = $("avatar");
+
+  if(currentUser.profile_image || currentUser.profileImage){
+    avatar.innerHTML =
+      '<img src="' +
+      escapeHtml(
+        currentUser.profile_image ||
+        currentUser.profileImage
+      ) +
+      '" alt="Profile">';
+  }else{
+    avatar.textContent =
+      name
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0,2)
+        .map(part=>part[0])
+        .join("")
+        .toUpperCase() || "AC";
+  }
+
+  if(String(currentUser.role || "").toLowerCase() === "admin"){
+    $("adminPanel").style.display = "block";
+    refreshAdmin();
+  }else{
+    $("adminPanel").style.display = "none";
+  }
+}
+
+async function refreshDashboard(){
+  if(!authToken) return;
+
+  try{
+    const data = await api("/api/me");
+
+    if(data.user){
+      currentUser = data.user;
+    }
+
+    updateUserInterface();
+    renderBalances(currentUser);
+    renderTransactions(currentUser);
+    renderNotifications(currentUser);
+    renderSupport(currentUser);
+
+    $("liveBanner").textContent =
+      "Your dashboard is connected to the demo server database.";
+
+  }catch(error){
+    $("liveBanner").textContent =
+      error.message || "Unable to refresh your account.";
+  }
+}
+
+function renderBalances(user){
+  const balances =
+    user && user.balances
+      ? user.balances
+      : {};
+
+  const primary =
+    String(
+      user.primary_currency ||
+      user.primaryCurrency ||
+      "NGN"
+    ).toUpperCase();
+
+  const amount = Number(balances[primary] || 0);
+
+  $("balance").textContent =
+    balanceHidden
+      ? "••••••"
+      : formatMoney(amount,primary);
+
+  $("balanceCurrency").textContent =
+    "Primary currency: " + primary;
+
+  const container = $("currencyBalances");
+
+  container.innerHTML = CURRENCIES.map(currency=>{
+
+    const value = Number(balances[currency] || 0);
+
+    return `
+      <div class="currencyCard">
+        <div class="currencyCode">${escapeHtml(currency)}</div>
+        <div class="currencyAmount">
+          ${balanceHidden ? "••••••" : escapeHtml(formatMoney(value,currency))}
+        </div>
+      </div>
+    `;
+
+  }).join("");
+
+  const eye = $("balanceEye");
+
+  if(eye){
+    eye.textContent = balanceHidden ? "🙈" : "👁️";
+    eye.setAttribute(
+      "aria-label",
+      balanceHidden ? "Show balance" : "Hide balance"
+    );
+  }
+}
+
+function toggleBalance(){
+  balanceHidden = !balanceHidden;
+
+  renderBalances(currentUser);
+}
+
+function renderTransactions(user){
+  const container = $("transactions");
+
+  const transactions =
+    Array.isArray(user.transactions)
+      ? user.transactions
+      : [];
+
+  $("txCount").textContent = transactions.length;
+
+  if(!transactions.length){
+    container.innerHTML =
+      '<div class="empty">No transactions yet.</div>';
+    return;
+  }
+
+  container.innerHTML =
+    transactions.slice(0,50).map(tx=>{
+
+      const amount = Number(tx.amount || 0);
+      const kind = String(tx.kind || "").toLowerCase();
+
+      const positive =
+        kind.includes("credit") ||
+        kind.includes("deposit") ||
+        kind.includes("received") ||
+        kind.includes("fund");
+
+      const sign = positive ? "+" : "-";
+      const className = positive ? "in" : "out";
+
+      return `
+        <div class="tx">
+          <div>
+            <div class="txName">${escapeHtml(tx.title || tx.kind || "Transaction")}</div>
+            <div class="txDate">${escapeHtml(formatDate(tx.created_at || tx.date))}</div>
+          </div>
+          <div class="${className}">
+            ${sign}${escapeHtml(formatMoney(amount,String(tx.currency || "NGN").toUpperCase()))}
+          </div>
+        </div>
+      `;
+    }).join("");
+}
+
+function renderNotifications(user){
+  const container = $("notifications");
+
+  const notifications =
+    Array.isArray(user.notifications)
+      ? user.notifications
+      : [];
+
+  if(!notifications.length){
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML =
+    notifications.slice(0,10).map(note=>`
+      <div class="notification">
+        ${escapeHtml(note.message)}
+        <small>${escapeHtml(formatDate(note.created_at || note.date))}</small>
+      </div>
+    `).join("");
+}
+
+function renderSupport(user){
+  const container = $("customerChatBody");
+
+  const messages =
+    Array.isArray(user.support)
+      ? user.support
+      : [];
+
+  if(!messages.length){
+    container.innerHTML =
+      '<div class="empty">No support messages yet.</div>';
+    return;
+  }
+
+  container.innerHTML =
+    messages.map(message=>`
+
+      <div class="msg ${String(message.sender || "").toLowerCase() === "customer" ? "user" : ""}">
+        ${escapeHtml(message.message)}
+        <div style="font-size:10px;color:#718096;margin-top:5px">
+          ${escapeHtml(message.sender || "Support")}
+          ·
+          ${escapeHtml(formatDate(message.created_at || message.date))}
+        </div>
+      </div>
+
+    `).join("");
+
+  container.scrollTop = container.scrollHeight;
+}
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+function logout(){
+  clearSession(true);
+  closeModal();
+  toast("You have been signed out.");
+}
+
+/* =========================================================
+   TRANSFER
+   ========================================================= */
+
+function openTransfer(){
+  if(!authToken){
+    openModal("login");
+    return;
+  }
+
+  const modal = $("transferModal");
+
+  const select = $("transferCurrency");
+
+  const balances =
+    currentUser && currentUser.balances
+      ? currentUser.balances
+      : {};
+
+  select.innerHTML = CURRENCIES.map(currency=>`
+    <option value="${currency}">
+      ${currency} — ${formatMoney(Number(balances[currency] || 0),currency)}
+    </option>
+  `).join("");
+
+  select.value =
+    currentUser.primary_currency ||
+    currentUser.primaryCurrency ||
+    "NGN";
+
+  $("transferRecipient").value = "";
+  $("transferAmount").value = "";
+  $("transferNote").value = "";
+
+  setError("transferError","");
+
+  modal.classList.add("show");
+}
+
+function closeTransfer(){
+  $("transferModal").classList.remove("show");
+  setError("transferError","");
+}
+
+async function submitTransfer(){
+  setError("transferError","");
+
+  const currency =
+    String($("transferCurrency").value || "").toUpperCase();
+
+  const recipient =
+    String($("transferRecipient").value || "").trim();
+
+  const amount =
+    Number($("transferAmount").value);
+
+  const note =
+    String($("transferNote").value || "").trim();
+
+  if(!recipient){
+    setError("transferError","Enter a recipient.");
+    return;
+  }
+
+  if(!Number.isFinite(amount) || amount <= 0){
+    setError("transferError","Enter a valid amount.");
+    return;
+  }
+
+  setButtonLoading("transferBtn",true);
+
+  try{
+    await api("/api/transfer",{
+      method:"POST",
+      body:{
+        currency,
+        recipient,
+        amount,
+        note
+      }
+    });
+
+    closeTransfer();
+    toast("Demo transfer completed.");
+
+    await refreshDashboard();
+
+  }catch(error){
+    setError(
+      "transferError",
+      error.message || "Unable to complete the transfer."
+    );
+  }finally{
+    setButtonLoading("transferBtn",false);
+  }
+}
+
+/* =========================================================
+   SUPPORT
+   ========================================================= */
+
+function toggleChat(){
+  if(!authToken){
+    openModal("login");
+    return;
+  }
+
+  supportOpen = !supportOpen;
+
+  $("customerChat").classList.toggle("show",supportOpen);
+
+  if(supportOpen){
+    refreshDashboard();
+  }
+}
+
+function openSupportFromHome(){
+  if(!authToken){
+    openModal("login");
+    return;
+  }
+
+  $("dashboard").style.display = "block";
+  $("publicSite").style.display = "none";
+
+  supportOpen = true;
+  $("customerChat").classList.add("show");
+
+  refreshDashboard();
+}
+
+async function sendSupportMessage(){
+  if(!authToken) return;
+
+  const input = $("customerChatInput");
+
+  const message =
+    String(input.value || "").trim();
+
+  if(!message) return;
+
+  input.disabled = true;
+
+  try{
+    await api("/api/support",{
+      method:"POST",
+      body:{
+        message
+      }
+    });
+
+    input.value = "";
+
+    await refreshDashboard();
+
+  }catch(error){
+    toast(
+      error.message ||
+      "Unable to send support message."
+    );
+  }finally{
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+async function saveProfileName(){
+  if(!authToken) return;
+
+  const name =
+    String($("profileName").value || "").trim();
+
+  if(name.length < 2){
+    toast("Enter a valid name.");
+    return;
+  }
+
+  try{
+    const data = await api("/api/profile",{
+      method:"PATCH",
+      body:{
+        name
+      }
+    });
+
+    if(data.user){
+      currentUser = data.user;
+      updateUserInterface();
+    }
+
+    toast("Profile updated.");
+
+  }catch(error){
+    toast(
+      error.message ||
+      "Unable to update profile."
+    );
+  }
+}
+
+function chooseProfileImage(){
+  const input = $("profileImageInput");
+
+  if(input){
+    input.click();
+  }
+}
+
+async function handleProfileImage(event){
+  const file =
+    event.target.files &&
+    event.target.files[0];
+
+  if(!file || !authToken) return;
+
+  if(file.size > 2 * 1024 * 1024){
+    toast("Profile image must be 2 MB or smaller.");
+    event.target.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = async ()=>{
+    try{
+
+      const data = await api("/api/profile",{
+        method:"PATCH",
+        body:{
+          profileImage:reader.result
+        }
+      });
+
+      if(data.user){
+        currentUser = data.user;
+        updateUserInterface();
+      }
+
+      toast("Profile picture updated.");
+
+    }catch(error){
+      toast(
+        error.message ||
+        "Unable to update profile picture."
+      );
+    }finally{
+      event.target.value = "";
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/* =========================================================
+   SERVICES
+   ========================================================= */
+
+function scrollToServices(){
+  const services = $("dashboardServices");
+
+  if(services){
+    services.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  }
+}
+
+function openDemoService(service){
+  $("serviceTitle").textContent = service;
+
+  $("serviceDescription").textContent =
+    service +
+    " is a fictional demo service. No real payment or purchase will be made.";
+
+  $("serviceReference").value = "";
+  $("serviceAmount").value = "";
+
+  setError("serviceError","");
+
+  $("serviceModal").classList.add("show");
+}
+
+function closeService(){
+  $("serviceModal").classList.remove("show");
+  setError("serviceError","");
+}
+
+async function submitDemoService(){
+  setError("serviceError","");
+
+  const service =
+    $("serviceTitle").textContent.trim();
+
+  const reference =
+    String($("serviceReference").value || "").trim();
+
+  const amount =
+    Number($("serviceAmount").value || 0);
+
+  if(!reference){
+    setError("serviceError","Enter the requested reference.");
+    return;
+  }
+
+  if(!Number.isFinite(amount) || amount <= 0){
+    setError("serviceError","Enter a valid amount.");
+    return;
+  }
+
+  try{
+    await api("/api/service-request",{
+      method:"POST",
+      body:{
+        service,
+        reference,
+        amount
+      }
+    });
+
+    closeService();
+
+    toast("Demo service request submitted.");
+
+    await refreshDashboard();
+
+  }catch(error){
+    setError(
+      "serviceError",
+      error.message ||
+      "Unable to submit the demo service request."
+    );
+  }
+}
+
+/* =========================================================
+   ADMIN
+   ========================================================= */
+
+async function refreshAdmin(){
+  if(
+    !currentUser ||
+    String(currentUser.role || "").toLowerCase() !== "admin"
+  ){
+    return;
+  }
+
+  try{
+    const data = await api("/api/admin/customers");
+
+    const customers =
+      Array.isArray(data.customers)
+        ? data.customers
+        : Array.isArray(data)
+          ? data
+          : [];
+
+    renderAdminCustomers(customers);
+
+    await refreshAdminRequests();
+
+    if(selectedAdminCustomer){
+      await loadAdminSupport(selectedAdminCustomer);
+    }
+
+  }catch(error){
+    $("customerList").innerHTML =
+      '<div class="empty">' +
+      escapeHtml(
+        error.message ||
+        "Unable to load customers."
+      ) +
+      "</div>";
+  }
+}
+
+function renderAdminCustomers(customers){
+  const container = $("customerList");
+
+  if(!customers.length){
+    container.innerHTML =
+      '<div class="empty">No customers found.</div>';
+    return;
+  }
+
+  container.innerHTML =
+    customers.map(customer=>{
+
+      const id =
+        customer.id ||
+        customer.userId ||
+        customer.user_id ||
+        customer.customerId ||
+        customer.customer_id;
+
+      const name =
+        customer.name ||
+        customer.full_name ||
+        customer.fullName ||
+        "Customer";
+
+      const identifier =
+        customer.email ||
+        customer.phone ||
+        "No identifier";
+
+      const active =
+        selectedAdminCustomer &&
+        String(selectedAdminCustomer) === String(id);
+
+      return `
+        <button
+          class="customerItem ${active ? "active" : ""}"
+          onclick="selectAdminCustomer('${escapeHtml(String(id))}')">
+
+          <span>
+            <strong>${escapeHtml(name)}</strong>
+            <small>${escapeHtml(identifier)}</small>
+          </span>
+
+          <span style="font-size:11px;color:#718096">
+            ${escapeHtml(customer.status || "Active")}
+          </span>
+
+        </button>
+      `;
+    }).join("");
+}
+
+async function selectAdminCustomer(customerId){
+  selectedAdminCustomer = String(customerId);
+
+  await refreshAdmin();
+
+  await loadAdminSupport(selectedAdminCustomer);
+}
+
+async function loadAdminSupport(customerId){
+  if(!customerId) return;
+
+  try{
+
+    const data = await api(
+      "/api/admin/support?customerId=" +
+      encodeURIComponent(customerId)
+    );
+
+    const messages =
+      Array.isArray(data.support)
+        ? data.support
+        : Array.isArray(data.messages)
+          ? data.messages
+          : [];
+
+    const chat = $("adminChat");
+
+    if(!messages.length){
+      chat.innerHTML =
+        '<div class="empty">No support messages.</div>';
+      return;
+    }
+
+    chat.innerHTML =
+      messages.map(message=>`
+
+        <div class="msg ${String(message.sender || "").toLowerCase() === "admin" ? "" : "user"}">
+          ${escapeHtml(message.message)}
+
+          <div style="font-size:10px;color:#718096;margin-top:5px">
+            ${escapeHtml(message.sender || "Customer")}
+            ·
+            ${escapeHtml(formatDate(message.created_at))}
+          </div>
+        </div>
+
+      `).join("");
+
+    chat.scrollTop = chat.scrollHeight;
+
+  }catch(error){
+
+    $("adminChat").innerHTML =
+      '<div class="empty">' +
+      escapeHtml(
+        error.message ||
+        "Unable to load support."
+      ) +
+      "</div>";
+  }
+}
+
+async function adminCredit(){
+  if(!selectedAdminCustomer){
+    toast("Select a customer first.");
+    return;
+  }
+
+  const currency =
+    String($("adminCurrency").value || "NGN").toUpperCase();
+
+  const amount =
+    Number($("adminAmount").value);
+
+  if(!Number.isFinite(amount) || amount <= 0){
+    toast("Enter a valid amount.");
+    return;
+  }
+
+  setButtonLoading("adminCreditBtn",true);
+
+  try{
+
+    /*
+      Send the selected customer's actual UUID explicitly.
+      This fixes the common "Customer Information Not Found"
+      problem caused by the admin UI sending a display name
+      instead of the database customer id.
+    */
+    await api("/api/admin/add-funds",{
+      method:"POST",
+      body:{
+        userId:selectedAdminCustomer,
+        customerId:selectedAdminCustomer,
+        customer_id:selectedAdminCustomer,
+        amount,
+        currency
+      }
+    });
+
+    $("adminAmount").value = "";
+
+    toast("Customer account credited.");
+
+    await refreshAdmin();
+
+    /*
+      If the administrator is viewing their own account,
+      refresh it too. Customer balances themselves remain
+      server-side and are not modified in browser storage.
+    */
+    if(
+      currentUser &&
+      String(currentUser.id) === String(selectedAdminCustomer)
+    ){
+      await refreshDashboard();
+    }
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      "Customer Information Not Found."
+    );
+
+  }finally{
+    setButtonLoading("adminCreditBtn",false);
+  }
+}
+
+async function adminNotify(){
+  if(!selectedAdminCustomer){
+    toast("Select a customer first.");
+    return;
+  }
+
+  const message =
+    String($("adminNotification").value || "").trim();
+
+  if(!message){
+    toast("Write a notification first.");
+    return;
+  }
+
+  setButtonLoading("adminNotifyBtn",true);
+
+  try{
+
+    await api("/api/admin/notify",{
+      method:"POST",
+      body:{
+        userId:selectedAdminCustomer,
+        customerId:selectedAdminCustomer,
+        message
+      }
+    });
+
+    $("adminNotification").value = "";
+
+    toast("Notification sent.");
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      "Unable to send notification."
+    );
+
+  }finally{
+    setButtonLoading("adminNotifyBtn",false);
+  }
+}
+
+async function adminReplyMessage(){
+  if(!selectedAdminCustomer){
+    toast("Select a customer first.");
+    return;
+  }
+
+  const input = $("adminReply");
+
+  const message =
+    String(input.value || "").trim();
+
+  if(!message){
+    toast("Write a reply first.");
+    return;
+  }
+
+  setButtonLoading("adminReplyBtn",true);
+
+  try{
+
+    await api("/api/admin/support/reply",{
+      method:"POST",
+      body:{
+        userId:selectedAdminCustomer,
+        customerId:selectedAdminCustomer,
+        message
+      }
+    });
+
+    input.value = "";
+
+    toast("Support reply sent.");
+
+    await loadAdminSupport(selectedAdminCustomer);
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      "Unable to send support reply."
+    );
+
+  }finally{
+    setButtonLoading("adminReplyBtn",false);
+  }
+}
+
+async function refreshAdminRequests(){
+  try{
+
+    const data = await api("/api/admin/requests");
+
+    const requests =
+      Array.isArray(data.requests)
+        ? data.requests
+        : Array.isArray(data)
+          ? data
+          : [];
+
+    const container = $("adminRequests");
+
+    if(!requests.length){
+      container.innerHTML =
+        '<div class="empty">No customer requests.</div>';
+      return;
+    }
+
+    container.innerHTML =
+      requests.map(request=>{
+
+        const requestId =
+          request.id ||
+          request.requestId;
+
+        return `
+          <div class="requestItem">
+
+            <strong>
+              ${escapeHtml(request.recipient || "Request")}
+            </strong>
+
+            <div style="font-size:12px;color:#718096;margin-top:4px">
+              ${escapeHtml(String(request.currency || "NGN"))}
+              ${escapeHtml(String(request.amount || 0))}
+            </div>
+
+            <div style="font-size:12px;margin-top:5px">
+              ${escapeHtml(request.note || "")}
+            </div>
+
+            <div style="font-size:11px;color:#718096;margin-top:5px">
+              ${escapeHtml(request.status || "pending")}
+              ·
+              ${escapeHtml(formatDate(request.created_at))}
+            </div>
+
+            ${
+              String(request.status || "").toLowerCase() === "pending"
+              ? `
+                <div class="requestButtons">
+
+                  <button
+                    class="btn primary"
+                    onclick="handleAdminRequest('${escapeHtml(String(requestId))}','approve')">
+                    Approve
+                  </button>
+
+                  <button
+                    class="btn outline"
+                    onclick="handleAdminRequest('${escapeHtml(String(requestId))}','reject')">
+                    Reject
+                  </button>
+
+                </div>
+              `
+              : ""
+            }
+
+          </div>
+        `;
+      }).join("");
+
+  }catch(error){
+
+    $("adminRequests").innerHTML =
+      '<div class="empty">' +
+      escapeHtml(
+        error.message ||
+        "Unable to load requests."
+      ) +
+      "</div>";
+  }
+}
+
+async function handleAdminRequest(requestId,action){
+  if(!requestId) return;
+
+  try{
+
+    await api("/api/admin/requests/" + encodeURIComponent(requestId),{
+      method:"PATCH",
+      body:{
+        action
+      }
+    });
+
+    toast(
+      action === "approve"
+        ? "Request approved."
+        : "Request rejected."
+    );
+
+    await refreshAdminRequests();
+
+  }catch(error){
+
+    toast(
+      error.message ||
+      "Unable to update request."
+    );
+  }
+}
+
+/* =========================================================
+   KEYBOARD / MODAL BEHAVIOR
+   ========================================================= */
+
+$("verificationCode").addEventListener("input",event=>{
+  event.target.value =
+    event.target.value
+      .replace(/\D/g,"")
+      .slice(0,6);
+});
+
+$("verificationCode").addEventListener("keydown",event=>{
+  if(event.key === "Enter"){
+    verifyCode();
+  }
+});
+
+$("customerChatInput").addEventListener("keydown",event=>{
+  if(event.key === "Enter"){
+    event.preventDefault();
+    sendSupportMessage();
+  }
+});
+
+document.addEventListener("keydown",event=>{
+  if(event.key !== "Escape") return;
+
+  document
+    .querySelectorAll(".modal.show")
+    .forEach(modal=>modal.classList.remove("show"));
+
+  if(supportOpen){
+    supportOpen = false;
+    $("customerChat").classList.remove("show");
+  }
+});
+
+$("authModal").addEventListener("click",event=>{
+  if(event.target === $("authModal")){
+    closeModal();
+  }
+});
+
+$("verificationModal").addEventListener("click",event=>{
+  if(event.target === $("verificationModal")){
+    returnToAuthForm();
+  }
+});
+
+$("transferModal").addEventListener("click",event=>{
+  if(event.target === $("transferModal")){
+    closeTransfer();
+  }
+});
+
+$("serviceModal").addEventListener("click",event=>{
+  if(event.target === $("serviceModal")){
+    closeService();
+  }
+});
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+(async function init(){
+
+  /*
+    No customer/account information is read from localStorage.
+    Only the temporary authenticated session token is restored.
+  */
+
+  const restored = await restoreSession();
+
+  if(!restored){
+    showPublicSite();
+  }
+
+})();
+</script>
