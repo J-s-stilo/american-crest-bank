@@ -1,5262 +1,3707 @@
-const express = require('express');
+<!DOCTYPE html><html lang="en">
 
-const path = require('path');
+<head>
 
-const cors = require('cors');
+<meta charset="UTF-8">
 
-const bcrypt = require('bcryptjs');
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-const jwt = require('jsonwebtoken');
+<title>American Crest Banking — Demo</title><style>
 
-const { Pool } = require('pg');
+*{box-sizing:border-box;margin:0;padding:0}
 
-const rateLimit = require('express-rate-limit');
+:root{--navy:#071a35;--navy2:#0d315d;--blue:#1769e0;--gold:#d6aa43;--light:#f4f7fb;--white:#fff;--text:#182536;--muted:#718096;--green:#159447;--red:#d93434;--border:#e3e9f1}
 
-const crypto = require('crypto');
+body{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
 
-const app = express();
+button,input,select,textarea{font:inherit}
 
-app.set('trust proxy', 1);
+button{cursor:pointer}
 
-app.use(cors({
+a{text-decoration:none;color:inherit}
 
-  origin: true,
+button:disabled{opacity:.6;cursor:not-allowed}
 
-  credentials: false
+.prototype{background:#fff3cd;color:#725b13;text-align:center;padding:7px;font-size:11px;font-weight:bold}
 
-}));
+.top{background:#041327;color:#dbe7f5;padding:9px 5%;display:flex;justify-content:space-between;font-size:12px}
 
-app.use(express.json({ limit: '2mb' }));
+header{background:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 15px #0001}
 
-app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+.nav{max-width:1200px;margin:auto;min-height:72px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;gap:20px}
 
-app.use(express.static(path.join(__dirname)));
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)}
 
-const PORT = process.env.PORT || 10000;
+.mark{width:40px;height:40px;border-radius:50%;background:var(--navy);color:var(--gold);border:2px solid var(--gold);display:grid;place-items:center;font-size:12px}
 
-const JWT_SECRET = process.env.JWT_SECRET;
+.links{display:flex;gap:24px;font-size:14px;font-weight:bold}
 
-const DATABASE_URL = process.env.DATABASE_URL;
+.actions{display:flex;gap:8px}
 
-const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || '')
+.btn{border:0;border-radius:8px;padding:12px 18px;font-weight:bold}
 
-  .trim()
+.primary{background:var(--blue);color:#fff}
 
-  .toLowerCase();
+.dark{background:var(--navy);color:#fff}
 
-const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '');
+.outline{background:#fff;border:1px solid #d8e0eb;color:var(--navy)}
 
-if (!JWT_SECRET || !DATABASE_URL) {
+.full{width:100%}
 
-  console.error('Missing JWT_SECRET or DATABASE_URL environment variable.');
+.hero{min-height:560px;background:linear-gradient(135deg,#f7faff,#eef4fb);color:var(--text);display:flex;align-items:center;padding:38px 0}
 
-  process.exit(1);
+.heroInner{max-width:1200px;width:90%;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
+
+.heroText{max-width:650px}
+
+.eyebrow{color:#b1872f;font-weight:bold;letter-spacing:2px;font-size:12px;margin-bottom:15px}
+
+.heroVisual{min-height:420px;border-radius:24px;overflow:hidden;box-shadow:0 24px 60px #071a5320;background:#dfe8f5}
+
+.heroVisual img{width:100%;height:100%;min-height:420px;object-fit:cover;display:block}
+
+.hero h1{color:var(--navy)}
+
+.hero p{color:#5f7185}
+
+h1{font-size:clamp(38px,6vw,68px);line-height:1.05;margin-bottom:20px}
+
+.hero p{font-size:18px;line-height:1.6;margin-bottom:28px}
+
+.heroButtons{display:flex;gap:12px;flex-wrap:wrap}
+
+.trust{background:#fff;padding:20px 5%;display:flex;justify-content:center;gap:35px;flex-wrap:wrap;color:#607080;font-size:13px;font-weight:bold}
+
+.section{padding:70px 5%}
+
+.inner{max-width:1150px;margin:auto}
+
+.head{text-align:center;max-width:700px;margin:0 auto 38px}
+
+.head h2{font-size:35px;color:var(--navy);margin-bottom:10px}
+
+.head p{color:var(--muted);line-height:1.6}
+
+.promoGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+.promo{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px #071a5312;border:1px solid #e8edf4}
+
+.promo img{width:100%;height:190px;object-fit:cover;display:block}
+
+.promoBody{padding:16px}
+
+.promoBody h3{color:var(--navy);font-size:17px}
+
+.cards,.securityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+.card,.box,.panel,.profileCard,.service,.adminBox{background:#fff;border-radius:15px;box-shadow:0 12px 35px #071a5314}
+
+.card{padding:28px}
+
+.icon{width:50px;height:50px;border-radius:12px;background:#eaf2ff;color:var(--blue);display:grid;place-items:center;font-size:23px;margin-bottom:18px}
+
+.card h3,.box h3,.panel h3,.profileCard h3,.service h3{color:var(--navy);margin-bottom:8px}
+
+.card p,.box p{color:var(--muted);font-size:14px;line-height:1.6}
+
+.security{background:var(--navy);color:#fff}
+
+.security .head h2{color:#fff}
+
+.security .head p{color:#bdcce0}
+
+.securityBox{padding:24px;border:1px solid #ffffff20;border-radius:14px;background:#ffffff08}
+
+.securityBox strong{display:block;margin-bottom:7px}
+
+.securityBox span{font-size:13px;color:#bdcce0;line-height:1.5}
+
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+
+.box{padding:28px}
+
+footer{background:#041327;color:#9fb0c5;padding:40px 5%}
+
+.footer{max-width:1150px;margin:auto}
+
+.footer .logo{color:#fff;margin-bottom:12px}
+
+.copy{margin-top:25px;padding-top:18px;border-top:1px solid #ffffff15;font-size:11px}
+
+.modal{display:none;position:fixed;inset:0;background:#000a1bb8;z-index:100;align-items:center;justify-content:center;padding:20px}
+
+.modal.show{display:flex}
+
+.modalBox{background:#fff;width:100%;max-width:820px;border-radius:18px;padding:0;position:relative;max-height:92vh;overflow:auto;display:grid;grid-template-columns:1fr 1.05fr}
+
+.authImage{min-height:480px;background:linear-gradient(180deg,#071a3580,#071a35e8),url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=85") center/cover;display:flex;align-items:flex-end;padding:30px;color:#fff}
+
+.authImage h3{font-size:25px;margin-bottom:8px}
+
+.authImage p{color:#d8e4f2;font-size:13px;line-height:1.5}
+
+.authForm{padding:30px}
+
+.close{position:absolute;right:17px;top:12px;border:0;background:none;font-size:25px;color:#777;z-index:2}
+
+.modalBox h2{color:var(--navy);margin-bottom:5px}
+
+.modalBox>p,.authForm>p{font-size:13px;color:var(--muted);margin-bottom:20px}
+
+.field{margin-bottom:14px}
+
+.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:6px}
+
+.field input,.field select,.field textarea{width:100%;padding:13px;border:1px solid #d8e0eb;border-radius:8px;outline:0}
+
+.field textarea{resize:vertical;min-height:90px}
+
+.error{display:none;background:#ffe8e8;color:#a21d1d;padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px}
+
+.error.show{display:block}
+
+#dashboard{display:none;min-height:100vh;background:#f3f6fa}
+
+.dashNav{background:var(--navy);color:#fff;padding:14px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px}
+
+.dashUser{display:flex;align-items:center;gap:9px}
+
+.avatarWrap{position:relative;width:48px;height:48px}
+
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-weight:bold;overflow:hidden}
+
+.avatar img{width:100%;height:100%;object-fit:cover}
+
+.avatarPlus{position:absolute;right:-5px;bottom:-5px;width:22px;height:22px;border-radius:50%;border:2px solid var(--navy);background:var(--blue);color:#fff;display:grid;place-items:center;font-size:16px;font-weight:bold;line-height:1}
+
+.dashWrap{max-width:1200px;margin:auto;padding:35px 5%}
+
+.dashTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+
+.dashTop h1{font-size:32px;color:var(--navy);margin:0}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+
+.balance{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:24px;border-radius:15px}
+
+.balance small{color:#bdcce0}
+
+.balance h2{margin:8px 0;font-size:30px}
+
+.stat{background:#fff;padding:22px;border-radius:15px}
+
+.stat small{color:var(--muted)}
+
+.stat h3{margin-top:7px}
+
+.columns{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
+
+.panel{padding:24px}
+
+.tx{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #edf0f4;gap:10px}
+
+.tx:last-child{border:0}
+
+.txName{font-weight:bold;font-size:13px}
+
+.txDate{font-size:11px;color:var(--muted)}
+
+.out{color:var(--red);font-weight:bold}
+
+.in{color:var(--green);font-weight:bold}
+
+.empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
+
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.quick button{padding:14px;border:1px solid #e1e7ef;background:#fff;border-radius:9px;font-weight:bold;color:var(--navy)}
+
+.profilePanel{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+.profileCard{padding:24px}
+
+.profileCard input{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;margin-bottom:10px}
+
+.profileNote{font-size:12px;color:var(--muted);margin-bottom:15px}
+
+.currencyBalances{margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+.currencyCard{background:#fff;border-radius:14px;padding:18px;box-shadow:0 8px 25px #071a5310}
+
+.currencyCode{font-weight:bold;color:var(--navy);font-size:13px}
+
+.currencyAmount{margin-top:7px;font-size:21px;font-weight:bold}
+
+.servicesGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+
+.service{padding:22px}
+
+.serviceIcon{font-size:28px;margin-bottom:12px}
+
+.service p{font-size:12px;color:var(--muted);line-height:1.5}
+
+.service button{margin-top:14px;width:100%}
+
+.notification{padding:13px;background:#eef5ff;border-left:4px solid var(--blue);border-radius:8px;margin-bottom:10px;font-size:13px}
+
+.notification small{display:block;color:var(--muted);margin-top:5px}
+.notificationCenter{margin:0 0 18px;background:#fff;border:1px solid var(--border);border-radius:15px;box-shadow:0 10px 30px #071a5310;overflow:hidden}
+.notificationCenterHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--border)}
+.notificationCenterHead h3{color:var(--navy);font-size:18px;margin-bottom:3px}
+.notificationCenterHead span{font-size:12px;color:var(--muted)}
+.notificationList{padding:12px}
+.notificationItem{background:#f7faff;border:1px solid #e2eaf5;border-radius:12px;padding:14px;margin-bottom:10px}
+.notificationItem:last-child{margin-bottom:0}
+.notificationItem.unread{border-left:4px solid var(--blue);background:#eef5ff}
+.notificationItemMessage{font-size:14px;line-height:1.5;color:var(--text);white-space:pre-wrap;word-break:break-word}
+.notificationItemDate{font-size:11px;color:var(--muted);margin-top:6px}
+.notificationActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.notificationActions button{padding:8px 10px;border-radius:7px;font-size:12px;font-weight:bold}
+.notificationReply{display:none;margin-top:10px}
+.notificationReply.show{display:flex;gap:7px}
+.notificationReply input{flex:1;min-width:0;padding:10px;border:1px solid var(--border);border-radius:8px;outline:0}
+.notificationReply button{border:0;background:var(--blue);color:#fff;padding:0 12px;border-radius:8px;font-weight:bold}
+.notificationEmpty{text-align:center;color:var(--muted);font-size:13px;padding:20px}
+.notificationPopupClose{margin-left:auto;border:0;background:none;color:#fff;font-size:20px;line-height:1;padding:0 2px}
+
+
+.admin{display:none;margin-top:25px;background:#fff;border-radius:15px;padding:25px;box-shadow:0 12px 35px #071a5314}
+
+.admin h2{color:var(--navy);margin-bottom:7px}
+
+.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+
+.adminBox{border:1px solid var(--border);padding:20px;border-radius:12px;box-shadow:none}
+
+.adminBox h3{margin-bottom:12px;color:var(--navy)}
+
+.adminBox input,.adminBox select,.adminBox textarea{width:100%;padding:11px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px}
+
+.customerList{max-height:300px;overflow:auto;border:1px solid var(--border);border-radius:10px;margin-top:10px}
+
+.customerItem{width:100%;border:0;border-bottom:1px solid var(--border);background:#fff;padding:12px;text-align:left;display:flex;justify-content:space-between;gap:10px}
+
+.customerItem:last-child{border-bottom:0}
+
+.customerItem.active{background:#eef5ff}
+
+.customerItem strong{display:block}
+
+.customerItem small{color:var(--muted)}
+
+.adminChat{height:250px;overflow:auto;background:#f5f7fa;border-radius:10px;padding:12px;margin-bottom:10px}
+
+.requestItem{padding:12px;border-bottom:1px solid var(--border)}
+
+.requestItem:last-child{border-bottom:0}
+
+.requestButtons{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+
+.chatBtn{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:23px;z-index:60}
+
+.chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;max-width:calc(100% - 40px);background:#fff;border-radius:15px;box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
+
+.chat.show{display:block}
+
+.chatHead{background:var(--navy);color:#fff;padding:15px;display:flex;justify-content:space-between}
+
+.chatBody{height:260px;padding:14px;overflow:auto;background:#f5f7fa}
+
+.msg{padding:9px 11px;border-radius:11px;background:#fff;font-size:13px;margin-bottom:9px;max-width:85%;line-height:1.45}
+
+.msg.user{margin-left:auto;background:#dceaff}
+
+.chatInput{display:flex;align-items:center;border-top:1px solid #ddd}
+
+.chatInput input{flex:1;border:0;padding:12px;outline:0;min-width:0}
+
+.chatInput button{border:0;background:var(--blue);color:#fff;padding:0 16px}
+
+.chatAttach{width:44px;height:44px;border:0;background:#fff;color:var(--navy);font-size:20px;display:grid;place-items:center}
+
+.chatImagePreview{display:none;padding:8px 10px;border-top:1px solid #eee;background:#fafcff}
+
+.chatImagePreview.show{display:block}
+
+.chatImagePreview img{display:block;max-width:120px;max-height:90px;border-radius:8px;border:1px solid var(--border);object-fit:cover}
+
+.chatImagePreview button{margin-top:5px;border:0;background:none;color:var(--red);font-size:11px;padding:0}
+
+
+.notificationPopup{position:fixed;top:85px;right:20px;width:360px;max-width:calc(100% - 40px);background:#fff;border:1px solid #e2e8f0;border-top:3px solid var(--gold);border-radius:12px;box-shadow:0 18px 50px #071a5330;z-index:1000;transform:translateX(120%);opacity:0;transition:transform .35s ease,opacity .35s ease;overflow:hidden}
+.notificationPopup.show{transform:translateX(0);opacity:1}
+.notificationPopupHead{display:flex;align-items:center;gap:10px;padding:12px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:bold}
+.notificationPopupIcon{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-size:15px}
+.notificationPopupContent{padding:14px 15px 15px}
+.notificationPopupContent strong{display:block;color:var(--navy);font-size:14px;margin-bottom:5px}
+.notificationPopupContent div{font-size:13px;line-height:1.5;color:var(--text)}
+.notificationPopupContent small{display:block;color:var(--muted);margin-top:7px;font-size:11px}
+@media(max-width:600px){.notificationPopup{top:72px;right:10px;max-width:calc(100% - 20px)}}
+
+.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,120px);background:var(--navy);color:#fff;padding:12px 18px;border-radius:8px;transition:.3s;z-index:600}
+
+.toast.show{transform:translate(-50%,0)}
+
+.hiddenFile{display:none}
+
+.liveBanner{background:#eaf7ef;border:1px solid #ccebd8;color:#126c36;border-radius:10px;padding:12px 15px;margin-bottom:18px;font-size:13px}
+
+.serviceLive{background:#f7f9fc;border:1px solid var(--border);padding:12px;border-radius:9px;margin-top:10px;font-size:12px;color:var(--muted)}
+
+.loadingBtn{position:relative;pointer-events:none}
+
+.loadingBtn:after{content:"";display:inline-block;width:13px;height:13px;margin-left:8px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:-2px;animation:spin .7s linear infinite}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:900px){
+
+.links{display:none}
+
+.heroInner{grid-template-columns:1fr}
+
+.heroVisual{min-height:330px}
+
+.heroVisual img{min-height:330px}
+
+.promoGrid{grid-template-columns:1fr 1fr}
+
+.cards,.securityGrid{grid-template-columns:1fr}
+
+.contact,.columns,.profilePanel{grid-template-columns:1fr}
+
+.grid{grid-template-columns:1fr 1fr}
+
+.servicesGrid{grid-template-columns:1fr 1fr}
+
+.currencyBalances{grid-template-columns:1fr 1fr}
+
+.adminGrid{grid-template-columns:1fr}
+
+.modalBox{grid-template-columns:1fr}
+
+.authImage{display:none}
 
 }
 
-const pool = new Pool({
+@media(max-width:600px){
 
-  connectionString: DATABASE_URL,
+.top{display:none}
 
-  ssl:
+.hero{padding:18px 0 35px}
 
-    process.env.NODE_ENV === 'production'
+.heroInner{width:92%}
 
-      ? { rejectUnauthorized: false }
+.heroVisual{min-height:300px}
 
-      : undefined
+.heroVisual img{min-height:300px}
+
+.promoGrid{grid-template-columns:1fr}
+
+.nav{min-height:65px}
+
+.hero{min-height:520px}
+
+.hero p{font-size:15px}
+
+.section{padding:55px 5%}
+
+.grid{grid-template-columns:1fr}
+
+.dashTop{flex-direction:column;align-items:flex-start;gap:12px}
+
+.chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
+
+.servicesGrid,.currencyBalances{grid-template-columns:1fr 1fr}
+
+.dashNav .logo span:last-child{display:none}
+
+}
+
+</style></head><body><div class="prototype">
+
+AMERICAN CREST BANK — FICTIONAL / DEMO BANKING APPLICATION
+
+</div><div id="publicSite"><div class="top">
+
+<span>American Crest Banking • Online Account</span>
+
+<span>Digital Services</span>
+
+</div><header>
+
+<nav class="nav">
+
+<a href="#home" class="logo">
+
+<span class="mark">AC</span>
+
+<span>AMERICAN CREST BANK</span>
+
+</a><div class="links">
+
+<a href="#services">Services</a>
+
+<a href="#security">Security</a>
+
+<a href="#support">Support</a>
+
+</div><div class="actions">
+
+<button class="btn outline" onclick="openModal('login')">Sign In</button>
+
+<button class="btn primary" onclick="openModal('register')">Open Account</button>
+
+</div>
+
+</nav>
+
+</header><section class="hero" id="home">
+
+<div class="heroInner"><div class="heroText">
+
+<div class="eyebrow">DIGITAL BANKING DEMO</div><h1>
+
+Bank smarter.<br>
+
+Manage with confidence.
+
+</h1><p>
+
+Manage your fictional demo account, balances, transactions,
+
+notifications and digital services from one dashboard.
+
+</p><div class="heroButtons">
+
+<button class="btn primary" onclick="openModal('register')">
+
+Open an Account
+
+</button><button class="btn outline" onclick="openModal('login')">
+
+Access Online Banking
+
+</button>
+
+</div>
+
+</div><div class="heroVisual">
+
+<img
+
+src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=85"
+
+alt="Customer using online banking">
+
+</div></div>
+
+</section><div class="trust">
+
+<span>✓ Account Management</span>
+
+<span>✓ Multi-Currency</span>
+
+<span>✓ Fund Credits</span>
+
+<span>✓ Transaction History</span>
+
+<span>✓ Customer Support</span>
+
+</div><section class="section" style="padding-top:45px;padding-bottom:35px">
+
+<div class="inner"><div class="head">
+
+<h2>Banking made simple</h2>
+
+<p>Explore convenient online banking, account management and digital services.</p>
+
+</div><div class="promoGrid"><div class="promo">
+
+<img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1000&q=85">
+
+<div class="promoBody"><h3>Secure Banking</h3></div>
+
+</div><div class="promo">
+
+<img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=85">
+
+<div class="promoBody"><h3>Fast &amp; Reliable</h3></div>
+
+</div><div class="promo">
+
+<img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1000&q=85">
+
+<div class="promoBody"><h3>Easy Transactions</h3></div>
+
+</div><div class="promo">
+
+<img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1000&q=85">
+
+<div class="promoBody"><h3>Safe &amp; Protected</h3></div>
+
+</div><div class="promo">
+
+<img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1000&q=85">
+
+<div class="promoBody"><h3>Real-time Alerts</h3></div>
+
+</div><div class="promo">
+
+<img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1000&q=85">
+
+<div class="promoBody"><h3>Trusted Service</h3></div>
+
+</div></div>
+
+</div>
+
+</section><section class="section" id="services">
+
+<div class="inner"><div class="head">
+
+<h2>Everything in one place</h2>
+
+<p>Account management, balances, transfers, digital services and support.</p>
+
+</div><div class="cards"><div class="card">
+
+<div class="icon">▣</div>
+
+<h3>Account Overview</h3>
+
+<p>View balances, account information, profile and recent activity.</p>
+
+</div><div class="card">
+
+<div class="icon">↗</div>
+
+<h3>Send Money</h3>
+
+<p>Create a demo transaction using your selected currency.</p>
+
+</div><div class="card">
+
+<div class="icon">¤</div>
+
+<h3>Multi-Currency</h3>
+
+<p>Maintain demo balances and transaction records in different currencies.</p>
+
+</div></div>
+
+</div>
+
+</section><section class="section security" id="security">
+
+<div class="inner"><div class="head">
+
+<h2>Account control</h2>
+
+<p>Keep demo account information, balances and activity organized from one dashboard.</p>
+
+</div><div class="securityGrid"><div class="securityBox">
+
+<strong>Account Dashboard</strong>
+
+<span>View current demo balances and account information.</span>
+
+</div><div class="securityBox">
+
+<strong>Credit &amp; Debit Records</strong>
+
+<span>Credits appear with a plus sign and debits with a minus sign.</span>
+
+</div><div class="securityBox">
+
+<strong>Digital Services</strong>
+
+<span>Access the available demo service interfaces from your dashboard.</span>
+
+</div></div>
+
+</div>
+
+</section><section class="section" id="support">
+
+<div class="inner"><div class="head">
+
+<h2>Customer Support</h2>
+
+<p>Send a message through the demo support system.</p>
+
+</div><div class="contact"><div class="box">
+
+<h3>Need assistance?</h3>
+
+<p style="margin-bottom:18px">
+
+Sign in to send a support message and continue the conversation with the administrator.
+
+</p>
+
+<button class="btn primary" onclick="openSupportFromHome()">
+
+Open Customer Support
+
+</button>
+
+</div><div class="box">
+
+<h3>Digital account services</h3>
+
+<p>
+
+Demo account, transfers, multi-currency balances,
+
+notifications and service interfaces are available inside the dashboard.
+
+</p>
+
+</div></div>
+
+</div>
+
+</section><footer>
+
+<div class="footer">
+
+<div class="logo">
+
+<span class="mark">AC</span>
+
+<span>AMERICAN CREST BANK</span>
+
+</div>
+
+<p>Online banking services and account management.</p>
+
+<div class="copy">© 2026 American Crest Banking — Demo only.</div>
+
+</div>
+
+</footer></div><div id="dashboard"><div class="dashNav"><div class="logo" style="color:white">
+
+<span class="mark">AC</span>
+
+<span>AMERICAN CREST BANK</span>
+
+</div><div class="dashUser"><div class="avatarWrap">
+
+<div class="avatar" id="avatar">AC</div><button class="avatarPlus" title="Change profile picture" onclick="chooseProfileImage()">+</button>
+
+<input
+
+id="profileImageInput"
+
+class="hiddenFile"
+
+type="file"
+
+accept="image/*"
+
+onchange="handleProfileImage(event)">
+
+</div><div>
+
+<div id="dashName" style="font-weight:bold">Customer</div>
+
+<small style="color:#bdcce0">Online Account</small>
+
+</div><button class="btn outline" onclick="logout()">Log Out</button>
+
+</div>
+
+</div><div class="dashWrap"><div class="dashTop"><div>
+
+<small style="color:#718096">Welcome back</small>
+
+<h1 id="welcomeName">Customer</h1>
+
+</div><button class="btn primary" onclick="openTransfer()">+ New Transfer</button>
+
+</div><div id="liveBanner" class="liveBanner"></div>
+
+<div id="notificationCenter" class="notificationCenter">
+<div class="notificationCenterHead"><div><h3>Notification Center</h3><span>Saved account notifications</span></div><span id="notificationCount">0</span></div>
+<div id="notifications" class="notificationList"></div>
+</div><div class="grid"><div class="balance"><small>AVAILABLE DEMO BALANCE</small>
+
+<div style="display:flex;align-items:center;gap:10px"><h2 id="balance">₦0.00</h2><button
+
+id="balanceEye"
+
+onclick="toggleBalance()"
+
+aria-label="Hide balance"
+
+style="border:0;background:none;color:#fff;font-size:20px;padding:4px">
+
+👁️
+
+</button>
+
+</div><small id="balanceCurrency">Primary currency: NGN</small>
+
+</div><div class="stat">
+
+<small>ACCOUNT STATUS</small>
+
+<h3 id="statusStat">Active</h3>
+
+</div><div class="stat">
+
+<small>TRANSACTIONS</small>
+
+<h3 id="txCount">0</h3>
+
+</div><div class="stat">
+
+<small>ACCOUNT EMAIL</small>
+
+<h3 id="emailStat" style="font-size:14px">—</h3>
+
+</div></div><div class="currencyBalances" id="currencyBalances"></div><div class="columns"><div class="panel">
+
+<h3>Recent Activity</h3>
+
+<div id="transactions"></div>
+
+</div><div class="panel">
+
+<h3>Quick Actions</h3><div class="quick"><button onclick="openTransfer()">Send Money</button>
+
+<button onclick="refreshDashboard()">Refresh</button>
+
+<button onclick="toggleChat()">Support</button>
+
+<button onclick="scrollToServices()">Services</button>
+
+</div>
+
+</div></div><div class="servicesGrid" id="dashboardServices"><div class="service">
+
+<div class="serviceIcon">📱</div>
+
+<h3>Buy Data</h3>
+
+<p>Demo data bundle interface.</p>
+
+<button class="btn outline" onclick="openDemoService('Buy Data')">Open</button>
+
+<div class="serviceLive">Demo request ready — no real purchase is made.</div>
+
+</div><div class="service">
+
+<div class="serviceIcon">☎️</div>
+
+<h3>Airtime</h3>
+
+<p>Demo mobile airtime interface.</p>
+
+<button class="btn outline" onclick="openDemoService('Airtime')">Open</button>
+
+<div class="serviceLive">Demo request ready — no real purchase is made.</div>
+
+</div><div class="service">
+
+<div class="serviceIcon">💡</div>
+
+<h3>Pay Bills</h3>
+
+<p>Demo utility payment interface.</p>
+
+<button class="btn outline" onclick="openDemoService('Pay Bills')">Open</button>
+
+<div class="serviceLive">Demo request ready — no real payment is made.</div>
+
+</div><div class="service">
+
+<div class="serviceIcon">💳</div>
+
+<h3>Cards</h3>
+
+<p>Demo card service interface.</p>
+
+<button class="btn outline" onclick="openDemoService('Cards')">Open</button>
+
+<div class="serviceLive">Demo card interface — no real card is issued.</div>
+
+</div></div><div class="profilePanel"><div class="profileCard"><h3>My Profile</h3><label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
+
+Display Name
+
+</label><input id="profileName" type="text"><button class="btn primary" onclick="saveProfileName()">Save Name</button>
+
+</div><div class="profileCard"><h3>Profile Picture</h3><p class="profileNote">
+
+Tap the + button beside your profile picture or choose an image below.
+
+</p><button class="btn outline" onclick="chooseProfileImage()">
+
+Choose Profile Picture
+
+</button></div></div><div class="admin" id="adminPanel"><h2>Demo Account Administration</h2><p style="font-size:13px;color:#718096;margin-bottom:10px">
+
+Customers and customer activity are loaded directly from the server database.
+
+Nothing is stored as customer data in browser localStorage.
+
+</p><div class="adminStats">
+<div class="adminStat"><small>CUSTOMERS</small><strong id="adminCustomersCount">0</strong></div>
+<div class="adminStat"><small>CUSTOMER BALANCES</small><strong id="adminBalancesTotal">0.00</strong></div>
+<div class="adminStat"><small>PENDING TRANSFERS</small><strong id="adminPendingCount">0</strong></div>
+<div class="adminStat"><small>OPEN SUPPORT</small><strong id="adminSupportCount">0</strong></div>
+</div><div class="adminGrid"><div class="adminBox"><h3>Customers</h3><div id="customerList" class="customerList">
+
+<div class="empty">Loading customers...</div>
+
+</div></div><div class="adminBox"><h3>Customer Requests</h3><div id="adminRequests" class="customerList">
+
+<div class="empty">Loading requests...</div>
+
+</div></div><div class="adminBox"><h3>Credit Customer</h3><select id="adminCurrency">
+
+<option value="NGN">NGN — Nigerian Naira</option>
+
+<option value="USD">USD — US Dollar</option>
+
+<option value="EUR">EUR — Euro</option>
+
+<option value="GBP">GBP — British Pound</option>
+
+<option value="IDR">IDR — Indonesian Rupiah</option>
+
+<option value="CAD">CAD — Canadian Dollar</option>
+
+<option value="AUD">AUD — Australian Dollar</option>
+
+<option value="CHF">CHF — Swiss Franc</option>
+
+<option value="JPY">JPY — Japanese Yen</option>
+
+<option value="CNY">CNY — Chinese Yuan</option>
+
+<option value="INR">INR — Indian Rupee</option>
+
+<option value="MYR">MYR — Malaysian Ringgit</option>
+
+<option value="SGD">SGD — Singapore Dollar</option>
+
+<option value="AED">AED — UAE Dirham</option>
+
+<option value="ZAR">ZAR — South African Rand</option>
+
+<option value="KES">KES — Kenyan Shilling</option>
+
+<option value="GHS">GHS — Ghanaian Cedi</option>
+
+</select><input id="adminAmount" type="number" min="0.01" step="0.01" placeholder="Amount"><button id="adminCreditBtn" class="btn primary" onclick="adminCredit()">
+
+Credit Customer
+
+</button></div><div class="adminBox"><h3>Customer Notification</h3><textarea id="adminNotification" placeholder="Write notification..."></textarea><button id="adminNotifyBtn" class="btn primary" onclick="adminNotify()">
+
+Send Notification
+
+</button></div><div class="adminBox"><h3>Customer Support</h3><div id="adminChat" class="adminChat">
+
+<div class="empty">Select a customer.</div>
+
+</div><input id="adminReply" type="text" placeholder="Write your reply..."><button id="adminReplyBtn" class="btn primary" onclick="adminReplyMessage()">
+
+Send Reply
+
+</button></div><div class="adminBox"><h3>Administration</h3><button class="btn outline" onclick="refreshAdmin()">
+
+Refresh Customer List
+
+</button></div></div>
+
+</div></div>
+
+</div><div class="modal" id="authModal"><div class="modalBox"><button class="close" onclick="closeModal()">×</button>
+
+<div class="authImage"><div>
+
+<h3>Welcome to the demo</h3>
+
+<p>
+
+A simple fictional banking demo.
+
+No real bank account, payment, transfer or funds are created.
+
+</p>
+
+</div></div><div class="authForm"><div id="loginForm"><h2>Welcome Back</h2>
+
+<p>Sign in to your demo account.</p><div class="error" id="loginError"></div><div class="field">
+
+<label>Email</label>
+
+<input id="loginEmail" type="email" autocomplete="username">
+
+</div><div class="field">
+
+<label>Password</label>
+
+<input id="loginPassword" type="password" autocomplete="current-password">
+
+</div><button id="loginBtn" class="btn primary full" onclick="login()">
+
+Sign In
+
+</button><div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+
+Don't have an account?<button onclick="showRegister()" style="border:0;background:none;color:#1769e0;font-weight:bold">
+
+Create Account
+
+</button>
+
+</div></div><div id="registerForm" style="display:none"><h2>Create Account</h2>
+
+<p>Create a new demo account.</p><div class="error" id="registerError"></div><div class="field">
+
+<label>Full Name</label>
+
+<input id="regName" type="text">
+
+</div><div class="field">
+
+<label>Email</label>
+
+<input id="regEmail" type="email" autocomplete="username">
+
+</div><div class="field">
+
+<label>Password</label>
+
+<input id="regPassword" type="password" autocomplete="new-password">
+
+</div><div class="field">
+
+<label>Primary Currency</label><select id="regCurrency">
+
+<option value="NGN">NGN — Nigerian Naira</option>
+
+<option value="USD">USD — US Dollar</option>
+
+<option value="EUR">EUR — Euro</option>
+
+<option value="GBP">GBP — British Pound</option>
+
+<option value="IDR">IDR — Indonesian Rupiah</option>
+
+<option value="CAD">CAD — Canadian Dollar</option>
+
+<option value="AUD">AUD — Australian Dollar</option>
+
+<option value="CHF">CHF — Swiss Franc</option>
+
+<option value="JPY">JPY — Japanese Yen</option>
+
+<option value="CNY">CNY — Chinese Yuan</option>
+
+<option value="INR">INR — Indian Rupee</option>
+
+<option value="MYR">MYR — Malaysian Ringgit</option>
+
+<option value="SGD">SGD — Singapore Dollar</option>
+
+<option value="AED">AED — UAE Dirham</option>
+
+<option value="ZAR">ZAR — South African Rand</option>
+
+<option value="KES">KES — Kenyan Shilling</option>
+
+<option value="GHS">GHS — Ghanaian Cedi</option>
+
+</select>
+
+</div><button id="registerBtn" class="btn primary full" onclick="register()">
+
+Create Account
+
+</button><div style="text-align:center;font-size:13px;color:#718096;margin-top:15px">
+
+Already registered?<button onclick="showLogin()" style="border:0;background:none;color:#1769e0;font-weight:bold">
+
+Sign In
+
+</button></div></div></div>
+
+</div>
+
+</div><div class="modal" id="transferModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeTransfer()">×</button>
+
+<h2>Send Money</h2>
+
+<p>Create a demo transaction using your available currency balance.</p><div class="error" id="transferError"></div><div class="field">
+
+<label>Currency</label>
+
+<select id="transferCurrency">
+
+<option value="NGN">NGN — Nigerian Naira</option>
+
+<option value="USD">USD — US Dollar</option>
+
+<option value="EUR">EUR — Euro</option>
+
+<option value="GBP">GBP — British Pound</option>
+
+<option value="IDR">IDR — Indonesian Rupiah</option>
+
+<option value="CAD">CAD — Canadian Dollar</option>
+
+<option value="AUD">AUD — Australian Dollar</option>
+
+<option value="CHF">CHF — Swiss Franc</option>
+
+<option value="JPY">JPY — Japanese Yen</option>
+
+<option value="CNY">CNY — Chinese Yuan</option>
+
+<option value="INR">INR — Indian Rupee</option>
+
+<option value="MYR">MYR — Malaysian Ringgit</option>
+
+<option value="SGD">SGD — Singapore Dollar</option>
+
+<option value="AED">AED — UAE Dirham</option>
+
+<option value="ZAR">ZAR — South African Rand</option>
+
+<option value="KES">KES — Kenyan Shilling</option>
+
+<option value="GHS">GHS — Ghanaian Cedi</option>
+
+</select>
+
+</div><div class="field">
+
+<label>Amount</label>
+
+<input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00">
+
+</div><div class="field">
+
+<label>Recipient</label>
+
+<input id="transferRecipient" type="text" placeholder="Recipient name">
+
+</div><div class="field">
+
+<label>Note</label>
+
+<textarea id="transferNote" placeholder="Optional note"></textarea>
+
+</div><button id="transferBtn" class="btn primary full" onclick="transfer()">
+
+Continue
+
+</button></div>
+
+</div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+<h2>Verify Sign In</h2>
+<p>Enter the 6-digit demo verification code to continue.</p>
+<div class="error" id="loginVerifyError"></div>
+<div class="field"><label>Verification Code</label><input id="loginVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
+<div id="loginVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<button id="loginVerifyBtn" class="btn primary full" onclick="verifyLoginCode()">Verify &amp; Continue</button>
+</div>
+</div><div class="modal" id="registrationVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelRegistrationVerification()">×</button>
+<h2>Verify Account</h2>
+<p>Enter the 6-digit demo verification code to complete your account creation.</p>
+<div class="error" id="registrationVerifyError"></div>
+<div class="field"><label>Verification Code</label><input id="registrationVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
+<div id="registrationVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<button id="registrationVerifyBtn" class="btn primary full" onclick="verifyRegistrationCode()">Verify &amp; Continue</button>
+</div>
+</div><div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
+
+<h2 id="serviceTitle">Service</h2>
+
+<p id="serviceText">Demo service interface.</p><div class="field">
+
+<label>Request details</label>
+
+<input id="serviceInput" placeholder="Enter demo request details">
+
+</div><button class="btn primary full" onclick="submitDemoService()">
+
+Submit Demo Request
+
+</button></div>
+
+</div><button class="chatBtn" onclick="toggleChat()">?</button>
+
+<div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
+
+<button
+
+onclick="toggleChat()"
+
+style="background:none;border:0;color:white;font-size:20px">
+
+×
+
+</button>
+
+</div><div class="chatBody" id="chatBody"></div><div class="chatImagePreview" id="chatImagePreview"><img id="chatImagePreviewImg" alt="Selected image"><button type="button" onclick="clearChatImage()">Remove image</button></div><div class="chatInput"><button type="button" class="chatAttach" onclick="chooseChatImage()" aria-label="Add image" title="Add image">📎</button><input id="chatImageInput" class="hiddenFile" type="file" accept="image/*" onchange="handleChatImage(event)"><input
+
+id="chatInput"
+
+placeholder="Type a message..."
+
+onkeydown="if(event.key==='Enter')sendChat()">
+
+<button id="chatSendBtn" onclick="sendChat()">Send</button>
+
+</div>
+
+</div><div id="notificationPopup" class="notificationPopup" role="status" aria-live="polite">
+<div class="notificationPopupHead"><span class="notificationPopupIcon">🔔</span><span>AMERICAN CREST BANK</span><button class="notificationPopupClose" onclick="hideNotificationPopup()" aria-label="Close notification">×</button></div>
+<div class="notificationPopupContent"><strong>New Account Notification</strong><div id="notificationPopupMessage"></div><small id="notificationPopupDate"></small></div>
+</div><div class="toast" id="toast"></div><script>
+
+const API='/api';
+
+let token='';
+
+let me=null;
+
+let selectedCustomerId=null;
+
+let adminState=null;
+let lastNotificationId=null;
+let notificationInitialized=false;
+
+let liveTimer=null;
+
+let balanceHidden=false;
+
+let publicSupportRequested=false;
+let knownNotificationIds=new Set();
+let notificationPopupTimer=null;
+let notificationAudioContext=null;
+let pendingLoginVerification=null;
+let pendingRegistrationVerification=null;
+let pendingChatImage=null;
+
+const CURRENCY_INFO={
+
+NGN:{symbol:'₦',decimals:2},
+
+USD:{symbol:'$',decimals:2},
+
+EUR:{symbol:'€',decimals:2},
+
+GBP:{symbol:'£',decimals:2},
+
+IDR:{symbol:'Rp',decimals:0},
+
+CAD:{symbol:'CA$',decimals:2},
+
+AUD:{symbol:'A$',decimals:2},
+
+CHF:{symbol:'CHF ',decimals:2},
+
+JPY:{symbol:'¥',decimals:0},
+
+CNY:{symbol:'¥',decimals:2},
+
+INR:{symbol:'₹',decimals:2},
+
+MYR:{symbol:'RM ',decimals:2},
+
+SGD:{symbol:'S$',decimals:2},
+
+AED:{symbol:'AED ',decimals:2},
+
+ZAR:{symbol:'R',decimals:2},
+
+KES:{symbol:'KSh ',decimals:2},
+
+GHS:{symbol:'GH₵',decimals:2}
+
+};
+
+const $=id=>document.getElementById(id);
+
+function money(amount,currency){
+
+const info=CURRENCY_INFO[currency]||CURRENCY_INFO.USD;
+
+return info.symbol+
+
+Number(amount||0).toLocaleString(undefined,{
+
+minimumFractionDigits:info.decimals,
+
+maximumFractionDigits:info.decimals
 
 });
 
-const authLimiter = rateLimit({
+}
 
-  windowMs: 15 * 60 * 1000,
+function esc(value){
 
-  max: 100,
+return String(value??'').replace(
 
-  standardHeaders: true,
+/[&<>"']/g,
 
-  legacyHeaders: false
+c=>({
 
-});
+'&':'&amp;',
 
-const writeLimiter = rateLimit({
+'<':'&lt;',
 
-  windowMs: 60 * 1000,
+'>':'&gt;',
 
-  max: 100,
+'"':'&quot;',
 
-  standardHeaders: true,
+"'":'&#039;'
 
-  legacyHeaders: false
+}[c])
 
-});
+);
 
-const CURRENCIES = [
+}
 
-  'NGN','USD','EUR','GBP','IDR','CAD','AUD','CHF','JPY',
+function toast(message){
 
-  'CNY','INR','MYR','SGD','AED','ZAR','KES','GHS'
+$('toast').textContent=message;
+
+$('toast').classList.add('show');
+
+clearTimeout(window.__toast);
+
+window.__toast=setTimeout(
+
+()=>$('toast').classList.remove('show'),
+
+2800
+
+);
+
+}
+
+function showError(id,message){
+
+$(id).textContent=message;
+
+$(id).classList.add('show');
+
+}
+
+function notificationPopup(message){
+
+$('toast').textContent=message;
+
+$('toast').classList.add('show');
+
+clearTimeout(window.__notificationToast);
+
+window.__notificationToast=setTimeout(
+
+()=>$('toast').classList.remove('show'),
+
+5600
+
+);
+
+}
+
+function clearError(id){
+
+$(id).textContent='';
+
+$(id).classList.remove('show');
+
+}
+
+function setLoading(buttonId,loading,text){
+
+const button=$(buttonId);
+
+if(!button)return;
+
+if(loading){
+
+if(!button.dataset.originalText)
+
+button.dataset.originalText=button.textContent.trim();
+
+button.disabled=true;
+
+button.classList.add('loadingBtn');
+
+button.textContent=text||'Please wait';
+
+}else{
+
+button.disabled=false;
+
+button.classList.remove('loadingBtn');
+
+if(button.dataset.originalText){
+
+button.textContent=button.dataset.originalText;
+
+}
+
+}
+
+}
+
+function normalizeId(value){
+
+if(value===undefined||value===null)return '';
+
+return String(value).trim();
+
+}
+
+function getCustomerIdentifiers(customer){
+
+if(!customer)return [];
+
+const values=[
+
+customer.id,
+
+customer.user_id,
+
+customer.userId,
+
+customer.uuid,
+
+customer.customer_id,
+
+customer.customerId,
+
+customer.email
 
 ];
 
-function uuid() {
+return values
 
-  return crypto.randomUUID();
+.filter(value=>value!==undefined&&value!==null&&String(value).trim()!=='')
 
-}
-
-function normalizeEmail(value) {
-
-  return String(value || '').trim().toLowerCase();
+.map(value=>String(value).trim());
 
 }
 
-function normalizePhone(value) {
-  return String(value || '').replace(/[^0-9+]/g, '').replace(/(?!^)\+/g, '');
-}
+function customerMatches(customer,identifier){
 
-function validPhone(value) {
-  const phone = normalizePhone(value);
-  return /^\+?[0-9]{7,15}$/.test(phone);
-}
+const target=normalizeId(identifier).toLowerCase();
 
-function normalizeText(value) {
+if(!target)return false;
 
-  return String(value ?? '').trim();
+return getCustomerIdentifiers(customer)
+
+.some(value=>value.toLowerCase()===target);
 
 }
 
-function validCurrency(value) {
+function resolveSelectedCustomer(){
 
-  return CURRENCIES.includes(
+const customers=adminState?.customers||[];
 
-    String(value || '').trim().toUpperCase()
+if(!selectedCustomerId)return null;
 
-  );
+return customers.find(
 
-}
+customer=>customerMatches(customer,selectedCustomerId)
 
-function validUUID(value) {
-
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-
-    String(value || '')
-
-  );
+)||null;
 
 }
 
-function signToken(user) {
+async function api(path,opts={}){
 
-  return jwt.sign(
+const headers={
 
-    {
+'Content-Type':'application/json',
 
-      id: String(user.id),
+...(opts.headers||{})
 
-      role: user.role
+};
 
-    },
+if(token){
 
-    JWT_SECRET,
-
-    { expiresIn: '7d' }
-
-  );
+headers.Authorization='Bearer '+token;
 
 }
 
-function auth(req, res, next) {
+const response=await fetch(
 
-  const header = req.headers.authorization || '';
+API+path,
 
-  const token = header.startsWith('Bearer ')
+{
 
-    ? header.slice(7).trim()
+...opts,
 
-    : null;
-
-  if (!token) {
-
-    return res.status(401).json({
-
-      ok: false,
-
-      error: 'Authentication required.'
-
-    });
-
-  }
-
-  try {
-
-    req.user = jwt.verify(token, JWT_SECRET);
-
-    next();
-
-  } catch {
-
-    return res.status(401).json({
-
-      ok: false,
-
-      error: 'Session expired. Please sign in again.'
-
-    });
-
-  }
+headers
 
 }
 
-function adminOnly(req, res, next) {
+);
 
-  if (!req.user) {
+let data={};
 
-    return res.status(401).json({
+try{
 
-      ok: false,
+data=await response.json();
 
-      error: 'Authentication required.'
+}catch{}
 
-    });
+if(!response.ok){
 
-  }
+throw new Error(
 
-  if (String(req.user.role || '').toLowerCase() !== 'admin') {
+data.error||
 
-    return res.status(403).json({
+data.message||
 
-      ok: false,
+'Request failed.'
 
-      error: 'Administrator access required.'
-
-    });
-
-  }
-
-  next();
+);
 
 }
 
-async function ensureBalances(userId, client = pool) {
-
-  for (const currency of CURRENCIES) {
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_balances
-
-        (user_id, currency, amount)
-
-      VALUES
-
-        ($1, $2, 0)
-
-      ON CONFLICT (user_id, currency)
-
-      DO NOTHING
-
-      `,
-
-      [userId, currency]
-
-    );
-
-  }
-
-}
-
-async function getUser(userId) {
-
-  if (!validUUID(userId)) return null;
-
-  const userResult = await pool.query(
-
-    `
-
-    SELECT
-
-      id,name,email,phone,phone_verified,role,status,primary_currency,
-
-      profile_image,created_at
-
-    FROM acb_users
-
-    WHERE id=$1
-
-    LIMIT 1
-
-    `,
-
-    [userId]
-
-  );
-
-  if (!userResult.rowCount) return null;
-
-  const user = userResult.rows[0];
-
-  await ensureBalances(user.id);
-
-  const [balances, transactions, notifications, support, requests] =
-
-    await Promise.all([
-
-      pool.query(
-
-        `
-
-        SELECT currency, amount
-
-        FROM acb_balances
-
-        WHERE user_id=$1
-
-        ORDER BY currency
-
-        `,
-
-        [userId]
-
-      ),
-
-      pool.query(
-
-        `
-
-        SELECT id,kind,title,amount,currency,created_at
-
-        FROM acb_transactions
-
-        WHERE user_id=$1
-
-        ORDER BY created_at DESC
-
-        LIMIT 100
-
-        `,
-
-        [userId]
-
-      ),
-
-      pool.query(
-
-        `
-
-        SELECT id,message,created_at,read_at
-
-        FROM acb_notifications
-
-        WHERE user_id=$1
-
-        ORDER BY created_at DESC
-
-        LIMIT 100
-
-        `,
-
-        [userId]
-
-      ),
-
-      pool.query(
-
-        `
-
-        SELECT id,sender,message,created_at
-
-        FROM acb_support
-
-        WHERE user_id=$1
-
-        ORDER BY created_at ASC
-
-        LIMIT 200
-
-        `,
-
-        [userId]
-
-      ),
-
-      pool.query(
-
-        `
-
-        SELECT
-
-          id,currency,amount,recipient,note,status,
-
-          created_at,handled_at
-
-        FROM acb_requests
-
-        WHERE user_id=$1
-
-        ORDER BY created_at DESC
-
-        LIMIT 100
-
-        `,
-
-        [userId]
-
-      )
-
-    ]);
-
-  const balanceObject = {};
-
-  for (const currency of CURRENCIES) {
-
-    balanceObject[currency] = 0;
-
-  }
-
-  for (const row of balances.rows) {
-
-    balanceObject[row.currency] = Number(row.amount || 0);
-
-  }
-
-  return {
-
-    id: String(user.id),
-
-    name: user.name,
-
-    email: user.email || '',
-
-    phone: user.phone || '',
-
-    phoneVerified: !!user.phone_verified,
-
-    role: user.role,
-
-    status: user.status,
-
-    primary_currency: user.primary_currency,
-
-    primaryCurrency: user.primary_currency,
-
-    profile_image: user.profile_image || '',
-
-    profileImage: user.profile_image || '',
-
-    created_at: user.created_at,
-
-    createdAt: user.created_at,
-
-    balances: balanceObject,
-
-    accounts: CURRENCIES.map(currency => ({
-
-      currency,
-
-      balance: Number(balanceObject[currency] || 0),
-
-      amount: Number(balanceObject[currency] || 0)
-
-    })),
-
-    transactions: transactions.rows.map(row => ({
-
-      id: String(row.id),
-
-      kind: row.kind,
-
-      title: row.title,
-
-      amount: Number(row.amount || 0),
-
-      currency: row.currency,
-
-      created_at: row.created_at,
-
-      date: row.created_at
-
-    })),
-
-    notifications: notifications.rows.map(row => ({
-
-      id: String(row.id),
-
-      message: row.message,
-
-      created_at: row.created_at,
-
-      read_at: row.read_at,
-
-      is_read: !!row.read_at,
-
-      date: row.created_at
-
-    })),
-
-    support: support.rows.map(row => ({
-
-      id: String(row.id),
-
-      sender: row.sender,
-
-      message: row.message,
-
-      created_at: row.created_at,
-
-      date: row.created_at
-
-    })),
-
-    requests: requests.rows.map(row => ({
-
-      id: String(row.id),
-
-      currency: row.currency,
-
-      amount: Number(row.amount || 0),
-
-      recipient: row.recipient,
-
-      note: row.note,
-
-      status: row.status,
-
-      created_at: row.created_at,
-
-      handled_at: row.handled_at,
-
-      date: row.created_at
-
-    }))
-
-  };
-
-}
-
-async function loadAdminCustomers() {
-
-  const result = await pool.query(`
-
-    SELECT
-
-      u.id,u.name,u.email,u.phone,u.role,u.status,
-
-      u.primary_currency,u.profile_image,u.created_at,
-
-      COALESCE(
-
-        json_agg(
-
-          json_build_object(
-
-            'currency',b.currency,
-
-            'balance',b.amount,
-
-            'amount',b.amount
-
-          )
-
-          ORDER BY b.currency
-
-        ) FILTER (WHERE b.currency IS NOT NULL),
-
-        '[]'::json
-
-      ) AS accounts
-
-    FROM acb_users u
-
-    LEFT JOIN acb_balances b
-
-      ON b.user_id=u.id
-
-    WHERE LOWER(u.role)='customer'
-
-    GROUP BY
-
-      u.id,u.name,u.email,u.role,u.status,
-
-      u.primary_currency,u.profile_image,u.created_at
-
-    ORDER BY u.created_at DESC
-
-  `);
-
-  return result.rows.map(row => ({
-
-    id: String(row.id),
-
-    userId: String(row.id),
-
-    user_id: String(row.id),
-
-    customerId: String(row.id),
-
-    customer_id: String(row.id),
-
-    name: row.name,
-
-    full_name: row.name,
-
-    fullName: row.name,
-
-    email: row.email,
-    phone: row.phone || '',
-
-    role: 'customer',
-
-    status: row.status,
-
-    primary_currency: row.primary_currency,
-
-    primaryCurrency: row.primary_currency,
-
-    profile_image: row.profile_image || '',
-
-    profileImage: row.profile_image || '',
-
-    created_at: row.created_at,
-
-    createdAt: row.created_at,
-
-    accounts: Array.isArray(row.accounts)
-
-      ? row.accounts.map(account => ({
-
-          currency: account.currency,
-
-          balance: Number(account.balance || 0),
-
-          amount: Number(account.amount || account.balance || 0)
-
-        }))
-
-      : []
-
-  }));
+return data;
 
 }
 
 /*
 
-\=========================================================
-
-ROBUST CUSTOMER RESOLUTION
-
-\=========================================================
+AUTH
 
 */
 
-function collectIdentifiers(value, output = []) {
+function openModal(type){
 
-  if (value === undefined || value === null) {
+$('authModal').classList.add('show');
 
-    return output;
+if(type==='register'){
 
-  }
+showRegister();
 
-  if (
+}else{
 
-    typeof value === 'string' ||
-
-    typeof value === 'number'
-
-  ) {
-
-    const text = String(value).trim();
-
-    if (text) output.push(text);
-
-    return output;
-
-  }
-
-  if (Array.isArray(value)) {
-
-    for (const item of value) {
-
-      collectIdentifiers(item, output);
-
-    }
-
-    return output;
-
-  }
-
-  if (typeof value === 'object') {
-
-    const keys = [
-
-      'id',
-
-      'userId',
-
-      'user_id',
-
-      'customerId',
-
-      'customer_id',
-
-      'email',
-
-      'emailAddress',
-
-      'email_address',
-
-      'name',
-
-      'fullName',
-
-      'full_name',
-
-      'username',
-
-      'customer',
-
-      'user',
-
-      'account',
-
-      'recipient',
-
-      'selectedCustomer',
-
-      'selected_customer',
-
-      'selectedUser',
-
-      'selected_user'
-
-    ];
-
-    for (const key of keys) {
-
-      if (
-
-        Object.prototype.hasOwnProperty.call(value, key)
-
-      ) {
-
-        collectIdentifiers(value[key], output);
-
-      }
-
-    }
-
-  }
-
-  return output;
+showLogin();
 
 }
 
-async function resolveCustomer(identifier) {
+}
 
-  if (
+function closeModal(){
 
-    identifier &&
-
-    typeof identifier === 'object' &&
-
-    !Array.isArray(identifier)
-
-  ) {
-
-    /*
-
-    Try the strongest identifiers first.
-
-    */
-
-    const identifiers = [];
-
-    collectIdentifiers(identifier, identifiers);
-
-    for (const item of identifiers) {
-
-      const found = await resolveCustomer(item);
-
-      if (found) return found;
-
-    }
-
-    return null;
-
-  }
-
-  const value = normalizeText(identifier);
-
-  if (!value) return null;
-
-  /*
-
-  UUID
-
-  */
-
-  if (validUUID(value)) {
-
-    const result = await pool.query(
-
-      `
-
-      SELECT id
-
-      FROM acb_users
-
-      WHERE id=$1
-
-      AND LOWER(role)='customer'
-
-      LIMIT 1
-
-      `,
-
-      [value]
-
-    );
-
-    if (result.rowCount) {
-
-      return String(result.rows[0].id);
-
-    }
-
-  }
-
-  /*
-
-  EMAIL
-
-  */
-
-  if (value.includes('@')) {
-
-    const emailResult = await pool.query(
-
-      `
-
-      SELECT id
-
-      FROM acb_users
-
-      WHERE LOWER(email)=LOWER($1)
-
-      AND LOWER(role)='customer'
-
-      LIMIT 1
-
-      `,
-
-      [value]
-
-    );
-
-    if (emailResult.rowCount) {
-
-      return String(emailResult.rows[0].id);
-
-    }
-
-  }
-
-  /*
-
-  PHONE
-
-  */
-
-  const normalizedPhone = normalizePhone(value);
-
-  if (validPhone(normalizedPhone)) {
-    const phoneResult = await pool.query(
-      `
-      SELECT id
-      FROM acb_users
-      WHERE phone=$1
-      AND LOWER(role)='customer'
-      LIMIT 1
-      `,
-      [normalizedPhone]
-    );
-
-    if (phoneResult.rowCount) {
-      return String(phoneResult.rows[0].id);
-    }
-  }
-
-  /*
-
-  EXACT NAME
-
-  */
-
-  const nameResult = await pool.query(
-
-    `
-
-    SELECT id
-
-    FROM acb_users
-
-    WHERE LOWER(TRIM(name))=LOWER(TRIM($1))
-
-    AND LOWER(role)='customer'
-
-    ORDER BY created_at DESC
-
-    LIMIT 1
-
-    `,
-
-    [value]
-
-  );
-
-  if (nameResult.rowCount) {
-
-    return String(nameResult.rows[0].id);
-
-  }
-
-  return null;
+$('authModal').classList.remove('show');
 
 }
 
-async function resolveCustomerFromRequest(req) {
+function showRegister(){
 
-  const candidates = [];
+$('loginForm').style.display='none';
 
-  /*
+$('registerForm').style.display='block';
 
-  Explicit fields first.
+clearError('registerError');
 
-  */
+}
 
-  const fields = [
+function showLogin(){
 
-    req.body?.userId,
+$('registerForm').style.display='none';
 
-    req.body?.user_id,
+$('loginForm').style.display='block';
 
-    req.body?.customerId,
-
-    req.body?.customer_id,
-
-    req.body?.id,
-
-    req.body?.email,
-
-    req.body?.emailAddress,
-
-    req.body?.email_address,
-
-    req.body?.name,
-
-    req.body?.fullName,
-
-    req.body?.full_name,
-
-    req.body?.username,
-
-    req.body?.customer,
-
-    req.body?.user,
-
-    req.body?.account,
-
-    req.body?.selectedCustomer,
-
-    req.body?.selected_customer,
-
-    req.body?.selectedUser,
-
-    req.body?.selected_user,
-
-    req.body?.data
-
-  ];
-
-  for (const field of fields) {
-
-    collectIdentifiers(field, candidates);
-
-  }
-
-  /*
-
-  Also inspect the entire body.
-
-  */
-
-  collectIdentifiers(req.body, candidates);
-
-  const unique = [
-
-    ...new Set(
-
-      candidates
-
-        .map(value => String(value).trim())
-
-        .filter(Boolean)
-
-    )
-
-  ];
-
-  /*
-
-  Strongest identifiers first.
-
-  */
-
-  const ordered = [
-
-    ...unique.filter(validUUID),
-
-    ...unique.filter(value => value.includes('@')),
-
-    ...unique.filter(value => !validUUID(value) && !value.includes('@'))
-
-  ];
-
-  for (const candidate of ordered) {
-
-    const resolved =
-
-      await resolveCustomer(candidate);
-
-    if (resolved) {
-
-      return resolved;
-
-    }
-
-  }
-
-  return null;
+clearError('loginError');
 
 }
 
 /*
 
-\=========================================================
+HOME SUPPORT
 
-SUPPORT RESOLUTION
+If the customer is already logged in, open the real
 
-\=========================================================
+server-backed support chat immediately.
+
+If not, open login and remember that support was requested.
 
 */
 
-async function resolveSupportCustomerId(identifier) {
+function openSupportFromHome(){
 
-  if (!identifier) return null;
+if(token&&me){
 
-  const customer =
+$('dashboard').style.display='block';
 
-    await resolveCustomer(identifier);
+$('publicSite').style.display='none';
 
-  if (customer) return customer;
+toggleChat();
 
-  let value = identifier;
-
-  if (
-
-    typeof identifier === 'object' &&
-
-    !Array.isArray(identifier)
-
-  ) {
-
-    value =
-
-      identifier.id ||
-
-      identifier.supportId ||
-
-      identifier.support_id ||
-
-      identifier.ticketId ||
-
-      identifier.ticket_id ||
-
-      identifier.userId ||
-
-      identifier.user_id ||
-
-      identifier.customerId ||
-
-      identifier.customer_id ||
-
-      identifier.email ||
-
-      identifier.name ||
-
-      '';
-
-  }
-
-  value = normalizeText(value);
-
-  if (!value) return null;
-
-  if (validUUID(value)) {
-
-    const support = await pool.query(
-
-      `
-
-      SELECT user_id
-
-      FROM acb_support
-
-      WHERE id=$1
-
-      LIMIT 1
-
-      `,
-
-      [value]
-
-    );
-
-    if (support.rowCount) {
-
-      return String(support.rows[0].user_id);
-
-    }
-
-    const request = await pool.query(
-
-      `
-
-      SELECT user_id
-
-      FROM acb_requests
-
-      WHERE id=$1
-
-      LIMIT 1
-
-      `,
-
-      [value]
-
-    );
-
-    if (request.rowCount) {
-
-      return String(request.rows[0].user_id);
-
-    }
-
-  }
-
-  return null;
+return;
 
 }
 
-async function resolveSupportCustomerFromRequest(req) {
+publicSupportRequested=true;
 
-  const identifiers = [];
-
-  collectIdentifiers(req.body, identifiers);
-
-  const unique = [
-
-    ...new Set(
-
-      identifiers
-
-        .map(value => String(value).trim())
-
-        .filter(Boolean)
-
-    )
-
-  ];
-
-  for (const identifier of unique) {
-
-    const customer =
-
-      await resolveCustomer(identifier);
-
-    if (customer) return customer;
-
-  }
-
-  for (const identifier of unique) {
-
-    const customer =
-
-      await resolveSupportCustomerId(identifier);
-
-    if (customer) return customer;
-
-  }
-
-  return null;
+openModal('login');
 
 }
 
 /*
 
-\=========================================================
-
-DATABASE INITIALIZATION
-
-\=========================================================
+REGISTRATION
 
 */
 
-async function initDb() {
+async function register(){
 
-  await pool.query(`
+const buttonId='registerBtn';
 
-    CREATE TABLE IF NOT EXISTS acb_users (
+if($(buttonId).disabled)return;
 
-      id UUID PRIMARY KEY,
+const name=$('regName').value.trim();
 
-      name TEXT NOT NULL,
+const email=$('regEmail').value.trim().toLowerCase();
 
-      email TEXT UNIQUE NOT NULL,
+const password=$('regPassword').value;
 
-      password_hash TEXT NOT NULL,
+const currency=$('regCurrency').value;
 
-      role TEXT NOT NULL DEFAULT 'customer',
+clearError('registerError');
 
-      status TEXT NOT NULL DEFAULT 'Active',
+if(name.length<2){
 
-      primary_currency TEXT NOT NULL DEFAULT 'NGN',
+return showError('registerError','Enter your full name.');
 
-      profile_image TEXT NOT NULL DEFAULT '',
+}
 
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+if(!/^\S+@\S+\.\S+$/.test(email)){
 
-    )
+return showError('registerError','Enter a valid email address.');
 
-  `);
+}
 
-  await pool.query(`
+if(password.length<6){
 
-    ALTER TABLE acb_users ALTER COLUMN email DROP NOT NULL
+return showError('registerError','Password must contain at least 6 characters.');
 
-  `);
+}
 
-  await pool.query(`
+setLoading(buttonId,true,'Creating account');
 
-    ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS phone TEXT
+try{
 
-  `);
+const data=await api(
 
-  await pool.query(`
+'/auth/register',
 
-    ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS phone_verified BOOLEAN NOT NULL DEFAULT FALSE
+{
 
-  `);
+method:'POST',
 
-  await pool.query(`
+body:JSON.stringify({
 
-    CREATE UNIQUE INDEX IF NOT EXISTS acb_users_phone_unique
-    ON acb_users(phone)
-    WHERE phone IS NOT NULL AND phone <> ''
+name:name,
 
-  `);
+email:email,
 
-  await pool.query(`
+password:password,
 
-    CREATE TABLE IF NOT EXISTS acb_verification_codes (
-      id UUID PRIMARY KEY,
-      user_id UUID REFERENCES acb_users(id) ON DELETE CASCADE,
-      purpose TEXT NOT NULL,
-      identifier TEXT NOT NULL,
-      code_hash TEXT NOT NULL,
-      payload JSONB,
-      expires_at TIMESTAMPTZ NOT NULL,
-      attempts INTEGER NOT NULL DEFAULT 0,
-      verified_at TIMESTAMPTZ,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
+currency:currency
 
-  `);
+})
 
-  await pool.query(`
+}
 
-    CREATE INDEX IF NOT EXISTS acb_verification_codes_lookup
-    ON acb_verification_codes(identifier,purpose,created_at DESC)
+);
 
-  `);
+if(data&&data.verificationRequired&&data.verificationId){
 
-  await pool.query(`
+pendingRegistrationVerification={
 
-    CREATE TABLE IF NOT EXISTS acb_balances (
+verificationId:String(data.verificationId),
 
-      user_id UUID NOT NULL
+demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
 
-        REFERENCES acb_users(id)
+};
 
-        ON DELETE CASCADE,
+closeModal();
 
-      currency TEXT NOT NULL,
+clearError('registrationVerifyError');
 
-      amount NUMERIC(24,2) NOT NULL DEFAULT 0,
+$('registrationVerifyCode').value='';
 
-      PRIMARY KEY(user_id,currency)
+$('registrationVerifyDemoCode').textContent=pendingRegistrationVerification.demoCode
 
-    )
+? 'Demo verification code: '+pendingRegistrationVerification.demoCode
 
-  `);
+: 'A verification code has been generated for this demo.';
 
-  await pool.query(`
+$('registrationVerifyModal').classList.add('show');
 
-    CREATE TABLE IF NOT EXISTS acb_transactions (
+setTimeout(()=>$('registrationVerifyCode').focus(),100);
 
-      id UUID PRIMARY KEY,
+return;
 
-      user_id UUID NOT NULL
+}
 
-        REFERENCES acb_users(id)
+if(!data||!data.token||!data.user){
 
-        ON DELETE CASCADE,
+throw new Error(
 
-      kind TEXT NOT NULL,
+'Account was created, but the server did not return a valid login session.'
 
-      title TEXT NOT NULL,
+);
 
-      amount NUMERIC(24,2) NOT NULL,
+}
 
-      currency TEXT NOT NULL,
+token=String(data.token);
 
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+me=data.user;
 
-    )
+closeModal();
 
-  `);
+showDashboard();
 
-  await pool.query(`
+toast('Demo account created successfully.');
 
-    CREATE TABLE IF NOT EXISTS acb_notifications (
+}catch(error){
 
-      id UUID PRIMARY KEY,
+showError(
 
-      user_id UUID NOT NULL
+'registerError',
 
-        REFERENCES acb_users(id)
+error.message||'Unable to create the account.'
 
-        ON DELETE CASCADE,
+);
 
-      message TEXT NOT NULL,
+}finally{
 
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+setLoading(buttonId,false);
 
-      read_at TIMESTAMPTZ
-
-    )
-
-  `);
-
-  await pool.query(`
-
-    CREATE TABLE IF NOT EXISTS acb_requests (
-
-      id UUID PRIMARY KEY,
-
-      user_id UUID NOT NULL
-
-        REFERENCES acb_users(id)
-
-        ON DELETE CASCADE,
-
-      currency TEXT NOT NULL,
-
-      amount NUMERIC(24,2) NOT NULL,
-
-      recipient TEXT NOT NULL,
-
-      note TEXT NOT NULL DEFAULT '',
-
-      status TEXT NOT NULL DEFAULT 'pending',
-
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-      handled_at TIMESTAMPTZ
-
-    )
-
-  `);
-
-  await pool.query(`
-
-    CREATE TABLE IF NOT EXISTS acb_support (
-
-      id UUID PRIMARY KEY,
-
-      user_id UUID NOT NULL
-
-        REFERENCES acb_users(id)
-
-        ON DELETE CASCADE,
-
-      sender TEXT NOT NULL,
-
-      message TEXT NOT NULL,
-
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-
-    )
-
-  `);
-
-  const existingUsers =
-
-    await pool.query(`
-
-      SELECT id
-
-      FROM acb_users
-
-    `);
-
-  for (const row of existingUsers.rows) {
-
-    await ensureBalances(row.id);
-
-  }
-
-  if (ADMIN_EMAIL && ADMIN_PASSWORD) {
-
-    const existing =
-
-      await pool.query(
-
-        `
-
-        SELECT id
-
-        FROM acb_users
-
-        WHERE LOWER(email)=LOWER($1)
-
-        LIMIT 1
-
-        `,
-
-        [ADMIN_EMAIL]
-
-      );
-
-    const passwordHash =
-
-      await bcrypt.hash(ADMIN_PASSWORD, 12);
-
-    if (existing.rowCount) {
-
-      await pool.query(
-
-        `
-
-        UPDATE acb_users
-
-        SET
-
-          name=$1,
-
-          password_hash=$2,
-
-          role='admin',
-
-          status='Active'
-
-        WHERE id=$3
-
-        `,
-
-        [
-
-          'Administrator',
-
-          passwordHash,
-
-          existing.rows[0].id
-
-        ]
-
-      );
-
-      await ensureBalances(
-
-        existing.rows[0].id
-
-      );
-
-    } else {
-
-      const adminId = uuid();
-
-      await pool.query(
-
-        `
-
-        INSERT INTO acb_users
-
-          (
-
-            id,name,email,password_hash,role,
-
-            status,primary_currency,profile_image
-
-          )
-
-        VALUES
-
-          (
-
-            $1,$2,$3,$4,'admin',
-
-            'Active','NGN',''
-
-          )
-
-        `,
-
-        [
-
-          adminId,
-
-          'Administrator',
-
-          ADMIN_EMAIL,
-
-          passwordHash
-
-        ]
-
-      );
-
-      await ensureBalances(adminId);
-
-    }
-
-  }
-
-  console.log('Database initialization completed successfully.');
+}
 
 }
 
 /*
-
-\=========================================================
-
-HEALTH
-
-\=========================================================
-
-*/
-
-app.get('/api/health', (_req, res) => {
-
-  res.json({
-
-    ok: true,
-
-    demo: true,
-
-    service: 'American Crest Demo Banking Platform'
-
-  });
-
-});
-
-/*
-
-\=========================================================
-
-REGISTER
-
-\=========================================================
-
-*/
-
-async function registerHandler(req, res) {
-  try {
-    const name = normalizeText(
-      req.body.name || req.body.fullName || req.body.full_name ||
-      req.body.username || req.body.displayName || req.body.display_name
-    );
-    const email = normalizeEmail(
-      req.body.email || req.body.emailAddress || req.body.email_address || req.body.usernameEmail
-    );
-    const phone = normalizePhone(
-      req.body.phone || req.body.phoneNumber || req.body.phone_number || req.body.mobile
-    );
-    const password = typeof req.body.password === 'string' ? req.body.password :
-      typeof req.body.passcode === 'string' ? req.body.passcode :
-      typeof req.body.passwordValue === 'string' ? req.body.passwordValue : '';
-    const currency = String(req.body.currency || req.body.primaryCurrency || req.body.primary_currency || 'NGN').trim().toUpperCase();
-
-    if (name.length < 2) return res.status(400).json({ ok:false, error:'Enter your full name.' });
-    if (!email && !phone) return res.status(400).json({ ok:false, error:'Enter an email address or phone number.' });
-    if (email && !/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ ok:false, error:'Enter a valid email address.' });
-    if (phone && !validPhone(phone)) return res.status(400).json({ ok:false, error:'Enter a valid phone number.' });
-    if (password.length < 6) return res.status(400).json({ ok:false, error:'Password must contain at least 6 characters.' });
-    if (!validCurrency(currency)) return res.status(400).json({ ok:false, error:'Invalid currency.' });
-
-    const duplicate = await pool.query(
-      `SELECT id FROM acb_users WHERE ($1 <> '' AND LOWER(email)=LOWER($1)) OR ($2 <> '' AND phone=$2) LIMIT 1`,
-      [email, phone]
-    );
-    if (duplicate.rowCount) return res.status(409).json({ ok:false, success:false, error:'That email address or phone number is already registered.' });
-
-    const pendingPayload = {
-      name, email: email || null, phone: phone || null,
-      passwordHash: await bcrypt.hash(password, 12), currency
-    };
-    const identifier = email || phone;
-    const code = String(crypto.randomInt(100000, 1000000));
-    const verificationId = uuid();
-    const codeHash = await bcrypt.hash(code, 10);
-
-    await pool.query(`DELETE FROM acb_verification_codes WHERE identifier=$1 AND purpose='registration' AND verified_at IS NULL`, [identifier]);
-    await pool.query(
-      `INSERT INTO acb_verification_codes (id,purpose,identifier,code_hash,payload,expires_at) VALUES ($1,'registration',$2,$3,$4,NOW()+INTERVAL '10 minutes')`,
-      [verificationId, identifier, codeHash, JSON.stringify(pendingPayload)]
-    );
-
-    return res.status(202).json({
-      ok:true, success:true, verificationRequired:true, verificationId,
-      destination: email || phone, channel: email ? 'email' : 'phone',
-      message:'Verification code generated for this demo. Enter the code before accessing the account.',
-      demoVerificationCode: code
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    return res.status(500).json({ ok:false, success:false, error:'Unable to create account.' });
-  }
-}
-
-async function verifyRegistrationHandler(req, res) {
-  const verificationId = normalizeText(req.body.verificationId || req.body.verification_id || req.body.id);
-  const code = normalizeText(req.body.code || req.body.verificationCode || req.body.verification_code);
-  if (!validUUID(verificationId) || !/^\d{6}$/.test(code)) return res.status(400).json({ok:false,error:'Enter the 6-digit verification code.'});
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    const result = await client.query(`SELECT * FROM acb_verification_codes WHERE id=$1 AND purpose='registration' AND verified_at IS NULL AND expires_at>NOW() FOR UPDATE`, [verificationId]);
-    if (!result.rowCount) { await client.query('ROLLBACK'); return res.status(400).json({ok:false,error:'Verification code is invalid or expired.'}); }
-    const row = result.rows[0];
-    if (row.attempts >= 5) { await client.query('ROLLBACK'); return res.status(429).json({ok:false,error:'Too many verification attempts. Start registration again.'}); }
-    const valid = await bcrypt.compare(code, row.code_hash);
-    if (!valid) { await client.query(`UPDATE acb_verification_codes SET attempts=attempts+1 WHERE id=$1`, [verificationId]); await client.query('COMMIT'); return res.status(400).json({ok:false,error:'Incorrect verification code.'}); }
-    const payload = row.payload || {};
-    const duplicate = await client.query(`SELECT id FROM acb_users WHERE ($1::text IS NOT NULL AND LOWER(email)=LOWER($1::text)) OR ($2::text IS NOT NULL AND phone=$2::text) LIMIT 1`, [payload.email || null, payload.phone || null]);
-    if (duplicate.rowCount) { await client.query('ROLLBACK'); return res.status(409).json({ok:false,error:'That email address or phone number is already registered.'}); }
-    const userId = uuid();
-    await client.query(`INSERT INTO acb_users (id,name,email,phone,password_hash,role,status,primary_currency,profile_image,phone_verified) VALUES ($1,$2,$3,$4,$5,'customer','Active',$6,'',$7)`, [userId,payload.name,payload.email,payload.phone,payload.passwordHash,payload.currency,!!payload.phone]);
-    await ensureBalances(userId, client);
-    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your American Crest demo account was created successfully.']);
-    const admin = await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
-    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),admin.rows[0].id,`New demo customer registered: ${payload.name} (${payload.email || payload.phone}).`]);
-    await client.query(`UPDATE acb_verification_codes SET verified_at=NOW(),user_id=$1 WHERE id=$2`, [userId,verificationId]);
-    await client.query('COMMIT');
-    const user = await getUser(userId);
-    const token = signToken(user);
-    return res.status(201).json({ok:true,success:true,message:'Account verified and created successfully.',token,accessToken:token,user,customer:user,account:user,id:user.id,userId:user.id,customerId:user.id,redirect:'dashboard'});
-  } catch (error) {
-    try { await client.query('ROLLBACK'); } catch {}
-    console.error('Verification registration error:',error);
-    return res.status(500).json({ok:false,error:'Unable to verify and create the account.'});
-  } finally { client.release(); }
-}
-
-app.post('/api/auth/register', authLimiter, registerHandler);
-app.post('/api/register', authLimiter, registerHandler);
-app.post('/api/signup', authLimiter, registerHandler);
-app.post('/api/auth/signup', authLimiter, registerHandler);
-app.post('/api/auth/verify-registration', authLimiter, verifyRegistrationHandler);
-app.post('/api/verify-registration', authLimiter, verifyRegistrationHandler);
-
-
-/*
-
-\=========================================================
 
 LOGIN
 
-\=========================================================
+The password is sent exactly as entered.
+
+Only the email is normalized.
 
 */
 
-async function loginHandler(req, res) {
-  try {
-    const identifier = normalizeText(req.body.identifier || req.body.login || req.body.email || req.body.emailAddress || req.body.email_address || req.body.phone || req.body.phoneNumber || req.body.phone_number);
-    const password = typeof req.body.password === 'string' ? req.body.password : typeof req.body.passcode === 'string' ? req.body.passcode : '';
-    if (!identifier || !password) return res.status(400).json({ok:false,error:'Enter your email/phone and password.'});
-    const email = normalizeEmail(identifier);
-    const phone = normalizePhone(identifier);
-    const result = await pool.query(`SELECT id,name,email,phone,password_hash,role,status,primary_currency,profile_image,created_at,phone_verified FROM acb_users WHERE (LOWER(email)=LOWER($1) AND $1<>'') OR (phone=$2 AND $2<>'') LIMIT 1`, [email,phone]);
-    if (!result.rowCount) return res.status(401).json({ok:false,success:false,error:'Incorrect email/phone or password.'});
-    const databaseUser=result.rows[0];
-    if (!(await bcrypt.compare(password,databaseUser.password_hash))) return res.status(401).json({ok:false,success:false,error:'Incorrect email/phone or password.'});
-    if (String(databaseUser.status||'').toLowerCase()==='suspended') return res.status(403).json({ok:false,success:false,error:'This account is currently suspended.'});
-    if (String(databaseUser.role||'').toLowerCase()==='admin') {
-      const user=await getUser(String(databaseUser.id)); const token=signToken(user);
-      return res.json({ok:true,success:true,message:'Signed in successfully.',token,accessToken:token,user,customer:user,account:user,id:user.id,userId:user.id,customerId:user.id,redirect:'admin'});
-    }
-    const verificationId=uuid(); const code=String(crypto.randomInt(100000,1000000)); const codeHash=await bcrypt.hash(code,10); const loginIdentifier=databaseUser.email || databaseUser.phone;
-    await pool.query(`DELETE FROM acb_verification_codes WHERE user_id=$1 AND purpose='login' AND verified_at IS NULL`,[databaseUser.id]);
-    await pool.query(`INSERT INTO acb_verification_codes (id,user_id,purpose,identifier,code_hash,expires_at) VALUES ($1,$2,'login',$3,$4,NOW()+INTERVAL '10 minutes')`,[verificationId,databaseUser.id,loginIdentifier,codeHash]);
-    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for this demo. Enter the code before accessing the account.',demoVerificationCode:code});
-  } catch(error){ console.error('Login error:',error); return res.status(500).json({ok:false,success:false,error:'Unable to sign in.'}); }
+async function login(){
+
+const buttonId='loginBtn';
+
+if($(buttonId).disabled)return;
+
+const email=$('loginEmail').value.trim().toLowerCase();
+const password=$('loginPassword').value;
+
+clearError('loginError');
+
+if(!email){
+return showError('loginError','Enter your email address.');
 }
 
-async function verifyLoginHandler(req,res){
-  const verificationId=normalizeText(req.body.verificationId||req.body.verification_id||req.body.id); const code=normalizeText(req.body.code||req.body.verificationCode||req.body.verification_code);
-  if(!validUUID(verificationId)||!/^[0-9]{6}$/.test(code)) return res.status(400).json({ok:false,error:'Enter the 6-digit verification code.'});
-  const rowResult=await pool.query(`SELECT * FROM acb_verification_codes WHERE id=$1 AND purpose='login' AND verified_at IS NULL AND expires_at>NOW() LIMIT 1`,[verificationId]);
-  if(!rowResult.rowCount) return res.status(400).json({ok:false,error:'Verification code is invalid or expired.'});
-  const row=rowResult.rows[0]; if(row.attempts>=5) return res.status(429).json({ok:false,error:'Too many verification attempts. Start login again.'});
-  if(!(await bcrypt.compare(code,row.code_hash))){ await pool.query(`UPDATE acb_verification_codes SET attempts=attempts+1 WHERE id=$1`,[verificationId]); return res.status(400).json({ok:false,error:'Incorrect verification code.'}); }
-  await pool.query(`UPDATE acb_verification_codes SET verified_at=NOW() WHERE id=$1`,[verificationId]);
-  const user=await getUser(String(row.user_id)); if(!user) return res.status(404).json({ok:false,error:'Account not found.'});
-  const token=signToken(user); return res.json({ok:true,success:true,message:'Verification successful. Signed in successfully.',token,accessToken:token,user,customer:user,account:user,id:user.id,userId:user.id,customerId:user.id,redirect:'dashboard'});
+if(!/^\S+@\S+\.\S+$/.test(email)){
+return showError('loginError','Enter a valid email address.');
 }
 
-app.post('/api/auth/login', authLimiter, loginHandler);
-app.post('/api/login', authLimiter, loginHandler);
-app.post('/api/signin', authLimiter, loginHandler);
-app.post('/api/auth/signin', authLimiter, loginHandler);
-app.post('/api/auth/verify-login', authLimiter, verifyLoginHandler);
-app.post('/api/verify-login', authLimiter, verifyLoginHandler);
+if(!password){
+return showError('loginError','Enter your password.');
+}
 
+setLoading(buttonId,true,'Signing in');
 
-/*
-
-\=========================================================
-
-CURRENT USER
-
-\=========================================================
-
-*/
-
-app.get('/api/me', auth, async (req, res) => {
-
-  try {
-
-    const user =
-
-      await getUser(req.user.id);
-
-    if (!user) {
-
-      return res.status(404).json({
-
-        ok: false,
-
-        error: 'Account not found.'
-
-      });
-
-    }
-
-    return res.json({
-
-      ok: true,
-
-      user,
-
-      customer: user,
-
-      account: user
-
-    });
-
-  } catch (error) {
-
-    console.error('ME error:', error);
-
-    return res.status(500).json({
-
-      ok: false,
-
-      error: 'Unable to load account.'
-
-    });
-
-  }
-
+try{
+const data=await api('/auth/login',{
+method:'POST',
+body:JSON.stringify({email:email,password:password})
 });
 
+if(data&&data.verificationRequired&&data.verificationId){
+  pendingLoginVerification={
+    verificationId:String(data.verificationId),
+    email:email,
+    password:password,
+    demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
+  };
+  closeModal();
+  clearError('loginVerifyError');
+  $('loginVerifyCode').value='';
+  $('loginVerifyDemoCode').textContent=pendingLoginVerification.demoCode
+    ? 'Demo verification code: '+pendingLoginVerification.demoCode
+    : 'A verification code has been generated for this demo.';
+  $('loginVerifyModal').classList.add('show');
+  setTimeout(()=>$('loginVerifyCode').focus(),100);
+  return;
+}
+
+if(!data||!data.token||!data.user){
+throw new Error('The server returned an invalid login response.');
+}
+
+completeLogin(data);
+
+}catch(error){
+showError('loginError',error.message||'Unable to sign in.');
+}finally{
+setLoading(buttonId,false);
+}
+}
+
+function completeLogin(data){
+if(!data||!data.token||!data.user){
+throw new Error('The server returned an invalid login response.');
+}
+
+token=String(data.token);
+me=data.user;
+pendingLoginVerification=null;
+$('loginVerifyModal').classList.remove('show');
+closeModal();
+showDashboard();
+
+toast(String(me.role||'').toLowerCase()==='admin'?'Administrator signed in.':'Signed in successfully.');
+
+if(publicSupportRequested){
+publicSupportRequested=false;
+setTimeout(()=>toggleChat(),250);
+}
+}
+
+async function verifyLoginCode(){
+if(!pendingLoginVerification)return;
+const buttonId='loginVerifyBtn';
+const code=$('loginVerifyCode').value.trim();
+clearError('loginVerifyError');
+if(!/^\d{6}$/.test(code)){
+return showError('loginVerifyError','Enter the 6-digit verification code.');
+}
+setLoading(buttonId,true,'Verifying');
+try{
+const verified=await api('/auth/verify-login',{
+method:'POST',
+body:JSON.stringify({verificationId:pendingLoginVerification.verificationId,code:code})
+});
+if(!verified||!verified.token||!verified.user){
+throw new Error('The server returned an invalid verification response.');
+}
+completeLogin(verified);
+}catch(error){
+showError('loginVerifyError',error.message||'Unable to verify the sign in.');
+}finally{
+setLoading(buttonId,false);
+}
+}
+
+function cancelLoginVerification(){
+pendingLoginVerification=null;
+$('loginVerifyModal').classList.remove('show');
+openModal('login');
+}
+
+function cancelRegistrationVerification(){
+pendingRegistrationVerification=null;
+$('registrationVerifyModal').classList.remove('show');
+openModal('register');
+}
+
+async function verifyRegistrationCode(){
+if(!pendingRegistrationVerification)return;
+const buttonId='registrationVerifyBtn';
+const code=$('registrationVerifyCode').value.trim();
+clearError('registrationVerifyError');
+if(!/^\d{6}$/.test(code)){
+return showError('registrationVerifyError','Enter the 6-digit verification code.');
+}
+setLoading(buttonId,true,'Verifying');
+try{
+const verified=await api('/auth/verify-registration',{
+method:'POST',
+body:JSON.stringify({verificationId:pendingRegistrationVerification.verificationId,code:code})
+});
+if(!verified||!verified.token||!verified.user){
+throw new Error('Verification succeeded but no login session was returned.');
+}
+token=String(verified.token);
+me=verified.user;
+pendingRegistrationVerification=null;
+$('registrationVerifyModal').classList.remove('show');
+showDashboard();
+toast('Demo account created successfully.');
+}catch(error){
+showError('registrationVerifyError',error.message||'Unable to verify the account.');
+}finally{
+setLoading(buttonId,false);
+}
+}
+
+async function loadMe(){
+
+if(!token)return false;
+
+try{
+
+const data=await api('/me');
+
+if(!data.user)throw new Error('Invalid user response.');
+
+me=data.user;
+
+return true;
+
+}catch(error){
+
+token='';
+
+me=null;
+
+return false;
+
+}
+
+} // FIX: closes loadMe()
+
 /*
 
-\=========================================================
+DASHBOARD
+
+*/
+
+/*
+
+DASHBOARD
+
+*/
+
+function showDashboard(){
+
+if(!me)return;
+
+// Seed the current notification set so existing notifications do not pop up on login.
+knownNotificationIds=new Set();
+lastNotificationId=null;
+
+$('publicSite').style.display='none';
+
+$('dashboard').style.display='block';
+
+$('welcomeName').textContent=me.name||'Customer';
+
+$('dashName').textContent=me.name||'Customer';
+
+$('emailStat').textContent=me.email||'—';
+
+$('profileName').value=me.name||'';
+
+$('statusStat').textContent=me.status||'Active';
+
+renderAvatar();
+
+refreshDashboard(false);
+
+const isAdmin=
+
+String(me.role||'').toLowerCase()==='admin';
+
+$('adminPanel').style.display=isAdmin?'block':'none';
+
+if(isAdmin){
+
+refreshAdmin(false);
+
+}
+
+if(liveTimer){
+
+clearInterval(liveTimer);
+
+}
+
+liveTimer=setInterval(
+
+async()=>{
+
+if(!token)return;
+
+const loaded=await loadMe();
+
+if(!loaded)return;
+
+refreshDashboard(false);
+
+if(String(me.role||'').toLowerCase()==='admin'){
+
+refreshAdmin(false);
+
+}
+
+},
+
+5000
+
+);
+
+}
+
+function renderAvatar(){
+
+if(!me)return;
+
+const avatar=$('avatar');
+
+if(me.profileImage){
+
+avatar.innerHTML=
+
+`<img src="${esc(me.profileImage)}" alt="Profile">`;
+
+return;
+
+}
+
+avatar.textContent=
+
+String(me.name||'AC')
+
+.split(/\s+/)
+
+.map(x=>x[0])
+
+.slice(0,2)
+
+.join('')
+
+.toUpperCase();
+
+}
+
+function renderBalance(){
+
+if(!me)return;
+
+const currency=
+
+me.primaryCurrency||
+
+me.primary_currency||
+
+'NGN';
+
+const amount=
+
+me.balances?.[currency]??0;
+
+$('balance').textContent=
+
+balanceHidden?'••••••':money(amount,currency);
+
+$('balanceCurrency').textContent=
+
+'Primary currency: '+currency;
+
+$('balanceEye').textContent=
+
+balanceHidden?'🙈':'👁️';
+
+$('balanceEye').setAttribute(
+
+'aria-label',
+
+balanceHidden?'Show balance':'Hide balance'
+
+);
+
+$('liveBanner').innerHTML=
+
+'<strong>Demo account active.</strong> '+
+
+'Customer account data, balances, requests, notifications and support are synchronized with the server database.';
+
+}
+
+function toggleBalance(){
+
+balanceHidden=!balanceHidden;
+
+renderBalance();
+
+renderCurrencyBalances();
+
+}
+
+function renderCurrencyBalances(){
+
+if(!me)return;
+
+const balances=me.balances||{};
+
+$('currencyBalances').innerHTML=
+
+Object.keys(CURRENCY_INFO)
+
+.map(currency=>`
+
+<div class="currencyCard">
+
+<div class="currencyCode">${currency}</div>
+
+<div class="currencyAmount">
+
+${
+
+balanceHidden
+
+?'••••••'
+
+:money(balances[currency]||0,currency)
+
+}
+
+</div>
+
+</div>
+
+`)
+
+.join('');
+
+}
+
+function renderTransactions(){
+
+if(!me)return;
+
+const list=Array.isArray(me.transactions)?me.transactions:[];
+
+$('txCount').textContent=list.length;
+
+if(!list.length){
+
+$('transactions').innerHTML=
+
+'<div class="empty">No transactions yet.</div>';
+
+return;
+
+}
+
+$('transactions').innerHTML=
+
+list.map(transaction=>{
+
+const incoming=
+
+String(transaction.kind||'').toLowerCase()==='credit';
+
+return `
+
+<div class="tx">
+
+<div>
+
+<div class="txName">
+
+${esc(transaction.title||'Transaction')}
+
+</div>
+
+<div class="txDate">
+
+${esc(transaction.date||transaction.created_at||'')}
+
+</div>
+
+</div>
+
+<div class="${incoming?'in':'out'}">
+
+${incoming?'+':'-'}
+
+${money(transaction.amount,transaction.currency)}
+
+</div>
+
+</div>
+
+`;
+
+}).join('');
+
+}
+
+function notificationKey(notification,index){
+  return String(notification?.id||notification?.notification_id||notification?.uuid||((notification?.created_at||notification?.date||'')+'|'+(notification?.message||'')+'|'+index));
+}
+
+function getNotificationAudioContext(){
+  try{
+    const AudioContext=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContext)return null;
+    if(!notificationAudioContext)notificationAudioContext=new AudioContext();
+    return notificationAudioContext;
+  }catch{return null;}
+}
+
+function unlockNotificationAudio(){
+  const ctx=getNotificationAudioContext();
+  if(ctx&&ctx.state==='suspended'){try{ctx.resume();}catch{}}
+}
+
+function playNotificationDing(){
+  try{
+    const ctx=getNotificationAudioContext();
+    if(!ctx)return;
+    const play=()=>{
+      try{
+        const oscillator=ctx.createOscillator();
+        const gain=ctx.createGain();
+        oscillator.type='sine';
+        oscillator.frequency.setValueAtTime(880,ctx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1320,ctx.currentTime+0.12);
+        gain.gain.setValueAtTime(0.0001,ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.16,ctx.currentTime+0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.35);
+        oscillator.connect(gain); gain.connect(ctx.destination);
+        oscillator.start(); oscillator.stop(ctx.currentTime+0.36);
+      }catch{}
+    };
+    if(ctx.state==='suspended'){ctx.resume().then(play).catch(()=>{});}else{play();}
+  }catch{}
+}
+
+if(typeof window!=='undefined'){
+  ['pointerdown','touchstart','keydown'].forEach(type=>window.addEventListener(type,unlockNotificationAudio,{once:true,passive:true}));
+}
+
+function formatNotificationDate(value){
+  if(!value)return '';
+  const date=new Date(value);
+  return Number.isNaN(date.getTime())?String(value):date.toLocaleString();
+}
+function hideNotificationPopup(){
+  const popup=$('notificationPopup');
+  if(!popup)return;
+  popup.classList.remove('show');
+  clearTimeout(notificationPopupTimer);
+}
+
+function showNotificationPopup(notification){
+  const popup=$('notificationPopup');
+  if(!popup)return;
+  $('notificationPopupMessage').textContent=notification?.message||'You have a new account notification.';
+  $('notificationPopupDate').textContent=notification?.date||notification?.created_at||'Just now';
+  popup.classList.add('show');
+  playNotificationDing();
+  clearTimeout(notificationPopupTimer);
+  notificationPopupTimer=setTimeout(hideNotificationPopup,5000);
+}
+
+function renderNotifications(){
+  if(!me)return;
+  const list=Array.isArray(me.notifications)?me.notifications:[];
+  const count=$('notificationCount');
+  if(count)count.textContent=String(list.length);
+  $('notifications').innerHTML=list.length?list.slice(0,100).map((notification,index)=>{
+    const id=notificationKey(notification,index);
+    const unread=!notification.read_at&&!notification.is_read;
+    return `<div class="notificationItem ${unread?'unread':''}">
+      <strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:4px">Account Notification</strong>
+      <div class="notificationItemMessage">${esc(notification.message)}</div>
+      <div class="notificationItemDate">${esc(formatNotificationDate(notification.date||notification.created_at))}</div>
+      ${Array.isArray(notification.replies)&&notification.replies.length?notification.replies.map(reply=>`
+        <div style="margin-top:10px;padding:9px 11px;background:#fff;border:1px solid var(--border);border-radius:9px;font-size:12px">
+          <strong style="color:var(--navy)">Your reply</strong>
+          <div style="margin-top:3px">${esc(reply.message)}</div>
+          <small style="display:block;color:var(--muted);margin-top:4px">${esc(formatNotificationDate(reply.date||reply.created_at))}</small>
+        </div>`).join(''):''}
+      <div class="notificationActions">
+        <button type="button" class="outline notificationReplyBtn" data-key="${esc(id)}">Reply</button>
+        <button type="button" class="outline notificationDeleteBtn" data-id="${esc(notification.id||'')}">Delete</button>
+      </div>
+      <div class="notificationReply" id="reply-${esc(id)}">
+        <input id="replyInput-${esc(id)}" maxlength="1000" placeholder="Reply to this notification...">
+        <button type="button" class="notificationSendReplyBtn" data-id="${esc(notification.id||'')}" data-key="${esc(id)}">Send</button>
+      </div>
+    </div>`;
+  }).join(''):'<div class="notificationEmpty">No saved notifications.</div>';
+
+  setupNotificationActions();
+
+  const currentIds=new Set();
+  list.forEach((notification,index)=>{
+    const id=notificationKey(notification,index);
+    currentIds.add(id);
+    if(notificationInitialized&&!knownNotificationIds.has(id))showNotificationPopup(notification);
+  });
+  knownNotificationIds=currentIds;
+  notificationInitialized=true;
+}
+
+function setupNotificationActions(){
+const list=$('notifications');
+if(!list||list.dataset.bound==='1')return;
+list.dataset.bound='1';
+list.addEventListener('click',event=>{
+const reply=event.target.closest('.notificationReplyBtn');
+if(reply){
+ event.preventDefault(); event.stopPropagation();
+ toggleNotificationReply(reply.dataset.key); return;
+}
+const del=event.target.closest('.notificationDeleteBtn');
+if(del){
+ event.preventDefault(); event.stopPropagation();
+ deleteNotification(del.dataset.id); return;
+}
+const send=event.target.closest('.notificationSendReplyBtn');
+if(send){
+ event.preventDefault(); event.stopPropagation();
+ replyToNotification(send.dataset.id,send.dataset.key); return;
+}
+});
+}
+
+function toggleNotificationReply(id){
+  const box=$('reply-'+id);
+  if(!box)return;
+  box.classList.toggle('show');
+  if(box.classList.contains('show')){
+    const input=$('replyInput-'+id);
+    if(input)setTimeout(()=>input.focus(),50);
+  }
+}
+
+async function deleteNotification(notificationId){
+  if(!notificationId)return toast('This notification cannot be deleted.');
+  try{
+    await api('/notifications/'+encodeURIComponent(notificationId),{method:'DELETE'});
+    me.notifications=(Array.isArray(me.notifications)?me.notifications:[]).filter(n=>String(n.id)!==String(notificationId));
+    renderNotifications();
+    toast('Notification deleted.');
+  }catch(error){toast(error.message||'Unable to delete notification.');}
+}
+
+async function replyToNotification(notificationId,key){
+  if(!notificationId)return toast('This notification cannot receive a reply.');
+  const input=$('replyInput-'+key);
+  const message=input?.value.trim()||'';
+  if(!message)return toast('Write a reply first.');
+  try{
+    const data=await api('/notifications/'+encodeURIComponent(notificationId)+'/reply',{method:'POST',body:JSON.stringify({message})});
+    if(data.user)me=data.user;
+    renderNotifications();
+    toast('Reply sent.');
+  }catch(error){toast(error.message||'Unable to send reply.');}
+}
+
+async function refreshDashboard(showToast=true){
+
+if(!me)return;
+
+renderBalance();
+
+renderCurrencyBalances();
+
+renderTransactions();
+
+renderNotifications();
+
+renderChat();
+
+if(showToast){
+
+toast('Dashboard refreshed.');
+
+}
+
+}
+
+/*
+
+TRANSFER
+
+*/
+
+function openTransfer(){
+
+if(!me){
+
+return openModal('login');
+
+}
+
+clearError('transferError');
+
+$('transferAmount').value='';
+
+$('transferRecipient').value='';
+
+$('transferNote').value='';
+
+$('transferCurrency').value=
+
+me.primaryCurrency||
+
+me.primary_currency||
+
+'NGN';
+
+$('transferModal').classList.add('show');
+
+}
+
+function closeTransfer(){
+
+$('transferModal').classList.remove('show');
+
+}
+
+async function transfer(){
+
+const buttonId='transferBtn';
+
+if($(buttonId).disabled)return;
+
+const currency=$('transferCurrency').value;
+
+const amount=Number($('transferAmount').value);
+
+const recipient=$('transferRecipient').value.trim();
+
+const note=$('transferNote').value.trim();
+
+clearError('transferError');
+
+if(!amount||amount<=0){
+
+return showError('transferError','Enter a valid amount.');
+
+}
+
+if(recipient.length<2){
+
+return showError('transferError','Enter the recipient name.');
+
+}
+
+setLoading(buttonId,true,'Sending');
+
+try{
+
+const data=await api(
+
+'/requests',
+
+{
+
+method:'POST',
+
+body:JSON.stringify({
+
+currency,
+
+amount,
+
+recipient,
+
+note
+
+})
+
+}
+
+);
+
+if(data.user)me=data.user;
+
+closeTransfer();
+
+refreshDashboard(false);
+
+if(String(me.role||'').toLowerCase()==='admin'){
+
+refreshAdmin(false);
+
+}
+
+toast('Request sent to the demo administrator.');
+
+}catch(error){
+
+showError(
+
+'transferError',
+
+error.message||'Unable to send request.'
+
+);
+
+}finally{
+
+setLoading(buttonId,false);
+
+}
+
+}
+
+/*
 
 PROFILE
 
-\=========================================================
-
 */
 
-app.put('/api/profile', auth, writeLimiter, async (req, res) => {
+async function saveProfileName(){
 
-  try {
+const name=$('profileName').value.trim();
 
-    const name =
+if(name.length<2){
 
-      normalizeText(
-
-        req.body.name ||
-
-        req.body.fullName ||
-
-        req.body.full_name
-
-      );
-
-    if (name.length < 2) {
-
-      return res.status(400).json({
-
-        error: 'Enter a valid name.'
-
-      });
-
-    }
-
-    await pool.query(
-
-      `
-
-      UPDATE acb_users
-
-      SET name=$1
-
-      WHERE id=$2
-
-      `,
-
-      name, [req.user.id]
-
-    );
-
-    const user =
-
-      await getUser(req.user.id);
-
-    return res.json({
-
-      ok: true,
-
-      user,
-
-      customer: user
-
-    });
-
-  } catch (error) {
-
-    console.error('Profile update error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to update profile.'
-
-    });
-
-  }
-
-});
-
-app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
-
-  try {
-
-    const image =
-
-      String(
-
-        req.body.profileImage ||
-
-        req.body.profile_image ||
-
-        ''
-
-      );
-
-    if (image.length > 700000) {
-
-      return res.status(400).json({
-
-        error: 'Profile image is too large.'
-
-      });
-
-    }
-
-    if (
-
-      image &&
-
-      !/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(image)
-
-    ) {
-
-      return res.status(400).json({
-
-        error: 'Invalid image format.'
-
-      });
-
-    }
-
-    await pool.query(
-
-      `
-
-      UPDATE acb_users
-
-      SET profile_image=$1
-
-      WHERE id=$2
-
-      `,
-
-      [image, req.user.id]
-
-    );
-
-    const user =
-
-      await getUser(req.user.id);
-
-    return res.json({
-
-      ok: true,
-
-      user,
-
-      customer: user
-
-    });
-
-  } catch (error) {
-
-    console.error('Profile image error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to update profile image.'
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-CUSTOMER FUNDS REQUEST
-
-\=========================================================
-
-*/
-
-app.post('/api/requests', auth, writeLimiter, async (req, res) => {
-
-  try {
-
-    const currency =
-
-      String(req.body.currency || '')
-
-        .trim()
-
-        .toUpperCase();
-
-    const amount =
-
-      Number(req.body.amount);
-
-    const recipient =
-
-      normalizeText(
-
-        req.body.recipient ||
-
-        req.body.recipientName
-
-      );
-
-    const note =
-
-      normalizeText(req.body.note)
-
-        .slice(0, 500);
-
-    if (
-
-      !validCurrency(currency) ||
-
-      !Number.isFinite(amount) ||
-
-      amount <= 0 ||
-
-      amount > 1000000000000
-
-    ) {
-
-      return res.status(400).json({
-
-        error: 'Enter a valid amount and currency.'
-
-      });
-
-    }
-
-    if (recipient.length < 2) {
-
-      return res.status(400).json({
-
-        error: 'Enter the recipient name.'
-
-      });
-
-    }
-
-    const requestId = uuid();
-
-    await pool.query(
-
-      `
-
-      INSERT INTO acb_requests
-
-        (
-
-          id,user_id,currency,amount,
-
-          recipient,note,status
-
-        )
-
-      VALUES
-
-        ($1,$2,$3,$4,$5,$6,'pending')
-
-      `,
-
-      
-
-        requestId,
-
-        [req.user.id,
-
-        currency,
-
-        amount,
-
-        recipient,
-
-        note
-
-      ]
-
-    );
-
-    const customer =
-
-      await getUser(req.user.id);
-
-    const admin =
-
-      await pool.query(
-
-        `
-
-        SELECT id
-
-        FROM acb_users
-
-        WHERE LOWER(role)='admin'
-
-        ORDER BY created_at ASC
-
-        LIMIT 1
-
-        `
-
-      );
-
-    if (admin.rowCount) {
-
-      await pool.query(
-
-        `
-
-        INSERT INTO acb_notifications
-
-          (id,user_id,message)
-
-        VALUES
-
-          ($1,$2,$3)
-
-        `,
-
-        [
-
-          uuid(),
-
-          admin.rows[0].id,
-
-          `New demo funds request from ${customer.name}: ${amount} ${currency} for ${recipient}.`
-
-        ]
-
-      );
-
-    }
-
-    return res.status(201).json({
-
-      ok: true,
-
-      success: true,
-
-      request: {
-
-        id: requestId,
-
-        status: 'pending'
-
-      },
-
-      user: customer,
-
-      customer
-
-    });
-
-  } catch (error) {
-
-    console.error('Request error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to send request.'
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-ADMIN LOGIN
-
-\=========================================================
-
-*/
-
-app.post('/api/admin/login', authLimiter, async (req, res) => {
-
-  try {
-
-    const email =
-
-      normalizeEmail(
-
-        req.body.email ||
-
-        req.body.emailAddress ||
-
-        req.body.email_address
-
-      );
-
-    const password =
-
-      typeof req.body.password === 'string'
-
-        ? req.body.password
-
-        : typeof req.body.passcode === 'string'
-
-          ? req.body.passcode
-
-          : '';
-
-    const result =
-
-      await pool.query(
-
-        `
-
-        SELECT *
-
-        FROM acb_users
-
-        WHERE LOWER(email)=LOWER($1)
-
-        AND LOWER(role)='admin'
-
-        LIMIT 1
-
-        `,
-
-        [email]
-
-      );
-
-    if (!result.rowCount) {
-
-      return res.status(401).json({
-
-        error: 'Invalid administrator email or password.'
-
-      });
-
-    }
-
-    const valid =
-
-      await bcrypt.compare(
-
-        password,
-
-        result.rows[0].password_hash
-
-      );
-
-    if (!valid) {
-
-      return res.status(401).json({
-
-        error: 'Invalid administrator email or password.'
-
-      });
-
-    }
-
-    await ensureBalances(result.rows[0].id);
-
-    const user =
-
-      await getUser(result.rows[0].id);
-
-    const token =
-
-      signToken(user);
-
-    return res.json({
-
-      ok: true,
-
-      success: true,
-
-      token,
-
-      accessToken: token,
-
-      user
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin login error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to sign in as administrator.'
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-ADMIN SUMMARY
-
-\=========================================================
-
-*/
-
-app.get('/api/admin/summary', auth, adminOnly, async (_req, res) => {
-
-  try {
-
-    const customers =
-
-      await pool.query(`
-
-        SELECT COUNT(*)::int AS count
-
-        FROM acb_users
-
-        WHERE LOWER(role)='customer'
-
-      `);
-
-    const pending =
-
-      await pool.query(`
-
-        SELECT COUNT(*)::int AS count
-
-        FROM acb_requests
-
-        WHERE status='pending'
-
-      `);
-
-    const support =
-
-      await pool.query(`
-
-        SELECT COUNT(*)::int AS count
-
-        FROM acb_support
-
-        WHERE sender='customer'
-
-      `);
-
-    const balanceResult =
-
-      await pool.query(`
-
-        SELECT
-
-          currency,
-
-          COALESCE(SUM(amount),0) AS total
-
-        FROM acb_balances b
-
-        JOIN acb_users u
-
-          ON u.id=b.user_id
-
-        WHERE LOWER(u.role)='customer'
-
-        GROUP BY currency
-
-        ORDER BY currency
-
-      `);
-
-    const customerCount =
-
-      Number(customers.rows[0].count);
-
-    const pendingCount =
-
-      Number(pending.rows[0].count);
-
-    const supportCount =
-
-      Number(support.rows[0].count);
-
-    return res.json({
-
-      ok: true,
-
-      customers: customerCount,
-
-      customerCount,
-
-      totalCustomers: customerCount,
-
-      pendingTransfers: pendingCount,
-
-      pending_transfers: pendingCount,
-
-      openSupport: supportCount,
-
-      open_support: supportCount,
-
-      balances:
-
-        balanceResult.rows.map(row => ({
-
-          currency: row.currency,
-
-          total: Number(row.total || 0)
-
-        }))
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin summary error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to load dashboard.'
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-ADMIN CUSTOMERS
-
-\=========================================================
-
-*/
-
-app.get('/api/admin/customers', auth, adminOnly, async (_req, res) => {
-
-  try {
-
-    const customers =
-
-      await loadAdminCustomers();
-
-    return res.json({
-
-      ok: true,
-
-      customers,
-
-      users: customers,
-
-      data: customers,
-
-      items: customers,
-
-      total: customers.length,
-
-      count: customers.length
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin customers error:', error);
-
-    return res.status(500).json({
-
-      ok: false,
-
-      error: 'Unable to load customers.',
-
-      customers: [],
-
-      users: [],
-
-      data: [],
-
-      items: []
-
-    });
-
-  }
-
-});
-
-app.get('/api/admin/users', auth, adminOnly, async (_req, res) => {
-
-  try {
-
-    const customers =
-
-      await loadAdminCustomers();
-
-    return res.json({
-
-      ok: true,
-
-      users: customers,
-
-      customers,
-
-      data: customers,
-
-      total: customers.length,
-
-      count: customers.length
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin users error:', error);
-
-    return res.status(500).json({
-
-      ok: false,
-
-      error: 'Unable to load users.',
-
-      users: [],
-
-      customers: [],
-
-      data: []
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-ADMIN STATE
-
-\=========================================================
-
-*/
-
-app.get('/api/admin/state', auth, adminOnly, async (_req, res) => {
-
-  try {
-
-    const customers =
-
-      await pool.query(`
-
-        SELECT
-
-          id,name,email,status,primary_currency,
-
-          profile_image,created_at
-
-        FROM acb_users
-
-        WHERE LOWER(role)='customer'
-
-        ORDER BY created_at DESC
-
-      `);
-
-    const requests =
-
-      await pool.query(`
-
-        SELECT
-
-          r.id,r.user_id,u.name,u.email,
-
-          r.currency,r.amount,r.recipient,r.note,
-
-          r.status,r.created_at,r.handled_at
-
-        FROM acb_requests r
-
-        JOIN acb_users u
-
-          ON u.id=r.user_id
-
-        ORDER BY r.created_at DESC
-
-        LIMIT 200
-
-      `);
-
-    const support =
-
-      await pool.query(`
-
-        SELECT
-
-          s.id,s.user_id,u.name,u.email,
-
-          s.sender,s.message,s.created_at
-
-        FROM acb_support s
-
-        JOIN acb_users u
-
-          ON u.id=s.user_id
-
-        ORDER BY s.created_at DESC
-
-        LIMIT 200
-
-      `);
-
-    return res.json({
-
-      ok: true,
-
-      customers:
-
-        customers.rows.map(row => ({
-
-          ...row,
-
-          id: String(row.id),
-
-          userId: String(row.id),
-
-          customerId: String(row.id),
-
-          customer_id: String(row.id),
-
-          full_name: row.name,
-
-          fullName: row.name,
-
-          primaryCurrency: row.primary_currency,
-
-          profileImage: row.profile_image || '',
-
-          createdAt: row.created_at
-
-        })),
-
-      requests:
-
-        requests.rows.map(row => ({
-
-          ...row,
-
-          id: String(row.id),
-
-          user_id: String(row.user_id),
-
-          userId: String(row.user_id),
-
-          customerId: String(row.user_id),
-
-          customer_id: String(row.user_id),
-
-          amount: Number(row.amount),
-
-          date: row.created_at
-
-        })),
-
-      support:
-
-        support.rows.map(row => ({
-
-          ...row,
-
-          id: String(row.id),
-
-          user_id: String(row.user_id),
-
-          userId: String(row.user_id),
-
-          customerId: String(row.user_id),
-
-          customer_id: String(row.user_id),
-
-          date: row.created_at
-
-        }))
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin state error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to load administrator data.'
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-ADMIN NOTIFICATIONS
-
-\=========================================================
-
-*/
-
-app.get('/api/admin/notifications', auth, adminOnly, async (req, res) => {
-
-  try {
-
-    const result =
-
-      await pool.query(
-
-        `
-
-        SELECT
-
-          n.id,n.user_id,n.message,
-
-          n.created_at,n.read_at
-
-        FROM acb_notifications n
-
-        JOIN acb_users u
-
-          ON u.id=n.user_id
-
-        WHERE n.user_id=$1
-
-        AND LOWER(u.role)='admin'
-
-        ORDER BY n.created_at DESC
-
-        LIMIT 100
-
-        `,
-
-        [req.user.id]
-
-      );
-
-    return res.json({
-
-      ok: true,
-
-      notifications:
-
-        result.rows.map(row => ({
-
-          id: String(row.id),
-
-          user_id: String(row.user_id),
-
-          title: 'Customer Activity',
-
-          message: row.message,
-
-          created_at: row.created_at,
-
-          is_read: !!row.read_at
-
-        }))
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin notification error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to load notifications.'
-
-    });
-
-  }
-
-});
-
-app.patch(
-
-  '/api/admin/notifications/:id/read',
-
-  auth,
-
-  adminOnly,
-
-  async (req, res) => {
-
-    try {
-
-      if (!validUUID(req.params.id)) {
-
-        return res.status(400).json({
-
-          error: 'Invalid notification ID.'
-
-        });
-
-      }
-
-      await pool.query(
-
-        `
-
-        UPDATE acb_notifications
-
-        SET read_at=NOW()
-
-        WHERE id=$1
-
-        AND user_id=$2
-
-        `,
-
-        [req.params.id, req.user.id]
-
-      );
-
-      return res.json({ ok: true });
-
-    } catch (error) {
-
-      console.error('Mark notification error:', error);
-
-      return res.status(500).json({
-
-        error: 'Unable to update notification.'
-
-      });
-
-    }
-
-  }
-
-);
-
-/*
-
-\=========================================================
-
-ADMIN ADD FUNDS
-
-FIXED:
-
-\- Accepts customer UUID
-
-\- Accepts customer email
-
-\- Accepts customer name
-
-\- Accepts nested customer objects
-
-\- Accepts JSON-string customer objects
-
-\- Uses transaction
-
-\- Updates actual customer balance
-
-\- Creates transaction
-
-\- Creates notification
-
-\- Returns updated customer/balance
-
-\=========================================================
-
-*/
-
-async function creditCustomerAccount({
-
-  userId,
-
-  currency,
-
-  amount,
-
-  description
-
-}) {
-
-  const client =
-
-    await pool.connect();
-
-  try {
-
-    await client.query('BEGIN');
-
-    const customerResult =
-
-      await client.query(
-
-        `
-
-        SELECT
-
-          id,name,email,status,primary_currency
-
-        FROM acb_users
-
-        WHERE id=$1
-
-        AND LOWER(role)='customer'
-
-        FOR UPDATE
-
-        `,
-
-        [userId]
-
-      );
-
-    if (!customerResult.rowCount) {
-
-      throw Object.assign(
-
-        new Error('Customer not found.'),
-
-        { code: 'CUSTOMER_NOT_FOUND' }
-
-      );
-
-    }
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_balances
-
-        (user_id,currency,amount)
-
-      VALUES
-
-        ($1,$2,0)
-
-      ON CONFLICT(user_id,currency)
-
-      DO NOTHING
-
-      `,
-
-      [userId, currency]
-
-    );
-
-    await client.query(
-
-      `
-
-      UPDATE acb_balances
-
-      SET amount=amount+$1
-
-      WHERE user_id=$2
-
-      AND currency=$3
-
-      `,
-
-      [amount, userId, currency]
-
-    );
-
-    const transactionId = uuid();
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_transactions
-
-        (
-
-          id,user_id,kind,title,
-
-          amount,currency
-
-        )
-
-      VALUES
-
-        (
-
-          $1,$2,'credit',$3,
-
-          $4,$5
-
-        )
-
-      `,
-
-      [
-
-        transactionId,
-
-        userId,
-
-        description ||
-
-          'Funds credited by demo administrator',
-
-        amount,
-
-        currency
-
-      ]
-
-    );
-
-    const notificationId = uuid();
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_notifications
-
-        (id,user_id,message)
-
-      VALUES
-
-        ($1,$2,$3)
-
-      `,
-
-      [
-
-        notificationId,
-
-        userId,
-
-        `A demo credit of ${amount.toLocaleString()} ${currency} was added to your account.`
-
-      ]
-
-    );
-
-    const balanceResult =
-
-      await client.query(
-
-        `
-
-        SELECT amount
-
-        FROM acb_balances
-
-        WHERE user_id=$1
-
-        AND currency=$2
-
-        `,
-
-        [userId, currency]
-
-      );
-
-    const newBalance =
-
-      Number(
-
-        balanceResult.rows[0]?.amount || 0
-
-      );
-
-    await client.query('COMMIT');
-
-    return {
-
-      customer: customerResult.rows[0],
-
-      newBalance,
-
-      transactionId,
-
-      notificationId
-
-    };
-
-  } catch (error) {
-
-    try {
-
-      await client.query('ROLLBACK');
-
-    } catch {}
-
-    throw error;
-
-  } finally {
-
-    client.release();
-
-  }
+return toast('Enter a valid name.');
 
 }
 
-async function handleAdminCredit(req, res, fixedId) {
+try{
 
-  try {
+const data=await api(
 
-    let userId = null;
+'/profile',
 
-    /*
+{
 
-    1. Route customer ID.
+method:'PUT',
 
-    */
-
-    if (fixedId) {
-
-      userId =
-
-        await resolveCustomer(fixedId);
-
-    }
-
-    /*
-
-    2. Explicit customer ID fields.
-
-    */
-
-    if (!userId) {
-
-      const directIdentifiers = [
-
-        req.body?.customerId,
-
-        req.body?.customer_id,
-
-        req.body?.userId,
-
-        req.body?.user_id,
-
-        req.body?.customer?.id,
-
-        req.body?.customer?.userId,
-
-        req.body?.customer?.user_id,
-
-        req.body?.customer?.customerId,
-
-        req.body?.customer?.customer_id,
-
-        req.body?.user?.id,
-
-        req.body?.user?.userId,
-
-        req.body?.account?.id,
-
-        req.body?.account?.userId
-
-      ];
-
-      for (const identifier of directIdentifiers) {
-
-        if (!identifier) continue;
-
-        userId =
-
-          await resolveCustomer(identifier);
-
-        if (userId) break;
-
-      }
-
-    }
-
-    /*
-
-    3. Entire request body.
-
-    */
-
-    if (!userId) {
-
-      userId =
-
-        await resolveCustomerFromRequest(req);
-
-    }
-
-    /*
-
-    4. Frontends sometimes send the selected
-
-       customer as a JSON string.
-
-    */
-
-    if (!userId) {
-
-      const possibleObjects = [
-
-        req.body?.customer,
-
-        req.body?.user,
-
-        req.body?.account,
-
-        req.body?.selectedCustomer,
-
-        req.body?.selected_customer,
-
-        req.body?.selectedUser,
-
-        req.body?.selected_user,
-
-        req.body?.data
-
-      ];
-
-      for (const item of possibleObjects) {
-
-        if (typeof item !== 'string') continue;
-
-        try {
-
-          const parsed =
-
-            JSON.parse(item);
-
-          userId =
-
-            await resolveCustomer(parsed);
-
-          if (userId) break;
-
-        } catch {
-
-          /*
-
-          If it isn't JSON, also try it directly
-
-          as email/name/UUID.
-
-          */
-
-          userId =
-
-            await resolveCustomer(item);
-
-          if (userId) break;
-
-        }
-
-      }
-
-    }
-
-    const currency =
-
-      String(
-
-        req.body.currency ||
-
-        req.body.currencyCode ||
-
-        req.body.currency_code ||
-
-        req.body.selectedCurrency ||
-
-        req.body.accountCurrency ||
-
-        req.body.selected_currency ||
-
-        'NGN'
-
-      )
-
-        .trim()
-
-        .toUpperCase();
-
-    const amount =
-
-      Number(
-
-        req.body.amount ??
-
-        req.body.value ??
-
-        req.body.funds ??
-
-        req.body.balance ??
-
-        req.body.creditAmount ??
-
-        req.body.credit_amount
-
-      );
-
-    const description =
-
-      String(
-
-        req.body.description ||
-
-        req.body.note ||
-
-        req.body.title ||
-
-        'Administrator account funding'
-
-      )
-
-        .trim()
-
-        .slice(0, 500);
-
-    if (!userId) {
-
-      return res.status(404).json({
-
-        ok: false,
-
-        success: false,
-
-        error: 'Customer information cannot be found.',
-
-        message: 'Customer information cannot be found.'
-
-      });
-
-    }
-
-    if (
-
-      !validCurrency(currency) ||
-
-      !Number.isFinite(amount) ||
-
-      amount <= 0 ||
-
-      amount > 1000000000000
-
-    ) {
-
-      return res.status(400).json({
-
-        ok: false,
-
-        success: false,
-
-        error: 'Enter a valid currency and amount.'
-
-      });
-
-    }
-
-    const result =
-
-      await creditCustomerAccount({
-
-        userId,
-
-        currency,
-
-        amount,
-
-        description
-
-      });
-
-    /*
-
-    IMPORTANT:
-
-    Reload the customer directly from PostgreSQL
-
-    after the committed balance update.
-
-    */
-
-    const updatedUser =
-
-      await getUser(userId);
-
-    if (!updatedUser) {
-
-      return res.status(500).json({
-
-        ok: false,
-
-        success: false,
-
-        error:
-
-          'Funds were credited but the updated customer could not be loaded.'
-
-      });
-
-    }
-
-    return res.json({
-
-      ok: true,
-
-      success: true,
-
-      message:
-
-        `Customer account funded successfully. ${amount.toLocaleString()} ${currency} added.`,
-
-      user: updatedUser,
-
-      customer: updatedUser,
-
-      updatedCustomer: updatedUser,
-
-      customerId: userId,
-
-      userId,
-
-      balance:
-
-        Number(
-
-          updatedUser.balances?.[currency] || 0
-
-        ),
-
-      balances:
-
-        updatedUser.balances || {},
-
-      accounts:
-
-        updatedUser.accounts || [],
-
-      currency,
-
-      amount,
-
-      transactionId:
-
-        result.transactionId,
-
-      notificationId:
-
-        result.notificationId
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin credit error:', error);
-
-    if (error.code === 'CUSTOMER_NOT_FOUND') {
-
-      return res.status(404).json({
-
-        ok: false,
-
-        success: false,
-
-        error: 'Customer information cannot be found.'
-
-      });
-
-    }
-
-    return res.status(500).json({
-
-      ok: false,
-
-      success: false,
-
-      error: 'Unable to credit customer.'
-
-    });
-
-  }
+body:JSON.stringify({name:name})
 
 }
 
-app.post(
+);
 
-  '/api/admin/customers/:id/funds',
+me=data.user;
 
-  auth,
+$('welcomeName').textContent=me.name;
 
-  adminOnly,
+$('dashName').textContent=me.name;
 
-  writeLimiter,
+$('profileName').value=me.name;
 
-  async (req, res) => {
+renderAvatar();
 
-    await handleAdminCredit(
+toast('Profile updated.');
 
-      req,
+}catch(error){
 
-      res,
+toast(error.message);
 
-      req.params.id
+}
 
-    );
+}
 
-  }
+function chooseProfileImage(){
+
+$('profileImageInput').click();
+
+}
+
+function handleProfileImage(event){
+
+const file=event.target.files[0];
+
+if(!file)return;
+
+if(!file.type.startsWith('image/')){
+
+return toast('Please select an image file.');
+
+}
+
+const reader=new FileReader();
+
+reader.onload=async()=>{
+
+try{
+
+const data=await api(
+
+'/profile/image',
+
+{
+
+method:'POST',
+
+body:JSON.stringify({
+
+profileImage:reader.result
+
+})
+
+}
 
 );
 
-app.post(
+me=data.user;
 
-  '/api/admin/customers/:id/add-funds',
+renderAvatar();
 
-  auth,
+toast('Profile picture updated.');
 
-  adminOnly,
+}catch(error){
 
-  writeLimiter,
+toast(error.message);
 
-  async (req, res) => {
+}
 
-    await handleAdminCredit(
+$('profileImageInput').value='';
 
-      req,
+};
 
-      res,
+reader.readAsDataURL(file);
 
-      req.params.id
-
-    );
-
-  }
-
-);
-
-app.post(
-
-  '/api/admin/credit',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    await handleAdminCredit(
-
-      req,
-
-      res,
-
-      null
-
-    );
-
-  }
-
-);
-
-app.post(
-
-  '/api/admin/add-funds',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    await handleAdminCredit(
-
-      req,
-
-      res,
-
-      null
-
-    );
-
-  }
-
-);
-
-app.post(
-
-  '/api/admin/customers/add-funds',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    await handleAdminCredit(
-
-      req,
-
-      res,
-
-      null
-
-    );
-
-  }
-
-);
+}
 
 /*
-
-\=========================================================
-
-ADMIN NOTIFY
-
-\=========================================================
-
-*/
-
-app.post('/api/admin/notify', auth, adminOnly, writeLimiter, async (req, res) => {
-
-  try {
-
-    const userId =
-
-      await resolveCustomerFromRequest(req);
-
-    const message =
-
-      String(req.body.message || '')
-
-        .trim()
-
-        .slice(0, 1000);
-
-    if (!userId) {
-
-      return res.status(404).json({
-
-        error: 'Customer not found.'
-
-      });
-
-    }
-
-    if (!message) {
-
-      return res.status(400).json({
-
-        error: 'Select a customer and write a notification.'
-
-      });
-
-    }
-
-    await pool.query(
-
-      `
-
-      INSERT INTO acb_notifications
-
-        (id,user_id,message)
-
-      VALUES
-
-        ($1,$2,$3)
-
-      `,
-
-      [uuid(), userId, message]
-
-    );
-
-    return res.json({
-
-      ok: true,
-
-      success: true
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin notify error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to send notification.'
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-CUSTOMER STATUS
-
-\=========================================================
-
-*/
-
-app.patch(
-
-  '/api/admin/customers/:id/status',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    try {
-
-      const userId =
-
-        await resolveCustomer(req.params.id);
-
-      if (!userId) {
-
-        return res.status(404).json({
-
-          error: 'Customer not found.'
-
-        });
-
-      }
-
-      const status =
-
-        String(req.body.status || '')
-
-          .trim()
-
-          .toLowerCase();
-
-      if (
-
-        !['active','suspended','pending'].includes(status)
-
-      ) {
-
-        return res.status(400).json({
-
-          error: 'Invalid account status.'
-
-        });
-
-      }
-
-      const normalized =
-
-        status === 'active'
-
-          ? 'Active'
-
-          : status === 'suspended'
-
-            ? 'Suspended'
-
-            : 'Pending';
-
-      await pool.query(
-
-        `
-
-        UPDATE acb_users
-
-        SET status=$1
-
-        WHERE id=$2
-
-        AND LOWER(role)='customer'
-
-        `,
-
-        [normalized, userId]
-
-      );
-
-      return res.json({
-
-        ok: true,
-
-        status: normalized
-
-      });
-
-    } catch (error) {
-
-      console.error('Customer status error:', error);
-
-      return res.status(500).json({
-
-        error: 'Unable to change account status.'
-
-      });
-
-    }
-
-  }
-
-);
-
-/*
-
-\=========================================================
-
-ADMIN SUPPORT
-
-\=========================================================
-
-*/
-
-app.get('/api/admin/support', auth, adminOnly, async (_req, res) => {
-
-  try {
-
-    const result =
-
-      await pool.query(
-
-        `
-
-        SELECT
-
-          s.id,s.user_id,u.name,u.email,
-
-          s.sender,s.message,s.created_at
-
-        FROM acb_support s
-
-        JOIN acb_users u
-
-          ON u.id=s.user_id
-
-        WHERE LOWER(u.role)='customer'
-
-        ORDER BY s.created_at ASC
-
-        LIMIT 500
-
-        `
-
-      );
-
-    const grouped = {};
-
-    for (const row of result.rows) {
-
-      const userId =
-
-        String(row.user_id);
-
-      if (!grouped[userId]) {
-
-        grouped[userId] = {
-
-          id: String(row.id),
-
-          user_id: userId,
-
-          userId,
-
-          customerId: userId,
-
-          customer_id: userId,
-
-          full_name: row.name,
-
-          fullName: row.name,
-
-          name: row.name,
-
-          email: row.email,
-
-          subject: 'Customer Support',
-
-          message: row.message,
-
-          status:
-
-            row.sender === 'admin'
-
-              ? 'answered'
-
-              : 'pending',
-
-          created_at: row.created_at,
-
-          messages: []
-
-        };
-
-      }
-
-      grouped[userId].messages.push({
-
-        id: String(row.id),
-
-        user_id: userId,
-
-        userId,
-
-        customerId: userId,
-
-        customer_id: userId,
-
-        sender: row.sender,
-
-        message: row.message,
-
-        created_at: row.created_at,
-
-        date: row.created_at
-
-      });
-
-      grouped[userId].message =
-
-        row.message;
-
-      grouped[userId].status =
-
-        row.sender === 'admin'
-
-          ? 'answered'
-
-          : 'pending';
-
-    }
-
-    const tickets =
-
-      Object.values(grouped);
-
-    return res.json({
-
-      ok: true,
-
-      tickets,
-
-      support: tickets,
-
-      data: tickets
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin support error:', error);
-
-    return res.status(500).json({
-
-      ok: false,
-
-      error: 'Unable to load support requests.',
-
-      tickets: [],
-
-      support: [],
-
-      data: []
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
 
 CUSTOMER SUPPORT
 
-\=========================================================
-
 */
 
-app.post('/api/support', auth, writeLimiter, async (req, res) => {
+function renderChat(){
+if(!me)return;
+const list=Array.isArray(me.support)?me.support:[];
+const body=$('chatBody');
+if(!body)return;
+if(!list.length){
+body.innerHTML='<div style="padding:22px;text-align:center;color:var(--muted);font-size:13px">No messages yet. Send a message to customer support.</div>';
+return;
+}
+body.innerHTML=list.map(item=>{
+const mine=String(item.sender||'').toLowerCase()==='customer';
+const image=item.image||item.image_url||item.attachment_url||item.attachment; const imageHtml=image?`<img src="${esc(image)}" alt="Support attachment" style="display:block;max-width:100%;max-height:220px;border-radius:9px;margin-top:7px;object-fit:contain">`:''; return `<div style="display:flex;justify-content:${mine?'flex-end':'flex-start'};margin:8px 0"><div style="max-width:82%;padding:10px 12px;border-radius:12px;background:${mine?'#eaf2ff':'#fff'};border:1px solid var(--border);color:var(--text)"><div style="font-size:11px;font-weight:bold;color:var(--navy);margin-bottom:3px">${mine?'You':'American Crest Bank'}</div><div style="white-space:pre-wrap;word-break:break-word">${esc(item.message||'')}</div>${imageHtml}<small style="display:block;color:var(--muted);margin-top:5px">${esc(formatNotificationDate(item.date||item.created_at))}</small></div></div>`;
+}).join('');
+body.scrollTop=body.scrollHeight;
+}
 
-  try {
+function toggleChat(){
 
-    const message =
+if(!me){
 
-      String(req.body.message || '')
+publicSupportRequested=true;
 
-        .trim()
+openModal('login');
 
-        .slice(0, 2000);
+return;
 
-    if (!message) {
+}
 
-      return res.status(400).json({
+$('chat').classList.toggle('show');
 
-        error: 'Write a message first.'
+if($('chat').classList.contains('show')){
 
-      });
+renderChat();
 
-    }
+setTimeout(()=>{
 
-    const supportId = uuid();
+$('chatInput').focus();
 
-    await pool.query(
+},100);
 
-      `
+}
 
-      INSERT INTO acb_support
+}
 
-        (id,user_id,sender,message)
+function chooseChatImage(){
+  const input=$('chatImageInput');
+  if(input)input.click();
+}
 
-      VALUES
+function clearChatImage(){
+  pendingChatImage=null;
+  const input=$('chatImageInput');
+  const preview=$('chatImagePreview');
+  const image=$('chatImagePreviewImg');
+  if(input)input.value='';
+  if(image)image.removeAttribute('src');
+  if(preview)preview.classList.remove('show');
+}
 
-        ($1,$2,'customer',$3)
+function handleChatImage(event){
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){clearChatImage();return toast('Please select an image file.');}
+  if(file.size>4*1024*1024){clearChatImage();return toast('Please choose an image smaller than 4 MB.');}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    pendingChatImage=String(reader.result||'');
+    const image=$('chatImagePreviewImg');
+    const preview=$('chatImagePreview');
+    if(image)image.src=pendingChatImage;
+    if(preview)preview.classList.add('show');
+  };
+  reader.onerror=()=>{clearChatImage();toast('Unable to read that image.');};
+  reader.readAsDataURL(file);
+}
 
-      `,
+async function sendChat(){
 
-      
+if(!me){
 
-        supportId,
+publicSupportRequested=true;
 
-        [req.user.id,
+openModal('login');
 
-        message
+return;
 
-      ]
+}
 
-    );
+const button=$('chatSendBtn');
 
-    const customer =
+const input=$('chatInput');
 
-      await getUser(req.user.id);
+const text=input.value.trim();
 
-    const admin =
+if(!text)return;
 
-      await pool.query(
+if(button.disabled)return;
 
-        `
+button.disabled=true;
 
-        SELECT id
+try{
 
-        FROM acb_users
+const data=await api(
 
-        WHERE LOWER(role)='admin'
+'/support',
 
-        ORDER BY created_at ASC
+{
 
-        LIMIT 1
+method:'POST',
 
-        `
+body:JSON.stringify({
 
-      );
+message:text,
+image:pendingChatImage||null
 
-    if (admin.rowCount) {
+})
 
-      await pool.query(
+}
 
-        `
+);
 
-        INSERT INTO acb_notifications
+if(data.user){
 
-          (id,user_id,message)
+me=data.user;
 
-        VALUES
+}
 
-          ($1,$2,$3)
+input.value='';
 
-        `,
+clearChatImage();
 
-        [
+renderChat();
 
-          uuid(),
+if(String(me.role||'').toLowerCase()==='admin'){
 
-          admin.rows[0].id,
+refreshAdmin(false);
 
-          `New support message from ${customer.name} (${customer.email}).`
+}
 
-        ]
+toast('Message sent to demo support.');
 
-      );
+}catch(error){
 
-    }
+toast(error.message||'Unable to send support message.');
 
-    return res.status(201).json({
+}finally{
 
-      ok: true,
+button.disabled=false;
 
-      success: true,
+}
 
-      supportId,
-
-      user: customer,
-
-      customer
-
-    });
-
-  } catch (error) {
-
-    console.error('Customer support error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to send support message.'
-
-    });
-
-  }
-
-});
+}
 
 /*
 
-\=========================================================
+SERVICES
+
+*/
+
+function openDemoService(service){
+
+$('serviceTitle').textContent=service;
+
+$('serviceText').textContent=
+
+'This is a fictional demo service interface and is not connected to real payments.';
+
+$('serviceInput').value='';
+
+$('serviceModal').classList.add('show');
+
+}
+
+function closeService(){
+
+$('serviceModal').classList.remove('show');
+
+}
+
+function submitDemoService(){
+
+const service=$('serviceTitle').textContent;
+
+const details=$('serviceInput').value.trim();
+
+if(!details){
+
+return toast('Enter the demo request details.');
+
+}
+
+closeService();
+
+toast(service+' demo request submitted.');
+
+}
+
+function scrollToServices(){
+
+$('dashboardServices').scrollIntoView({
+
+behavior:'smooth'
+
+});
+
+}
+
+/*
+
+ADMIN DATA
+
+*/
+
+function renderAdminSummary(){
+  const customers=adminState?.customers||[];
+  const requests=Array.isArray(adminState?.requests)?adminState.requests:[];
+  const support=Array.isArray(adminState?.support)?adminState.support:[];
+  $('adminCustomersCount').textContent=String(customers.length);
+  const totals={};
+  customers.forEach(customer=>{
+    const accounts=Array.isArray(customer.accounts)?customer.accounts:[];
+    const balanceMap=customer.balances&&typeof customer.balances==='object'?customer.balances:{};
+    const rows=Object.keys(balanceMap).length
+      ?Object.keys(balanceMap).map(currency=>({currency,balance:Number(balanceMap[currency]||0)}))
+      :accounts;
+    rows.forEach(account=>{
+      const currency=String(account.currency||'NGN');
+      const amount=Number(account.balance??account.amount??0);
+      totals[currency]=(totals[currency]||0)+amount;
+    });
+  });
+  const nonZero=Object.keys(totals).filter(currency=>totals[currency]!==0);
+  $('adminBalancesTotal').textContent=nonZero.length
+    ?nonZero.slice(0,2).map(currency=>money(totals[currency],currency)).join(' • ')
+    :'0.00';
+  $('adminPendingCount').textContent=String(requests.filter(r=>String(r.status||'').toLowerCase()==='pending').length);
+  $('adminSupportCount').textContent=String(support.length);
+}
+
+async function refreshAdmin(showToast=true){
+
+if(
+
+!me||
+
+String(me.role||'').toLowerCase()!=='admin'
+
+){
+
+return;
+
+}
+
+try{
+
+const state=await api('/admin/state');
+
+const customerResponse=await api('/admin/customers');
+
+adminState=state||{};
+
+const customers=
+
+Array.isArray(customerResponse.customers)
+
+?customerResponse.customers
+
+:Array.isArray(customerResponse.users)
+
+?customerResponse.users
+
+:Array.isArray(customerResponse)
+
+?customerResponse
+
+:[];
+
+adminState.customers=customers;
+renderAdminSummary();
+
+if(
+
+selectedCustomerId &&
+
+!customers.some(
+
+customer=>customerMatches(customer,selectedCustomerId)
+
+)
+
+){
+
+selectedCustomerId=null;
+
+}
+
+if(!selectedCustomerId&&customers.length){
+
+selectedCustomerId=
+
+normalizeId(
+
+customers[0].id||
+
+customers[0].user_id||
+
+customers[0].userId||
+
+customers[0].uuid||
+
+customers[0].customer_id||
+
+customers[0].customerId||
+
+customers[0].email
+
+);
+
+}
+
+renderAdminCustomers();
+
+renderAdminRequests();
+
+renderAdminSupport();
+
+if(showToast){
+
+toast('Admin data refreshed.');
+
+}
+
+}catch(error){
+
+toast(error.message||'Unable to load admin data.');
+
+}
+
+}
+
+function renderAdminCustomers(){
+
+const list=$('customerList');
+
+const customers=adminState?.customers||[];
+
+if(!customers.length){
+
+list.innerHTML=
+
+'<div class="empty">No customers registered yet.</div>';
+
+return;
+
+}
+
+list.innerHTML=
+
+customers.map(customer=>{
+
+const identifiers=getCustomerIdentifiers(customer);
+
+const id=
+
+identifiers[0]||
+
+'';
+
+const active=customerMatches(customer,selectedCustomerId);
+
+const accounts=Array.isArray(customer.accounts)?customer.accounts:[];
+const balanceMap=customer.balances&&typeof customer.balances==='object'?customer.balances:{};
+const normalizedAccounts=Object.keys(balanceMap).length?Object.keys(balanceMap).map(currency=>({currency,balance:Number(balanceMap[currency]||0)})):accounts;
+const nonZeroBalances=normalizedAccounts.filter(account=>Number(account.balance??account.amount??0)!==0);
+const totalBalances=nonZeroBalances.length?nonZeroBalances.slice(0,5).map(account=>money(Number(account.balance??account.amount??0),String(account.currency||'NGN'))).join(' • '):'All balances: 0';
+
+return `
+
+<button
+
+class="customerItem ${active?'active':''}"
+
+onclick="selectCustomerByIdentifier(${JSON.stringify(id)})">
+
+<div>
+
+<strong>
+
+${esc(
+
+customer.full_name||
+
+customer.name||
+
+customer.email||
+
+'Customer'
+
+)}
+
+</strong>
+
+<small>${esc(customer.email||'')}</small>
+
+${
+
+totalBalances
+
+?
+
+`<small style="display:block;margin-top:4px;color:#1769e0">
+
+${esc(totalBalances)}
+
+</small>`
+
+:''
+
+}
+
+</div>
+
+<small>
+
+${esc(
+
+customer.primary_currency||
+
+customer.primaryCurrency||
+
+'NGN'
+
+)}
+
+</small>
+
+</button>
+
+`;
+
+}).join('');
+
+}
+
+function selectCustomerByIdentifier(identifier){
+
+const customer=
+
+(adminState?.customers||[])
+
+.find(c=>customerMatches(c,identifier));
+
+if(!customer)return;
+
+const identifiers=getCustomerIdentifiers(customer);
+
+selectedCustomerId=
+
+identifiers.find(
+
+value=>value.toLowerCase()===String(identifier).toLowerCase()
+
+)||
+
+identifiers[0];
+
+renderAdminCustomers();
+
+renderAdminSupport();
+
+}
+
+function selectCustomer(id){
+
+selectCustomerByIdentifier(id);
+
+}
+
+function renderAdminRequests(){
+
+const box=$('adminRequests');
+
+if(!box)return;
+
+const requests=
+
+Array.isArray(adminState?.requests)
+
+?adminState.requests
+
+:[];
+
+const pending=
+
+requests.filter(
+
+request=>
+
+String(request.status||'').toLowerCase()==='pending'
+
+);
+
+if(!pending.length){
+
+box.innerHTML=
+
+'<div class="empty">No pending customer requests.</div>';
+
+return;
+
+}
+
+box.innerHTML=
+
+pending.map(request=>`
+
+<div class="requestItem">
+
+<strong>
+
+${esc(request.name||request.full_name||'Customer')}
+
+</strong>
+
+<small style="display:block;color:#718096">
+
+${esc(request.email||'')}
+
+</small>
+
+<div style="margin:7px 0;font-weight:bold">
+
+${money(request.amount,request.currency)}
+
+→ ${esc(request.recipient||'')}
+
+</div>
+
+<div style="font-size:12px;color:#718096">
+
+${esc(request.note||'No note')}
+
+</div>
+
+<div class="requestButtons">
+
+<button
+
+class="btn primary"
+
+style="padding:8px 11px"
+
+onclick="approveRequest('${esc(String(request.id))}')">
+
+Approve &amp; Credit
+
+</button>
+
+<button
+
+class="btn outline"
+
+style="padding:8px 11px"
+
+onclick="rejectRequest('${esc(String(request.id))}')">
+
+Reject
+
+</button>
+
+</div>
+
+</div>
+
+`).join('');
+
+}
+
+async function approveRequest(id){
+
+try{
+
+const data=await api(
+
+'/admin/requests/'+encodeURIComponent(id)+'/approve',
+
+{
+
+method:'POST'
+
+}
+
+);
+
+if(data.user&&selectedCustomerId){
+
+const returned=data.user;
+
+const returnedId=
+
+returned.id||
+
+returned.user_id||
+
+returned.userId||
+
+returned.uuid||
+
+returned.email;
+
+if(returnedId){
+
+selectedCustomerId=String(returnedId);
+
+}
+
+}
+
+await refreshAdmin(false);
+
+await loadMe();
+
+refreshDashboard(false);
+
+toast('Request approved and demo funds credited.');
+
+}catch(error){
+
+toast(error.message||'Unable to approve request.');
+
+}
+
+}
+
+async function rejectRequest(id){
+
+try{
+
+await api(
+
+'/admin/requests/'+encodeURIComponent(id)+'/reject',
+
+{
+
+method:'POST'
+
+}
+
+);
+
+await refreshAdmin(false);
+
+toast('Request rejected.');
+
+}catch(error){
+
+toast(error.message||'Unable to reject request.');
+
+}
+
+}
+
+/*
+
+ADMIN CREDIT
+
+Send the selected customer's canonical identifier.
+
+The server replacement can additionally resolve email,
+
+UUID, user_id or other supported identifiers.
+
+*/
+
+async function adminCredit(){
+
+if(!selectedCustomerId){
+
+return toast('Select a customer first.');
+
+}
+
+const buttonId='adminCreditBtn';
+
+if($(buttonId).disabled)return;
+
+const currency=$('adminCurrency').value;
+
+const amount=Number($('adminAmount').value);
+
+if(!amount||amount<=0){
+
+return toast('Enter a valid amount.');
+
+}
+
+setLoading(buttonId,true,'Crediting');
+
+try{
+
+const data=await api(
+
+'/admin/credit',
+
+{
+
+method:'POST',
+
+body:JSON.stringify({
+
+userId:selectedCustomerId,
+
+customerId:selectedCustomerId,
+
+user_id:selectedCustomerId,
+
+identifier:selectedCustomerId,
+
+currency:currency,
+
+amount:amount
+
+})
+
+}
+
+);
+
+$('adminAmount').value='';
+
+if(data.user&&customerMatches(data.user,selectedCustomerId)){
+
+selectedCustomerId=
+
+getCustomerIdentifiers(data.user)[0]||
+
+selectedCustomerId;
+
+}
+
+await refreshAdmin(false);
+
+toast(
+
+money(amount,currency)+
+
+' credited to the demo customer.'
+
+);
+
+}catch(error){
+
+toast(error.message||'Unable to credit customer.');
+
+}finally{
+
+setLoading(buttonId,false);
+
+}
+
+}
+
+/*
+
+ADMIN NOTIFICATION
+
+*/
+
+async function adminNotify(){
+
+if(!selectedCustomerId){
+
+return toast('Select a customer first.');
+
+}
+
+const buttonId='adminNotifyBtn';
+
+if($(buttonId).disabled)return;
+
+const message=$('adminNotification').value.trim();
+
+if(!message){
+
+return toast('Write a notification first.');
+
+}
+
+setLoading(buttonId,true,'Sending');
+
+try{
+
+await api(
+
+'/admin/notify',
+
+{
+
+method:'POST',
+
+body:JSON.stringify({
+
+userId:selectedCustomerId,
+
+customerId:selectedCustomerId,
+
+user_id:selectedCustomerId,
+
+identifier:selectedCustomerId,
+
+message:message
+
+})
+
+}
+
+);
+
+$('adminNotification').value='';
+
+await refreshAdmin(false);
+
+toast('Notification sent to customer.');
+
+}catch(error){
+
+toast(error.message||'Unable to send notification.');
+
+}finally{
+
+setLoading(buttonId,false);
+
+}
+
+}
+
+/*
+
+ADMIN SUPPORT
+
+Matches using all available customer identifiers
+
+rather than only UUID.
+
+*/
+
+function renderAdminSupport(){
+
+const box=$('adminChat');
+
+if(!box||!adminState)return;
+
+const rows=
+
+(Array.isArray(adminState.support)
+
+?adminState.support
+
+:[])
+
+.filter(message=>{
+
+const messageIdentifiers=[
+
+message.user_id,
+
+message.userId,
+
+message.customer_id,
+
+message.customerId,
+
+message.uuid,
+
+message.email
+
+]
+
+.filter(value=>value!==undefined&&value!==null)
+
+.map(value=>String(value).trim());
+
+const target=String(selectedCustomerId||'').trim().toLowerCase();
+
+return messageIdentifiers.some(
+
+value=>value.toLowerCase()===target
+
+);
+
+})
+
+.sort(
+
+(a,b)=>
+
+new Date(a.created_at||a.date||0)-
+
+new Date(b.created_at||b.date||0)
+
+);
+
+box.innerHTML=
+
+rows.length
+
+?
+
+rows.map(message=>{
+const image=message.image||message.image_url||message.attachment_url||message.attachment;
+const imageHtml=image?`<img src="${esc(image)}" alt="Support attachment" style="display:block;max-width:100%;max-height:220px;border-radius:9px;margin-top:7px;object-fit:contain">`:'';
+return `<div class="msg ${
+
+String(message.sender||'').toLowerCase()==='customer'
+
+?'user'
+
+:''
+
+}">
+
+${
+
+String(message.sender||'').toLowerCase()==='customer'
+
+?
+
+'<strong>Customer:</strong><br>'+esc(message.message||'')
+
+:
+
+'<strong>Support:</strong><br>'+esc(message.message||'')
+
+}${imageHtml}
+
+<div style="
+
+font-size:10px;
+
+color:#718096;
+
+margin-top:4px">
+
+${esc(message.date||message.created_at||'')}
+
+</div>
+
+</div>`;
+}).join('')
+
+:
+
+'<div class="empty">No support messages for this customer.</div>';
+
+box.scrollTop=box.scrollHeight;
+
+}
+
+/*
 
 ADMIN SUPPORT REPLY
 
-\=========================================================
+Sends multiple compatible identifier fields so the
+
+correct customer can be resolved by the replacement server.
 
 */
 
-async function sendAdminSupportReply({
+async function adminReplyMessage(){
 
-  userId,
+if(!selectedCustomerId){
 
-  message
-
-}) {
-
-  const client =
-
-    await pool.connect();
-
-  try {
-
-    await client.query('BEGIN');
-
-    const customer =
-
-      await client.query(
-
-        `
-
-        SELECT id,name,email
-
-        FROM acb_users
-
-        WHERE id=$1
-
-        AND LOWER(role)='customer'
-
-        FOR UPDATE
-
-        `,
-
-        [userId]
-
-      );
-
-    if (!customer.rowCount) {
-
-      throw Object.assign(
-
-        new Error('Customer not found.'),
-
-        { code: 'CUSTOMER_NOT_FOUND' }
-
-      );
-
-    }
-
-    const supportId = uuid();
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_support
-
-        (id,user_id,sender,message)
-
-      VALUES
-
-        ($1,$2,'admin',$3)
-
-      `,
-
-      [
-
-        supportId,
-
-        userId,
-
-        message
-
-      ]
-
-    );
-
-    const notificationId = uuid();
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_notifications
-
-        (id,user_id,message)
-
-      VALUES
-
-        ($1,$2,$3)
-
-      `,
-
-      [
-
-        notificationId,
-
-        userId,
-
-        'You received a new support reply from the administrator.'
-
-      ]
-
-    );
-
-    await client.query('COMMIT');
-
-    return {
-
-      supportId,
-
-      notificationId,
-
-      customer: customer.rows[0]
-
-    };
-
-  } catch (error) {
-
-    try {
-
-      await client.query('ROLLBACK');
-
-    } catch {}
-
-    throw error;
-
-  } finally {
-
-    client.release();
-
-  }
+return toast('Select a customer first.');
 
 }
 
-async function handleSupportReply(req, res, routeId) {
+const buttonId='adminReplyBtn';
 
-  try {
+if($(buttonId).disabled)return;
 
-    let userId = null;
+const input=$('adminReply');
 
-    /*
+const message=input.value.trim();
 
-    Route ID may be either:
+if(!message){
 
-    - customer UUID
-
-    - support message UUID
-
-    */
-
-    if (routeId) {
-
-      userId =
-
-        await resolveSupportCustomerId(routeId);
-
-    }
-
-    /*
-
-    Direct customer identifiers.
-
-    */
-
-    if (!userId) {
-
-      const direct = [
-
-        req.body?.customerId,
-
-        req.body?.customer_id,
-
-        req.body?.userId,
-
-        req.body?.user_id,
-
-        req.body?.customer?.id,
-
-        req.body?.customer?.userId,
-
-        req.body?.customer?.user_id,
-
-        req.body?.user?.id,
-
-        req.body?.user?.userId
-
-      ];
-
-      for (const identifier of direct) {
-
-        if (!identifier) continue;
-
-        userId =
-
-          await resolveSupportCustomerId(
-
-            identifier
-
-          );
-
-        if (userId) break;
-
-      }
-
-    }
-
-    /*
-
-    Entire body.
-
-    */
-
-    if (!userId) {
-
-      userId =
-
-        await resolveSupportCustomerFromRequest(req);
-
-    }
-
-    const message =
-
-      String(
-
-        req.body.message ||
-
-        req.body.reply ||
-
-        req.body.text ||
-
-        req.body.replyMessage ||
-
-        req.body.reply_message ||
-
-        ''
-
-      )
-
-        .trim()
-
-        .slice(0, 2000);
-
-    if (!message) {
-
-      return res.status(400).json({
-
-        ok: false,
-
-        error: 'Write a reply first.'
-
-      });
-
-    }
-
-    if (!userId) {
-
-      return res.status(404).json({
-
-        ok: false,
-
-        error: 'Customer support request not found.'
-
-      });
-
-    }
-
-    const result =
-
-      await sendAdminSupportReply({
-
-        userId,
-
-        message
-
-      });
-
-    const updatedUser =
-
-      await getUser(userId);
-
-    return res.json({
-
-      ok: true,
-
-      success: true,
-
-      message:
-
-        'Support reply sent successfully.',
-
-      supportId:
-
-        result.supportId,
-
-      notificationId:
-
-        result.notificationId,
-
-      user:
-
-        updatedUser,
-
-      customer:
-
-        updatedUser,
-
-      updatedCustomer:
-
-        updatedUser,
-
-      support:
-
-        updatedUser?.support || []
-
-    });
-
-  } catch (error) {
-
-    console.error('Support reply error:', error);
-
-    if (error.code === 'CUSTOMER_NOT_FOUND') {
-
-      return res.status(404).json({
-
-        ok: false,
-
-        error: 'Customer not found.'
-
-      });
-
-    }
-
-    return res.status(500).json({
-
-      ok: false,
-
-      error: 'Unable to send response.'
-
-    });
-
-  }
+return toast('Write a reply first.');
 
 }
 
-app.post(
+setLoading(buttonId,true,'Sending');
 
-  '/api/admin/support/:id/reply',
+try{
 
-  auth,
+const customer=resolveSelectedCustomer();
 
-  adminOnly,
+const customerIdentifiers=
 
-  writeLimiter,
+getCustomerIdentifiers(customer);
 
-  async (req, res) => {
+const identifier=
 
-    await handleSupportReply(
+selectedCustomerId||
 
-      req,
+customerIdentifiers[0];
 
-      res,
+await api(
 
-      req.params.id
+'/admin/support/reply',
 
-    );
+{
 
-  }
+method:'POST',
 
-);
+body:JSON.stringify({
 
-app.post(
+userId:identifier,
 
-  '/api/admin/support/reply',
+customerId:identifier,
 
-  auth,
+user_id:identifier,
 
-  adminOnly,
+customer_id:identifier,
 
-  writeLimiter,
+identifier:identifier,
 
-  async (req, res) => {
+email:customer?.email||'',
 
-    await handleSupportReply(
+message:message
 
-      req,
-
-      res,
-
-      null
-
-    );
-
-  }
-
-);
-
-app.post(
-
-  '/api/admin/support/respond',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    await handleSupportReply(
-
-      req,
-
-      res,
-
-      null
-
-    );
-
-  }
-
-);
-
-app.post(
-
-  '/api/admin/support/:id/respond',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    await handleSupportReply(
-
-      req,
-
-      res,
-
-      req.params.id
-
-    );
-
-  }
-
-);
-
-/*
-
-\=========================================================
-
-ADMIN TRANSFERS
-
-\=========================================================
-
-*/
-
-app.get('/api/admin/transfers', auth, adminOnly, async (_req, res) => {
-
-  try {
-
-    const result =
-
-      await pool.query(
-
-        `
-
-        SELECT
-
-          r.id,r.user_id,u.name,u.email,
-
-          r.currency,r.amount,r.recipient,
-
-          r.note,r.status,r.created_at,r.handled_at
-
-        FROM acb_requests r
-
-        JOIN acb_users u
-
-          ON u.id=r.user_id
-
-        ORDER BY r.created_at DESC
-
-        LIMIT 200
-
-        `
-
-      );
-
-    return res.json({
-
-      ok: true,
-
-      transfers:
-
-        result.rows.map(row => ({
-
-          id: String(row.id),
-
-          user_id: String(row.user_id),
-
-          userId: String(row.user_id),
-
-          customerId: String(row.user_id),
-
-          customer_id: String(row.user_id),
-
-          full_name: row.name,
-
-          fullName: row.name,
-
-          name: row.name,
-
-          email: row.email,
-
-          currency: row.currency,
-
-          amount: Number(row.amount),
-
-          recipient: row.recipient,
-
-          reference: String(row.id),
-
-          note: row.note,
-
-          status: row.status,
-
-          created_at: row.created_at,
-
-          handled_at: row.handled_at
-
-        }))
-
-    });
-
-  } catch (error) {
-
-    console.error('Admin transfers error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to load transfers.'
-
-    });
-
-  }
-
-});
-
-/*
-
-\=========================================================
-
-ADMIN TRANSFER STATUS
-
-\=========================================================
-
-*/
-
-async function updateTransferStatus(req, res) {
-
-  const client =
-
-    await pool.connect();
-
-  try {
-
-    if (!validUUID(req.params.id)) {
-
-      return res.status(400).json({
-
-        error: 'Invalid transfer ID.'
-
-      });
-
-    }
-
-    const status =
-
-      String(req.body.status || '')
-
-        .trim()
-
-        .toLowerCase();
-
-    if (
-
-      !['successful','approved','declined'].includes(status)
-
-    ) {
-
-      return res.status(400).json({
-
-        error: 'Invalid transfer status.'
-
-      });
-
-    }
-
-    await client.query('BEGIN');
-
-    const requestResult =
-
-      await client.query(
-
-        `
-
-        SELECT
-
-          r.*,u.name,u.email
-
-        FROM acb_requests r
-
-        JOIN acb_users u
-
-          ON u.id=r.user_id
-
-        WHERE r.id=$1
-
-        FOR UPDATE
-
-        `,
-
-        [req.params.id]
-
-      );
-
-    if (!requestResult.rowCount) {
-
-      await client.query('ROLLBACK');
-
-      return res.status(404).json({
-
-        error: 'Transfer not found.'
-
-      });
-
-    }
-
-    const request =
-
-      requestResult.rows[0];
-
-    if (request.status !== 'pending') {
-
-      await client.query('ROLLBACK');
-
-      return res.status(409).json({
-
-        error: 'This transfer has already been handled.'
-
-      });
-
-    }
-
-    if (status === 'declined') {
-
-      await client.query(
-
-        `
-
-        UPDATE acb_requests
-
-        SET status='declined',handled_at=NOW()
-
-        WHERE id=$1
-
-        `,
-
-        [request.id]
-
-      );
-
-      await client.query(
-
-        `
-
-        INSERT INTO acb_notifications
-
-          (id,user_id,message)
-
-        VALUES
-
-          ($1,$2,$3)
-
-        `,
-
-        [
-
-          uuid(),
-
-          request.user_id,
-
-          `Your demo transfer request for ${Number(request.amount).toLocaleString()} ${request.currency} was declined.`
-
-        ]
-
-      );
-
-      await client.query('COMMIT');
-
-      const updatedUser =
-
-        await getUser(String(request.user_id));
-
-      return res.json({
-
-        ok: true,
-
-        status: 'declined',
-
-        user: updatedUser,
-
-        customer: updatedUser
-
-      });
-
-    }
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_balances
-
-        (user_id,currency,amount)
-
-      VALUES
-
-        ($1,$2,$3)
-
-      ON CONFLICT(user_id,currency)
-
-      DO UPDATE SET
-
-        amount=
-
-          acb_balances.amount+
-
-          EXCLUDED.amount
-
-      `,
-
-      [
-
-        request.user_id,
-
-        request.currency,
-
-        request.amount
-
-      ]
-
-    );
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_transactions
-
-        (
-
-          id,user_id,kind,title,
-
-          amount,currency
-
-        )
-
-      VALUES
-
-        (
-
-          $1,$2,'credit',
-
-          'Funds received from administrator',
-
-          $3,$4
-
-        )
-
-      `,
-
-      [
-
-        uuid(),
-
-        request.user_id,
-
-        request.amount,
-
-        request.currency
-
-      ]
-
-    );
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_notifications
-
-        (id,user_id,message)
-
-      VALUES
-
-        ($1,$2,$3)
-
-      `,
-
-      [
-
-        uuid(),
-
-        request.user_id,
-
-        `You received ${Number(request.amount).toLocaleString()} ${request.currency}. Your demo account balance has been updated.`
-
-      ]
-
-    );
-
-    await client.query(
-
-      `
-
-      UPDATE acb_requests
-
-      SET status=$1,handled_at=NOW()
-
-      WHERE id=$2
-
-      AND status='pending'
-
-      `,
-
-      status, [request.id]
-
-    );
-
-    await client.query('COMMIT');
-
-    const updatedUser =
-
-      await getUser(
-
-        String(request.user_id)
-
-      );
-
-    return res.json({
-
-      ok: true,
-
-      status,
-
-      message:
-
-        `Customer received ${Number(request.amount).toLocaleString()} ${request.currency}.`,
-
-      user: updatedUser,
-
-      customer: updatedUser,
-
-      balance:
-
-        updatedUser?.balances?.[request.currency] ?? 0
-
-    });
-
-  } catch (error) {
-
-    try {
-
-      await client.query('ROLLBACK');
-
-    } catch {}
-
-    console.error('Transfer status error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to update transfer.'
-
-    });
-
-  } finally {
-
-    client.release();
-
-  }
+})
 
 }
 
-app.patch(
+);
 
-  '/api/admin/transfers/:id/status',
+input.value='';
 
-  auth,
+await refreshAdmin(false);
 
-  adminOnly,
+toast('Support reply sent.');
 
-  writeLimiter,
+}catch(error){
 
-  updateTransferStatus
+toast(error.message||'Unable to send support reply.');
+
+}finally{
+
+setLoading(buttonId,false);
+
+}
+
+}
+
+/*
+
+LOGOUT
+
+*/
+
+function logout(show=true){
+
+token='';
+
+me=null;
+
+selectedCustomerId=null;
+
+adminState=null;
+
+lastNotificationId=null;
+
+notificationInitialized=false;
+
+publicSupportRequested=false;
+
+if(liveTimer){
+
+clearInterval(liveTimer);
+
+liveTimer=null;
+
+}
+
+$('chat').classList.remove('show');
+
+$('dashboard').style.display='none';
+
+$('publicSite').style.display='block';
+
+$('adminPanel').style.display='none';
+
+if(show){
+
+toast('Signed out.');
+
+}
+
+}
+
+/*
+
+PAGE LOAD
+
+No customer/admin information is stored in localStorage.
+
+*/
+
+window.addEventListener(
+
+'load',
+
+()=>{
+
+$('publicSite').style.display='block';
+
+$('dashboard').style.display='none';
+
+}
 
 );
 
-/*
+</script></body>
 
-\=========================================================
-
-OLD APPROVE ROUTE
-
-\=========================================================
-
-*/
-
-app.post(
-
-  '/api/admin/requests/:id/approve',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    req.body.status = 'approved';
-
-    await updateTransferStatus(
-
-      req,
-
-      res
-
-    );
-
-  }
-
-);
-
-/*
-
-\=========================================================
-
-OLD REJECT ROUTE
-
-\=========================================================
-
-*/
-
-app.post(
-
-  '/api/admin/requests/:id/reject',
-
-  auth,
-
-  adminOnly,
-
-  writeLimiter,
-
-  async (req, res) => {
-
-    try {
-
-      if (!validUUID(req.params.id)) {
-
-        return res.status(400).json({
-
-          error: 'Invalid request ID.'
-
-        });
-
-      }
-
-      const result =
-
-        await pool.query(
-
-          `
-
-          UPDATE acb_requests
-
-          SET
-
-            status='rejected',
-
-            handled_at=NOW()
-
-          WHERE id=$1
-
-          AND status='pending'
-
-          RETURNING
-
-            user_id,amount,currency
-
-          `,
-
-          [req.params.id]
-
-        );
-
-      if (!result.rowCount) {
-
-        return res.status(404).json({
-
-          error: 'Pending request not found.'
-
-        });
-
-      }
-
-      const row =
-
-        result.rows[0];
-
-      await pool.query(
-
-        `
-
-        INSERT INTO acb_notifications
-
-          (id,user_id,message)
-
-        VALUES
-
-          ($1,$2,$3)
-
-        `,
-
-        [
-
-          uuid(),
-
-          row.user_id,
-
-          `Your demo request for ${Number(row.amount).toLocaleString()} ${row.currency} was not approved.`
-
-        ]
-
-      );
-
-      return res.json({
-
-        ok: true,
-
-        success: true
-
-      });
-
-    } catch (error) {
-
-      console.error('Reject request error:', error);
-
-      return res.status(500).json({
-
-        error: 'Unable to reject request.'
-
-      });
-
-    }
-
-  }
-
-);
-
-/*
-
-\=========================================================
-
-SPA FALLBACK
-
-\=========================================================
-
-*/
-
-app.get('/*', (req, res) => {
-
-  res.sendFile(
-
-    path.join(__dirname, 'index.html')
-
-  );
-
-});
-
-/*
-
-\=========================================================
-
-START SERVER
-
-\=========================================================
-
-*/
-
-initDb()
-
-  .then(() => {
-
-    app.listen(
-
-      PORT,
-
-      () => {
-
-        console.log(
-
-          `American Crest demo server listening on ${PORT}`
-
-        );
-
-      }
-
-    );
-
-  })
-
-  .catch(error => {
-
-    console.error(
-
-      'Database initialization failed:',
-
-      error
-
-    );
-
-    process.exit(1);
-
-  });
+</html>
