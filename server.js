@@ -16,7 +16,6 @@ const crypto = require('crypto');
 
 const app = express();
 
-app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
 app.use(cors({
@@ -73,7 +72,7 @@ const authLimiter = rateLimit({
 
   windowMs: 15 * 60 * 1000,
 
-  max: 60,
+  max: 100,
 
   standardHeaders: true,
 
@@ -90,23 +89,6 @@ const writeLimiter = rateLimit({
   standardHeaders: true,
 
   legacyHeaders: false
-
-});
-
-const verificationLimiter = rateLimit({
-
-  windowMs: 15 * 60 * 1000,
-
-  max: 20,
-
-  standardHeaders: true,
-
-  legacyHeaders: false,
-
-  message: {
-    ok: false,
-    error: 'Too many verification attempts. Please try again later.'
-  }
 
 });
 
@@ -319,7 +301,7 @@ async function getUser(userId) {
 
   await ensureBalances(user.id);
 
-  const [balances, transactions, notifications, support, requests, notificationRepliesResult] =
+  const [balances, transactions, notifications, support, requests] =
 
     await Promise.all([
 
@@ -423,26 +405,6 @@ async function getUser(userId) {
 
         [userId]
 
-      ),
-
-      pool.query(
-
-        `
-
-        SELECT id,notification_id,message,created_at
-
-        FROM acb_notification_replies
-
-        WHERE user_id=$1
-
-        ORDER BY created_at ASC
-
-        LIMIT 500
-
-        `,
-
-        [userId]
-
       )
 
     ]);
@@ -459,19 +421,6 @@ async function getUser(userId) {
 
     balanceObject[row.currency] = Number(row.amount || 0);
 
-  }
-
-  const notificationReplies = new Map();
-
-  for (const row of notificationRepliesResult.rows) {
-    const key = String(row.notification_id);
-    if (!notificationReplies.has(key)) notificationReplies.set(key, []);
-    notificationReplies.get(key).push({
-      id: String(row.id),
-      message: row.message,
-      created_at: row.created_at,
-      date: row.created_at
-    });
   }
 
   return {
@@ -544,9 +493,7 @@ async function getUser(userId) {
 
       is_read: !!row.read_at,
 
-      date: row.created_at,
-
-      replies: notificationReplies.get(String(row.id)) || []
+      date: row.created_at
 
     })),
 
@@ -1416,28 +1363,6 @@ async function initDb() {
 
   await pool.query(`
 
-    CREATE TABLE IF NOT EXISTS acb_notification_replies (
-
-      id UUID PRIMARY KEY,
-
-      notification_id UUID NOT NULL
-        REFERENCES acb_notifications(id)
-        ON DELETE CASCADE,
-
-      user_id UUID NOT NULL
-        REFERENCES acb_users(id)
-        ON DELETE CASCADE,
-
-      message TEXT NOT NULL,
-
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-
-    )
-
-  `);
-
-  await pool.query(`
-
     CREATE TABLE IF NOT EXISTS acb_requests (
 
       id UUID PRIMARY KEY,
@@ -1753,31 +1678,9 @@ app.post('/api/auth/register', authLimiter, registerHandler);
 app.post('/api/register', authLimiter, registerHandler);
 app.post('/api/signup', authLimiter, registerHandler);
 app.post('/api/auth/signup', authLimiter, registerHandler);
-app.post('/api/auth/verify-registration', verificationLimiter, verifyRegistrationHandler);
-app.post('/api/verify-registration', verificationLimiter, verifyRegistrationHandler);
+app.post('/api/auth/verify-registration', authLimiter, verifyRegistrationHandler);
+app.post('/api/verify-registration', authLimiter, verifyRegistrationHandler);
 
-
-
-async function resendRegistrationVerificationHandler(req, res) {
-  try {
-    const identifier = normalizeText(req.body.identifier || req.body.email || req.body.phone || req.body.userId || req.body.user_id);
-    if (!identifier) return res.status(400).json({ ok:false, error:'Enter your email address or phone number.' });
-    const existing = await pool.query(`SELECT id FROM acb_users WHERE (LOWER(email)=LOWER($1) AND $1<>'') OR (phone=$2 AND $2<>'') LIMIT 1`, [normalizeEmail(identifier), normalizePhone(identifier)]);
-    if (existing.rowCount) return res.status(409).json({ ok:false, error:'That account is already registered. Use login verification instead.' });
-    const pending = await pool.query(`SELECT id FROM acb_verification_codes WHERE identifier=$1 AND purpose='registration' AND verified_at IS NULL AND expires_at>NOW() ORDER BY created_at DESC LIMIT 1`, [identifier]);
-    if (!pending.rowCount) return res.status(404).json({ ok:false, error:'No active registration verification was found. Start registration again.' });
-    const code = String(crypto.randomInt(100000,1000000));
-    const codeHash = await bcrypt.hash(code,10);
-    await pool.query(`UPDATE acb_verification_codes SET code_hash=$1,attempts=0,expires_at=NOW()+INTERVAL '10 minutes' WHERE id=$2`, [codeHash,pending.rows[0].id]);
-    return res.json({ ok:true, success:true, verificationRequired:true, verificationId:String(pending.rows[0].id), demoVerificationCode:code, message:'A new verification code was generated.' });
-  } catch (error) {
-    console.error('Resend registration verification error:',error);
-    return res.status(500).json({ ok:false, error:'Unable to generate a new verification code.' });
-  }
-}
-
-app.post('/api/auth/resend-verification', verificationLimiter, resendRegistrationVerificationHandler);
-app.post('/api/resend-verification', verificationLimiter, resendRegistrationVerificationHandler);
 
 /*
 
@@ -1828,8 +1731,8 @@ app.post('/api/auth/login', authLimiter, loginHandler);
 app.post('/api/login', authLimiter, loginHandler);
 app.post('/api/signin', authLimiter, loginHandler);
 app.post('/api/auth/signin', authLimiter, loginHandler);
-app.post('/api/auth/verify-login', verificationLimiter, verifyLoginHandler);
-app.post('/api/verify-login', verificationLimiter, verifyLoginHandler);
+app.post('/api/auth/verify-login', authLimiter, verifyLoginHandler);
+app.post('/api/verify-login', authLimiter, verifyLoginHandler);
 
 
 /*
@@ -1900,117 +1803,6 @@ PROFILE
 
 */
 
-app.delete('/api/notifications/:id', auth, writeLimiter, async (req, res) => {
-  try {
-    const notificationId = String(req.params.id || '').trim();
-
-    if (!validUUID(notificationId)) {
-      return res.status(400).json({ok:false,error:'Invalid notification.'});
-    }
-
-    const result = await pool.query(
-      `
-      DELETE FROM acb_notifications
-      WHERE id=$1 AND user_id=$2
-      RETURNING id
-      `,
-      [notificationId, req.user.id]
-    );
-
-    if (!result.rowCount) {
-      return res.status(404).json({ok:false,error:'Notification not found.'});
-    }
-
-    return res.json({
-      ok:true,
-      success:true,
-      deletedId:String(result.rows[0].id)
-    });
-  } catch (error) {
-    console.error('Notification delete error:', error);
-    return res.status(500).json({ok:false,error:'Unable to delete notification.'});
-  }
-});
-
-app.post('/api/notifications/:id/reply', auth, writeLimiter, async (req, res) => {
-  try {
-    const notificationId = String(req.params.id || '').trim();
-    const message = normalizeText(req.body.message).slice(0, 1000);
-
-    if (!validUUID(notificationId)) {
-      return res.status(400).json({ok:false,error:'Invalid notification.'});
-    }
-
-    if (!message) {
-      return res.status(400).json({ok:false,error:'Write a reply first.'});
-    }
-
-    const notification = await pool.query(
-      `
-      SELECT id
-      FROM acb_notifications
-      WHERE id=$1 AND user_id=$2
-      LIMIT 1
-      `,
-      [notificationId, req.user.id]
-    );
-
-    if (!notification.rowCount) {
-      return res.status(404).json({ok:false,error:'Notification not found.'});
-    }
-
-    await pool.query(
-      `
-      INSERT INTO acb_notification_replies
-        (id,notification_id,user_id,message)
-      VALUES ($1,$2,$3,$4)
-      `,
-      [uuid(),notificationId,req.user.id,message]
-    );
-
-    await pool.query(
-      `
-      UPDATE acb_notifications
-      SET read_at=COALESCE(read_at,NOW())
-      WHERE id=$1 AND user_id=$2
-      `,
-      [notificationId,req.user.id]
-    );
-
-    const admin = await pool.query(
-      `SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`
-    );
-
-    if (admin.rowCount) {
-      const customer = await pool.query(
-        `SELECT name,email,phone FROM acb_users WHERE id=$1 LIMIT 1`,
-        [req.user.id]
-      );
-      const customerName =
-        customer.rows[0]?.name ||
-        customer.rows[0]?.email ||
-        customer.rows[0]?.phone ||
-        'Customer';
-
-      await pool.query(
-        `INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`,
-        [
-          uuid(),
-          admin.rows[0].id,
-          `Customer ${customerName} replied to an account notification: ${message}`
-        ]
-      );
-    }
-
-    const user = await getUser(req.user.id);
-
-    return res.json({ok:true,success:true,user,customer:user});
-  } catch (error) {
-    console.error('Notification reply error:', error);
-    return res.status(500).json({ok:false,error:'Unable to send notification reply.'});
-  }
-});
-
 app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
   try {
@@ -2048,8 +1840,7 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
       WHERE id=$2
 
       `,
-
-      name, [req.user.id]
+      [name, req.user.id]
 
     );
 
@@ -2134,8 +1925,7 @@ app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
       WHERE id=$2
 
       `,
-
-      image, [req.user.id]
+      [image, req.user.id]
 
     );
 
@@ -2260,22 +2050,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
         ($1,$2,$3,$4,$5,$6,'pending')
 
       `,
-
-      
-
-        requestId,
-
-        [req.user.id,
-
-        currency,
-
-        amount,
-
-        recipient,
-
-        note
-
-      ]
+      [requestId, req.user.id, currency, amount, recipient, note]
 
     );
 
@@ -2493,29 +2268,6 @@ app.post('/api/admin/login', authLimiter, async (req, res) => {
 
   }
 
-});
-
-
-app.post('/api/auth/admin/login', authLimiter, async (req, res) => {
-  try {
-    const email = normalizeEmail(req.body.email || req.body.emailAddress || req.body.email_address || req.body.identifier);
-    const password = typeof req.body.password === 'string' ? req.body.password : typeof req.body.passcode === 'string' ? req.body.passcode : '';
-    if (!email || !password) return res.status(400).json({ ok:false, error:'Enter your administrator email and password.' });
-    const result = await pool.query(`SELECT * FROM acb_users WHERE LOWER(email)=LOWER($1) AND LOWER(role)='admin' LIMIT 1`, [email]);
-    if (!result.rowCount || !(await bcrypt.compare(password, result.rows[0].password_hash))) {
-      return res.status(401).json({ ok:false, error:'Invalid administrator email or password.' });
-    }
-    if (String(result.rows[0].status || '').toLowerCase() === 'suspended') {
-      return res.status(403).json({ ok:false, error:'This administrator account is suspended.' });
-    }
-    await ensureBalances(result.rows[0].id);
-    const user = await getUser(String(result.rows[0].id));
-    const token = signToken(user);
-    return res.json({ ok:true, success:true, token, accessToken:token, user, customer:user, account:user, redirect:'admin' });
-  } catch (error) {
-    console.error('Admin compatibility login error:', error);
-    return res.status(500).json({ ok:false, error:'Unable to sign in as administrator.' });
-  }
 });
 
 /*
@@ -4247,7 +3999,6 @@ app.post('/api/support', auth, writeLimiter, async (req, res) => {
         ($1,$2,'customer',$3)
 
       `,
-
       [supportId, req.user.id, message]
 
     );
@@ -5428,13 +5179,13 @@ SPA FALLBACK
 
 */
 
-app.use((req, res, next) => {
+app.get('/*', (req, res) => {
 
-  if (req.method === 'GET' && !req.path.startsWith('/api/')) {
-    return res.sendFile(path.join(__dirname, 'index.html'));
-  }
+  res.sendFile(
 
-  next();
+    path.join(__dirname, 'index.html')
+
+  );
 
 });
 
