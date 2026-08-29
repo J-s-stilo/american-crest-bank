@@ -1,4 +1,4 @@
-const express = require('express');
+550825const express = require('express');
 
 const path = require('path');
 
@@ -1840,7 +1840,8 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
       WHERE id=$2
 
       `,
-      [name, req.user.id]
+
+      name, [req.user.id]
 
     );
 
@@ -1925,7 +1926,8 @@ app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
       WHERE id=$2
 
       `,
-      [image, req.user.id]
+
+      image, [req.user.id]
 
     );
 
@@ -2050,7 +2052,15 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
         ($1,$2,$3,$4,$5,$6,'pending')
 
       `,
-      [requestId, req.user.id, currency, amount, recipient, note]
+      [
+        requestId,
+        req.user.id,
+        currency,
+        amount,
+        recipient,
+        note
+      ]
+
     );
 
     const customer =
@@ -2669,6 +2679,55 @@ app.get('/api/admin/state', auth, adminOnly, async (_req, res) => {
 
   }
 
+});
+
+/*
+
+CUSTOMER NOTIFICATION ACTIONS
+
+*/
+
+app.delete('/api/notifications/:id', auth, writeLimiter, async (req, res) => {
+  try {
+    if (!validUUID(req.params.id)) {
+      return res.status(400).json({ ok: false, error: 'Invalid notification ID.' });
+    }
+    const result = await pool.query(
+      `DELETE FROM acb_notifications
+       WHERE id=$1 AND user_id=$2
+       RETURNING id`,
+      [req.params.id, req.user.id]
+    );
+    if (!result.rowCount) {
+      return res.status(404).json({ ok: false, error: 'Notification not found.' });
+    }
+    return res.json({ ok: true, success: true, id: String(req.params.id) });
+  } catch (error) {
+    console.error('Customer notification delete error:', error);
+    return res.status(500).json({ ok: false, error: 'Unable to delete notification.' });
+  }
+});
+
+app.patch('/api/notifications/:id/read', auth, writeLimiter, async (req, res) => {
+  try {
+    if (!validUUID(req.params.id)) {
+      return res.status(400).json({ ok: false, error: 'Invalid notification ID.' });
+    }
+    const result = await pool.query(
+      `UPDATE acb_notifications
+       SET read_at=NOW()
+       WHERE id=$1 AND user_id=$2
+       RETURNING id`,
+      [req.params.id, req.user.id]
+    );
+    if (!result.rowCount) {
+      return res.status(404).json({ ok: false, error: 'Notification not found.' });
+    }
+    return res.json({ ok: true, success: true, id: String(req.params.id) });
+  } catch (error) {
+    console.error('Customer notification read error:', error);
+    return res.status(500).json({ ok: false, error: 'Unable to update notification.' });
+  }
 });
 
 /*
@@ -3998,15 +4057,10 @@ app.post('/api/support', auth, writeLimiter, async (req, res) => {
         ($1,$2,'customer',$3)
 
       `,
-
-      
-
+      [
         supportId,
-
-        [req.user.id,
-
+        req.user.id,
         message
-
       ]
 
     );
@@ -4942,7 +4996,8 @@ async function updateTransferStatus(req, res) {
       AND status='pending'
 
       `,
-      [status, request.id]
+
+      status, [request.id]
 
     );
 
