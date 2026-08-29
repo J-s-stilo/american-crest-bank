@@ -2699,6 +2699,52 @@ ADMIN NOTIFICATIONS
 
 */
 
+app.delete(
+  '/api/notifications/:id',
+  auth,
+  async (req, res) => {
+    try {
+      if (!validUUID(req.params.id)) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Invalid notification ID.'
+        });
+      }
+
+      const result = await pool.query(
+        `
+        DELETE FROM acb_notifications
+        WHERE id=$1
+        AND user_id=$2
+        RETURNING id
+        `,
+        [req.params.id, req.user.id]
+      );
+
+      if (!result.rowCount) {
+        return res.status(404).json({
+          ok: false,
+          error: 'Notification not found.'
+        });
+      }
+
+      return res.json({
+        ok: true,
+        success: true,
+        deleted: true,
+        id: String(result.rows[0].id)
+      });
+    } catch (error) {
+      console.error('Delete customer notification error:', error);
+      return res.status(500).json({
+        ok: false,
+        error: 'Unable to delete notification.'
+      });
+    }
+  }
+);
+
+
 app.get('/api/admin/notifications', auth, adminOnly, async (req, res) => {
 
   try {
