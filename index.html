@@ -156,286 +156,121 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 .field textarea{resize:vertical;min-height:90px}
 
-/* TRANSFER EXPERIENCE ADDITION — transfer section only */
-.transferModalBox{max-width:620px!important;padding:0!important;border-radius:24px!important;overflow:hidden!important;background:#f7f9fc!important;display:block!important}
-.transferHeader{padding:26px 28px 20px;background:#fff;border-bottom:1px solid #e8edf4;position:relative}
-.transferHeader h2{font-size:28px;margin:0 0 6px;color:var(--navy)}
-.transferHeader p{font-size:13px;color:var(--muted);line-height:1.5;margin:0;padding-right:35px}
-.transferClose{position:absolute;right:20px;top:18px;border:0;background:#f1f4f8;color:#687789;width:38px;height:38px;border-radius:50%;font-size:23px;line-height:1}
-.transferSteps{display:flex;gap:7px;padding:16px 28px;background:#fff}
-.transferStep{height:5px;flex:1;border-radius:99px;background:#e3e8ef;transition:.2s}
-.transferStep.active{background:var(--blue)}
-.transferBody{padding:24px 28px 28px;max-height:70vh;overflow:auto}
+/* TRANSFER EXPERIENCE — PayPal-style 3-step transfer service */
+.transferModalBox{max-width:700px!important;width:calc(100% - 24px)!important;height:min(92vh,820px)!important;padding:0!important;border-radius:28px!important;overflow:hidden!important;background:#f7f9fc!important;display:flex!important;flex-direction:column!important;max-height:92vh!important;min-height:0!important}
+.transferHeader{padding:30px 34px 22px;background:#fff;border-bottom:1px solid #e7edf4;position:relative}
+.transferHeader:before{content:'PAYMENTS';display:block;font-size:12px;letter-spacing:1.5px;font-weight:900;color:#1769e0;margin-bottom:9px}
+.transferHeader h2{font-size:32px;line-height:1.05;margin:0 0 10px;color:var(--navy)}
+.transferHeader p{font-size:15px;color:#687789;line-height:1.55;margin:0;padding-right:40px}
+.transferClose{position:absolute;right:25px;top:25px;border:0;background:#f2f5f9;color:#607080;width:48px;height:48px;border-radius:50%;font-size:30px;line-height:1;display:flex;align-items:center;justify-content:center}
+.transferSteps{display:flex;align-items:center;gap:0;padding:25px 34px 22px;background:#fff}
+.transferStep{position:relative;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:#edf1f6;color:#607080;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;transition:.2s}
+.transferStep:before{position:absolute;content:attr(data-step);}
+.transferStep:nth-child(1):before{content:'1'}.transferStep:nth-child(2):before{content:'2'}.transferStep:nth-child(3):before{content:'3'}
+.transferStep:not(:last-child):after{content:'';position:absolute;left:40px;top:18px;width:calc((100vw - 150px)/3);max-width:185px;height:4px;background:#e4e9ef}
+.transferStep.active{background:var(--blue);color:#fff}
+.transferStep.active:not(:last-child):after{background:#e4e9ef}
+.transferBody{padding:30px 34px 34px;flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 .transferPanel{display:none}.transferPanel.active{display:block}
-.transferEyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;font-weight:800;color:#1769e0;margin-bottom:8px}
-.transferTitle{font-size:22px;color:var(--navy);margin-bottom:6px}
-.transferSubtitle{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:20px}
-.transferCard{background:#fff;border:1px solid #e4eaf2;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 6px 18px #071a5308}
-.transferChoice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.transferChoice button{border:1px solid #dce4ee;background:#fff;border-radius:12px;padding:14px;text-align:left;color:var(--navy);font-weight:800}
-.transferChoice button.active{border:2px solid var(--blue);background:#f2f7ff}
-.transferChoice small{display:block;color:var(--muted);font-weight:normal;margin-top:4px}
-.transferGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.transferField{margin-bottom:14px}.transferField label{display:block;font-size:12px;font-weight:800;color:#253447;margin-bottom:7px}
-.transferField input,.transferField select,.transferField textarea{width:100%;padding:14px;border:1px solid #d8e0eb;border-radius:11px;outline:0;background:#fff;color:#182536}
+.transferEyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;font-weight:900;color:#1769e0;margin-bottom:12px}
+.transferTitle{font-size:31px;line-height:1.15;color:var(--navy);margin:0 0 10px}
+.transferSubtitle{font-size:15px;color:#687789;line-height:1.6;margin:0 0 24px}
+.transferCard{background:#fff;border:1px solid #e4eaf2;border-radius:18px;padding:17px;margin-bottom:16px;box-shadow:0 6px 18px #071a5308}
+.transferChoice{display:none}
+.transferGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.transferField{margin-bottom:18px}.transferField label{display:block;font-size:14px;font-weight:800;color:#253447;margin-bottom:9px}
+.transferField input,.transferField select,.transferField textarea{width:100%;padding:17px 18px;border:1px solid #ccd6e1;border-radius:15px;outline:0;background:#fff;color:#182536;font-size:16px;min-height:56px}
 .transferField input:focus,.transferField select:focus,.transferField textarea:focus{border-color:#1769e0;box-shadow:0 0 0 3px #1769e014}
-.transferBalance{display:flex;justify-content:space-between;align-items:center;background:#eef5ff;border-radius:13px;padding:13px 15px;margin-bottom:17px;color:var(--navy)}
-.transferBalance span{font-size:12px;color:#607080}.transferBalance strong{font-size:15px}
-.transferAmountBox{position:relative}.transferAmountBox span{position:absolute;left:14px;top:14px;font-weight:800;color:#718096}.transferAmountBox input{padding-left:58px;font-size:25px;font-weight:700}
-.transferReview{background:#fff;border:1px solid #e1e7ef;border-radius:16px;overflow:hidden;margin-bottom:16px}
-.transferReviewHead{padding:15px 17px;background:#f7f9fc;font-weight:800;color:var(--navy)}
-.transferReviewRow{display:flex;justify-content:space-between;gap:15px;padding:12px 17px;border-top:1px solid #edf1f5;font-size:13px}.transferReviewRow span:first-child{color:#718096}.transferReviewRow strong{text-align:right;color:#182536;word-break:break-word}
-.transferTotal{background:#071a35;color:#fff;border-radius:14px;padding:16px;margin-top:10px}.transferTotal div{display:flex;justify-content:space-between;margin:5px 0;font-size:13px;color:#cbd7e6}.transferTotal .grand{font-size:18px;color:#fff;font-weight:800;border-top:1px solid #ffffff20;padding-top:11px;margin-top:10px}
-.transferSecurity{font-size:11px;color:#718096;text-align:center;margin:13px 0 0;line-height:1.5}
-.transferActions{display:flex;gap:10px;margin-top:18px}.transferActions .btn{flex:1}
-.transferSuccess{text-align:center;padding:8px 0 4px}.transferSuccessIcon{width:70px;height:70px;border-radius:50%;background:#e9f8ef;color:#159447;display:grid;place-items:center;font-size:34px;margin:0 auto 15px;font-weight:800}
-.transferReceipt{background:#fff;border:1px solid #e0e7ef;border-radius:16px;text-align:left;overflow:hidden;margin:20px 0}.transferReceiptTop{padding:16px 18px;background:#f7f9fc}.transferReceiptTop strong{display:block;color:var(--navy);font-size:15px}.transferReceiptTop span{font-size:11px;color:#718096}.transferStatus{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#fff4d6;color:#8a6710;font-size:11px;font-weight:800}.transferReceiptRows{padding:5px 18px 12px}.transferReceiptRow{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #edf1f5;font-size:12px}.transferReceiptRow:last-child{border-bottom:0}.transferReceiptRow span{color:#718096}.transferReceiptRow strong{text-align:right;color:#182536}
-@media(max-width:560px){.transferModalBox{border-radius:20px!important}.transferHeader{padding:22px 20px 17px}.transferSteps{padding:13px 20px}.transferBody{padding:20px;max-height:74vh}.transferGrid,.transferChoice{grid-template-columns:1fr}.transferActions{flex-direction:column}.transferHeader h2{font-size:25px}}
-
-.error{display:none;background:#ffe8e8;color:#a21d1d;padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px}
-
-.error.show{display:block}
-
-#dashboard{display:none;min-height:100vh;background:#f3f6fa}
-
-.dashNav{background:var(--navy);color:#fff;padding:14px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px}
-
-.dashUser{display:flex;align-items:center;gap:9px}
-
-.avatarWrap{position:relative;width:48px;height:48px}
-
-.avatar{width:48px;height:48px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-weight:bold;overflow:hidden}
-
-.avatar img{width:100%;height:100%;object-fit:cover}
-
-.avatarPlus{position:absolute;right:-5px;bottom:-5px;width:22px;height:22px;border-radius:50%;border:2px solid var(--navy);background:var(--blue);color:#fff;display:grid;place-items:center;font-size:16px;font-weight:bold;line-height:1}
-
-.dashWrap{max-width:1200px;margin:auto;padding:35px 5%}
-
-.dashTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
-
-.dashTop h1{font-size:32px;color:var(--navy);margin:0}
-
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-
-.balance{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:24px;border-radius:15px}
-
-.balance small{color:#bdcce0}
-
-.balance h2{margin:8px 0;font-size:30px}
-
-.stat{background:#fff;padding:22px;border-radius:15px}
-
-.stat small{color:var(--muted)}
-
-.stat h3{margin-top:7px}
-
-.columns{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
-
-.panel{padding:24px}
-
-.tx{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #edf0f4;gap:10px}
-
-.tx:last-child{border:0}
-
-.txName{font-weight:bold;font-size:13px}
-
-.txDate{font-size:11px;color:var(--muted)}
-
-.out{color:var(--red);font-weight:bold}
-
-.in{color:var(--green);font-weight:bold}
-
-.empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
-
-.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-.quick button{padding:14px;border:1px solid #e1e7ef;background:#fff;border-radius:9px;font-weight:bold;color:var(--navy)}
-
-.profilePanel{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
-
-.profileCard{padding:24px}
-
-.profileCard input{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;margin-bottom:10px}
-
-.profileNote{font-size:12px;color:var(--muted);margin-bottom:15px}
-
-.currencyBalances{margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-
-.currencyCard{background:#fff;border-radius:14px;padding:18px;box-shadow:0 8px 25px #071a5310}
-
-.currencyCode{font-weight:bold;color:var(--navy);font-size:13px}
-
-.currencyAmount{margin-top:7px;font-size:21px;font-weight:bold}
-
-.servicesGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
-
-.service{padding:22px}
-
-.serviceIcon{font-size:28px;margin-bottom:12px}
-
-.service p{font-size:12px;color:var(--muted);line-height:1.5}
-
-.service button{margin-top:14px;width:100%}
-
-.notification{padding:13px;background:#eef5ff;border-left:4px solid var(--blue);border-radius:8px;margin-bottom:10px;font-size:13px}
-
-.notification small{display:block;color:var(--muted);margin-top:5px}
-.notificationCenter{position:relative;margin:0 0 18px;display:flex;justify-content:flex-end;background:transparent;border:0;box-shadow:none;overflow:visible}.notificationCenterHead{position:relative;display:block}.notificationCenterHead h3,.notificationCenterHead span{display:none}.notificationBell{width:46px;height:46px;border:1px solid #d8e0eb;border-radius:50%;background:#fff;color:var(--navy);display:grid;place-items:center;font-size:22px;position:relative;box-shadow:0 6px 18px #071a5312}.notificationBell.hasUnread{animation:notificationBellPulse 1.15s ease-in-out infinite}.notificationBell.hasUnread:after{content:"";position:absolute;right:2px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--red);border:2px solid #fff}.notificationBadge{position:absolute;right:-5px;top:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--red);color:#fff;font-size:10px;font-weight:bold;display:none;align-items:center;justify-content:center;border:2px solid #fff}.notificationBadge.show{display:flex}.notificationBoard{display:none;position:absolute;right:0;top:52px;width:390px;max-width:calc(100vw - 30px);background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 18px 50px #071a5330;z-index:300;padding:0;overflow:hidden}.notificationBoard.show{display:block}.notificationBoardHead{display:flex;align-items:center;justify-content:space-between;background:var(--navy);color:#fff;padding:14px 15px}.notificationBoardHead strong{font-size:14px}.notificationBoardClose{border:0;background:none;color:#fff;font-size:20px;line-height:1}.notificationList{padding:10px;max-height:420px;overflow:auto}.notificationItem{background:#f7faff;border:1px solid #e2eaf5;border-radius:12px;padding:14px;margin-bottom:10px}.notificationItem:last-child{margin-bottom:0}.notificationItem.unread{border-left:4px solid var(--red);background:#eef5ff}.notificationItemMessage{font-size:14px;line-height:1.5;color:var(--text);white-space:pre-wrap;word-break:break-word}.notificationItemDate{font-size:11px;color:var(--muted);margin-top:6px}.notificationActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.notificationActions button{padding:7px 10px;border-radius:7px;font-size:11px}.notificationEmpty{text-align:center;color:var(--muted);font-size:13px;padding:25px 10px}@keyframes notificationBellPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}@media(max-width:600px){.notificationBoard{right:-8px;width:calc(100vw - 25px)}}
-
-.admin{display:none;margin-top:25px;background:#fff;border-radius:15px;padding:25px;box-shadow:0 12px 35px #071a5314}
-
-.admin h2{color:var(--navy);margin-bottom:7px}
-
-.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
-
-.adminBox{border:1px solid var(--border);padding:20px;border-radius:12px;box-shadow:none}
-
-.adminBox h3{margin-bottom:12px;color:var(--navy)}
-
-.adminBox input,.adminBox select,.adminBox textarea{width:100%;padding:11px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px}
-
-.customerList{max-height:300px;overflow:auto;border:1px solid var(--border);border-radius:10px;margin-top:10px}
-
-.customerItem{width:100%;border:0;border-bottom:1px solid var(--border);background:#fff;padding:12px;text-align:left;display:flex;justify-content:space-between;gap:10px}
-
-.customerItem:last-child{border-bottom:0}
-
-.customerItem.active{background:#eef5ff}
-
-.customerItem strong{display:block}
-
-.customerItem small{color:var(--muted)}
-
-.adminChat{height:250px;overflow:auto;background:#f5f7fa;border-radius:10px;padding:12px;margin-bottom:10px}
-
-.requestItem{padding:12px;border-bottom:1px solid var(--border)}
-
-.requestItem:last-child{border-bottom:0}
-
-.requestButtons{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
-
-.chatBtn{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:23px;z-index:60}
-
-.chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;max-width:calc(100% - 40px);background:#fff;border-radius:15px;box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
-
-.chat.show{display:block}
-
-.chatHead{background:var(--navy);color:#fff;padding:15px;display:flex;justify-content:space-between}
-
-.chatBody{height:260px;padding:14px;overflow:auto;background:#f5f7fa}
-
-.supportEmpty{text-align:center;color:var(--muted);padding:45px 18px;font-size:13px}.supportMessage{padding:13px 4px;border-bottom:1px solid #e7edf4;line-height:1.45}.supportMessage:last-child{border-bottom:0}.supportMessageHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}.supportMessageHead strong{font-size:12px;color:var(--navy)}.supportMessageHead small{font-size:10px;color:var(--muted);white-space:nowrap}.supportMessageText{font-size:13px;color:var(--text);white-space:pre-wrap;word-break:break-word}.supportAttachment{display:block;max-width:100%;max-height:220px;margin-top:9px;border:1px solid var(--border);border-radius:8px;object-fit:contain}.msg{padding:9px 11px;border-radius:11px;background:#fff;font-size:13px;margin-bottom:9px;max-width:85%;line-height:1.45}
-
-.msg.user{margin-left:auto;background:#dceaff}
-
-.chatInput{display:flex;align-items:center;border-top:1px solid #ddd}
-
-.chatInput input{flex:1;border:0;padding:12px;outline:0;min-width:0}
-
-.chatInput button{border:0;background:var(--blue);color:#fff;padding:0 16px}
-
-.chatAttach{width:44px;height:44px;border:0;background:#fff;color:var(--navy);font-size:20px;display:grid;place-items:center}
-
-.chatImagePreview{display:none;padding:8px 10px;border-top:1px solid #eee;background:#fafcff}
-
-.chatImagePreview.show{display:block}
-
-.chatImagePreview img{display:block;max-width:120px;max-height:90px;border-radius:8px;border:1px solid var(--border);object-fit:cover}
-
-.chatImagePreview button{margin-top:5px;border:0;background:none;color:var(--red);font-size:11px;padding:0}
-
-
-.notificationPopup{position:fixed;top:85px;right:20px;width:360px;max-width:calc(100% - 40px);background:#fff;border:1px solid #e2e8f0;border-top:3px solid var(--gold);border-radius:12px;box-shadow:0 18px 50px #071a5330;z-index:1000;transform:translateX(120%);opacity:0;transition:transform .35s ease,opacity .35s ease;overflow:hidden}
-.notificationPopup.show{transform:translateX(0);opacity:1}
-.notificationPopupHead{display:flex;align-items:center;gap:10px;padding:12px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:bold}
-.notificationPopupIcon{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-size:15px}
-.notificationPopupContent{padding:14px 15px 15px}
-.notificationPopupContent strong{display:block;color:var(--navy);font-size:14px;margin-bottom:5px}
-.notificationPopupContent div{font-size:13px;line-height:1.5;color:var(--text)}
-.notificationPopupContent small{display:block;color:var(--muted);margin-top:7px;font-size:11px}
-@media(max-width:600px){.notificationPopup{top:72px;right:10px;max-width:calc(100% - 20px)}}
-
-.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,120px);background:var(--navy);color:#fff;padding:12px 18px;border-radius:8px;transition:.3s;z-index:600}
-
-.toast.show{transform:translate(-50%,0)}
-
-.hiddenFile{display:none}
-
-.liveBanner{background:#eaf7ef;border:1px solid #ccebd8;color:#126c36;border-radius:10px;padding:12px 15px;margin-bottom:18px;font-size:13px}
-
-.serviceLive{background:#f7f9fc;border:1px solid var(--border);padding:12px;border-radius:9px;margin-top:10px;font-size:12px;color:var(--muted)}
-
-.loadingBtn{position:relative;pointer-events:none}
-
-.loadingBtn:after{content:"";display:inline-block;width:13px;height:13px;margin-left:8px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:-2px;animation:spin .7s linear infinite}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-
-@media(max-width:900px){
-
-.links{display:none}
-
-.heroInner{grid-template-columns:1fr}
-
-.heroVisual{min-height:330px}
-
-.heroVisual img{min-height:330px}
-
-.promoGrid{grid-template-columns:1fr 1fr}
-
-.cards,.securityGrid{grid-template-columns:1fr}
-
-.contact,.columns,.profilePanel{grid-template-columns:1fr}
-
-.grid{grid-template-columns:1fr 1fr}
-
-.servicesGrid{grid-template-columns:1fr 1fr}
-
-.currencyBalances{grid-template-columns:1fr 1fr}
-
-.adminGrid{grid-template-columns:1fr}
-
-.modalBox{grid-template-columns:1fr}
-
-.authImage{display:none}
-
+.transferBalance{display:flex;justify-content:space-between;align-items:center;background:#eef5ff;border-radius:17px;padding:17px 18px;margin-bottom:20px;color:var(--navy)}
+.transferBalance span{font-size:14px;color:#607080}.transferBalance strong{font-size:17px}
+.transferAmountBox{position:relative}.transferAmountBox span{position:absolute;left:18px;top:17px;font-weight:800;color:#718096;font-size:18px;z-index:1}.transferAmountBox input{padding-left:52px;font-size:28px;font-weight:700}
+.transferReview{background:#fff;border:1px solid #e1e7ef;border-radius:18px;overflow:hidden;margin-bottom:18px}
+.transferReviewHead{padding:17px 19px;background:#f7f9fc;font-weight:800;color:var(--navy)}
+.transferReviewRow{display:flex;justify-content:space-between;gap:15px;padding:14px 19px;border-top:1px solid #edf1f5;font-size:14px}.transferReviewRow span:first-child{color:#718096}.transferReviewRow strong{text-align:right;color:#182536;word-break:break-word}
+.transferTotal{background:#071a35;color:#fff;border-radius:16px;padding:18px;margin-top:12px}.transferTotal div{display:flex;justify-content:space-between;margin:6px 0;font-size:14px;color:#cbd7e6}.transferTotal .grand{font-size:19px;color:#fff;font-weight:800;border-top:1px solid #ffffff20;padding-top:12px;margin-top:11px}
+.transferSecurity{font-size:12px;color:#718096;text-align:center;margin:14px 0 0;line-height:1.5}
+.transferActions{display:flex;gap:12px;margin-top:20px;padding-bottom:4px}.transferActions .btn{flex:1;min-height:54px;border-radius:14px;font-size:15px;font-weight:800}
+.transferSuccess{text-align:center}.transferSuccessIcon{margin:0 auto 12px}.transferReceipt{background:#fff;border:1px solid #e1e7ef;border-radius:18px;overflow:hidden;margin:18px 0}.transferReceiptTop{padding:18px;border-bottom:1px solid #edf1f5;display:grid;gap:5px}.transferReceiptRows{padding:4px 18px 10px}.transferReceiptRow{display:flex;justify-content:space-between;gap:15px;padding:13px 0;border-bottom:1px solid #edf1f5;font-size:14px}.transferReceiptRow:last-child{border-bottom:0}.transferStatus{display:inline-block!important;width:max-content;padding:5px 9px;border-radius:999px;background:#fff4db;color:#9a6500;font-size:11px;font-weight:800}
+@media(max-width:700px){
+.transferModalBox{width:calc(100% - 20px)!important;height:92vh!important;max-height:92vh!important;border-radius:26px!important}
+.transferHeader{padding:27px 24px 20px}.transferHeader h2{font-size:29px}.transferHeader p{font-size:14px}.transferClose{right:20px;top:20px;width:44px;height:44px}
+.transferSteps{padding:23px 24px 20px}.transferStep{width:40px;height:40px;flex-basis:40px}.transferStep:not(:last-child):after{left:40px;width:calc((100vw - 148px)/3);max-width:none}
+.transferBody{padding:27px 24px 30px}.transferTitle{font-size:28px}.transferSubtitle{font-size:14px}.transferGrid{grid-template-columns:1fr;gap:0}
+.transferField input,.transferField select,.transferField textarea{font-size:16px;padding:16px 17px}.transferActions{position:relative}
 }
 
-@media(max-width:600px){
-
-.top{display:none}
-
-.hero{padding:18px 0 35px}
-
-.heroInner{width:92%}
-
-.heroVisual{min-height:300px}
-
-.heroVisual img{min-height:300px}
-
-.promoGrid{grid-template-columns:1fr}
-
-.nav{min-height:65px}
-
-.hero{min-height:520px}
-
-.hero p{font-size:15px}
-
-.section{padding:55px 5%}
-
-.grid{grid-template-columns:1fr}
-
-.dashTop{flex-direction:column;align-items:flex-start;gap:12px}
-
-.chat{right:10px;bottom:80px;max-width:calc(100% - 20px)}
-
-.servicesGrid,.currencyBalances{grid-template-columns:1fr 1fr}
-
-.dashNav .logo span:last-child{display:none}
-
+/* CUSTOMER DASHBOARD — reference-style layout, additive only */
+#dashboard{display:none;min-height:100vh;background:#f4f7fb;padding-bottom:86px}
+#dashboard .dashNav{position:sticky;top:0;z-index:40;background:#071a35;color:#fff;min-height:72px;padding:12px 5%;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 4px 18px #071a3522}
+#dashboard .dashNav .logo{color:#fff!important}
+#dashboard .dashNav .logo .mark{background:#0d315d}
+#dashboard .dashUser{display:flex;align-items:center;gap:10px}
+#dashboard .dashUser .btn{padding:9px 12px}
+#dashboard .dashWrap{max-width:1100px;margin:auto;padding:22px 18px 40px}
+#dashboard .dashTop{background:linear-gradient(135deg,#071a35,#0d315d);color:#fff;border-radius:0 0 22px 22px;padding:26px 24px 22px;margin:-22px -18px 0}
+#dashboard .dashTop small{color:#cbd7e6!important}
+#dashboard #welcomeName{font-size:30px;color:#fff;margin:3px 0 0}
+#dashboard .dashTop .btn{background:#1769e0;color:#fff}
+#dashboard .liveBanner{margin:14px 0}
+#dashboard .grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:14px;margin-top:14px}
+#dashboard .balance{grid-column:1/-1;background:linear-gradient(135deg,#123e86,#0d315d);color:#fff;border-radius:18px;padding:25px 24px;box-shadow:0 12px 30px #071a5318}
+#dashboard .balance small{color:#dbe7f5}
+#dashboard .balance h2{font-size:38px;margin:7px 0 4px}
+#dashboard .stat{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 24px #071a5310;border:1px solid #e8edf4}
+#dashboard .stat small{color:#718096;font-weight:800}
+#dashboard .stat h3{margin-top:8px;color:#071a35;word-break:break-word}
+#dashboard .currencyBalances{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+#dashboard .currencyCard{background:#fff;border:1px solid #e6ebf2;border-radius:15px;padding:15px;box-shadow:0 8px 22px #071a530b}
+#dashboard .currencyCode{font-weight:800;color:#1769e0;font-size:12px}
+#dashboard .currencyAmount{font-size:18px;font-weight:800;color:#182536;margin-top:5px}
+#dashboard .columns{display:grid;grid-template-columns:1.55fr 1fr;gap:16px}
+#dashboard .panel{background:#fff;border:1px solid #e6ebf2;border-radius:18px;padding:20px;box-shadow:0 10px 28px #071a5310}
+#dashboard .panel h3{font-size:21px}
+#dashboard #transactions{max-height:470px;overflow:auto}
+#dashboard #transactions .tx{display:flex;justify-content:space-between;gap:14px;padding:15px 0;border-bottom:1px solid #edf1f5}
+#dashboard #transactions .tx:last-child{border-bottom:0}
+#dashboard .txName{font-weight:800;color:#182536}
+#dashboard .txDate{font-size:12px;color:#718096;margin-top:4px}
+#dashboard .tx .in{color:#159447;font-weight:900;white-space:nowrap}
+#dashboard .tx .out{color:#d93434;font-weight:900;white-space:nowrap}
+#dashboard .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+#dashboard .quick button{border:1px solid #e2e8f0;background:#f8fafc;border-radius:12px;padding:14px;color:#1769e0;font-weight:800}
+#dashboard .servicesGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}
+#dashboard .service{padding:18px;border:1px solid #e6ebf2}
+#dashboard .serviceIcon{font-size:25px;margin-bottom:8px}
+#dashboard .profilePanel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+#dashboard .admin{margin-top:16px}
+#dashboard .notificationCenter{position:absolute;right:5%;top:13px;z-index:45}
+#dashboard .notificationBell{border:0;background:#fff;color:#071a35;border-radius:50%;width:46px;height:46px;font-size:21px;position:relative;box-shadow:0 5px 16px #0002}
+#dashboard .notificationBadge{position:absolute;right:-2px;top:-2px;background:#d93434;color:#fff;border-radius:99px;font-size:10px;min-width:18px;height:18px;display:grid;place-items:center}
+#dashboard .notificationBoard{position:absolute;right:0;top:55px;width:320px;background:#fff;color:#182536;border:1px solid #e3e9f1;border-radius:16px;box-shadow:0 18px 45px #071a5330;display:none;overflow:hidden}
+#dashboard .notificationBoard.show{display:block}
+#dashboard .notificationBoardHead{display:flex;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #edf1f5}
+#dashboard .notificationList{max-height:330px;overflow:auto}
+#dashboard .chatBtn{position:fixed;right:18px;bottom:92px;z-index:80;width:62px;height:62px;border-radius:50%;border:0;background:#2589d8;color:#fff;font-size:28px;box-shadow:0 8px 22px #071a5333}
+#dashboard .chatBtn:after{content:'Customer Live Support';position:absolute;right:70px;top:16px;background:#fff;color:#182536;font-size:12px;font-weight:800;padding:8px 11px;border-radius:9px;white-space:nowrap;box-shadow:0 4px 15px #071a531c}
+.customerBottomNav{position:fixed;left:0;right:0;bottom:0;height:76px;background:#fff;border-top:1px solid #dfe6ee;z-index:75;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -5px 18px #071a5310}
+.customerBottomNav button{border:0;background:none;color:#5f7185;font-size:11px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.customerBottomNav button span{font-size:22px;line-height:1}
+.customerBottomNav button.active{color:#1769e0}
+.exchangeModalBox{max-width:560px!important;width:calc(100% - 24px)!important;display:block!important;padding:0!important;border-radius:22px!important;overflow:hidden}
+.exchangeHead{padding:25px 26px 18px;background:#071a35;color:#fff}
+.exchangeHead h2{margin:0 0 5px;font-size:28px}
+.exchangeHead p{margin:0;color:#cbd7e6;font-size:13px}
+.exchangeBody{padding:24px;background:#f7f9fc}
+.exchangeGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.exchangeRate{margin:14px 0;background:#eef5ff;border-radius:14px;padding:15px;color:#071a35;font-weight:800;text-align:center}
+.exchangeResult{background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:18px;text-align:center;margin-top:12px}
+.exchangeResult small{display:block;color:#718096;margin-bottom:6px}.exchangeResult strong{font-size:30px;color:#159447}
+@media(max-width:760px){
+ #dashboard .dashNav{padding:10px 14px}.dashUser>div:nth-child(2),.dashUser .btn{display:none}
+ #dashboard .grid{grid-template-columns:1fr 1fr}.grid .balance{grid-column:1/-1}.grid .stat:nth-child(3){grid-column:1/2}.grid .stat:nth-child(4){grid-column:2/3}
+ #dashboard .currencyBalances{grid-template-columns:1fr 1fr}.currencyCard{min-width:0}
+ #dashboard .columns{grid-template-columns:1fr}.servicesGrid{grid-template-columns:1fr 1fr!important}.profilePanel{grid-template-columns:1fr!important}
+ #dashboard .notificationCenter{right:68px;top:13px}.notificationBoard{right:-35px!important}
+ #dashboard .chatBtn{right:14px;bottom:88px}.chatBtn:after{display:none}
+ .exchangeGrid{grid-template-columns:1fr}.exchangeBody{padding:18px}
 }
-
 </style></head><body><div class="prototype">
 
 AMERICAN CREST BANK — FICTIONAL / DEMO BANKING APPLICATION
@@ -778,9 +613,9 @@ style="border:0;background:none;color:#fff;font-size:20px;padding:4px">
 
 </div></div><div class="currencyBalances" id="currencyBalances"></div><div class="columns"><div class="panel">
 
-<h3>Recent Activity</h3>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h3 style="margin-bottom:3px">Transaction History</h3><p style="margin:0;color:#718096;font-size:12px">All completed, pending and received transactions.</p></div><span id="historyCount" style="font-size:12px;font-weight:800;color:#1769e0"></span></div>
 
-<div id="transactions"></div>
+<div id="transactions" style="margin-top:18px"></div>
 
 </div><div class="panel">
 
@@ -1052,11 +887,11 @@ Sign In
 </div><div class="modal" id="transferModal"><div class="modalBox transferModalBox">
 <button class="transferClose" onclick="closeTransfer()" aria-label="Close">×</button>
 <div class="transferHeader"><h2>Send Money</h2><p>Send money to a person or bank account using a simple, secure transfer flow.</p></div>
-<div class="transferSteps"><span id="transferStep1" class="transferStep active"></span><span id="transferStep2" class="transferStep"></span><span id="transferStep3" class="transferStep"></span></div>
+<div class="transferSteps"><span id="transferStep1" class="transferStep active" aria-label="Step 1"></span><span id="transferStep2" class="transferStep" aria-label="Step 2"></span><span id="transferStep3" class="transferStep" aria-label="Step 3"></span></div>
 <div class="transferBody">
 <div class="error" id="transferError"></div>
 <div id="transferPanel1" class="transferPanel active">
-<div class="transferEyebrow">Step 1 of 3</div><h3 class="transferTitle">Who are you sending to?</h3><p class="transferSubtitle">Enter the recipient details. You can use an email address or bank account information.</p>
+<div class="transferEyebrow">Step 1 of 3</div><h3 class="transferTitle">Who are you sending to?</h3><p class="transferSubtitle">Enter the recipient's details. You can send to an email or a bank account.</p><div class="transferCard"><strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:5px">Recipient details</strong><span style="color:#718096;font-size:13px">Email delivery and transfer receipt are supported in this demo.</span></div>
 <div class="transferChoice"><button id="transferMethodPerson" type="button" class="active" onclick="setTransferMethod('person')">Person / account<small>Email, name and account details</small></button><button id="transferMethodBank" type="button" onclick="setTransferMethod('bank')">Bank transfer<small>Bank and destination details</small></button></div>
 <div class="transferGrid"><div class="transferField"><label>Recipient name</label><input id="transferRecipient" type="text" placeholder="Full recipient name"></div><div class="transferField"><label>Recipient email</label><input id="transferRecipientEmail" type="email" placeholder="name@example.com"></div></div>
 <div class="transferGrid"><div class="transferField"><label>Account number</label><input id="transferAccountNumber" type="text" inputmode="numeric" placeholder="Account number"></div><div class="transferField"><label>Country</label><select id="transferCountry"><option value="Nigeria">Nigeria</option><option value="United States">United States</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="South Africa">South Africa</option><option value="Ghana">Ghana</option><option value="Kenya">Kenya</option><option value="India">India</option><option value="Singapore">Singapore</option><option value="Malaysia">Malaysia</option><option value="Other">Other</option></select></div></div>
@@ -1065,9 +900,9 @@ Sign In
 <div class="transferActions"><button class="btn outline" type="button" onclick="closeTransfer()">Cancel</button><button class="btn primary" type="button" onclick="transferNext(2)">Continue</button></div>
 </div>
 <div id="transferPanel2" class="transferPanel">
-<div class="transferEyebrow">Step 2 of 3</div><h3 class="transferTitle">How much?</h3><p class="transferSubtitle">Choose the currency and enter the amount you want to send.</p>
+<div class="transferEyebrow">Step 2 of 3</div><h3 class="transferTitle">How much are you sending?</h3><p class="transferSubtitle">Choose where the money is coming from, select the receiving currency, and the exchange engine calculates the fee and converted amount automatically.</p>
 <div class="transferBalance"><span>Available balance</span><strong id="transferAvailableBalance">—</strong></div>
-<div class="transferField"><label>Currency</label><select id="transferCurrency"><option value="NGN">NGN — Nigerian Naira</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British Pound</option><option value="IDR">IDR — Indonesian Rupiah</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="CHF">CHF — Swiss Franc</option><option value="JPY">JPY — Japanese Yen</option><option value="CNY">CNY — Chinese Yuan</option><option value="INR">INR — Indian Rupee</option><option value="MYR">MYR — Malaysian Ringgit</option><option value="SGD">SGD — Singapore Dollar</option><option value="AED">AED — UAE Dirham</option><option value="ZAR">ZAR — South African Rand</option><option value="KES">KES — Kenyan Shilling</option><option value="GHS">GHS — Ghanaian Cedi</option></select></div>
+<div class="transferField"><label>Sending from</label><select id="transferFromCountry"><option value="Nigeria">Nigeria</option><option value="United Kingdom" selected>United Kingdom</option><option value="United States">United States</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="South Africa">South Africa</option><option value="Ghana">Ghana</option><option value="Kenya">Kenya</option><option value="India">India</option><option value="Singapore">Singapore</option><option value="Malaysia">Malaysia</option></select></div><div class="transferField"><label>Sending currency</label><select id="transferCurrency"><option value="GBP">GBP — British Pound</option><option value="NGN">NGN — Nigerian Naira</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="IDR">IDR — Indonesian Rupiah</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="CHF">CHF — Swiss Franc</option><option value="JPY">JPY — Japanese Yen</option><option value="CNY">CNY — Chinese Yuan</option><option value="INR">INR — Indian Rupee</option><option value="MYR">MYR — Malaysian Ringgit</option><option value="SGD">SGD — Singapore Dollar</option><option value="AED">AED — UAE Dirham</option><option value="ZAR">ZAR — South African Rand</option><option value="KES">KES — Kenyan Shilling</option><option value="GHS">GHS — Ghanaian Cedi</option></select></div>
 <div class="transferField"><label>Amount</label><div class="transferAmountBox"><span id="transferAmountCurrency">$</span><input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00"></div></div>
 <div class="transferField"><label>Note <span style="font-weight:normal;color:#718096">(optional)</span></label><textarea id="transferNote" placeholder="Add a note for the recipient"></textarea></div>
 <div class="transferActions"><button class="btn outline" type="button" onclick="transferNext(1)">Back</button><button class="btn primary" type="button" onclick="transferNext(3)">Review transfer</button></div>
@@ -1099,7 +934,7 @@ Sign In
 <div id="registrationVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
 <button id="registrationVerifyBtn" class="btn primary full" onclick="verifyRegistrationCode()">Verify &amp; Continue</button>
 </div>
-</div><div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
+</div><div class="modal" id="exchangeModal"><div class="modalBox exchangeModalBox"><button class="close" onclick="closeExchange()">×</button><div class="exchangeHead"><h2>Exchange Currency</h2><p>Convert between your available demo currencies.</p></div><div class="exchangeBody"><div class="exchangeGrid"><div class="field"><label>From</label><select id="exchangeFrom"></select></div><div class="field"><label>To</label><select id="exchangeTo"></select></div></div><div class="field"><label>Amount</label><input id="exchangeAmount" type="number" min="0.01" step="0.01" placeholder="0.00" oninput="calculateExchange()"></div><div id="exchangeRate" class="exchangeRate">Select currencies and enter an amount.</div><div class="exchangeResult"><small>You receive</small><strong id="exchangeResult">—</strong></div><div class="transferActions"><button class="btn outline" type="button" onclick="closeExchange()">Close</button><button class="btn primary" type="button" onclick="submitExchange()">Exchange</button></div></div></div></div><div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
 <h2 id="serviceTitle">Service</h2>
 
@@ -1115,7 +950,7 @@ Submit Demo Request
 
 </button></div>
 
-</div><button class="chatBtn" onclick="toggleChat()">?</button>
+</div><div class="customerBottomNav" aria-label="Customer navigation"><button class="active" onclick="customerNav('home')"><span>⌂</span>Home</button><button onclick="openTransfer()"><span>↑</span>Transfer</button><button onclick="openExchange()"><span>⇄</span>Exchange</button><button onclick="customerNav('history')"><span>◷</span>History</button><button onclick="toggleChat()"><span>◉</span>Support</button></div><button class="chatBtn" onclick="toggleChat()" aria-label="Customer Live Support" title="Customer Live Support">💬</button>
 
 <div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
 
@@ -2070,6 +1905,7 @@ if(!me)return;
 const list=Array.isArray(me.transactions)?me.transactions:[];
 
 $('txCount').textContent=list.length;
+if($('historyCount'))$('historyCount').textContent=list.length+' transaction'+(list.length===1?'':'s');
 
 if(!list.length){
 
@@ -2263,8 +2099,9 @@ $('transferBankName').value='';
 $('transferSwiftIban').value='';
 $('transferAccountType').value='Checking';
 $('transferCountry').value='Nigeria';
+if($('transferFromCountry'))$('transferFromCountry').value='United Kingdom';
 $('transferNote').value='';
-$('transferCurrency').value=me.primaryCurrency||me.primary_currency||'NGN';
+$('transferCurrency').value=me.primaryCurrency||me.primary_currency||'GBP';
 setTransferMethod('person');
 resetTransferSteps();
 updateTransferBalance();
@@ -3584,33 +3421,6 @@ $('dashboard').style.display='none';
 
 );
 
-</script>
-
-<style id="provide-support-left-position">
-/* Provide Support Live Chat — left side. Keep the existing American Crest support button on the right. */
-[class*="psmtc_"] {
-  position: fixed !important;
-  left: 18px !important;
-  right: auto !important;
-  bottom: 90px !important;
-  z-index: 2147483000 !important;
-}
-[class*="psmw_"] {
-  left: 18px !important;
-  right: auto !important;
-  bottom: 90px !important;
-  z-index: 2147483001 !important;
-}
-@media (max-width: 600px) {
-  [class*="psmtc_"] { left: 12px !important; bottom: 85px !important; }
-  [class*="psmw_"] { left: 12px !important; bottom: 85px !important; }
-}
-</style>
-
-<!-- BEGIN ProvideSupport.com Graphics Chat Button Code -->
-<script>(function(D){function f(){function n(n,e){e=D.createElement("script");e.src="https://image.providesupport.com/"+n,D.body.appendChild(e)}n("js/0mg1rfn365kk30ovvzkpps7hpz/safe-standard-sync.js?ps_h=C6aM&ps_t="+Date.now()),n("sjs/static.js")}D.readyState=="complete"?f():window.addEventListener("load",f)})(document)</script><noscript><div style="display:inline"><a href="https://vm.providesupport.com/0mg1rfn365kk30ovvzkpps7hpz">Live Chat</a></div></noscript>
-<!-- END ProvideSupport.com Graphics Chat Button Code -->
-
-</body>
+</script></body>
 
 </html>
