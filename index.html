@@ -248,6 +248,12 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 @media(max-width:560px){.transferHeader{padding:24px 22px 18px}.transferSteps{padding:14px 22px 6px}.transferPanel{padding:20px 22px 14px}.transferFooter{padding:13px 22px}.transferHeader h2{font-size:27px}.transferSecure{display:none}.transferAmountRow{grid-template-columns:1fr}.transferTwoCol,.transferCountryRow,.transferExchangeGrid,.transferQuote{grid-template-columns:1fr}.transferSwap{display:none}.transferStep small{display:none}.transferStepLine{min-width:18px}.transferReviewLine{font-size:11px}}
 @media(max-width:560px){.transferHeader{padding:26px 22px 18px}.transferSteps{padding:15px 22px 5px}.transferPanel{padding:20px 22px 14px}.transferFooter{padding:13px 22px}.transferHeader h2{font-size:27px}.transferSecure{display:none}.transferAmountRow{grid-template-columns:1fr}.transferStep small{display:none}.transferStepLine{min-width:18px}.transferReviewLine{font-size:11px}}
 
+
+/* MOBILE-FRIENDLY STEP 1 ACTION — keeps the Next button visible and does not alter transfer logic */
+.transferStepAction{position:sticky;bottom:0;z-index:2;margin:18px -34px -18px;padding:14px 34px 18px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff 28%);display:flex;justify-content:flex-end}
+.transferStepActionBtn{width:100%;max-width:260px}
+@media(max-width:560px){.transferStepAction{margin:16px -22px -14px;padding:14px 22px 18px}.transferStepActionBtn{max-width:none;width:100%;font-size:15px;padding:15px 18px}}
+
 /* ADD-ON: standalone demo exchange engine + full transaction history */
 .exchangeCard{background:linear-gradient(135deg,#f7fbff,#edf4ff);border:1px solid #dce8f8;border-radius:16px;padding:18px;margin-top:18px}
 .exchangeCard h4{color:var(--navy);font-size:16px;margin-bottom:5px}.exchangeCard p{color:var(--muted);font-size:12px;line-height:1.5}
@@ -1085,7 +1091,7 @@ Sign In
 <div class="transferTwoCol"><div class="field transferField"><label>Recipient name</label><input id="transferRecipient" type="text" autocomplete="off" placeholder="Full name"></div><div class="field transferField"><label>Recipient email</label><input id="transferRecipientEmail" type="email" autocomplete="off" placeholder="name@example.com"></div></div>
 <div class="transferCountryRow"><div class="field transferField"><label>Recipient country</label><select id="transferRecipientCountry"><option value="Nigeria">Nigeria</option><option value="United States">United States</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="India">India</option><option value="Ghana">Ghana</option></select></div><div class="field transferField"><label>SWIFT / BIC <em>(optional)</em></label><input id="transferSwift" type="text" autocomplete="off" placeholder="e.g. ABCDUS33"></div></div>
 <div class="transferHint">For a person-to-person demo, the email is used as the recipient identifier. Bank details can be added for the later bank-transfer integration.</div>
-<button type="button" class="transferNextBtn" onclick="nextTransferStep(2)">Continue <span>→</span></button>
+<div class="transferStepAction"><button type="button" class="transferNextBtn transferStepActionBtn" onclick="nextTransferStep(2)">Next <span>→</span></button></div>
 </div>
 <div class="transferPanel hiddenTransferPanel" id="transferPanel2">
 <h3>How much are you sending?</h3><p class="transferPanelSub">Choose where the money is coming from, select the receiving currency, and the exchange engine calculates the fee and converted amount automatically.</p>
