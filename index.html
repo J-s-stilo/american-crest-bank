@@ -157,7 +157,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .field textarea{resize:vertical;min-height:90px}
 
 /* TRANSFER EXPERIENCE ADDITION — transfer section only */
-.transferModalBox{max-width:620px!important;width:100%!important;height:92vh!important;padding:0!important;border-radius:24px!important;overflow:hidden!important;background:#f7f9fc!important;display:flex!important;flex-direction:column!important;max-height:92vh!important;min-height:0!important}
+.transferModalBox{max-width:620px!important;padding:0!important;border-radius:24px!important;overflow:hidden!important;background:#f7f9fc!important;display:block!important}
 .transferHeader{padding:26px 28px 20px;background:#fff;border-bottom:1px solid #e8edf4;position:relative}
 .transferHeader h2{font-size:28px;margin:0 0 6px;color:var(--navy)}
 .transferHeader p{font-size:13px;color:var(--muted);line-height:1.5;margin:0;padding-right:35px}
@@ -165,7 +165,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .transferSteps{display:flex;gap:7px;padding:16px 28px;background:#fff}
 .transferStep{height:5px;flex:1;border-radius:99px;background:#e3e8ef;transition:.2s}
 .transferStep.active{background:var(--blue)}
-.transferBody{padding:24px 28px 28px;flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+.transferBody{padding:24px 28px 28px;max-height:70vh;overflow:auto}
 .transferPanel{display:none}.transferPanel.active{display:block}
 .transferEyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;font-weight:800;color:#1769e0;margin-bottom:8px}
 .transferTitle{font-size:22px;color:var(--navy);margin-bottom:6px}
@@ -190,7 +190,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .transferActions{display:flex;gap:10px;margin-top:18px}.transferActions .btn{flex:1}
 .transferSuccess{text-align:center;padding:8px 0 4px}.transferSuccessIcon{width:70px;height:70px;border-radius:50%;background:#e9f8ef;color:#159447;display:grid;place-items:center;font-size:34px;margin:0 auto 15px;font-weight:800}
 .transferReceipt{background:#fff;border:1px solid #e0e7ef;border-radius:16px;text-align:left;overflow:hidden;margin:20px 0}.transferReceiptTop{padding:16px 18px;background:#f7f9fc}.transferReceiptTop strong{display:block;color:var(--navy);font-size:15px}.transferReceiptTop span{font-size:11px;color:#718096}.transferStatus{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#fff4d6;color:#8a6710;font-size:11px;font-weight:800}.transferReceiptRows{padding:5px 18px 12px}.transferReceiptRow{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #edf1f5;font-size:12px}.transferReceiptRow:last-child{border-bottom:0}.transferReceiptRow span{color:#718096}.transferReceiptRow strong{text-align:right;color:#182536}
-@media(max-width:560px){.transferModalBox{border-radius:20px!important;height:94vh!important;max-height:94vh!important}.transferHeader{padding:22px 20px 17px}.transferSteps{padding:13px 20px}.transferBody{padding:20px;max-height:none;flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}.transferGrid,.transferChoice{grid-template-columns:1fr}.transferActions{flex-direction:column}.transferHeader h2{font-size:25px}}
+@media(max-width:560px){.transferModalBox{border-radius:20px!important}.transferHeader{padding:22px 20px 17px}.transferSteps{padding:13px 20px}.transferBody{padding:20px;max-height:74vh}.transferGrid,.transferChoice{grid-template-columns:1fr}.transferActions{flex-direction:column}.transferHeader h2{font-size:25px}}
 
 .error{display:none;background:#ffe8e8;color:#a21d1d;padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px}
 
@@ -230,7 +230,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 .stat h3{margin-top:7px}
 
-.columns{display:block;margin-top:18px}.columns .panel{margin-bottom:18px}.columns .panel:first-child{min-height:360px}
+.columns{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
 
 .panel{padding:24px}
 
@@ -778,9 +778,9 @@ style="border:0;background:none;color:#fff;font-size:20px;padding:4px">
 
 </div></div><div class="currencyBalances" id="currencyBalances"></div><div class="columns"><div class="panel">
 
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h3 style="margin-bottom:3px">Transaction History</h3><p style="margin:0;color:#718096;font-size:12px">All completed, pending and received transactions.</p></div><span id="historyCount" style="font-size:12px;font-weight:800;color:#1769e0"></span></div>
+<h3>Recent Activity</h3>
 
-<div id="transactions" style="margin-top:18px"></div>
+<div id="transactions"></div>
 
 </div><div class="panel">
 
@@ -1115,7 +1115,9 @@ Submit Demo Request
 
 </button></div>
 
-</div><div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
+</div><button class="chatBtn" onclick="toggleChat()">?</button>
+
+<div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
 
 <button
 
@@ -2068,7 +2070,6 @@ if(!me)return;
 const list=Array.isArray(me.transactions)?me.transactions:[];
 
 $('txCount').textContent=list.length;
-if($('historyCount'))$('historyCount').textContent=list.length+' transaction'+(list.length===1?'':'s');
 
 if(!list.length){
 
@@ -3584,29 +3585,30 @@ $('dashboard').style.display='none';
 );
 
 </script>
-<style id="provide-support-right-position">
-/* Provide Support Live Chat — right side. Existing American Crest Customer Support remains available after login. */
+
+<style id="provide-support-left-position">
+/* Provide Support Live Chat — left side. Keep the existing American Crest support button on the right. */
 [class*="psmtc_"] {
   position: fixed !important;
-  right: 20px !important;
-  left: auto !important;
-  bottom: 20px !important;
+  left: 18px !important;
+  right: auto !important;
+  bottom: 90px !important;
   z-index: 2147483000 !important;
 }
 [class*="psmw_"] {
-  right: 20px !important;
-  left: auto !important;
-  bottom: 85px !important;
+  left: 18px !important;
+  right: auto !important;
+  bottom: 90px !important;
   z-index: 2147483001 !important;
 }
 @media (max-width: 600px) {
-  [class*="psmtc_"] { right: 14px !important; bottom: 85px !important; left: auto !important; }
-  [class*="psmw_"] { right: 14px !important; bottom: 150px !important; left: auto !important; }
+  [class*="psmtc_"] { left: 12px !important; bottom: 85px !important; }
+  [class*="psmw_"] { left: 12px !important; bottom: 85px !important; }
 }
 </style>
 
 <!-- BEGIN ProvideSupport.com Graphics Chat Button Code -->
-<script>(function(D){function f(){function n(n,e){e=D.createElement("script");e.src="https://image.providesupport.com/"+n,D.body.appendChild(e)}n("js/0mg1rfn365kk30ovvzkpps7hpz/safe-standard-sync.js?ps_h=C6aM&ps_t="+Date.now()),n("sjs/static.js")}D.readyState=="complete"?f():window.addEventListener("load",f)})(document)</script><noscript><div style="display:inline"><a href="https://vm.providesupport.com/0mg1rfn365kk30ovvzkpps7hpz">Customer Live Support</a></div></noscript>
+<script>(function(D){function f(){function n(n,e){e=D.createElement("script");e.src="https://image.providesupport.com/"+n,D.body.appendChild(e)}n("js/0mg1rfn365kk30ovvzkpps7hpz/safe-standard-sync.js?ps_h=C6aM&ps_t="+Date.now()),n("sjs/static.js")}D.readyState=="complete"?f():window.addEventListener("load",f)})(document)</script><noscript><div style="display:inline"><a href="https://vm.providesupport.com/0mg1rfn365kk30ovvzkpps7hpz">Live Chat</a></div></noscript>
 <!-- END ProvideSupport.com Graphics Chat Button Code -->
 
 </body>
