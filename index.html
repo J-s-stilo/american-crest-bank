@@ -213,6 +213,53 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 .empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
 
+
+/* PAYPAL-STYLE TRANSFER UI — presentation layer only; existing transfer IDs/API preserved */
+.transferPayPalModal{background:rgba(7,26,53,.72);backdrop-filter:blur(5px);padding:16px;align-items:center;justify-content:center}
+.transferPayPalBox{width:min(680px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:24px;box-shadow:0 28px 80px rgba(7,26,53,.28);position:relative;color:#0b2340}
+.transferClose{position:absolute;right:18px;top:16px;width:38px;height:38px;border:0;border-radius:50%;background:#f2f5f9;color:#526276;font-size:25px;line-height:1;z-index:3;cursor:pointer}
+.transferHeader{padding:30px 34px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid #e8edf3}
+.transferEyebrow{font-size:11px;font-weight:800;letter-spacing:1.8px;color:#1670e8;margin-bottom:7px}
+.transferHeader h2{font-size:31px;line-height:1.08;margin:0 0 7px;color:#071a35}
+.transferHeader p{margin:0;color:#66778a;font-size:14px}
+.transferSecure{background:#eef7f0;color:#19733a;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:800;white-space:nowrap}
+.transferSteps{display:flex;align-items:center;padding:18px 34px 8px;gap:8px}
+.transferStep{display:flex;align-items:center;gap:7px;color:#9aa7b5;font-size:11px;font-weight:800;white-space:nowrap}.transferStep span{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#edf1f5;color:#718094}.transferStep.active,.transferStep.done{color:#1769e0}.transferStep.active span,.transferStep.done span{background:#1769e0;color:#fff}.transferStepLine{height:2px;background:#e5eaf0;flex:1}.transferPanel{padding:24px 34px 16px}.hiddenTransferPanel{display:none}.transferPanelIcon,.transferReviewIcon{width:50px;height:50px;border-radius:15px;background:#eaf2ff;color:#1769e0;display:grid;place-items:center;font-size:23px;font-weight:900;margin-bottom:16px}.transferReviewIcon{background:#eaf8f0;color:#198754}.transferPanel h3{font-size:23px;margin:0 0 6px;color:#071a35}.transferPanelSub{margin:0 0 20px;color:#6b7b8e;font-size:13px;line-height:1.5}.transferRecipientCard{display:flex;align-items:center;gap:12px;border:1px solid #dfe6ee;background:#f8fafc;border-radius:15px;padding:13px;margin-bottom:16px}.transferRecipientIcon{width:40px;height:40px;border-radius:50%;background:#fff;color:#1769e0;display:grid;place-items:center;font-weight:900;border:1px solid #d9e4f2}.transferRecipientCard strong,.transferRecipientCard span{display:block}.transferRecipientCard strong{font-size:12px}.transferRecipientCard span{font-size:11px;color:#718094;margin-top:2px}.transferField{margin-bottom:13px}.transferField label{font-size:12px;color:#273b52}.transferField label em{font-style:normal;color:#8794a3;font-weight:500}.transferField input,.transferField select,.transferField textarea{border:1px solid #cfd9e4;border-radius:12px;padding:14px 15px;background:#fff;font-size:14px}.transferField textarea{min-height:78px}.transferHint{font-size:11px;color:#8492a1;margin:-2px 0 17px}.transferNextBtn{border:0;border-radius:12px;background:#1769e0;color:#fff;font-weight:800;font-size:14px;padding:14px 18px;min-width:145px;cursor:pointer;box-shadow:0 8px 20px rgba(23,105,224,.18)}.transferNextBtn span{margin-left:8px}.transferBalanceCard{display:flex;justify-content:space-between;align-items:center;background:#f3f7fc;border:1px solid #dfe8f2;border-radius:15px;padding:15px 17px;margin-bottom:17px}.transferBalanceCard span{display:block;font-size:11px;color:#748397}.transferBalanceCard strong{display:block;font-size:21px;color:#071a35;margin-top:3px}.transferBalanceLabel{font-size:9px!important;font-weight:900;letter-spacing:1px;color:#1769e0!important}.transferAmountRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}.transferMoneyInput{position:relative}.transferMoneyInput span{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-weight:800;color:#738297;z-index:1}.transferMoneyInput input{padding-left:34px!important}.transferFeeRow{display:flex;justify-content:space-between;align-items:center;padding:10px 0 13px;color:#6e7e90;font-size:11px;border-top:1px solid #edf1f5}.transferFeeRow strong{color:#1769e0}.transferNav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:7px}.transferBackBtn{border:1px solid #d5dee8;background:#fff;color:#1e344d;border-radius:12px;padding:13px 17px;font-weight:800;cursor:pointer}.transferSendBtn{min-width:170px}.transferReviewCard{border:1px solid #dce5ee;border-radius:16px;overflow:hidden;margin:18px 0 13px}.transferReviewLine{display:flex;justify-content:space-between;gap:20px;padding:13px 15px;border-bottom:1px solid #edf1f5;font-size:12px}.transferReviewLine span{color:#718094}.transferReviewLine strong{text-align:right;color:#142b45;max-width:65%;word-break:break-word}.transferReviewLine.total{background:#f5f8fc;border-bottom:0;padding:16px 15px}.transferReviewLine.total strong{font-size:18px;color:#1769e0}.transferProcessingNote{background:#f7faff;border:1px solid #dfe9f7;color:#60738a;border-radius:12px;padding:11px 13px;font-size:11px;line-height:1.5;margin-bottom:15px}.transferFooter{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #edf1f5;padding:14px 34px;color:#8a97a6;font-size:10px}.transferFooter button{border:0;background:none;color:#68798b;font-weight:700;cursor:pointer}.transferErrorWrap{padding:0 34px}.transferErrorWrap .error{margin:12px 0 0}.transferPayPalBox .loadingBtn{opacity:.7;pointer-events:none}
+
+.transferPayPalBox{max-width:620px;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 24px 70px rgba(7,26,53,.22)}
+.transferHeader{padding:28px 34px 22px;background:linear-gradient(180deg,#fff 0%,#fbfdff 100%);border-bottom:1px solid #e8edf3}
+.transferHeader h2{font-size:30px;letter-spacing:-.5px}.transferHeader p{font-size:14px;line-height:1.55}.transferEyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#1769e0;margin-bottom:7px}
+.transferSecure{padding:7px 10px;border-radius:999px;background:#eef6ff;color:#1769e0;font-size:11px;font-weight:800}
+.transferSteps{padding:16px 34px 8px;background:#fff}
+.transferPanel{padding:24px 34px 18px}.transferPanelIcon{display:none}
+.transferPanel h3{font-size:24px;letter-spacing:-.3px}.transferPanelSub{font-size:13px;margin-bottom:18px}
+.transferField{margin-bottom:15px}.transferField label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;margin-bottom:7px;color:#26384d}
+.transferField input,.transferField select,.transferField textarea{width:100%;min-height:50px;border:1px solid #cfd9e4;border-radius:12px;padding:13px 14px;background:#fff;font-size:14px;color:#172a40;outline:none}
+.transferField input:focus,.transferField select:focus,.transferField textarea:focus{border-color:#1769e0;box-shadow:0 0 0 3px rgba(23,105,224,.10)}
+.transferField textarea{min-height:78px;resize:vertical}.transferHint{margin:0 0 17px;color:#7b8a9a}
+.transferTwoCol{display:grid;grid-template-columns:1fr 1fr;gap:12px}.transferCountryRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.transferRecipientCard{background:#f7faff;border-color:#dce8f8;padding:14px;margin-bottom:18px}.transferRecipientIcon{background:#fff;color:#1769e0}
+.transferExchangeCard{border:1px solid #d9e6f6;background:#f7faff;border-radius:16px;padding:15px;margin:8px 0 17px}
+.transferExchangeHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.transferExchangeHead strong{font-size:12px;color:#17314e}.transferExchangeHead span{font-size:10px;font-weight:800;color:#1769e0}
+.transferExchangeGrid{display:grid;grid-template-columns:1fr 42px 1fr;gap:9px;align-items:end}.transferSwap{width:42px;height:42px;border-radius:50%;border:1px solid #cfe0f5;background:#fff;color:#1769e0;font-weight:900;cursor:pointer}
+.transferQuote{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}.transferQuoteBox{background:#fff;border:1px solid #e3eaf2;border-radius:11px;padding:9px}.transferQuoteBox small{display:block;color:#7a8998;font-size:9px;margin-bottom:3px}.transferQuoteBox strong{display:block;color:#102943;font-size:12px;word-break:break-word}
+.transferBalanceCard{margin-bottom:15px}.transferFeeRow{border-top:0;border-bottom:1px solid #edf1f5;padding:10px 0 12px;margin-top:-3px}.transferNav{margin-top:10px}.transferNextBtn{border-radius:999px;min-width:150px}.transferBackBtn{border-radius:999px}
+.transferReviewCard{margin:16px 0 13px}.transferReviewLine strong{max-width:70%}.transferProcessingNote{border-radius:12px}
+@media(max-width:560px){.transferHeader{padding:24px 22px 18px}.transferSteps{padding:14px 22px 6px}.transferPanel{padding:20px 22px 14px}.transferFooter{padding:13px 22px}.transferHeader h2{font-size:27px}.transferSecure{display:none}.transferAmountRow{grid-template-columns:1fr}.transferTwoCol,.transferCountryRow,.transferExchangeGrid,.transferQuote{grid-template-columns:1fr}.transferSwap{display:none}.transferStep small{display:none}.transferStepLine{min-width:18px}.transferReviewLine{font-size:11px}}
+@media(max-width:560px){.transferHeader{padding:26px 22px 18px}.transferSteps{padding:15px 22px 5px}.transferPanel{padding:20px 22px 14px}.transferFooter{padding:13px 22px}.transferHeader h2{font-size:27px}.transferSecure{display:none}.transferAmountRow{grid-template-columns:1fr}.transferStep small{display:none}.transferStepLine{min-width:18px}.transferReviewLine{font-size:11px}}
+
+/* MOBILE SCROLL FIX — transfer modal only; keeps the approved design and makes all step-2/3 content reachable */
+@media(max-width:560px){
+  .transferPayPalModal{align-items:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:16px;}
+  .transferPayPalBox{height:calc(100vh - 32px);max-height:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;}
+}
+
+
+/* MOBILE-FRIENDLY STEP 1 ACTION — keeps the Next button visible and does not alter transfer logic */
+.transferStepAction{position:sticky;bottom:0;z-index:2;margin:18px -34px -18px;padding:14px 34px 18px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff 28%);display:flex;justify-content:flex-end}
+.transferStepActionBtn{width:100%;max-width:260px}
+@media(max-width:560px){.transferStepAction{margin:16px -22px -14px;padding:14px 22px 18px}.transferStepActionBtn{max-width:none;width:100%;font-size:15px;padding:15px 18px}}
+
 /* ADD-ON: standalone demo exchange engine + full transaction history */
 .exchangeCard{background:linear-gradient(135deg,#f7fbff,#edf4ff);border:1px solid #dce8f8;border-radius:16px;padding:18px;margin-top:18px}
 .exchangeCard h4{color:var(--navy);font-size:16px;margin-bottom:5px}.exchangeCard p{color:var(--muted);font-size:12px;line-height:1.5}
@@ -416,7 +463,44 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 
 .receiptPaper{background:#fff;border:1px solid #dbe3ee;border-radius:18px;max-width:520px;margin:0 auto;box-shadow:0 18px 45px rgba(15,35,65,.16);overflow:hidden}.receiptTop{padding:22px 24px 16px;border-bottom:1px dashed #cbd5e1;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.receiptBrand{font-weight:800;color:var(--navy);letter-spacing:.3px}.receiptBrand small{display:block;font-weight:500;color:#64748b;margin-top:4px;letter-spacing:0}.receiptStatus{padding:7px 10px;border-radius:999px;background:#fff7ed;color:#b45309;font-size:12px;font-weight:800;white-space:nowrap}.receiptBody{padding:22px 24px}.receiptTitle{text-align:center;margin-bottom:20px}.receiptTitle .check{width:46px;height:46px;border-radius:50%;background:#eefbf3;color:#16803c;display:grid;place-items:center;margin:0 auto 10px;font-size:22px;font-weight:800}.receiptTitle h3{margin:0;color:var(--navy);font-size:20px}.receiptTitle p{margin:5px 0 0;color:#64748b;font-size:13px}.receiptAmount{text-align:center;background:#f7f9fc;border-radius:14px;padding:16px;margin-bottom:18px}.receiptAmount small{display:block;color:#64748b;font-size:12px}.receiptAmount strong{display:block;color:var(--navy);font-size:28px;margin-top:3px}.receiptGrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#e5eaf1;border:1px solid #e5eaf1;border-radius:12px;overflow:hidden}.receiptItem{background:#fff;padding:12px}.receiptItem small{display:block;color:#64748b;font-size:11px;margin-bottom:4px}.receiptItem strong{display:block;color:#1e293b;font-size:13px;word-break:break-word}.receiptNote{margin-top:14px;padding:12px;border-radius:10px;background:#f8fafc;color:#475569;font-size:12px}.receiptRef{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px;word-break:break-all}.receiptActions{display:flex;gap:10px;padding:16px 24px 22px;border-top:1px dashed #cbd5e1}.receiptActions button{flex:1}@media(max-width:520px){.receiptGrid{grid-template-columns:1fr}.receiptTop,.receiptBody,.receiptActions{padding-left:17px;padding-right:17px}}
-</style></head><body><div class="prototype">
+</style>
+<style id="transfer-scroll-final-fix">
+/* Transfer modal only: preserve the approved 3-stage design and make the modal itself scrollable. */
+.transferPayPalModal{
+  overflow:hidden;
+}
+.transferPayPalBox{
+  width:min(680px,100%);
+  max-height:calc(100dvh - 32px);
+  height:auto;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  touch-action:pan-y;
+}
+/* Match the supplied Stage-2 reference on phone-sized screens: each field spans the modal width. */
+@media (max-width:800px){
+  .transferPayPalModal{
+    align-items:flex-start;
+    justify-content:center;
+    padding:16px;
+  }
+  .transferPayPalBox{
+    width:100%;
+    max-width:680px;
+    max-height:calc(100dvh - 32px);
+  }
+  .transferCountryRow,
+  .transferTwoCol,
+  .transferExchangeGrid,
+  .transferQuote{
+    grid-template-columns:1fr;
+  }
+  .transferSwap{display:none;}
+}
+</style>
+</head><body><div class="prototype">
 
 AMERICAN CREST BANK — FICTIONAL / DEMO BANKING APPLICATION
 
@@ -1040,77 +1124,34 @@ Sign In
 <div class="historyTotals"><div class="historyTotal"><small>Total credited</small><strong id="historyCreditTotal">—</strong></div><div class="historyTotal"><small>Total debited</small><strong id="historyDebitTotal">—</strong></div></div>
 <div class="historyByCurrency" id="historyCurrencyTotals"></div><div class="historyList" id="historyList"></div>
 <div class="historyDetail" id="historyDetail"><strong style="color:var(--navy)">Transaction details</strong><div class="historyDetailGrid" id="historyDetailGrid"></div></div></div></div>
-<div class="modal" id="transferModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeTransfer()">×</button>
-
-<h2>Send Money</h2>
-
-<p>Create a demo transaction using your available currency balance.</p><div class="error" id="transferError"></div><div class="field">
-
-<label>Currency</label>
-
-<select id="transferCurrency">
-
-<option value="NGN">NGN — Nigerian Naira</option>
-
-<option value="USD">USD — US Dollar</option>
-
-<option value="EUR">EUR — Euro</option>
-
-<option value="GBP">GBP — British Pound</option>
-
-<option value="IDR">IDR — Indonesian Rupiah</option>
-
-<option value="CAD">CAD — Canadian Dollar</option>
-
-<option value="AUD">AUD — Australian Dollar</option>
-
-<option value="CHF">CHF — Swiss Franc</option>
-
-<option value="JPY">JPY — Japanese Yen</option>
-
-<option value="CNY">CNY — Chinese Yuan</option>
-
-<option value="INR">INR — Indian Rupee</option>
-
-<option value="MYR">MYR — Malaysian Ringgit</option>
-
-<option value="SGD">SGD — Singapore Dollar</option>
-
-<option value="AED">AED — UAE Dirham</option>
-
-<option value="ZAR">ZAR — South African Rand</option>
-
-<option value="KES">KES — Kenyan Shilling</option>
-
-<option value="GHS">GHS — Ghanaian Cedi</option>
-
-</select>
-
-</div><div class="field">
-
-<label>Amount</label>
-
-<input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00">
-
-</div><div class="field">
-
-<label>Recipient</label>
-
-<input id="transferRecipient" type="text" placeholder="Recipient name">
-
-</div><div class="field">
-
-<label>Note</label>
-
-<textarea id="transferNote" placeholder="Optional note"></textarea>
-
-</div><button id="transferBtn" class="btn primary full" onclick="transfer()">
-
-Continue
-
-</button></div>
-
-</div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Demo</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting administrator approval.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+<div class="modal transferPayPalModal" id="transferModal"><div class="transferPayPalBox"><button class="transferClose" onclick="closeTransfer()" aria-label="Close">×</button>
+<div class="transferHeader"><div><div class="transferEyebrow">PAYMENTS</div><h2>Send Money</h2><p>Send money securely to a person or bank account.</p></div><div class="transferSecure">🔒 Secure</div></div>
+<div class="transferSteps"><div class="transferStep active" id="transferStepDot1"><span>1</span><small>Recipient</small></div><div class="transferStepLine"></div><div class="transferStep" id="transferStepDot2"><span>2</span><small>Transfer details</small></div><div class="transferStepLine"></div><div class="transferStep" id="transferStepDot3"><span>3</span><small>Review</small></div></div>
+<div class="transferErrorWrap"><div class="error" id="transferError"></div></div>
+<div class="transferPanel" id="transferPanel1">
+<h3>Who are you sending to?</h3><p class="transferPanelSub">Enter the recipient's details. You can send to an email or a bank account.</p>
+<div class="transferRecipientCard"><div class="transferRecipientIcon">@</div><div><strong>Recipient details</strong><span>Email delivery and transfer receipt are supported in this demo.</span></div></div>
+<div class="transferTwoCol"><div class="field transferField"><label>Recipient name</label><input id="transferRecipient" type="text" autocomplete="off" placeholder="Full name"></div><div class="field transferField"><label>Recipient email</label><input id="transferRecipientEmail" type="email" autocomplete="off" placeholder="name@example.com"></div></div>
+<div class="transferCountryRow"><div class="field transferField"><label>Recipient country</label><select id="transferRecipientCountry"><option value="Nigeria">Nigeria</option><option value="United States">United States</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="India">India</option><option value="Ghana">Ghana</option></select></div><div class="field transferField"><label>SWIFT / BIC <em>(optional)</em></label><input id="transferSwift" type="text" autocomplete="off" placeholder="e.g. ABCDUS33"></div></div>
+<div class="transferHint">For a person-to-person demo, the email is used as the recipient identifier. Bank details can be added for the later bank-transfer integration.</div>
+<div class="transferStepAction"><button type="button" class="transferNextBtn transferStepActionBtn" onclick="nextTransferStep(2)">Next <span>→</span></button></div>
+</div>
+<div class="transferPanel hiddenTransferPanel" id="transferPanel2">
+<h3>How much are you sending?</h3><p class="transferPanelSub">Choose where the money is coming from, select the receiving currency, and the exchange engine calculates the fee and converted amount automatically.</p>
+<div class="transferCountryRow"><div class="field transferField"><label>Sending from</label><select id="transferFromCountry"><option value="Nigeria">Nigeria</option><option value="United States">United States</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="India">India</option><option value="Ghana">Ghana</option></select></div><div class="field transferField"><label>Sending currency</label><select id="transferCurrency"><option value="NGN">NGN — Nigerian Naira</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British Pound</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="CHF">CHF — Swiss Franc</option><option value="JPY">JPY — Japanese Yen</option><option value="CNY">CNY — Chinese Yuan</option><option value="INR">INR — Indian Rupee</option><option value="AED">AED — UAE Dirham</option><option value="ZAR">ZAR — South African Rand</option><option value="GHS">GHS — Ghanaian Cedi</option></select></div></div>
+<div class="field transferField"><label>Amount</label><div class="transferMoneyInput"><span id="transferCurrencySymbol">₦</span><input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00"></div></div>
+<div class="transferExchangeCard"><div class="transferExchangeHead"><strong>Currency conversion</strong><span id="transferExchangeStatus">Automatic calculation</span></div><div class="transferExchangeGrid"><div class="field transferField"><label>Receive currency</label><select id="transferToCurrency"><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British Pound</option><option value="NGN">NGN — Nigerian Naira</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="CHF">CHF — Swiss Franc</option><option value="JPY">JPY — Japanese Yen</option><option value="CNY">CNY — Chinese Yuan</option><option value="INR">INR — Indian Rupee</option><option value="AED">AED — UAE Dirham</option><option value="ZAR">ZAR — South African Rand</option><option value="GHS">GHS — Ghanaian Cedi</option></select></div><button type="button" class="transferSwap" onclick="swapTransferCurrencies()" aria-label="Swap currencies">⇄</button><div class="transferQuoteBox"><small>Exchange rate</small><strong id="transferRatePreview">—</strong></div></div><div class="transferQuote"><div class="transferQuoteBox"><small>Exchange fee</small><strong id="transferFeePreview">—</strong></div><div class="transferQuoteBox"><small>You receive</small><strong id="transferReceivePreview">—</strong></div><div class="transferQuoteBox"><small>Conversion</small><strong id="transferNetPreview">—</strong></div></div></div>
+<div class="field transferField"><label>Note <em>(optional)</em></label><textarea id="transferNote" placeholder="Add a message for the recipient"></textarea></div>
+<div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(1)">← Back</button><button type="button" class="transferNextBtn" onclick="nextTransferStep(3)">Review <span>→</span></button></div>
+</div>
+<div class="transferPanel hiddenTransferPanel" id="transferPanel3">
+<div class="transferReviewIcon">✓</div><h3>Review your transfer</h3><p class="transferPanelSub">Check the recipient, exchange details, fee and final amount before sending.</p>
+<div class="transferReviewCard"><div class="transferReviewLine"><span>Recipient</span><strong id="transferReviewRecipient">—</strong></div><div class="transferReviewLine"><span>Email</span><strong id="transferReviewEmail">—</strong></div><div class="transferReviewLine"><span>Country / SWIFT</span><strong id="transferReviewBank">—</strong></div><div class="transferReviewLine"><span>Sending</span><strong id="transferReviewAmount">—</strong></div><div class="transferReviewLine"><span>Exchange fee</span><strong id="transferReviewFee">—</strong></div><div class="transferReviewLine"><span>Recipient receives</span><strong id="transferReviewReceive">—</strong></div><div class="transferReviewLine"><span>Note</span><strong id="transferReviewNote">No note</strong></div><div class="transferReviewLine total"><span>Status after sending</span><strong>PROCESSING</strong></div></div>
+<div class="transferProcessingNote">Your transfer is submitted as <strong>Processing</strong>. The demo administrator can approve or reject it. Once approved, the transaction becomes <strong>Successful</strong> and the receipt can be viewed from Transaction History.</div>
+<div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(2)">← Back</button><button id="transferBtn" type="button" class="transferNextBtn transferSendBtn" onclick="transfer()">Send Money <span>→</span></button></div>
+</div>
+<div class="transferFooter"><span>🔒 Demo payment protection</span><button type="button" onclick="closeTransfer()">Cancel</button></div>
+</div></div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Demo</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting administrator approval.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
 <h2>Verify Sign In</h2>
 <p>Enter the 6-digit demo verification code to continue.</p>
 <div class="error" id="loginVerifyError"></div>
@@ -2236,128 +2277,59 @@ TRANSFER
 */
 
 function openTransfer(){
-
-if(!me){
-
-return openModal('login');
-
-}
-
+if(!me){return openModal('login');}
 clearError('transferError');
-
-$('transferAmount').value='';
-
-$('transferRecipient').value='';
-
-$('transferNote').value='';
-
-$('transferCurrency').value=
-
-me.primaryCurrency||
-
-me.primary_currency||
-
-'NGN';
-
-$('transferModal').classList.add('show');
-
+$('transferAmount').value='';$('transferRecipient').value='';$('transferRecipientEmail').value='';$('transferSwift').value='';$('transferNote').value='';
+$('transferCurrency').value=me.primaryCurrency||me.primary_currency||'NGN';
+$('transferToCurrency').value=($('transferCurrency').value==='EUR'?'USD':'EUR');
+$('transferModal').classList.add('show');showTransferStep(1);updateTransferCurrencySymbol();updateTransferExchangeQuote();
 }
-
-function closeTransfer(){
-
-$('transferModal').classList.remove('show');
-
+function closeTransfer(){$('transferModal').classList.remove('show');}
+function updateTransferBalancePreview(){}
+function updateTransferCurrencySymbol(){
+ const currency=$('transferCurrency')?.value||'USD';const info=CURRENCY_INFO[currency]||CURRENCY_INFO.USD;const el=$('transferCurrencySymbol');if(el)el.textContent=info.symbol;updateTransferExchangeQuote();
 }
-
+function transferCurrencyName(code){return (CURRENCY_INFO[code]&&CURRENCY_INFO[code].name)||code;}
+function updateTransferExchangeQuote(){
+ const from=$('transferCurrency')?.value||'USD',to=$('transferToCurrency')?.value||'EUR',amount=Number($('transferAmount')?.value||0);
+ const fromRate=DEMO_EXCHANGE_RATES[from]??1,toRate=DEMO_EXCHANGE_RATES[to]??1,rate=toRate/fromRate,fee=Math.max(0,amount*DEMO_EXCHANGE_FEE_RATE),net=Math.max(0,amount-fee),converted=net*rate;
+ window.currentTransferQuote={from,to,amount,fee,net,converted,rate};
+ if($('transferRatePreview'))$('transferRatePreview').textContent=`1 ${from} = ${rate.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}`;
+ if($('transferFeePreview'))$('transferFeePreview').textContent=money(fee,from);
+ if($('transferReceivePreview'))$('transferReceivePreview').textContent=amount>0?money(converted,to):money(0,to);
+ if($('transferNetPreview'))$('transferNetPreview').textContent=amount>0?money(net,from):money(0,from);
+ if($('transferExchangeStatus'))$('transferExchangeStatus').textContent=amount>0?'Live demo quote':'Automatic calculation';
+ return window.currentTransferQuote;
+}
+function swapTransferCurrencies(){const a=$('transferCurrency'),b=$('transferToCurrency');if(!a||!b)return;const v=a.value;a.value=b.value;b.value=v;updateTransferCurrencySymbol();}
+function showTransferStep(step){
+ [1,2,3].forEach(n=>{const panel=$('transferPanel'+n);if(panel)panel.classList.toggle('hiddenTransferPanel',n!==step);const dot=$('transferStepDot'+n);if(dot){dot.classList.toggle('active',n===step);dot.classList.toggle('done',n<step);}});
+ if(step===2)updateTransferExchangeQuote();
+ if(step===3){
+  const q=updateTransferExchangeQuote(), recipient=$('transferRecipient').value.trim(), email=$('transferRecipientEmail').value.trim(), country=$('transferRecipientCountry').value, swift=$('transferSwift').value.trim();
+  $('transferReviewRecipient').textContent=recipient||'—';$('transferReviewEmail').textContent=email||'—';$('transferReviewBank').textContent=swift?`${country} · ${swift}`:country||'—';
+  $('transferReviewAmount').textContent=q.amount>0?money(q.amount,q.from):'—';$('transferReviewFee').textContent=q.amount>0?money(q.fee,q.from):'—';$('transferReviewReceive').textContent=q.amount>0?money(q.converted,q.to):'—';$('transferReviewNote').textContent=$('transferNote').value.trim()||'No note';
+ }
+}
+function nextTransferStep(step){
+ clearError('transferError');
+ if(step===2){if(($('transferRecipient').value||'').trim().length<2)return showError('transferError','Enter the recipient name.');const email=($('transferRecipientEmail').value||'').trim();if(!email||!/^\S+@\S+\.\S+$/.test(email))return showError('transferError','Enter a valid recipient email.');}
+ if(step===3){const amount=Number($('transferAmount').value||0);if(!amount||amount<=0)return showError('transferError','Enter a valid amount.');if($('transferCurrency').value===$('transferToCurrency').value)return showError('transferError','Choose a different receiving currency for conversion.');}
+ showTransferStep(step);
+}
 async function transfer(){
-
-const buttonId='transferBtn';
-
-if($(buttonId).disabled)return;
-
-const currency=$('transferCurrency').value;
-
-const amount=Number($('transferAmount').value);
-
-const recipient=$('transferRecipient').value.trim();
-
-const note=$('transferNote').value.trim();
-
-clearError('transferError');
-
-if(!amount||amount<=0){
-
-return showError('transferError','Enter a valid amount.');
-
+ const buttonId='transferBtn';if($(buttonId).disabled)return;const q=updateTransferExchangeQuote();const currency=q.from,amount=Number($('transferAmount').value),recipient=$('transferRecipient').value.trim(),recipientEmail=$('transferRecipientEmail').value.trim(),recipientCountry=$('transferRecipientCountry').value,swift=$('transferSwift').value.trim(),note=$('transferNote').value.trim();clearError('transferError');
+ if(!amount||amount<=0)return showError('transferError','Enter a valid amount.');if(recipient.length<2)return showError('transferError','Enter the recipient name.');if(!/^\S+@\S+\.\S+$/.test(recipientEmail))return showError('transferError','Enter a valid recipient email.');
+ setLoading(buttonId,true,'Sending');
+ try{
+  const data=await api('/requests',{method:'POST',body:JSON.stringify({currency,amount,recipient,recipient_email:recipientEmail,recipient_country:recipientCountry,swift_code:swift,from_currency:q.from,to_currency:q.to,exchange_rate:q.rate,exchange_fee:q.fee,converted_amount:q.converted,note})});
+  if(data.user)me=data.user;closeTransfer();refreshDashboard(false);openReceipt({id:data.request?.id||data.id||data.request_id||'',status:data.request?.status||data.status||'pending',amount,currency,recipient,note,date:data.request?.created_at||data.created_at||new Date().toISOString(),recipientEmail,recipientCountry,swift,toCurrency:q.to,exchangeFee:q.fee,convertedAmount:q.converted});
+  if(String(me.role||'').toLowerCase()==='admin')refreshAdmin(false);toast('Transfer submitted for administrator approval.');
+ }catch(error){showError('transferError',error.message||'Unable to send request.');}finally{setLoading(buttonId,false);}
 }
-
-if(recipient.length<2){
-
-return showError('transferError','Enter the recipient name.');
-
-}
-
-setLoading(buttonId,true,'Sending');
-
-try{
-
-const data=await api(
-
-'/requests',
-
-{
-
-method:'POST',
-
-body:JSON.stringify({
-
-currency,
-
-amount,
-
-recipient,
-
-note
-
-})
-
-}
-
-);
-
-if(data.user)me=data.user;
-
-closeTransfer();
-
-refreshDashboard(false);
-
-openReceipt({id:data.request?.id||data.id||data.request_id||'',status:data.request?.status||data.status||'pending',amount,currency,recipient,note,date:data.request?.created_at||data.created_at||new Date().toISOString()});
-
-if(String(me.role||'').toLowerCase()==='admin'){
-
-refreshAdmin(false);
-
-}
-
-toast('Request sent to the demo administrator.');
-
-}catch(error){
-
-showError(
-
-'transferError',
-
-error.message||'Unable to send request.'
-
-);
-
-}finally{
-
-setLoading(buttonId,false);
-
-}
-
-}
+const transferCurrencySelect=$('transferCurrency');if(transferCurrencySelect)transferCurrencySelect.addEventListener('change',updateTransferCurrencySymbol);
+const transferToCurrencySelect=$('transferToCurrency');if(transferToCurrencySelect)transferToCurrencySelect.addEventListener('change',updateTransferExchangeQuote);
+const transferAmountInput=$('transferAmount');if(transferAmountInput)transferAmountInput.addEventListener('input',updateTransferExchangeQuote);
 
 /*
 
