@@ -414,6 +414,8 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 }
 
+
+.receiptPaper{background:#fff;border:1px solid #dbe3ee;border-radius:18px;max-width:520px;margin:0 auto;box-shadow:0 18px 45px rgba(15,35,65,.16);overflow:hidden}.receiptTop{padding:22px 24px 16px;border-bottom:1px dashed #cbd5e1;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.receiptBrand{font-weight:800;color:var(--navy);letter-spacing:.3px}.receiptBrand small{display:block;font-weight:500;color:#64748b;margin-top:4px;letter-spacing:0}.receiptStatus{padding:7px 10px;border-radius:999px;background:#fff7ed;color:#b45309;font-size:12px;font-weight:800;white-space:nowrap}.receiptBody{padding:22px 24px}.receiptTitle{text-align:center;margin-bottom:20px}.receiptTitle .check{width:46px;height:46px;border-radius:50%;background:#eefbf3;color:#16803c;display:grid;place-items:center;margin:0 auto 10px;font-size:22px;font-weight:800}.receiptTitle h3{margin:0;color:var(--navy);font-size:20px}.receiptTitle p{margin:5px 0 0;color:#64748b;font-size:13px}.receiptAmount{text-align:center;background:#f7f9fc;border-radius:14px;padding:16px;margin-bottom:18px}.receiptAmount small{display:block;color:#64748b;font-size:12px}.receiptAmount strong{display:block;color:var(--navy);font-size:28px;margin-top:3px}.receiptGrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#e5eaf1;border:1px solid #e5eaf1;border-radius:12px;overflow:hidden}.receiptItem{background:#fff;padding:12px}.receiptItem small{display:block;color:#64748b;font-size:11px;margin-bottom:4px}.receiptItem strong{display:block;color:#1e293b;font-size:13px;word-break:break-word}.receiptNote{margin-top:14px;padding:12px;border-radius:10px;background:#f8fafc;color:#475569;font-size:12px}.receiptRef{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px;word-break:break-all}.receiptActions{display:flex;gap:10px;padding:16px 24px 22px;border-top:1px dashed #cbd5e1}.receiptActions button{flex:1}@media(max-width:520px){.receiptGrid{grid-template-columns:1fr}.receiptTop,.receiptBody,.receiptActions{padding-left:17px;padding-right:17px}}
 </style></head><body><div class="prototype">
 
 AMERICAN CREST BANK — FICTIONAL / DEMO BANKING APPLICATION
@@ -566,7 +568,7 @@ alt="Customer using online banking">
 
 <h3>Account Overview</h3>
 
-<p>View balances, account information, profile and recent activity.</p>
+<p>View balances, account information, profile and your complete transaction history.</p>
 
 </div><div class="card">
 
@@ -755,12 +757,6 @@ style="border:0;background:none;color:#fff;font-size:20px;padding:4px">
 <h3 id="emailStat" style="font-size:14px">—</h3>
 
 </div></div><div class="currencyBalances" id="currencyBalances"></div><div class="columns"><div class="panel">
-
-<h3>Recent Activity</h3>
-
-<div id="transactions"></div>
-
-</div><div class="panel">
 
 <h3>Quick Actions</h3><div class="quick"><button onclick="openTransfer()">Send Money</button>
 
@@ -1114,7 +1110,7 @@ Continue
 
 </button></div>
 
-</div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+</div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Demo</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting administrator approval.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
 <h2>Verify Sign In</h2>
 <p>Enter the 6-digit demo verification code to continue.</p>
 <div class="error" id="loginVerifyError"></div>
@@ -2095,65 +2091,11 @@ balanceHidden
 }
 
 function renderTransactions(){
-
-if(!me)return;
-
-const list=Array.isArray(me.transactions)?me.transactions:[];
-
-$('txCount').textContent=list.length;
-
-if(!list.length){
-
-$('transactions').innerHTML=
-
-'<div class="empty">No transactions yet.</div>';
-
-return;
-
-}
-
-$('transactions').innerHTML=
-
-list.map(transaction=>{
-
-const incoming=
-
-String(transaction.kind||'').toLowerCase()==='credit';
-
-return `
-
-<div class="tx">
-
-<div>
-
-<div class="txName">
-
-${esc(transaction.title||'Transaction')}
-
-</div>
-
-<div class="txDate">
-
-${esc(transaction.date||transaction.created_at||'')}
-
-</div>
-
-</div>
-
-<div class="${incoming?'in':'out'}">
-
-${incoming?'+':'-'}
-
-${money(transaction.amount,transaction.currency)}
-
-</div>
-
-</div>
-
-`;
-
-}).join('');
-
+  // Transaction History is now the single detailed activity view.
+  if(!me)return;
+  const list=Array.isArray(me.transactions)?me.transactions:[];
+  const count=$('txCount');
+  if(count)count.textContent=list.length;
 }
 
 function notificationKey(notification,index){
@@ -2279,6 +2221,16 @@ const exchangeAmountInput=$('exchangeAmount');if(exchangeAmountInput)exchangeAmo
 
 /*
 
+TRANSFER RECEIPT
+
+*/
+let lastTransferReceipt=null;
+function openReceipt(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'DEMO-'+Date.now();$('receiptModal').classList.add('show');}
+function closeReceipt(){const modal=$('receiptModal');if(modal)modal.classList.remove('show');}
+function printReceipt(){const paper=$('receiptPaper');if(!paper)return;const win=window.open('','_blank','width=700,height=850');if(!win)return toast('Please allow pop-ups to print the receipt.');win.document.write('<!doctype html><html><head><title>American Crest Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial,sans-serif;background:#eef2f7;padding:30px;color:#1e293b}.receipt{background:#fff;max-width:520px;margin:auto;border:1px solid #dbe3ee;border-radius:18px;overflow:hidden}.top{padding:22px;border-bottom:1px dashed #cbd5e1;font-weight:800;color:#071a35}.body{padding:24px}.amount{background:#f7f9fc;border-radius:14px;padding:16px;margin:18px 0}.amount strong{display:block;font-size:28px;color:#071a35}.grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e5eaf1}.item{padding:12px;border:1px solid #e5eaf1}.item small{display:block;color:#64748b;font-size:11px}.item strong{display:block;margin-top:4px;font-size:13px;word-break:break-word}.note{margin-top:14px;padding:12px;background:#f8fafc;font-size:12px}.ref{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px}@media(max-width:520px){.grid{grid-template-columns:1fr}}</style></head><body><div class="receipt">'+paper.innerHTML+'</div></body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),250);}
+
+/*
+
 TRANSFER
 
 */
@@ -2378,6 +2330,8 @@ if(data.user)me=data.user;
 closeTransfer();
 
 refreshDashboard(false);
+
+openReceipt({id:data.request?.id||data.id||data.request_id||'',status:data.request?.status||data.status||'pending',amount,currency,recipient,note,date:data.request?.created_at||data.created_at||new Date().toISOString()});
 
 if(String(me.role||'').toLowerCase()==='admin'){
 
