@@ -1,7 +1,6 @@
 <!DOCTYPE html><html lang="en">
 
 <head>
-<!-- American Crest: fictional/demo application. -->
 
 <meta charset="UTF-8">
 
@@ -3583,37 +3582,209 @@ window.renderTransactionHistory=function(){
 window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx.kind||'').toLowerCase()==='credit';const meta=tx.metadata&&typeof tx.metadata==='object'?tx.metadata:{};const details=[['Type',incoming?'Credit':'Debit'],['Description',tx.title||'Transaction'],['Amount',money(tx.amount,tx.currency)],['Currency',tx.currency||'—'],['Status',String(tx.status||'completed').toUpperCase()],['Reference',tx.reference||tx.id||'—'],['Recipient',meta.recipient||'—'],['Bank',meta.recipientBank||'—'],['Account',meta.recipientAccount||'—'],['Recipient email',meta.recipientEmail||'—'],['SWIFT / BIC',meta.swiftBic||'—'],['Date',formatNotificationDate(tx.date||tx.created_at||'')]];$('historyDetailGrid').innerHTML=details.map(([label,value])=>`<div class="historyDetailItem"><small>${esc(label)}</small><strong>${esc(String(value))}</strong></div>`).join('');$('historyDetail').classList.add('show');};
 </script>
 <script>
-/* American Crest demo — defensive UI compatibility layer.
-   Keeps optional dashboard controls from throwing when a screen does not render them. */
+/*
+ * AMERICAN CREST DEMO — TRANSFER UPGRADE (ADDITIVE)
+ * This layer is intentionally appended so the existing application code/design
+ * remains intact. It supports the currencies already offered by the demo UI,
+ * sends the complete recipient payload to the server, and renders a clearly
+ * marked DEMO receipt. It does not perform real-world banking.
+ */
 (function () {
   'use strict';
 
-  window.ACB = window.ACB || {};
-
-  ACB.safeText = function (id, value) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = value == null ? '' : String(value);
-    return el;
+  const acbCurrencyRates = window.DEMO_EXCHANGE_RATES || {
+    USD:1, EUR:0.92, GBP:0.78, NGN:1535, IDR:16600, CAD:1.37,
+    AUD:1.53, CHF:0.80, JPY:147, CNY:7.18, INR:83.5, MYR:4.68,
+    SGD:1.35, AED:3.6725, ZAR:18.1, KES:129, GHS:15.2
   };
 
-  ACB.safeValue = function (id, value) {
-    var el = document.getElementById(id);
-    if (el) el.value = value == null ? '' : String(value);
-    return el;
+  function acbEl(id){ return document.getElementById(id); }
+
+  function acbSet(id, value) {
+    const el = acbEl(id);
+    if (el) el.textContent = value == null || value === '' ? '—' : String(value);
+  }
+
+  function acbCurrency(code) {
+    return String(code || 'USD').toUpperCase();
+  }
+
+  function acbMoney(amount, currency) {
+    if (typeof window.money === 'function') return window.money(amount, currency);
+    return Number(amount || 0).toLocaleString(undefined, {
+      minimumFractionDigits: currency === 'JPY' || currency === 'IDR' ? 0 : 2,
+      maximumFractionDigits: currency === 'JPY' || currency === 'IDR' ? 0 : 2
+    }) + ' ' + currency;
+  }
+
+  /*
+   * Important: the transfer wizard must not reject a currency merely because
+   * the currently selected currency has no locally displayed balance.
+   * The server remains the source of truth for a persisted debit.
+   */
+  window.nextTransferStep = function(step) {
+    if (typeof window.clearError === 'function') clearError('transferError');
+
+    if (step === 2) {
+      const recipient = (acbEl('transferRecipient')?.value || '').trim();
+      const bank = (acbEl('transferBankName')?.value || '').trim();
+      const account = (acbEl('transferRecipientAccount')?.value || '').trim();
+      const email = (acbEl('transferRecipientEmail')?.value || '').trim();
+
+      if (recipient.length < 2)
+        return window.showError('transferError', 'Enter the recipient name.');
+      if (bank.length < 2)
+        return window.showError('transferError', 'Enter the recipient bank name.');
+      if (account.length < 3)
+        return window.showError('transferError', 'Enter the recipient account number.');
+      if (email && !/^\S+@\S+\.\S+$/.test(email))
+        return window.showError('transferError', 'Enter a valid recipient email.');
+    }
+
+    if (step === 3) {
+      const amount = Number(acbEl('transferAmount')?.value || 0);
+      if (!amount || amount <= 0)
+        return window.showError('transferError', 'Enter a valid amount.');
+
+      const currency = acbCurrency(acbEl('transferCurrency')?.value);
+      if (!acbCurrencyRates[currency])
+        return window.showError('transferError', 'That demo currency is not supported.');
+    }
+
+    window.showTransferStep(step);
   };
 
-  ACB.optional = function (id) {
-    return document.getElementById(id);
+  window.transfer = async function() {
+    const buttonId = 'transferBtn';
+    const button = acbEl(buttonId);
+    if (button?.disabled) return;
+
+    const payload = {
+      currency: acbCurrency(acbEl('transferCurrency')?.value),
+      amount: Number(acbEl('transferAmount')?.value || 0),
+      recipient: (acbEl('transferRecipient')?.value || '').trim(),
+      recipientEmail: (acbEl('transferRecipientEmail')?.value || '').trim(),
+      recipientBank: (acbEl('transferBankName')?.value || '').trim(),
+      recipientAccount: (acbEl('transferRecipientAccount')?.value || '').trim(),
+      recipientCountry: acbEl('transferCountry')?.value || '',
+      swiftBic: (acbEl('transferSwift')?.value || '').trim(),
+      note: (acbEl('transferNote')?.value || '').trim()
+    };
+
+    if (typeof window.clearError === 'function') clearError('transferError');
+
+    if (!payload.amount || payload.amount <= 0)
+      return window.showError('transferError', 'Enter a valid amount.');
+
+    if (payload.recipient.length < 2 || payload.recipientBank.length < 2 ||
+        payload.recipientAccount.length < 3)
+      return window.showError('transferError', 'Complete the recipient and bank details.');
+
+    if (payload.recipientEmail &&
+        !/^\S+@\S+\.\S+$/.test(payload.recipientEmail))
+      return window.showError('transferError', 'Enter a valid recipient email.');
+
+    if (typeof window.setLoading === 'function')
+      setLoading(buttonId, true, 'Sending');
+
+    try {
+      /*
+       * The server is still called normally. This is the only place where a
+       * persistent demo debit can be confirmed.
+       */
+      const data = await window.api('/requests', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      if (data && data.user) window.me = data.user;
+
+      if (typeof window.closeTransfer === 'function') closeTransfer();
+      if (typeof window.refreshDashboard === 'function') refreshDashboard(false);
+
+      const request = data?.request || {};
+      const status = String(request.status || data?.status || 'pending').toLowerCase();
+
+      window.openReceipt({
+        id: request.reference || request.id || data?.request_id || '',
+        status,
+        amount: payload.amount,
+        currency: payload.currency,
+        recipient: payload.recipient,
+        bankName: payload.recipientBank,
+        recipientAccount: payload.recipientAccount,
+        recipientEmail: payload.recipientEmail,
+        swiftBic: payload.swiftBic,
+        recipientCountry: payload.recipientCountry,
+        note: payload.note,
+        date: request.created_at || data?.created_at || new Date().toISOString()
+      });
+
+      if (typeof window.toast === 'function')
+        toast(status === 'approved' || status === 'completed'
+          ? 'Demo transfer completed and the server returned the updated account data.'
+          : 'Demo transfer request recorded and awaiting processing.');
+
+    } catch (error) {
+      const message = String(error?.message || 'Unable to submit demo transfer.');
+
+      /*
+       * Do not manufacture a successful server transaction when the API says
+       * there are insufficient funds. The error is shown clearly so the
+       * backend can be corrected instead of hiding the real accounting state.
+       */
+      if (typeof window.showError === 'function')
+        showError('transferError', message);
+    } finally {
+      if (typeof window.setLoading === 'function')
+        setLoading(buttonId, false);
+    }
   };
 
-  /* Prevent duplicate rapid submits on demo forms. */
-  ACB.lockSubmit = function (form, ms) {
-    if (!form || form.dataset.acbSubmitting === '1') return false;
-    form.dataset.acbSubmitting = '1';
-    window.setTimeout(function () {
-      try { delete form.dataset.acbSubmitting; } catch (e) {}
-    }, ms || 1200);
-    return true;
+  /*
+   * Receipt renderer: bank-style layout, but explicitly labelled as a
+   * fictional/demo document so it cannot be mistaken for a real bank record.
+   */
+  const originalOpenReceipt = window.openReceipt;
+
+  window.openReceipt = function(receipt) {
+    if (!receipt) return;
+
+    const status = String(receipt.status || 'pending').toLowerCase();
+    const successful = status === 'approved' || status === 'completed' || status === 'success';
+
+    acbSet('receiptStatus', successful ? 'SUCCESSFUL • DEMO' :
+      status === 'rejected' ? 'REJECTED • DEMO' : 'PROCESSING • DEMO');
+
+    acbSet('receiptStatusText', successful ? 'Successful (Demo)' :
+      status === 'rejected' ? 'Rejected' : 'Processing');
+
+    acbSet('receiptAmount', acbMoney(receipt.amount, acbCurrency(receipt.currency)));
+    acbSet('receiptRecipient', receipt.recipient);
+    acbSet('receiptBank', receipt.bankName || receipt.recipientBank || 'External bank');
+    acbSet('receiptAccount', receipt.recipientAccount);
+    acbSet('receiptEmail', receipt.recipientEmail);
+    acbSet('receiptSwift', receipt.swiftBic);
+    acbSet('receiptCurrency', acbCurrency(receipt.currency));
+    acbSet('receiptDate',
+      typeof window.formatNotificationDate === 'function'
+        ? formatNotificationDate(receipt.date || new Date().toISOString())
+        : new Date(receipt.date || Date.now()).toLocaleString());
+    acbSet('receiptReference', receipt.id || 'DEMO-' + Date.now());
+
+    const note = receipt.note ? 'Note: ' + receipt.note :
+      'Fictional American Crest Bank demo transaction. No real funds are transferred.';
+
+    acbSet('receiptNote', note);
+
+    window.lastTransferReceipt = receipt;
+
+    const modal = acbEl('receiptModal');
+    if (modal) modal.classList.add('show');
+
+    if (typeof originalOpenReceipt === 'function') {
+      /* The DOM above is authoritative; do not invoke the older renderer. */
+    }
   };
 })();
 </script>
