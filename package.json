@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "American Crest Banking online banking application",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "scripts": {"start": "node server.js"},
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -15,7 +13,5 @@
     "nodemailer": "^7.0.0",
     "pg": "^8.13.1"
   },
-  "engines": {
-    "node": ">=18"
-  }
+  "engines": {"node": ">=18"}
 }
