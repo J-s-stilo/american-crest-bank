@@ -1086,6 +1086,14 @@ let pendingLoginVerification=null;
 let pendingRegistrationVerification=null;
 let pendingChatImage=null;
 
+/* Keep the functional upgrade layer and the original login code on the same
+   customer session. `let token` / `let me` are lexical globals and are not
+   automatically exposed as window.token / window.me. The upgrade layer uses
+   the window names, so expose them as live aliases instead of maintaining a
+   second, stale session. */
+Object.defineProperty(window,'token',{configurable:true,get:()=>token,set:value=>{token=String(value||'');}});
+Object.defineProperty(window,'me',{configurable:true,get:()=>me,set:value=>{me=value||null;}});
+
 const CURRENCY_INFO={
 
 NGN:{symbol:'₦',decimals:2},
@@ -1665,12 +1673,25 @@ if(!data||!data.token||!data.user){
 throw new Error('The server returned an invalid login response.');
 }
 
+/* Use the same lexical session variables as the original login flow. */
 token=String(data.token);
 me=data.user;
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
+
+/* IMPORTANT: call the original dashboard renderer directly. Do not route
+   login through an async wrapper, because the login handlers are synchronous
+   at this point and the wrapper could leave the public page visible. */
 showDashboard();
+
+/* Repaint the authoritative balance after the dashboard is mounted. */
+if(typeof window.renderAuthoritativeBalance==='function'){
+  window.renderAuthoritativeBalance();
+}
+if(typeof window.updateTransferBalancePreview==='function'){
+  window.updateTransferBalancePreview();
+}
 
 toast(String(me.role||'').toLowerCase()==='admin'?'Administrator signed in.':'Signed in successfully.');
 
@@ -3512,11 +3533,16 @@ window.addEventListener(
 'load',
 
 ()=>{
-
-$('publicSite').style.display='block';
-
-$('dashboard').style.display='none';
-
+  /* Never let the initial page-load handler undo a login that has already
+     completed. The old unconditional reset caused the exact symptom where
+     the user saw "Signed in successfully" but remained on the public page. */
+  if(token && me){
+    $('publicSite').style.display='none';
+    $('dashboard').style.display='block';
+    return;
+  }
+  $('publicSite').style.display='block';
+  $('dashboard').style.display='none';
 }
 
 );
@@ -4207,7 +4233,7 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
     return 0;
   }
 
-  function renderAuthoritativeBalance(){
+  window.renderAuthoritativeBalance=function(){
     if(!window.me) return;
     const currency=primaryCurrency();
     const amount=serverBalance(currency);
@@ -4255,31 +4281,12 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
 
   /* Do not use rendered DOM/account fallbacks as balance sources. */
   const oldOpenTransfer=window.openTransfer;
-  window.openTransfer=async function(){
+  window.openTransfer=function(){
     if(!window.me)return window.openModal('login');
-    if(window.token && typeof window.loadMe==='function'){
-      const ok=await window.loadMe();
-      if(!ok)return;
-    }
     if(typeof oldOpenTransfer==='function') oldOpenTransfer();
     renderAuthoritativeBalance();
     window.updateTransferBalancePreview();
     if(typeof window.updateTransferQuote==='function')window.updateTransferQuote();
-  };
-
-  /* Login/dashboard race fix: fetch the authoritative /me record BEFORE the
-     dashboard paints, so the first render cannot briefly show the HTML default
-     (£0.00) or stale login data. */
-  const oldShowDashboard=window.showDashboard;
-  window.showDashboard=async function(){
-    if(!window.me)return;
-    if(window.token && typeof window.loadMe==='function'){
-      const ok=await window.loadMe();
-      if(!ok)return;
-    }
-    if(typeof oldShowDashboard==='function') oldShowDashboard();
-    renderAuthoritativeBalance();
-    window.updateTransferBalancePreview();
   };
 
   /* Keep the eye state across logout/login in the same browser session.
