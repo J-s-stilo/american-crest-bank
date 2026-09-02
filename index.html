@@ -439,7 +439,19 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 /* ===== FUNCTIONAL UPGRADE LAYER ===== */
 .transferGrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.transferGrid2 .field{margin:0}.transferGrid2 input,.transferGrid2 select{width:100%}.appMenuOverlay{position:fixed;inset:0;background:rgba(2,8,23,.62);z-index:9997;opacity:0;visibility:hidden;transition:.22s}.appMenuOverlay.show{opacity:1;visibility:visible}.appMenu{position:fixed;left:0;top:0;bottom:0;width:min(390px,92vw);background:#fff;z-index:9998;transform:translateX(-105%);transition:.25s;box-shadow:18px 0 50px #0004;overflow:auto;padding:20px}.appMenu.show{transform:translateX(0)}.appMenuHead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #e7edf5}.appMenuHead strong{display:block;font-size:21px;color:var(--navy)}.appMenuHead small{color:var(--muted)}.appMenuHead button{border:0;background:#eef2f7;border-radius:12px;width:42px;height:42px;font-size:25px}.appMenuProfile{display:flex;gap:12px;align-items:center;padding:18px 4px}.menuAvatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800;border:2px solid var(--gold);overflow:hidden}.menuAvatar img{width:100%;height:100%;object-fit:cover}.appMenuProfile strong,.appMenuProfile small{display:block}.appMenuProfile small{color:var(--muted);font-size:12px;margin-top:3px}.menuDemoBadge{display:inline-block;margin-top:7px;padding:4px 8px;border-radius:999px;background:#fff3cd;color:#725b13;font-size:9px;font-weight:800}.appMenuGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.appMenuGrid button{min-height:72px;border:1px solid #e1e8f1;background:#f8fafc;border-radius:15px;text-align:left;padding:12px;color:var(--navy);font-weight:800;font-size:21px}.appMenuGrid button span{display:block;font-size:12px;margin-top:7px;color:#526174}.appMenuGrid button:hover{background:#eef5ff;border-color:#bcd3f5}.appMenuNotice{margin-top:18px;padding:13px;border-radius:13px;background:#fff8e6;color:#735b19;font-size:11px;line-height:1.5}.featureModal{position:fixed;inset:0;display:none;z-index:10010}.featureModal.show{display:block}.featureBackdrop{position:absolute;inset:0;background:rgba(2,8,23,.7)}.featureBox{position:relative;width:min(620px,92vw);max-height:88vh;overflow:auto;background:#fff;margin:6vh auto 0;border-radius:24px;padding:28px;box-shadow:0 30px 90px #0005}.featureClose{position:absolute;right:16px;top:14px;width:40px;height:40px;border:0;border-radius:12px;background:#eef2f7;font-size:24px}.featureIcon{width:58px;height:58px;border-radius:17px;background:#eaf2ff;color:var(--blue);display:grid;place-items:center;font-size:28px;margin-bottom:15px}.featureEyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#9a741d}.featureBox h2{color:var(--navy);font-size:30px;margin:5px 0 8px}.featureBox>p{color:#64748b;line-height:1.6;margin-bottom:18px}.featureCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.featureCard{border:1px solid #e2e8f0;border-radius:16px;padding:16px;background:#f8fafc}.featureCard h4{color:var(--navy);margin-bottom:7px}.featureCard p{font-size:12px;color:#64748b;line-height:1.5}.featureWarn{padding:13px;border-radius:13px;background:#fff3cd;color:#725b13;font-size:12px;line-height:1.5;margin:15px 0}.featureForm{display:grid;gap:12px}.featureForm input,.featureForm select,.featureForm textarea{width:100%;border:1px solid #d9e2ed;border-radius:11px;padding:12px}.featureForm label{font-size:12px;font-weight:800;color:#526174}.countryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.countryChoice{padding:12px;border:1px solid #dbe4ee;background:#fff;border-radius:12px;text-align:left}.countryChoice strong{display:block;color:var(--navy)}.countryChoice small{color:#718096}.loanCard{border-radius:20px;padding:22px;background:linear-gradient(135deg,#071a35,#123e70);color:#fff;margin:10px 0}.loanCard h3{color:#fff;margin-bottom:8px}.loanCard p{color:#dbe7f5;font-size:13px;line-height:1.6}.accountMini{display:flex;justify-content:space-between;gap:12px;padding:14px;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:9px}.accountMini strong{color:var(--navy)}.accountMini span{color:#64748b;font-size:12px}.@media(max-width:560px){.transferGrid2,.featureCards{grid-template-columns:1fr}.featureBox{margin-top:3vh;padding:22px}}
-</style></head><body><div class="prototype">
+</style>
+<style>
+/* ACB stability additions — existing design preserved */
+.acbLogoutMenuButton{border-color:#f0c7c7!important;background:#fff6f6!important;color:#a51d2d!important}.acbLogoutMenuButton span{color:#a51d2d!important}
+.acbLogoutCode{font-size:24px;letter-spacing:.28em;text-align:center;font-weight:900;color:#071a35;background:#eef5ff;border:1px dashed #9bbbe8;padding:14px;border-radius:12px;margin:12px 0}
+.acbLogoutModal{position:fixed;inset:0;z-index:100001;background:rgba(3,15,35,.72);display:none;align-items:center;justify-content:center;padding:20px}
+.acbLogoutModal.show{display:flex}
+.acbLogoutBox{width:min(420px,100%);background:#fff;border-radius:20px;padding:24px;box-shadow:0 30px 90px #0005}
+.acbLogoutBox h2{margin:7px 0;color:#071a35}.acbLogoutBox p{color:#64748b;line-height:1.55;font-size:13px}
+.acbLogoutBox input{width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:20px;text-align:center;letter-spacing:.25em}
+.acbLogoutActions{display:flex;gap:10px;margin-top:12px}.acbLogoutActions button{flex:1}
+</style>
+</head><body><div class="prototype">
 
 AMERICAN CREST BANK — FICTIONAL / DEMO BANKING APPLICATION
 
@@ -1011,6 +1023,7 @@ Sign In
     <button onclick="closeAppMenu();openFeature('profile')">●<span>Profile</span></button>
     <button onclick="closeAppMenu();openFeature('settings')">⚙<span>Settings</span></button>
     <button onclick="closeAppMenu();toggleChat()">☁<span>Support</span></button>
+    <button class="acbLogoutMenuButton" type="button" onclick="requestACBLogout()">↪<span>Log Out</span></button>
   </div>
   <div class="appMenuNotice">All banking, card, loan, transfer and payment features in this application are simulations. No real funds are moved.</div>
 </aside>
@@ -4173,6 +4186,243 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
       if(typeof window.openReceipt==='function')window.openReceipt(window.lastTransferReceipt);
     }
   };
+})();
+</script>
+<script>
+/* ================================================================
+   ACB STABILITY LAYER — ADDITIVE ONLY
+   Keeps existing banking-demo functionality and fixes:
+   1) balance-eye preference across logout/login
+   2) stable main balance in transfer screen
+   3) session survives page refresh
+   4) verified demo logout from the three-line menu
+   5) automatic in-dashboard notification popup + unread count
+   ================================================================ */
+(function(){
+  'use strict';
+
+  const SESSION_KEY='acb_demo_session_token';
+  const BALANCE_PREF_PREFIX='acb_balance_visibility_';
+  const LOGOUT_CODE_LENGTH=6;
+
+  function currentUserKey(user){
+    const u=user||window.me||{};
+    return String(u.id||u.userId||u.user_id||u.email||u.phone||'current');
+  }
+  function balancePrefKey(user){ return BALANCE_PREF_PREFIX+currentUserKey(user); }
+  function getBalanceHidden(user){
+    try{return localStorage.getItem(balancePrefKey(user))==='hidden';}catch{return false;}
+  }
+  function saveBalanceHidden(value,user){
+    try{localStorage.setItem(balancePrefKey(user),value?'hidden':'visible');}catch{}
+  }
+
+  /* Persist only the demo auth token in sessionStorage so refresh does not
+     throw the customer back to the public home page. It is cleared by logout. */
+  function saveSession(){
+    try{ if(typeof token==='string' && token) sessionStorage.setItem(SESSION_KEY,token); }catch{}
+  }
+  function clearSession(){try{sessionStorage.removeItem(SESSION_KEY);}catch{}}
+
+  /* Balance visibility is a customer preference, not account data. */
+  const originalToggleBalance=window.toggleBalance;
+  window.toggleBalance=function(){
+    balanceHidden=!balanceHidden;
+    saveBalanceHidden(balanceHidden,window.me);
+    if(typeof window.renderBalance==='function')window.renderBalance();
+    if(typeof window.renderCurrencyBalances==='function')window.renderCurrencyBalances();
+  };
+
+  /* The existing showDashboard is retained; we only restore the eye state
+     immediately before it renders the dashboard. */
+  const originalShowDashboard=window.showDashboard;
+  window.showDashboard=function(){
+    if(window.me)balanceHidden=getBalanceHidden(window.me);
+    if(typeof originalShowDashboard==='function')originalShowDashboard();
+    if(window.me){
+      balanceHidden=getBalanceHidden(window.me);
+      if(typeof window.renderBalance==='function')window.renderBalance();
+      if(typeof window.renderCurrencyBalances==='function')window.renderCurrencyBalances();
+      if(typeof window.updateTransferBalancePreview==='function')window.updateTransferBalancePreview();
+    }
+  };
+
+  /* Main customer balance stays the main customer balance in the transfer
+     screen. Selecting USD/EUR/etc. must not relabel an NGN/GBP balance. */
+  window.updateTransferBalancePreview=function(){
+    if(!window.me)return;
+    const m=window.me;
+    const primary=String(m.primaryCurrency||m.primary_currency||'NGN').toUpperCase();
+    const balances=m.balances||{};
+    let balance=Number(balances[primary]??m.availableBalance??m.available_balance??m.balance??m.available??0);
+    if(!Number.isFinite(balance))balance=0;
+    const el=document.getElementById('transferAvailableBalance');
+    if(el){
+      el.textContent=balanceHidden?'••••••':(typeof window.money==='function'?window.money(balance,primary):`${balance.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${primary}`);
+      el.setAttribute('data-balance-currency',primary);
+    }
+    const label=el?.parentElement?.querySelector('small,span,.transferBalanceLabel');
+    if(label && /balance/i.test(label.textContent||'')) label.textContent='Available main balance';
+  };
+
+  /* Wrap successful login paths so the session is remembered for refresh. */
+  if(typeof window.completeLogin==='function'){
+    const oldCompleteLogin=window.completeLogin;
+    window.completeLogin=function(data){
+      oldCompleteLogin(data);
+      saveSession();
+    };
+  }
+
+  if(typeof window.verifyRegistrationCode==='function'){
+    const oldVerifyRegistrationCode=window.verifyRegistrationCode;
+    window.verifyRegistrationCode=async function(){
+      await oldVerifyRegistrationCode();
+      saveSession();
+    };
+  }
+
+  /* Demo logout verification code. The code is shown inside the modal because
+     this is a fictional app; no real security credential is created. */
+  let logoutCode='';
+  let logoutTimer=null;
+  function ensureLogoutModal(){
+    let m=document.getElementById('acbLogoutModal');
+    if(m)return m;
+    m=document.createElement('div');
+    m.id='acbLogoutModal';
+    m.className='acbLogoutModal';
+    m.innerHTML=`<div class="acbLogoutBox" role="dialog" aria-modal="true" aria-labelledby="acbLogoutTitle">
+      <div style="font-size:11px;font-weight:900;letter-spacing:1.2px;color:#1769e0">AMERICAN CREST BANK • DEMO</div>
+      <h2 id="acbLogoutTitle">Confirm Log Out</h2>
+      <p>For this demo, enter the verification code below to confirm that you want to end this customer session.</p>
+      <div id="acbLogoutCode" class="acbLogoutCode">------</div>
+      <input id="acbLogoutInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="Logout verification code">
+      <div id="acbLogoutError" style="min-height:20px;color:#b42318;font-size:13px;margin-top:8px"></div>
+      <div class="acbLogoutActions"><button type="button" class="btn outline" onclick="cancelACBLogout()">Cancel</button><button type="button" class="btn primary" onclick="confirmACBLogout()">Log Out</button></div>
+    </div>`;
+    document.body.appendChild(m);
+    return m;
+  }
+  window.requestACBLogout=function(){
+    if(!window.me)return;
+    const m=ensureLogoutModal();
+    logoutCode=String(Math.floor(100000+Math.random()*900000));
+    document.getElementById('acbLogoutCode').textContent=logoutCode;
+    document.getElementById('acbLogoutInput').value='';
+    document.getElementById('acbLogoutError').textContent='';
+    m.classList.add('show');
+    clearTimeout(logoutTimer);
+    logoutTimer=setTimeout(function(){
+      if(m.classList.contains('show')){
+        logoutCode='';
+        document.getElementById('acbLogoutCode').textContent='Expired';
+        document.getElementById('acbLogoutError').textContent='Code expired. Cancel and start again.';
+      }
+    },5*60*1000);
+    setTimeout(()=>document.getElementById('acbLogoutInput')?.focus(),80);
+  };
+  window.cancelACBLogout=function(){
+    const m=document.getElementById('acbLogoutModal');if(m)m.classList.remove('show');
+    logoutCode='';clearTimeout(logoutTimer);
+  };
+  window.confirmACBLogout=function(){
+    const input=String(document.getElementById('acbLogoutInput')?.value||'').trim();
+    const error=document.getElementById('acbLogoutError');
+    if(!/^\d{6}$/.test(input)||input!==logoutCode){
+      if(error)error.textContent='Incorrect verification code.';
+      return;
+    }
+    clearTimeout(logoutTimer);logoutCode='';
+    document.getElementById('acbLogoutModal')?.classList.remove('show');
+    clearSession();
+    if(typeof window.closeAppMenu==='function')window.closeAppMenu();
+    if(typeof window.logout==='function')window.logout(true);
+  };
+
+  /* Automatic notification popup. Existing bell/count behavior remains. */
+  let notificationSeenInitialized=false;
+  let notificationSeen=new Set();
+  let popupTimer=null;
+  function notificationId(n,i){
+    return String(n?.id||n?.notification_id||n?.uuid||((n?.created_at||n?.date||'')+'|'+(n?.message||'')+'|'+i));
+  }
+  window.notificationPopup=function(message,date){
+    const popup=document.getElementById('notificationPopup');
+    if(!popup){
+      if(typeof window.toast==='function')window.toast(message);
+      return;
+    }
+    const msg=document.getElementById('notificationPopupMessage');
+    const dt=document.getElementById('notificationPopupDate');
+    if(msg)msg.textContent=String(message||'New account notification');
+    if(dt)dt.textContent=typeof window.formatNotificationDate==='function'?window.formatNotificationDate(date||new Date().toISOString()):new Date(date||Date.now()).toLocaleString();
+    popup.classList.add('show');
+    clearTimeout(popupTimer);popupTimer=setTimeout(()=>popup.classList.remove('show'),6500);
+  };
+  window.hideNotificationPopup=function(){document.getElementById('notificationPopup')?.classList.remove('show');clearTimeout(popupTimer);};
+
+  window.renderNotifications=function(){
+    if(!window.me)return;
+    const list=Array.isArray(window.me.notifications)?window.me.notifications:[];
+    if(typeof window.updateNotificationIndicator==='function')window.updateNotificationIndicator(list);
+    const target=document.getElementById('notifications');
+    if(target){
+      target.innerHTML=list.length?list.slice(0,100).map(n=>{
+        const unread=!n.read_at&&!n.is_read;
+        return `<div class="notificationItem ${unread?'unread':''}"><strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:4px">Account Notification</strong><div class="notificationItemMessage">${typeof window.esc==='function'?window.esc(n.message||''):String(n.message||'')}</div><div class="notificationItemDate">${typeof window.esc==='function'?window.esc(window.formatNotificationDate(n.date||n.created_at)):String(n.date||n.created_at||'')}</div><div class="notificationActions"><button type="button" class="outline notificationDeleteBtn" data-id="${typeof window.esc==='function'?window.esc(n.id||''):String(n.id||'')}">Delete</button></div></div>`;
+      }).join(''):'<div class="notificationEmpty">No saved notifications.</div>';
+      if(typeof window.setupNotificationActions==='function')window.setupNotificationActions();
+    }
+    const current=new Set();
+    list.forEach((n,i)=>current.add(notificationId(n,i)));
+    if(notificationSeenInitialized){
+      list.forEach((n,i)=>{
+        const id=notificationId(n,i);
+        if(!notificationSeen.has(id)){
+          window.notificationPopup(n.message||'New account notification',n.date||n.created_at);
+          if(typeof window.playNotificationDing==='function')window.playNotificationDing();
+        }
+      });
+    }
+    notificationSeen=current;
+    notificationSeenInitialized=true;
+  };
+
+  /* Do not show old notifications as a new popup on login. */
+  const oldShowDashboard2=window.showDashboard;
+  /* Re-wrap only the initialization part without changing the earlier wrapper. */
+  window.showDashboard=function(){
+    if(window.me){
+      balanceHidden=getBalanceHidden(window.me);
+      notificationSeenInitialized=false;
+      notificationSeen=new Set();
+    }
+    if(typeof oldShowDashboard2==='function')oldShowDashboard2();
+    if(window.me){
+      const initial=Array.isArray(window.me.notifications)?window.me.notifications:[];
+      notificationSeen=new Set(initial.map(notificationId));
+      notificationSeenInitialized=true;
+      if(typeof window.updateTransferBalancePreview==='function')window.updateTransferBalancePreview();
+    }
+  };
+
+  /* Restore the session after a normal browser refresh. */
+  window.addEventListener('load',async function(){
+    let saved='';try{saved=sessionStorage.getItem(SESSION_KEY)||'';}catch{}
+    if(!saved||window.me)return;
+    token=saved;
+    try{
+      const ok=await window.loadMe();
+      if(ok){
+        balanceHidden=getBalanceHidden(window.me);
+        window.showDashboard();
+      }else clearSession();
+    }catch{clearSession();}
+  });
+
+  /* Keep session storage synchronized if an older login path writes token directly. */
+  try{if(typeof token==='string'&&token)sessionStorage.setItem(SESSION_KEY,token);}catch{}
 })();
 </script>
 </body>
