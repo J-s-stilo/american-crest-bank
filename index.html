@@ -1090,6 +1090,14 @@ let notificationInitialized=false;
 let liveTimer=null;
 
 let balanceHidden=false;
+const ACB_BALANCE_VISIBILITY_PREFIX='acb_balance_visibility_';
+function acbBalanceUserKey(user){const u=user||me||{};return String(u.id||u.userId||u.user_id||u.email||'current');}
+function acbLoadBalanceVisibility(user){try{return localStorage.getItem(ACB_BALANCE_VISIBILITY_PREFIX+acbBalanceUserKey(user))==='hidden';}catch{return false;}}
+function acbSaveBalanceVisibility(hidden,user){try{localStorage.setItem(ACB_BALANCE_VISIBILITY_PREFIX+acbBalanceUserKey(user),hidden?'hidden':'visible');}catch{}}
+const ACB_SESSION_KEY='acb_demo_session_token';
+function acbSaveSession(){try{if(token)sessionStorage.setItem(ACB_SESSION_KEY,token);}catch{}}
+function acbClearSession(){try{sessionStorage.removeItem(ACB_SESSION_KEY);}catch{}}
+function acbSyncGlobals(){try{window.me=me;window.token=token;}catch{}}
 
 let publicSupportRequested=false;
 let knownNotificationIds=new Set();
@@ -1680,6 +1688,9 @@ throw new Error('The server returned an invalid login response.');
 
 token=String(data.token);
 me=data.user;
+balanceHidden=acbLoadBalanceVisibility(me);
+acbSyncGlobals();
+acbSaveSession();
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
@@ -1749,6 +1760,9 @@ throw new Error('Verification succeeded but no login session was returned.');
 }
 token=String(verified.token);
 me=verified.user;
+balanceHidden=acbLoadBalanceVisibility(me);
+acbSyncGlobals();
+acbSaveSession();
 pendingRegistrationVerification=null;
 $('registrationVerifyModal').classList.remove('show');
 showDashboard();
@@ -1771,6 +1785,8 @@ const data=await api('/me');
 if(!data.user)throw new Error('Invalid user response.');
 
 me=data.user;
+balanceHidden=acbLoadBalanceVisibility(me);
+acbSyncGlobals();
 
 return true;
 
@@ -1819,6 +1835,7 @@ function loadRealCustomerLiveChat(){
 function showDashboard(){
 
 if(!me)return;
+balanceHidden=acbLoadBalanceVisibility(me);
 
 // Seed the current notification set so existing notifications do not pop up on login.
 knownNotificationIds=new Set();
@@ -1952,6 +1969,7 @@ $('liveBanner').innerHTML=
 function toggleBalance(){
 
 balanceHidden=!balanceHidden;
+acbSaveBalanceVisibility(balanceHidden,me);
 
 renderBalance();
 
@@ -2158,14 +2176,13 @@ updateTransferCurrencySymbol();
 }
 function closeTransfer(){$('transferModal').classList.remove('show');}
 function updateTransferBalancePreview(){
- const currency=$('transferCurrency')?.value||me?.primaryCurrency||me?.primary_currency||'NGN';
- const balances=me?.balances||{};
- const primary=me?.primaryCurrency||me?.primary_currency||'NGN';
- let balance=Number(balances[currency]??0);
- // Display the customer's main balance when the selected transfer currency has no separate wallet.
- if(!(balance>0) && balances[primary]!=null) balance=Number(balances[primary]??0);
+ if(!me)return;
+ const balances=me.balances||{};
+ const primary=String(me.primaryCurrency||me.primary_currency||'NGN').toUpperCase();
+ let balance=Number(balances[primary]??me.availableBalance??me.available_balance??me.balance??me.available??0);
+ if(!Number.isFinite(balance))balance=0;
  const el=$('transferAvailableBalance');
- if(el)el.textContent=balanceHidden?'••••••':money(balance,currency);
+ if(el){el.textContent=balanceHidden?'••••••':money(balance,primary);el.setAttribute('data-balance-currency',primary);}
 }
 function updateTransferCurrencySymbol(){
  const currency=$('transferCurrency')?.value||'USD';
@@ -3474,9 +3491,11 @@ LOGOUT
 
 function logout(show=true){
 
+acbClearSession();
 token='';
 
 me=null;
+acbSyncGlobals();
 
 selectedCustomerId=null;
 
@@ -3716,7 +3735,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         body: JSON.stringify(payload)
       });
 
-      if (data && data.user) window.me = data.user;
+      if (data && data.user) { window.me = data.user; me = data.user; balanceHidden = acbLoadBalanceVisibility(me); acbSyncGlobals(); }
 
       if (typeof window.closeTransfer === 'function') closeTransfer();
       if (typeof window.refreshDashboard === 'function') refreshDashboard(false);
@@ -3884,7 +3903,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       /* The existing server only debits one wallet. We submit the wallet that actually funds the converted request. */
       const serverPayload={...payload,currency:pick.fundingCurrency,amount:Number(pick.fundingAmount.toFixed(2)),note:(payload.note?payload.note+' | ':'')+`Demo conversion: ${requestedAmount} ${target} from ${pick.fundingCurrency}; rate ${pick.rate}; fee ${pick.fee.toFixed(2)} ${pick.fundingCurrency}.`};
       const data=await window.api('/requests',{method:'POST',body:JSON.stringify(serverPayload)});
-      if(data?.user)window.me=data.user;
+      if(data?.user){window.me=data.user;me=data.user;balanceHidden=acbLoadBalanceVisibility(me);acbSyncGlobals();}
       if(typeof window.closeTransfer==='function')closeTransfer();
       if(typeof window.refreshDashboard==='function')refreshDashboard(false);
       const request=data?.request||{}; const status=String(request.status||data?.status||'pending').toLowerCase();
@@ -3932,7 +3951,7 @@ function err(m){if(typeof window.showError==='function')window.showError('transf
 function preview(){const t=C($('transferCurrency')?.value),a=N($('transferAmount')?.value),q=quote(t,a);let box=$('acbFinalAutoQuote'),panel=$('transferPanel1');if(!box&&panel){box=document.createElement('div');box.id='acbFinalAutoQuote';box.style.cssText='margin:12px 0;padding:13px 15px;border:1px solid #dbe7f5;border-radius:14px;background:#f6faff;color:#29415f;font-size:13px;line-height:1.6';const nav=panel.querySelector('.transferNav');if(nav)panel.insertBefore(box,nav);else panel.appendChild(box)}if(!box)return;if(!a)box.textContent='Automatic conversion will use an available demo balance when needed.';else if(q)box.innerHTML=`<strong>Automatic conversion</strong><br>${M(a,t)} recipient amount → debit ${M(q.total,q.source)} from ${q.source} balance, including ${M(q.fee,q.source)} demo fee.`;else box.textContent='No available demo balance can cover this amount and the demo fee.'}
 function pin(){return new Promise(resolve=>{let m=$('acbFinalPinModal');if(!m){m=document.createElement('div');m.id='acbFinalPinModal';m.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(3,15,35,.72);display:flex;align-items:center;justify-content:center;padding:20px';m.innerHTML='<div style="width:min(410px,100%);background:#fff;border-radius:20px;padding:24px;font-family:Arial,sans-serif"><b style="font-size:12px;color:#1769e0">AMERICAN CREST BANK • DEMO</b><h2 id="acbPinTitle">Transfer PIN</h2><p id="acbPinHelp">Enter your 4-digit PIN to confirm this demo transfer.</p><input id="acbPin1" inputmode="numeric" maxlength="4" type="password" autocomplete="off" style="width:100%;box-sizing:border-box;padding:14px;font-size:22px;text-align:center;letter-spacing:.35em"><input id="acbPin2" inputmode="numeric" maxlength="4" type="password" autocomplete="off" placeholder="Confirm PIN" style="width:100%;box-sizing:border-box;padding:14px;font-size:22px;text-align:center;letter-spacing:.35em;margin-top:10px"><div id="acbPinErr" style="min-height:20px;color:#b42318;margin:9px 0;font-size:13px"></div><button id="acbPinGo" style="width:100%;border:0;border-radius:12px;padding:14px;background:#1769e0;color:#fff;font-weight:800">Continue</button><button id="acbPinNo" style="width:100%;border:0;background:none;padding:12px;color:#64748b">Cancel</button></div>';document.body.appendChild(m)}const key='acb_demo_transfer_pin_'+String(window.me?.id||window.me?.userId||window.me?.user_id||'current');let old='';try{old=localStorage.getItem(key)||''}catch(e){}const first=!/^\d{4}$/.test(old);$('acbPinTitle').textContent=first?'Create transfer PIN':'Enter transfer PIN';$('acbPinHelp').textContent=first?'Create a 4-digit PIN for future demo transfers.':'Enter your 4-digit PIN to confirm this demo transfer.';$('acbPin2').style.display=first?'block':'none';$('acbPinGo').textContent=first?'Save PIN':'Verify PIN';$('acbPin1').value='';$('acbPin2').value='';$('acbPinErr').textContent='';m.style.display='flex';$('acbPinNo').onclick=()=>{m.style.display='none';resolve(false)};$('acbPinGo').onclick=()=>{const a=$('acbPin1').value,b=$('acbPin2').value;if(!/^\d{4}$/.test(a))return $('acbPinErr').textContent='PIN must contain exactly 4 digits.';if(first&&a!==b)return $('acbPinErr').textContent='PINs do not match.';if(first){try{localStorage.setItem(key,a)}catch(e){}m.style.display='none';resolve(true)}else if(a===old){m.style.display='none';resolve(true)}else $('acbPinErr').textContent='Incorrect PIN.'};$('acbPin1').focus()})}
 window.nextTransferStep=function(step){if(typeof window.clearError==='function')window.clearError('transferError');if(step===2){const r=($('transferRecipient')?.value||'').trim(),b=($('transferBankName')?.value||'').trim(),a=($('transferRecipientAccount')?.value||'').trim(),e=($('transferRecipientEmail')?.value||'').trim();if(r.length<2)return err('Enter the recipient name.');if(b.length<2)return err('Enter the recipient bank name.');if(a.length<3)return err('Enter the recipient account number.');if(e&&!/^\S+@\S+\.\S+$/.test(e))return err('Enter a valid recipient email.')}if(step===3){const a=N($('transferAmount')?.value),t=C($('transferCurrency')?.value);if(a<=0)return err('Enter a valid amount.');if(R[t]==null)return err('That demo currency is not supported.');if(!quote(t,a))return err('Your available demo balance cannot cover this transfer after automatic currency conversion and the demo fee.')}if(typeof window.showTransferStep==='function')window.showTransferStep(step);preview()};
-window.transfer=async function(){const btn=$('transferBtn');if(btn?.disabled)return;const target=C($('transferCurrency')?.value),requested=N($('transferAmount')?.value),q=quote(target,requested);if(requested<=0)return err('Enter a valid amount.');if(!q)return err('Your available demo balance cannot cover this transfer after automatic currency conversion and the demo fee.');const recipient=($('transferRecipient')?.value||'').trim(),bank=($('transferBankName')?.value||'').trim(),account=($('transferRecipientAccount')?.value||'').trim(),email=($('transferRecipientEmail')?.value||'').trim();if(recipient.length<2||bank.length<2||account.length<3)return err('Complete the recipient and bank details.');if(email&&!/^\S+@\S+\.\S+$/.test(email))return err('Enter a valid recipient email.');if(!(await pin()))return;const originalNote=($('transferNote')?.value||'').trim(),payload={currency:q.source,amount:Number(q.total.toFixed(2)),recipient,recipientEmail:email,recipientBank:bank,recipientAccount:account,recipientCountry:$('transferCountry')?.value||'',swiftBic:($('transferSwift')?.value||'').trim(),note:originalNote};payload.note=(originalNote?originalNote+' | ':'')+`Demo automatic conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`;try{if(typeof window.setLoading==='function')window.setLoading('transferBtn',true,'Sending');const data=await window.api('/requests',{method:'POST',body:JSON.stringify(payload)});if(data?.user)window.me=data.user;if(typeof window.closeTransfer==='function')window.closeTransfer();if(typeof window.refreshDashboard==='function')await window.refreshDashboard(false);const r=data?.request||{},status=String(r.status||data?.status||'pending').toLowerCase();if(typeof window.openReceipt==='function')window.openReceipt({id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,recipientCountry:payload.recipientCountry,swiftBic:payload.swiftBic,note:originalNote,date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,fundingCurrency:q.source,fundingAmount:q.total,sourceCurrency:q.source,sourceAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent});if(typeof window.toast==='function')window.toast(data?.emailSent?'Demo transfer submitted. Receipt email accepted by the server.':'Demo transfer submitted. The server did not confirm email delivery.')}catch(e){err(String(e?.message||'Unable to submit demo transfer.'))}finally{if(typeof window.setLoading==='function')window.setLoading('transferBtn',false)}};
+window.transfer=async function(){const btn=$('transferBtn');if(btn?.disabled)return;const target=C($('transferCurrency')?.value),requested=N($('transferAmount')?.value),q=quote(target,requested);if(requested<=0)return err('Enter a valid amount.');if(!q)return err('Your available demo balance cannot cover this transfer after automatic currency conversion and the demo fee.');const recipient=($('transferRecipient')?.value||'').trim(),bank=($('transferBankName')?.value||'').trim(),account=($('transferRecipientAccount')?.value||'').trim(),email=($('transferRecipientEmail')?.value||'').trim();if(recipient.length<2||bank.length<2||account.length<3)return err('Complete the recipient and bank details.');if(email&&!/^\S+@\S+\.\S+$/.test(email))return err('Enter a valid recipient email.');if(!(await pin()))return;const originalNote=($('transferNote')?.value||'').trim(),payload={currency:q.source,amount:Number(q.total.toFixed(2)),recipient,recipientEmail:email,recipientBank:bank,recipientAccount:account,recipientCountry:$('transferCountry')?.value||'',swiftBic:($('transferSwift')?.value||'').trim(),note:originalNote};payload.note=(originalNote?originalNote+' | ':'')+`Demo automatic conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`;try{if(typeof window.setLoading==='function')window.setLoading('transferBtn',true,'Sending');const data=await window.api('/requests',{method:'POST',body:JSON.stringify(payload)});if(data?.user){window.me=data.user;me=data.user;balanceHidden=acbLoadBalanceVisibility(me);acbSyncGlobals();}if(typeof window.closeTransfer==='function')window.closeTransfer();if(typeof window.refreshDashboard==='function')await window.refreshDashboard(false);const r=data?.request||{},status=String(r.status||data?.status||'pending').toLowerCase();if(typeof window.openReceipt==='function')window.openReceipt({id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,recipientCountry:payload.recipientCountry,swiftBic:payload.swiftBic,note:originalNote,date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,fundingCurrency:q.source,fundingAmount:q.total,sourceCurrency:q.source,sourceAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent});if(typeof window.toast==='function')window.toast(data?.emailSent?'Demo transfer submitted. Receipt email accepted by the server.':'Demo transfer submitted. The server did not confirm email delivery.')}catch(e){err(String(e?.message||'Unable to submit demo transfer.'))}finally{if(typeof window.setLoading==='function')window.setLoading('transferBtn',false)}};
 const c=$('transferCurrency'),a=$('transferAmount');if(c)c.addEventListener('change',preview);if(a)a.addEventListener('input',preview);const open=window.openTransfer;window.openTransfer=function(){if(typeof open==='function')open();setTimeout(preview,0)};setTimeout(preview,0);
 })();
 
@@ -4135,7 +4154,7 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
         note:(note?note+' | ':'')+`Demo conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`
       };
       const data=await window.api('/requests',{method:'POST',body:JSON.stringify(payload)});
-      if(data?.user)window.me=data.user;
+      if(data?.user){window.me=data.user;me=data.user;balanceHidden=acbLoadBalanceVisibility(me);acbSyncGlobals();}
       if(typeof window.closeTransfer==='function')closeTransfer();
       if(typeof window.refreshDashboard==='function')await window.refreshDashboard(false);
       const r=data?.request||{};
@@ -4189,241 +4208,24 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
 })();
 </script>
 <script>
-/* ================================================================
-   ACB STABILITY LAYER — ADDITIVE ONLY
-   Keeps existing banking-demo functionality and fixes:
-   1) balance-eye preference across logout/login
-   2) stable main balance in transfer screen
-   3) session survives page refresh
-   4) verified demo logout from the three-line menu
-   5) automatic in-dashboard notification popup + unread count
-   ================================================================ */
-(function(){
-  'use strict';
-
-  const SESSION_KEY='acb_demo_session_token';
-  const BALANCE_PREF_PREFIX='acb_balance_visibility_';
-  const LOGOUT_CODE_LENGTH=6;
-
-  function currentUserKey(user){
-    const u=user||window.me||{};
-    return String(u.id||u.userId||u.user_id||u.email||u.phone||'current');
-  }
-  function balancePrefKey(user){ return BALANCE_PREF_PREFIX+currentUserKey(user); }
-  function getBalanceHidden(user){
-    try{return localStorage.getItem(balancePrefKey(user))==='hidden';}catch{return false;}
-  }
-  function saveBalanceHidden(value,user){
-    try{localStorage.setItem(balancePrefKey(user),value?'hidden':'visible');}catch{}
-  }
-
-  /* Persist only the demo auth token in sessionStorage so refresh does not
-     throw the customer back to the public home page. It is cleared by logout. */
-  function saveSession(){
-    try{ if(typeof token==='string' && token) sessionStorage.setItem(SESSION_KEY,token); }catch{}
-  }
-  function clearSession(){try{sessionStorage.removeItem(SESSION_KEY);}catch{}}
-
-  /* Balance visibility is a customer preference, not account data. */
-  const originalToggleBalance=window.toggleBalance;
-  window.toggleBalance=function(){
-    balanceHidden=!balanceHidden;
-    saveBalanceHidden(balanceHidden,window.me);
-    if(typeof window.renderBalance==='function')window.renderBalance();
-    if(typeof window.renderCurrencyBalances==='function')window.renderCurrencyBalances();
-  };
-
-  /* The existing showDashboard is retained; we only restore the eye state
-     immediately before it renders the dashboard. */
-  const originalShowDashboard=window.showDashboard;
-  window.showDashboard=function(){
-    if(window.me)balanceHidden=getBalanceHidden(window.me);
-    if(typeof originalShowDashboard==='function')originalShowDashboard();
-    if(window.me){
-      balanceHidden=getBalanceHidden(window.me);
-      if(typeof window.renderBalance==='function')window.renderBalance();
-      if(typeof window.renderCurrencyBalances==='function')window.renderCurrencyBalances();
-      if(typeof window.updateTransferBalancePreview==='function')window.updateTransferBalancePreview();
-    }
-  };
-
-  /* Main customer balance stays the main customer balance in the transfer
-     screen. Selecting USD/EUR/etc. must not relabel an NGN/GBP balance. */
-  window.updateTransferBalancePreview=function(){
-    if(!window.me)return;
-    const m=window.me;
-    const primary=String(m.primaryCurrency||m.primary_currency||'NGN').toUpperCase();
-    const balances=m.balances||{};
-    let balance=Number(balances[primary]??m.availableBalance??m.available_balance??m.balance??m.available??0);
-    if(!Number.isFinite(balance))balance=0;
-    const el=document.getElementById('transferAvailableBalance');
-    if(el){
-      el.textContent=balanceHidden?'••••••':(typeof window.money==='function'?window.money(balance,primary):`${balance.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${primary}`);
-      el.setAttribute('data-balance-currency',primary);
-    }
-    const label=el?.parentElement?.querySelector('small,span,.transferBalanceLabel');
-    if(label && /balance/i.test(label.textContent||'')) label.textContent='Available main balance';
-  };
-
-  /* Wrap successful login paths so the session is remembered for refresh. */
-  if(typeof window.completeLogin==='function'){
-    const oldCompleteLogin=window.completeLogin;
-    window.completeLogin=function(data){
-      oldCompleteLogin(data);
-      saveSession();
-    };
-  }
-
-  if(typeof window.verifyRegistrationCode==='function'){
-    const oldVerifyRegistrationCode=window.verifyRegistrationCode;
-    window.verifyRegistrationCode=async function(){
-      await oldVerifyRegistrationCode();
-      saveSession();
-    };
-  }
-
-  /* Demo logout verification code. The code is shown inside the modal because
-     this is a fictional app; no real security credential is created. */
-  let logoutCode='';
-  let logoutTimer=null;
-  function ensureLogoutModal(){
-    let m=document.getElementById('acbLogoutModal');
-    if(m)return m;
-    m=document.createElement('div');
-    m.id='acbLogoutModal';
-    m.className='acbLogoutModal';
-    m.innerHTML=`<div class="acbLogoutBox" role="dialog" aria-modal="true" aria-labelledby="acbLogoutTitle">
-      <div style="font-size:11px;font-weight:900;letter-spacing:1.2px;color:#1769e0">AMERICAN CREST BANK • DEMO</div>
-      <h2 id="acbLogoutTitle">Confirm Log Out</h2>
-      <p>For this demo, enter the verification code below to confirm that you want to end this customer session.</p>
-      <div id="acbLogoutCode" class="acbLogoutCode">------</div>
-      <input id="acbLogoutInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="Logout verification code">
-      <div id="acbLogoutError" style="min-height:20px;color:#b42318;font-size:13px;margin-top:8px"></div>
-      <div class="acbLogoutActions"><button type="button" class="btn outline" onclick="cancelACBLogout()">Cancel</button><button type="button" class="btn primary" onclick="confirmACBLogout()">Log Out</button></div>
-    </div>`;
-    document.body.appendChild(m);
-    return m;
-  }
-  window.requestACBLogout=function(){
-    if(!window.me)return;
-    const m=ensureLogoutModal();
-    logoutCode=String(Math.floor(100000+Math.random()*900000));
-    document.getElementById('acbLogoutCode').textContent=logoutCode;
-    document.getElementById('acbLogoutInput').value='';
-    document.getElementById('acbLogoutError').textContent='';
-    m.classList.add('show');
-    clearTimeout(logoutTimer);
-    logoutTimer=setTimeout(function(){
-      if(m.classList.contains('show')){
-        logoutCode='';
-        document.getElementById('acbLogoutCode').textContent='Expired';
-        document.getElementById('acbLogoutError').textContent='Code expired. Cancel and start again.';
-      }
-    },5*60*1000);
-    setTimeout(()=>document.getElementById('acbLogoutInput')?.focus(),80);
-  };
-  window.cancelACBLogout=function(){
-    const m=document.getElementById('acbLogoutModal');if(m)m.classList.remove('show');
-    logoutCode='';clearTimeout(logoutTimer);
-  };
-  window.confirmACBLogout=function(){
-    const input=String(document.getElementById('acbLogoutInput')?.value||'').trim();
-    const error=document.getElementById('acbLogoutError');
-    if(!/^\d{6}$/.test(input)||input!==logoutCode){
-      if(error)error.textContent='Incorrect verification code.';
-      return;
-    }
-    clearTimeout(logoutTimer);logoutCode='';
-    document.getElementById('acbLogoutModal')?.classList.remove('show');
-    clearSession();
-    if(typeof window.closeAppMenu==='function')window.closeAppMenu();
-    if(typeof window.logout==='function')window.logout(true);
-  };
-
-  /* Automatic notification popup. Existing bell/count behavior remains. */
-  let notificationSeenInitialized=false;
-  let notificationSeen=new Set();
-  let popupTimer=null;
-  function notificationId(n,i){
-    return String(n?.id||n?.notification_id||n?.uuid||((n?.created_at||n?.date||'')+'|'+(n?.message||'')+'|'+i));
-  }
-  window.notificationPopup=function(message,date){
-    const popup=document.getElementById('notificationPopup');
-    if(!popup){
-      if(typeof window.toast==='function')window.toast(message);
-      return;
-    }
-    const msg=document.getElementById('notificationPopupMessage');
-    const dt=document.getElementById('notificationPopupDate');
-    if(msg)msg.textContent=String(message||'New account notification');
-    if(dt)dt.textContent=typeof window.formatNotificationDate==='function'?window.formatNotificationDate(date||new Date().toISOString()):new Date(date||Date.now()).toLocaleString();
-    popup.classList.add('show');
-    clearTimeout(popupTimer);popupTimer=setTimeout(()=>popup.classList.remove('show'),6500);
-  };
-  window.hideNotificationPopup=function(){document.getElementById('notificationPopup')?.classList.remove('show');clearTimeout(popupTimer);};
-
-  window.renderNotifications=function(){
-    if(!window.me)return;
-    const list=Array.isArray(window.me.notifications)?window.me.notifications:[];
-    if(typeof window.updateNotificationIndicator==='function')window.updateNotificationIndicator(list);
-    const target=document.getElementById('notifications');
-    if(target){
-      target.innerHTML=list.length?list.slice(0,100).map(n=>{
-        const unread=!n.read_at&&!n.is_read;
-        return `<div class="notificationItem ${unread?'unread':''}"><strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:4px">Account Notification</strong><div class="notificationItemMessage">${typeof window.esc==='function'?window.esc(n.message||''):String(n.message||'')}</div><div class="notificationItemDate">${typeof window.esc==='function'?window.esc(window.formatNotificationDate(n.date||n.created_at)):String(n.date||n.created_at||'')}</div><div class="notificationActions"><button type="button" class="outline notificationDeleteBtn" data-id="${typeof window.esc==='function'?window.esc(n.id||''):String(n.id||'')}">Delete</button></div></div>`;
-      }).join(''):'<div class="notificationEmpty">No saved notifications.</div>';
-      if(typeof window.setupNotificationActions==='function')window.setupNotificationActions();
-    }
-    const current=new Set();
-    list.forEach((n,i)=>current.add(notificationId(n,i)));
-    if(notificationSeenInitialized){
-      list.forEach((n,i)=>{
-        const id=notificationId(n,i);
-        if(!notificationSeen.has(id)){
-          window.notificationPopup(n.message||'New account notification',n.date||n.created_at);
-          if(typeof window.playNotificationDing==='function')window.playNotificationDing();
-        }
-      });
-    }
-    notificationSeen=current;
-    notificationSeenInitialized=true;
-  };
-
-  /* Do not show old notifications as a new popup on login. */
-  const oldShowDashboard2=window.showDashboard;
-  /* Re-wrap only the initialization part without changing the earlier wrapper. */
-  window.showDashboard=function(){
-    if(window.me){
-      balanceHidden=getBalanceHidden(window.me);
-      notificationSeenInitialized=false;
-      notificationSeen=new Set();
-    }
-    if(typeof oldShowDashboard2==='function')oldShowDashboard2();
-    if(window.me){
-      const initial=Array.isArray(window.me.notifications)?window.me.notifications:[];
-      notificationSeen=new Set(initial.map(notificationId));
-      notificationSeenInitialized=true;
-      if(typeof window.updateTransferBalancePreview==='function')window.updateTransferBalancePreview();
-    }
-  };
-
-  /* Restore the session after a normal browser refresh. */
-  window.addEventListener('load',async function(){
-    let saved='';try{saved=sessionStorage.getItem(SESSION_KEY)||'';}catch{}
-    if(!saved||window.me)return;
-    token=saved;
-    try{
-      const ok=await window.loadMe();
-      if(ok){
-        balanceHidden=getBalanceHidden(window.me);
-        window.showDashboard();
-      }else clearSession();
-    }catch{clearSession();}
-  });
-
-  /* Keep session storage synchronized if an older login path writes token directly. */
-  try{if(typeof token==='string'&&token)sessionStorage.setItem(SESSION_KEY,token);}catch{}
-})();
+/* ACB STABILITY LAYER: core fixes are now applied directly above. */</script>
+<script>
+/* ACB SESSION + BALANCE PREFERENCE RESTORE — direct core implementation */
+window.addEventListener('load',async()=>{
+  $('publicSite').style.display='block';
+  $('dashboard').style.display='none';
+  let saved='';
+  try{saved=sessionStorage.getItem(ACB_SESSION_KEY)||'';}catch{}
+  if(!saved||token||me)return;
+  token=saved;
+  acbSyncGlobals();
+  const ok=await loadMe();
+  if(ok){
+    balanceHidden=acbLoadBalanceVisibility(me);
+    acbSyncGlobals();
+    showDashboard();
+  }else acbClearSession();
+});
 </script>
 </body>
 
