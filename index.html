@@ -3960,6 +3960,155 @@ const c=$('transferCurrency'),a=$('transferAmount');
 if(c)c.addEventListener('change',async()=>{await freshBalance();showQuote(quote(C(c.value),N(a?.value)),C(c.value),N(a?.value));});
 if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?.value),N(a.value)));
 })();
+
+/* ACB INDEX FIX — authoritative balance detection + conversion path.
+   This is inside the existing final script and supersedes the earlier
+   client-side transfer wrappers without changing the server. */
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const C=v=>String(v==null?'':v).trim().toUpperCase();
+  const N=v=>{
+    if(typeof v==='number') return Number.isFinite(v)?v:0;
+    if(v==null) return 0;
+    if(typeof v==='object') return N(v.amount??v.balance??v.available??v.value??0);
+    const n=Number(String(v).replace(/[^0-9.\\-]/g,''));
+    return Number.isFinite(n)?n:0;
+  };
+  const R={USD:1,EUR:.92,GBP:.78,NGN:1535,IDR:16600,CAD:1.37,AUD:1.53,CHF:.80,JPY:147,CNY:7.18,INR:83.5,MYR:4.68,SGD:1.35,AED:3.6725,ZAR:18.1,KES:129,GHS:15.2};
+  const F=.01;
+
+  function readBalances(){
+    const m=window.me||{}, out={};
+    const put=(currency,value)=>{
+      const c=C(currency); if(!c||R[c]==null) return;
+      const n=N(value); if(n>0) out[c]=Math.max(out[c]||0,n);
+      else if(!(c in out)) out[c]=0;
+    };
+    const b=m.balances;
+    if(Array.isArray(b)) b.forEach(x=>put(x?.currency||x?.code,x));
+    else if(b&&typeof b==='object') Object.keys(b).forEach(k=>put(k,b[k]));
+    const a=m.accounts;
+    if(Array.isArray(a)) a.forEach(x=>put(x?.currency||x?.code,x));
+    else if(a&&typeof a==='object') Object.keys(a).forEach(k=>put(k,a[k]));
+    return out;
+  }
+
+  function quote(target,amount){
+    const t=C(target), a=N(amount), b=readBalances();
+    if(!a||a<=0||R[t]==null) return null;
+    const primary=C(window.me?.primaryCurrency||window.me?.primary_currency||'USD');
+    const sources=Object.keys(b).filter(c=>R[c]!=null&&b[c]>0).sort((x,y)=>{
+      if(x===t) return -1; if(y===t) return 1;
+      if(x===primary) return -1; if(y===primary) return 1;
+      return b[y]-b[x];
+    });
+    for(const source of sources){
+      const rate=R[t]/R[source];
+      const sourceAmount=a/rate;
+      const fee=sourceAmount*F;
+      const total=sourceAmount+fee;
+      if(b[source]+1e-9>=total)
+        return {target:t,amount:a,source,rate,sourceAmount,fee,total,available:b[source]};
+    }
+    return null;
+  }
+
+  function showError(message){
+    if(typeof window.showError==='function') window.showError('transferError',message);
+  }
+
+  function updateTransferQuote(){
+    const target=C($('transferCurrency')?.value||'USD');
+    const amount=N($('transferAmount')?.value);
+    const q=quote(target,amount);
+    const balance=readBalances();
+    const source=C(window.me?.primaryCurrency||window.me?.primary_currency||'USD');
+    const visible=balance[target]>0?target:source;
+    const balEl=$('transferAvailableBalance');
+    if(balEl) balEl.textContent=typeof window.money==='function'?window.money(balance[visible]||0,visible):`${(balance[visible]||0).toLocaleString()} ${visible}`;
+    return q;
+  }
+
+  window.nextTransferStep=function(step){
+    if(typeof window.clearError==='function') window.clearError('transferError');
+    if(step===2){
+      const recipient=($('transferRecipient')?.value||'').trim();
+      const bank=($('transferBankName')?.value||'').trim();
+      const account=($('transferRecipientAccount')?.value||'').trim();
+      const email=($('transferRecipientEmail')?.value||'').trim();
+      if(recipient.length<2) return showError('Enter the recipient name.');
+      if(bank.length<2) return showError('Enter the recipient bank name.');
+      if(account.length<3) return showError('Enter the recipient account number.');
+      if(email&&!/^\S+@\S+\.\S+$/.test(email)) return showError('Enter a valid recipient email.');
+    }
+    if(step===3){
+      const amount=N($('transferAmount')?.value), target=C($('transferCurrency')?.value);
+      if(amount<=0) return showError('Enter a valid amount.');
+      if(R[target]==null) return showError('That demo currency is not supported.');
+      const q=updateTransferQuote();
+      if(!q) return showError('The available demo balance is not sufficient for this amount and fee.');
+    }
+    if(typeof window.showTransferStep==='function') window.showTransferStep(step);
+    updateTransferQuote();
+  };
+
+  window.transfer=async function(){
+    const btn=$('transferBtn'); if(btn?.disabled) return;
+    const target=C($('transferCurrency')?.value), requested=N($('transferAmount')?.value), q=quote(target,requested);
+    if(requested<=0) return showError('Enter a valid amount.');
+    if(!q) return showError('The available demo balance is not sufficient for this amount and fee.');
+    const recipient=($('transferRecipient')?.value||'').trim();
+    const bank=($('transferBankName')?.value||'').trim();
+    const account=($('transferRecipientAccount')?.value||'').trim();
+    const email=($('transferRecipientEmail')?.value||'').trim();
+    if(recipient.length<2||bank.length<2||account.length<3) return showError('Complete the recipient and bank details.');
+    if(email&&!/^\S+@\S+\.\S+$/.test(email)) return showError('Enter a valid recipient email.');
+    if(typeof window.setLoading==='function') setLoading('transferBtn',true,'Sending');
+    try{
+      const note=($('transferNote')?.value||'').trim();
+      const payload={
+        currency:q.source,
+        amount:Number(q.total.toFixed(2)),
+        recipient,
+        recipientEmail:email,
+        recipientBank:bank,
+        recipientAccount:account,
+        recipientCountry:$('transferCountry')?.value||'',
+        swiftBic:($('transferSwift')?.value||'').trim(),
+        note:(note?note+' | ':'')+`Demo conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`
+      };
+      const data=await window.api('/requests',{method:'POST',body:JSON.stringify(payload)});
+      if(data?.user) window.me=data.user;
+      if(typeof window.closeTransfer==='function') closeTransfer();
+      if(typeof window.refreshDashboard==='function') await window.refreshDashboard(false);
+      const r=data?.request||{};
+      const status=String(r.status||data?.status||'pending').toLowerCase();
+      if(typeof window.openReceipt==='function') window.openReceipt({
+        id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,
+        recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,
+        recipientCountry:payload.recipientCountry,swiftBic:payload.swiftBic,note,date:r.created_at||data?.created_at||new Date().toISOString(),
+        exchangeRate:q.rate,fundingCurrency:q.source,fundingAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent
+      });
+      if(typeof window.toast==='function') toast(data?.emailSent?'Demo transfer submitted. Receipt email accepted by the server.':'Demo transfer submitted. The server did not confirm email delivery.');
+    }catch(e){
+      showError(String(e?.message||'Unable to submit demo transfer.'));
+    }finally{
+      if(typeof window.setLoading==='function') setLoading('transferBtn',false);
+    }
+  };
+
+  const currency=$('transferCurrency'), amount=$('transferAmount');
+  if(currency) currency.addEventListener('change',updateTransferQuote);
+  if(amount) amount.addEventListener('input',updateTransferQuote);
+  const originalOpen=window.openTransfer;
+  window.openTransfer=function(){
+    if(typeof originalOpen==='function') originalOpen();
+    setTimeout(updateTransferQuote,0);
+  };
+  updateTransferQuote();
+})();
+
 </script>
 </body>
 
