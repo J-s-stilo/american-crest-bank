@@ -172,11 +172,23 @@ function receiptSvg({ reference, amount, currency, recipient, bankName, status, 
 }
 
 async function sendDemoEmail({ to, subject, html, receipt }) {
-  if (!to || !/^\S+@\S+\.\S+$/.test(String(to))) return false;
-  if (!nodemailer || !SMTP_HOST || !SMTP_PASSWORD) {
-    console.warn('Demo email not sent: SMTP is not configured.');
+  const recipient = String(to || '').trim();
+  console.log(`[DEMO EMAIL] requested recipient=${recipient || '(missing)'}`);
+  console.log(`[DEMO EMAIL] smtp configured host=${SMTP_HOST ? 'yes' : 'no'} port=${SMTP_PORT || '(missing)'} user=${SMTP_USER ? 'yes' : 'no'} password=${SMTP_PASSWORD ? 'yes' : 'no'}`);
+
+  if (!recipient || !/^\S+@\S+\.\S+$/.test(recipient)) {
+    console.warn(`[DEMO EMAIL] skipped: invalid recipient email (${recipient || '(missing)'})`);
     return false;
   }
+  if (!nodemailer) {
+    console.error('[DEMO EMAIL] skipped: nodemailer is not available.');
+    return false;
+  }
+  if (!SMTP_HOST || !SMTP_PASSWORD) {
+    console.warn('[DEMO EMAIL] skipped: SMTP is not configured.');
+    return false;
+  }
+
   try {
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
@@ -187,17 +199,23 @@ async function sendDemoEmail({ to, subject, html, receipt }) {
       greetingTimeout: 15000,
       socketTimeout: 20000
     });
+
+    console.log(`[DEMO EMAIL] attempting SMTP verify host=${SMTP_HOST} port=${SMTP_PORT} secure=${SMTP_PORT === 465}`);
     await transporter.verify();
-    await transporter.sendMail({
+    console.log('[DEMO EMAIL] SMTP verify succeeded.');
+
+    const info = await transporter.sendMail({
       from: `${BANK_NAME} <${BANK_EMAIL}>`,
-      to,
+      to: recipient,
       subject,
       html,
       attachments: receipt ? [{ filename: 'american-crest-demo-transfer-receipt.svg', content: receipt, contentType: 'image/svg+xml' }] : []
     });
+
+    console.log(`[DEMO EMAIL] sendMail accepted messageId=${info.messageId || '(none)'} response=${info.response || '(none)'}`);
     return true;
   } catch (error) {
-    console.error('Demo email error:', error.message);
+    console.error(`[DEMO EMAIL] error name=${error?.name || '(unknown)'} code=${error?.code || '(none)'} command=${error?.command || '(none)'} message=${error?.message || error}`);
     return false;
   }
 }
@@ -2185,6 +2203,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     const date = new Date().toISOString();
     const receipt = receiptSvg({reference,amount:amount.toFixed(2),currency,recipient,bankName:recipientBank,status:'pending',date});
     let emailSent = false;
+    console.log(`[DEMO EMAIL] transfer ${reference} recipientEmail=${recipientEmail || '(missing)'}`);
     if (recipientEmail) {
       emailSent = await sendDemoEmail({
         to: recipientEmail,
@@ -2192,6 +2211,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
         receipt,
         html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>A simulated transfer is pending.</b></p><p>A demo transfer has been initiated for you and is awaiting processing.</p><div style="padding:18px;background:#f4f7fb;border-radius:14px"><p><b>Amount:</b> ${amount.toLocaleString()} ${currency}</p><p><b>Reference:</b> ${reference}</p><p><b>Recipient bank:</b> ${recipientBank}</p><p><b>Status:</b> PENDING</p></div><p style="color:#64748b">This is a fictional/demo banking notification. No real funds were transferred.</p></div>`
       });
+      console.log(`[DEMO EMAIL] transfer ${reference} result=${emailSent ? 'sent' : 'not-sent'}`);
       if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [requestId]);
     }
 
