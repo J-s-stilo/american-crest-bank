@@ -3913,6 +3913,53 @@ window.nextTransferStep=function(step){if(typeof window.clearError==='function')
 window.transfer=async function(){const btn=$('transferBtn');if(btn?.disabled)return;const target=C($('transferCurrency')?.value),requested=N($('transferAmount')?.value),q=quote(target,requested);if(requested<=0)return err('Enter a valid amount.');if(!q)return err('Your available demo balance cannot cover this transfer after automatic currency conversion and the demo fee.');const recipient=($('transferRecipient')?.value||'').trim(),bank=($('transferBankName')?.value||'').trim(),account=($('transferRecipientAccount')?.value||'').trim(),email=($('transferRecipientEmail')?.value||'').trim();if(recipient.length<2||bank.length<2||account.length<3)return err('Complete the recipient and bank details.');if(email&&!/^\S+@\S+\.\S+$/.test(email))return err('Enter a valid recipient email.');if(!(await pin()))return;const originalNote=($('transferNote')?.value||'').trim(),payload={currency:q.source,amount:Number(q.total.toFixed(2)),recipient,recipientEmail:email,recipientBank:bank,recipientAccount:account,recipientCountry:$('transferCountry')?.value||'',swiftBic:($('transferSwift')?.value||'').trim(),note:originalNote};payload.note=(originalNote?originalNote+' | ':'')+`Demo automatic conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`;try{if(typeof window.setLoading==='function')window.setLoading('transferBtn',true,'Sending');const data=await window.api('/requests',{method:'POST',body:JSON.stringify(payload)});if(data?.user)window.me=data.user;if(typeof window.closeTransfer==='function')window.closeTransfer();if(typeof window.refreshDashboard==='function')await window.refreshDashboard(false);const r=data?.request||{},status=String(r.status||data?.status||'pending').toLowerCase();if(typeof window.openReceipt==='function')window.openReceipt({id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,recipientCountry:payload.recipientCountry,swiftBic:payload.swiftBic,note:originalNote,date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,fundingCurrency:q.source,fundingAmount:q.total,sourceCurrency:q.source,sourceAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent});if(typeof window.toast==='function')window.toast(data?.emailSent?'Demo transfer submitted. Receipt email accepted by the server.':'Demo transfer submitted. The server did not confirm email delivery.')}catch(e){err(String(e?.message||'Unable to submit demo transfer.'))}finally{if(typeof window.setLoading==='function')window.setLoading('transferBtn',false)}};
 const c=$('transferCurrency'),a=$('transferAmount');if(c)c.addEventListener('change',preview);if(a)a.addEventListener('input',preview);const open=window.openTransfer;window.openTransfer=function(){if(typeof open==='function')open();setTimeout(preview,0)};setTimeout(preview,0);
 })();
+
+
+/* Relocated index-only balance/quote fix; kept inside the existing script. */
+/* ACB DEMO — BALANCE DETECTION + QUOTE FIX v2 (INDEX ONLY)
+   Additive layer. Server endpoint is unchanged. */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const C=v=>String(v==null?'':v).trim().toUpperCase();
+const N=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;if(v==null)return 0;const n=Number(String(v).replace(/[^0-9.\-]/g,''));return Number.isFinite(n)?n:0};
+const R=window.DEMO_EXCHANGE_RATES||{USD:1,EUR:.92,GBP:.78,NGN:1535,IDR:16600,CAD:1.37,AUD:1.53,CHF:.80,JPY:147,CNY:7.18,INR:83.5,MYR:4.68,SGD:1.35,AED:3.6725,ZAR:18.1,KES:129,GHS:15.2};
+const F=Number(window.DEMO_EXCHANGE_FEE_RATE||.01);
+function add(o,c,v){c=C(c);v=N(v);if(!c||R[c]==null)return;if(v>0)o[c]=Math.max(N(o[c]),v);else if(!(c in o))o[c]=v;}
+function readBalances(){
+ const m=window.me||{},o={},r=m.balances;
+ if(r&&typeof r==='object'&&!Array.isArray(r))Object.keys(r).forEach(k=>{const v=r[k];add(o,k,v&&typeof v==='object'?(v.amount??v.balance??v.available??v.value):v)});
+ if(Array.isArray(r))r.forEach(x=>add(o,x?.currency||x?.code,x?.amount??x?.balance??x?.available));
+ const a=m.accounts;
+ if(Array.isArray(a))a.forEach(x=>add(o,x?.currency||x?.code,x?.amount??x?.balance??x?.available));
+ else if(a&&typeof a==='object')Object.keys(a).forEach(k=>add(o,k,a[k]?.amount??a[k]?.balance??a[k]?.available??a[k]));
+ return o;
+}
+function quote(target,amount){
+ target=C(target);amount=N(amount);if(!amount||R[target]==null)return null;
+ const b=readBalances(),primary=C(window.me?.primaryCurrency||window.me?.primary_currency||'USD');
+ const sources=Object.keys(b).filter(k=>R[k]!=null&&b[k]>0).sort((a,z)=>a===primary?-1:z===primary?1:a===target?-1:z===target?1:b[z]-b[a]);
+ for(const source of sources){const rate=R[target]/R[source],sourceAmount=amount/rate,fee=sourceAmount*F,total=sourceAmount+fee;if(b[source]+1e-9>=total)return{target,amount,source,rate,sourceAmount,fee,total,available:b[source]};}
+ return null;
+}
+async function freshBalance(){try{if(typeof window.loadMe==='function')await window.loadMe();}catch(e){}}
+function showQuote(q,target,amount){
+ let box=$('acbBalanceQuote'),panel=$('transferPanel1');
+ if(!box&&panel){box=document.createElement('div');box.id='acbBalanceQuote';box.style.cssText='margin:12px 0;padding:13px 15px;border:1px solid #dbe7f5;border-radius:14px;background:#f6faff;color:#29415f;font-size:13px;line-height:1.6';const nav=panel.querySelector('.transferNav');if(nav)nav.parentNode.insertBefore(box,nav);else panel.appendChild(box);}
+ if(!box)return;
+ box.innerHTML=q?`<strong>Automatic currency conversion</strong><br>${N(amount).toLocaleString(undefined,{maximumFractionDigits:2})} ${C(target)} → ${q.total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${q.source} debited, including ${q.fee.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${q.source} demo fee.`:'The available demo balance is not sufficient for this amount and fee.';
+}
+const oldNext=window.nextTransferStep;
+window.nextTransferStep=async function(step){
+ if(step===3){const amount=N($('transferAmount')?.value),target=C($('transferCurrency')?.value);if(amount<=0)return typeof window.showError==='function'&&window.showError('transferError','Enter a valid amount.');if(R[target]==null)return typeof window.showError==='function'&&window.showError('transferError','That demo currency is not supported.');await freshBalance();const q=quote(target,amount);showQuote(q,target,amount);if(!q)return typeof window.showError==='function'&&window.showError('transferError','The available demo balance is not sufficient for this amount and fee.');}
+ return oldNext?oldNext(step):undefined;
+};
+const oldTransfer=window.transfer;
+window.transfer=async function(){await freshBalance();return oldTransfer?oldTransfer.apply(this,arguments):undefined;};
+const c=$('transferCurrency'),a=$('transferAmount');
+if(c)c.addEventListener('change',async()=>{await freshBalance();showQuote(quote(C(c.value),N(a?.value)),C(c.value),N(a?.value));});
+if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?.value),N(a.value)));
+})();
 </script>
 </body>
 
