@@ -1011,9 +1011,11 @@ Sign In
     <button onclick="closeAppMenu();openFeature('profile')">●<span>Profile</span></button>
     <button onclick="closeAppMenu();openFeature('settings')">⚙<span>Settings</span></button>
     <button onclick="closeAppMenu();toggleChat()">☁<span>Support</span></button>
+    <button onclick="openLogoutVerification()">⇥<span>Log Out</span></button>
   </div>
   <div class="appMenuNotice">All banking, card, loan, transfer and payment features in this application are simulations. No real funds are moved.</div>
 </aside>
+<div class="featureModal" id="logoutVerificationModal" aria-hidden="true"><div class="featureBackdrop" onclick="closeLogoutVerification()"></div><div class="featureBox" role="dialog" aria-modal="true" aria-labelledby="logoutVerificationTitle"><button class="featureClose" type="button" onclick="closeLogoutVerification()">×</button><div class="featureIcon">⇥</div><div class="featureEyebrow">AMERICAN CREST DEMO</div><h2 id="logoutVerificationTitle">Verify Logout</h2><p>Enter the 6-digit verification code shown below to complete logout.</p><div class="featureCard" style="text-align:center;margin:12px 0 16px"><strong id="logoutVerificationCode" style="font-size:28px;letter-spacing:6px;color:var(--navy)">------</strong></div><div class="featureForm"><label for="logoutVerificationInput">Verification code</label><input id="logoutVerificationInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code"><div id="logoutVerificationError" style="display:none;color:#b42318;font-size:12px;font-weight:700"></div><button class="btn primary full" type="button" onclick="verifyLogoutCode()">Verify &amp; Log Out</button></div></div></div>
 <div class="featureModal" id="featureModal"><div class="featureBackdrop" onclick="closeFeature()"></div><div class="featureBox"><button class="featureClose" onclick="closeFeature()">×</button><div class="featureIcon" id="featureIcon">✦</div><div class="featureEyebrow">AMERICAN CREST DEMO</div><h2 id="featureTitle">Feature</h2><p id="featureDescription">Demo feature.</p><div id="featureContent"></div></div></div>
 <div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
@@ -1085,13 +1087,6 @@ let notificationAudioContext=null;
 let pendingLoginVerification=null;
 let pendingRegistrationVerification=null;
 let pendingChatImage=null;
-
-/* Keep existing session variables and later add-on code on the same state. */
-Object.defineProperty(window,'me',{configurable:true,get:()=>me,set:v=>{me=v;}});
-Object.defineProperty(window,'token',{configurable:true,get:()=>token,set:v=>{token=String(v||'');}});
-function balancePreferenceKey(user){const id=user?.id||user?.userId||user?.user_id||user?.email||user?.phone||'current';return 'acb_balance_hidden_'+String(id);}
-function loadBalancePreference(user){try{return localStorage.getItem(balancePreferenceKey(user))==='1';}catch{return false;}}
-function saveBalancePreference(user,hidden){try{localStorage.setItem(balancePreferenceKey(user),hidden?'1':'0');}catch{}}
 
 const CURRENCY_INFO={
 
@@ -1570,7 +1565,6 @@ throw new Error(
 token=String(data.token);
 
 me=data.user;
-balanceHidden=loadBalancePreference(me);
 
 closeModal();
 
@@ -1675,7 +1669,6 @@ throw new Error('The server returned an invalid login response.');
 
 token=String(data.token);
 me=data.user;
-balanceHidden=loadBalancePreference(me);
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
@@ -1948,7 +1941,6 @@ $('liveBanner').innerHTML=
 function toggleBalance(){
 
 balanceHidden=!balanceHidden;
-saveBalancePreference(me,balanceHidden);
 
 renderBalance();
 
@@ -2155,11 +2147,14 @@ updateTransferCurrencySymbol();
 }
 function closeTransfer(){$('transferModal').classList.remove('show');}
 function updateTransferBalancePreview(){
- const primary=me?.primaryCurrency||me?.primary_currency||'NGN';
+ const currency=$('transferCurrency')?.value||me?.primaryCurrency||me?.primary_currency||'NGN';
  const balances=me?.balances||{};
- const balance=Number(balances[primary]??0);
+ const primary=me?.primaryCurrency||me?.primary_currency||'NGN';
+ let balance=Number(balances[currency]??0);
+ // Display the customer's main balance when the selected transfer currency has no separate wallet.
+ if(!(balance>0) && balances[primary]!=null) balance=Number(balances[primary]??0);
  const el=$('transferAvailableBalance');
- if(el)el.textContent=balanceHidden?'••••••':money(balance,primary);
+ if(el)el.textContent=balanceHidden?'••••••':money(balance,currency);
 }
 function updateTransferCurrencySymbol(){
  const currency=$('transferCurrency')?.value||'USD';
@@ -3466,6 +3461,44 @@ LOGOUT
 
 */
 
+function openLogoutVerification(){
+  if(!token || !me){ return; }
+  closeAppMenu();
+  const code=String(Math.floor(100000+Math.random()*900000));
+  window.__acbLogoutVerificationCode=code;
+  const codeEl=document.getElementById('logoutVerificationCode');
+  const input=document.getElementById('logoutVerificationInput');
+  const err=document.getElementById('logoutVerificationError');
+  if(codeEl) codeEl.textContent=code;
+  if(input){ input.value=''; setTimeout(()=>input.focus(),50); }
+  if(err){ err.textContent=''; err.style.display='none'; }
+  const modal=document.getElementById('logoutVerificationModal');
+  if(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
+}
+
+function closeLogoutVerification(){
+  const modal=document.getElementById('logoutVerificationModal');
+  if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+}
+
+function verifyLogoutCode(){
+  const input=document.getElementById('logoutVerificationInput');
+  const err=document.getElementById('logoutVerificationError');
+  const entered=(input?.value||'').trim();
+  const expected=window.__acbLogoutVerificationCode||'';
+  if(!/^\d{6}$/.test(entered)){
+    if(err){ err.textContent='Enter the 6-digit verification code.'; err.style.display='block'; }
+    return;
+  }
+  if(entered!==expected){
+    if(err){ err.textContent='Incorrect verification code.'; err.style.display='block'; }
+    return;
+  }
+  window.__acbLogoutVerificationCode='';
+  closeLogoutVerification();
+  logout(true);
+}
+
 function logout(show=true){
 
 token='';
@@ -3519,14 +3552,11 @@ window.addEventListener(
 'load',
 
 ()=>{
-  /* Login can complete before the browser's load event. Never hide an active dashboard. */
-  if(token && me){
-    $('publicSite').style.display='none';
-    $('dashboard').style.display='block';
-    return;
-  }
-  $('publicSite').style.display='block';
-  $('dashboard').style.display='none';
+
+$('publicSite').style.display='block';
+
+$('dashboard').style.display='none';
+
 }
 
 );
@@ -4068,11 +4098,12 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
     const amount=N($('transferAmount')?.value);
     const q=quote(target,amount);
     const balances=readBalances();
-    const primary=C(me?.primaryCurrency||me?.primary_currency||'USD');
+    const primary=C(window.me?.primaryCurrency||window.me?.primary_currency||'USD');
+    const visible=balances[target]>0?target:primary;
     const balEl=$('transferAvailableBalance');
     if(balEl){
-      const value=Number(balances[primary]||0);
-      balEl.textContent=typeof window.money==='function'?window.money(value,primary):`${value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${primary}`;
+      const value=balances[visible]||0;
+      balEl.textContent=typeof window.money==='function'?window.money(value,visible):`${value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${visible}`;
     }
     return q;
   }
