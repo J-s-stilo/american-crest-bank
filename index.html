@@ -3555,6 +3555,13 @@ window.addEventListener(
 
 ()=>{
 
+  /* Preserve a login that completed before the browser load event. */
+  if(token && me){
+    $('publicSite').style.display='none';
+    $('dashboard').style.display='block';
+    return;
+  }
+
 $('publicSite').style.display='block';
 
 $('dashboard').style.display='none';
@@ -3563,14 +3570,6 @@ $('dashboard').style.display='none';
 
 );
 
-
-/* ACB additive login/dashboard load guard: preserve an active authenticated dashboard. */
-window.addEventListener('load',()=>{
-  if(token && me){
-    $('publicSite').style.display='none';
-    $('dashboard').style.display='block';
-  }
-},{once:true});
 
 /* ===== FUNCTIONAL UPGRADE JAVASCRIPT ===== */
 function openAppMenu(){
