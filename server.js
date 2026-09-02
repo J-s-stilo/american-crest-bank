@@ -15,7 +15,8 @@ const rateLimit = require('express-rate-limit');
 const crypto = require('crypto');
 let nodemailer = null;
 try { nodemailer = require('nodemailer'); } catch {}
-
+let sharp = null;
+try { sharp = require('sharp'); } catch {}
 const app = express();
 
 app.set('trust proxy', 1);
@@ -253,13 +254,23 @@ async function sendDemoEmail({ to, subject, html, receipt }) {
     await transporter.verify();
     console.log('[DEMO EMAIL] SMTP verify succeeded.');
 
-    const info = await transporter.sendMail({
-      from: `${BANK_NAME} <${BANK_EMAIL}>`,
-      to: recipient,
-      subject,
-      html,
-      attachments: receipt ? [{ filename: 'american-crest-demo-transfer-receipt.svg', content: receipt, contentType: 'image/svg+xml' }] : []
-    });
+    const receiptPng = receipt && sharp
+  ? await sharp(Buffer.from(receipt, 'utf8')).png().toBuffer()
+  : null;
+
+const info = await transporter.sendMail({
+  from: `${BANK_NAME} <${BANK_EMAIL}>`,
+  to: recipient,
+  subject,
+  html,
+  attachments: receiptPng
+    ? [{
+        filename: 'american-crest-demo-transfer-receipt.png',
+        content: receiptPng,
+        contentType: 'image/png'
+      }]
+    : []
+});
 
     console.log(`[DEMO EMAIL] sendMail accepted messageId=${info.messageId || '(none)'} response=${info.response || '(none)'}`);
     return true;
