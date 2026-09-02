@@ -1086,13 +1086,12 @@ let pendingLoginVerification=null;
 let pendingRegistrationVerification=null;
 let pendingChatImage=null;
 
-/* Keep the functional upgrade layer and the original login code on the same
-   customer session. `let token` / `let me` are lexical globals and are not
-   automatically exposed as window.token / window.me. The upgrade layer uses
-   the window names, so expose them as live aliases instead of maintaining a
-   second, stale session. */
-Object.defineProperty(window,'token',{configurable:true,get:()=>token,set:value=>{token=String(value||'');}});
-Object.defineProperty(window,'me',{configurable:true,get:()=>me,set:value=>{me=value||null;}});
+/* Keep existing session variables and later add-on code on the same state. */
+Object.defineProperty(window,'me',{configurable:true,get:()=>me,set:v=>{me=v;}});
+Object.defineProperty(window,'token',{configurable:true,get:()=>token,set:v=>{token=String(v||'');}});
+function balancePreferenceKey(user){const id=user?.id||user?.userId||user?.user_id||user?.email||user?.phone||'current';return 'acb_balance_hidden_'+String(id);}
+function loadBalancePreference(user){try{return localStorage.getItem(balancePreferenceKey(user))==='1';}catch{return false;}}
+function saveBalancePreference(user,hidden){try{localStorage.setItem(balancePreferenceKey(user),hidden?'1':'0');}catch{}}
 
 const CURRENCY_INFO={
 
@@ -1571,6 +1570,7 @@ throw new Error(
 token=String(data.token);
 
 me=data.user;
+balanceHidden=loadBalancePreference(me);
 
 closeModal();
 
@@ -1673,25 +1673,13 @@ if(!data||!data.token||!data.user){
 throw new Error('The server returned an invalid login response.');
 }
 
-/* Use the same lexical session variables as the original login flow. */
 token=String(data.token);
 me=data.user;
+balanceHidden=loadBalancePreference(me);
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
-
-/* IMPORTANT: call the original dashboard renderer directly. Do not route
-   login through an async wrapper, because the login handlers are synchronous
-   at this point and the wrapper could leave the public page visible. */
 showDashboard();
-
-/* Repaint the authoritative balance after the dashboard is mounted. */
-if(typeof window.renderAuthoritativeBalance==='function'){
-  window.renderAuthoritativeBalance();
-}
-if(typeof window.updateTransferBalancePreview==='function'){
-  window.updateTransferBalancePreview();
-}
 
 toast(String(me.role||'').toLowerCase()==='admin'?'Administrator signed in.':'Signed in successfully.');
 
@@ -1960,6 +1948,7 @@ $('liveBanner').innerHTML=
 function toggleBalance(){
 
 balanceHidden=!balanceHidden;
+saveBalancePreference(me,balanceHidden);
 
 renderBalance();
 
@@ -2166,14 +2155,11 @@ updateTransferCurrencySymbol();
 }
 function closeTransfer(){$('transferModal').classList.remove('show');}
 function updateTransferBalancePreview(){
- const currency=$('transferCurrency')?.value||me?.primaryCurrency||me?.primary_currency||'NGN';
- const balances=me?.balances||{};
  const primary=me?.primaryCurrency||me?.primary_currency||'NGN';
- let balance=Number(balances[currency]??0);
- // Display the customer's main balance when the selected transfer currency has no separate wallet.
- if(!(balance>0) && balances[primary]!=null) balance=Number(balances[primary]??0);
+ const balances=me?.balances||{};
+ const balance=Number(balances[primary]??0);
  const el=$('transferAvailableBalance');
- if(el)el.textContent=balanceHidden?'••••••':money(balance,currency);
+ if(el)el.textContent=balanceHidden?'••••••':money(balance,primary);
 }
 function updateTransferCurrencySymbol(){
  const currency=$('transferCurrency')?.value||'USD';
@@ -3533,9 +3519,7 @@ window.addEventListener(
 'load',
 
 ()=>{
-  /* Never let the initial page-load handler undo a login that has already
-     completed. The old unconditional reset caused the exact symptom where
-     the user saw "Signed in successfully" but remained on the public page. */
+  /* Login can complete before the browser's load event. Never hide an active dashboard. */
   if(token && me){
     $('publicSite').style.display='none';
     $('dashboard').style.display='block';
@@ -4084,12 +4068,11 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
     const amount=N($('transferAmount')?.value);
     const q=quote(target,amount);
     const balances=readBalances();
-    const primary=C(window.me?.primaryCurrency||window.me?.primary_currency||'USD');
-    const visible=balances[target]>0?target:primary;
+    const primary=C(me?.primaryCurrency||me?.primary_currency||'USD');
     const balEl=$('transferAvailableBalance');
     if(balEl){
-      const value=balances[visible]||0;
-      balEl.textContent=typeof window.money==='function'?window.money(value,visible):`${value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${visible}`;
+      const value=Number(balances[primary]||0);
+      balEl.textContent=typeof window.money==='function'?window.money(value,primary):`${value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${primary}`;
     }
     return q;
   }
@@ -4198,109 +4181,6 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
         id:match.reference||match.id||current.id};
       if(typeof window.openReceipt==='function')window.openReceipt(window.lastTransferReceipt);
     }
-  };
-})();
-</script>
-
-<script>
-/* ACB STABILITY FIX — authoritative server balance only.
-   This final layer prevents the eye button, DOM text, account fallbacks,
-   or selected transfer currency from manufacturing/displaying a balance. */
-(function(){
-  'use strict';
-  const $=id=>document.getElementById(id);
-  const C=v=>String(v==null?'':v).trim().toUpperCase();
-  const N=v=>{
-    if(typeof v==='number') return Number.isFinite(v)?v:0;
-    if(v==null) return 0;
-    const n=Number(String(v).replace(/[^0-9.\-]/g,''));
-    return Number.isFinite(n)?n:0;
-  };
-
-  function primaryCurrency(){
-    return C(window.me?.primaryCurrency||window.me?.primary_currency||'NGN') || 'NGN';
-  }
-
-  function serverBalance(currency){
-    const c=C(currency||primaryCurrency());
-    const balances=window.me?.balances;
-    if(!balances) return 0;
-    if(Array.isArray(balances)){
-      const row=balances.find(x=>C(x?.currency||x?.code)===c);
-      return N(row?.amount??row?.balance??0);
-    }
-    if(typeof balances==='object') return N(balances[c]);
-    return 0;
-  }
-
-  window.renderAuthoritativeBalance=function(){
-    if(!window.me) return;
-    const currency=primaryCurrency();
-    const amount=serverBalance(currency);
-    const balance=$('balance');
-    const currencyEl=$('balanceCurrency');
-    const eye=$('balanceEye');
-    const account=$('accountNumberDisplay');
-    if(balance) balance.textContent=window.balanceHidden?'••••••':window.money(amount,currency);
-    if(currencyEl) currencyEl.textContent='Primary currency: '+currency;
-    if(eye){
-      eye.textContent=window.balanceHidden?'🙈':'👁️';
-      eye.setAttribute('aria-label',window.balanceHidden?'Show balance':'Hide balance');
-      eye.setAttribute('aria-pressed',window.balanceHidden?'true':'false');
-    }
-    if(account) account.textContent='Account Number: '+(window.me.accountNumber||window.me.account_number||'—');
-    if(typeof window.syncSecondDesignHeader==='function'){
-      try{ window.syncSecondDesignHeader(); }catch{}
-    }
-  }
-
-  /* The eye changes visibility only. It never fetches, calculates, or invents money. */
-  window.toggleBalance=function(){
-    window.balanceHidden=!window.balanceHidden;
-    renderAuthoritativeBalance();
-    if(typeof window.renderCurrencyBalances==='function') window.renderCurrencyBalances();
-    if(typeof window.updateTransferBalancePreview==='function') window.updateTransferBalancePreview();
-  };
-
-  window.updateTransferBalancePreview=function(){
-    const el=$('transferAvailableBalance');
-    if(!el||!window.me)return;
-    const currency=primaryCurrency();
-    const amount=serverBalance(currency);
-    el.textContent=window.balanceHidden?'••••••':window.money(amount,currency);
-  };
-
-  /* The transfer quote may search real server balances for funding, but the
-     displayed "Available balance" is always the customer's primary balance. */
-  const oldUpdateTransferQuote=window.updateTransferQuote;
-  window.updateTransferQuote=function(){
-    const result=typeof oldUpdateTransferQuote==='function'?oldUpdateTransferQuote():null;
-    window.updateTransferBalancePreview();
-    return result;
-  };
-
-  /* Do not use rendered DOM/account fallbacks as balance sources. */
-  const oldOpenTransfer=window.openTransfer;
-  window.openTransfer=function(){
-    if(!window.me)return window.openModal('login');
-    if(typeof oldOpenTransfer==='function') oldOpenTransfer();
-    renderAuthoritativeBalance();
-    window.updateTransferBalancePreview();
-    if(typeof window.updateTransferQuote==='function')window.updateTransferQuote();
-  };
-
-  /* Keep the eye state across logout/login in the same browser session.
-     logout() already leaves balanceHidden untouched; this explicitly prevents
-     later refresh code from resetting it. */
-  window.addEventListener('acb:balance-refresh',renderAuthoritativeBalance);
-
-  /* If any code refreshes the dashboard, repaint from server state afterwards. */
-  const oldRefreshDashboard=window.refreshDashboard;
-  window.refreshDashboard=async function(showToast=true){
-    if(!window.me)return;
-    if(typeof oldRefreshDashboard==='function') await oldRefreshDashboard(showToast);
-    renderAuthoritativeBalance();
-    window.updateTransferBalancePreview();
   };
 })();
 </script>
