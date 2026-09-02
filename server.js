@@ -144,30 +144,79 @@ async function generateAccountNumber(client = pool) {
   throw new Error('Unable to generate account number.');
 }
 
-function receiptSvg({ reference, amount, currency, recipient, bankName, status, date }) {
+function receiptSvg({
+  reference,
+  amount,
+  currency,
+  recipient,
+  recipientEmail,
+  bankName,
+  status,
+  date,
+  senderName,
+  senderEmail,
+  senderAccountNumber,
+  fee,
+  fundingCurrency,
+  debitAmount,
+  exchangeRate
+}) {
   const escSvg = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
-    <rect width="900" height="1200" fill="#f4f7fb"/>
-    <rect x="60" y="50" width="780" height="1100" rx="28" fill="#fff" stroke="#d9e2ef" stroke-width="3"/>
-    <text x="100" y="125" font-family="Arial" font-size="30" font-weight="700" fill="#071a35">${escSvg(BANK_NAME)}</text>
-    <text x="100" y="160" font-family="Arial" font-size="18" fill="#64748b">DIGITAL BANKING DEMO</text>
-    <rect x="650" y="90" width="130" height="48" rx="24" fill="#fff3cd"/>
-    <text x="715" y="121" text-anchor="middle" font-family="Arial" font-size="16" font-weight="700" fill="#725b13">${escSvg(String(status).toUpperCase())}</text>
-    <line x1="100" y1="195" x2="800" y2="195" stroke="#e2e8f0"/>
-    <text x="100" y="255" font-family="Arial" font-size="16" fill="#64748b">TRANSFER AMOUNT</text>
-    <text x="100" y="305" font-family="Arial" font-size="44" font-weight="700" fill="#071a35">${escSvg(amount)} ${escSvg(currency)}</text>
-    <g font-family="Arial">
-      <text x="100" y="380" font-size="16" fill="#64748b">RECIPIENT</text><text x="100" y="410" font-size="22" font-weight="700" fill="#1e293b">${escSvg(recipient)}</text>
-      <text x="100" y="475" font-size="16" fill="#64748b">BANK</text><text x="100" y="505" font-size="22" font-weight="700" fill="#1e293b">${escSvg(bankName || 'External bank')}</text>
-      <text x="100" y="570" font-size="16" fill="#64748b">REFERENCE</text><text x="100" y="600" font-size="22" font-weight="700" fill="#1e293b">${escSvg(reference)}</text>
-      <text x="100" y="665" font-size="16" fill="#64748b">DATE &amp; TIME</text><text x="100" y="695" font-size="22" font-weight="700" fill="#1e293b">${escSvg(date)}</text>
-    </g>
-    <rect x="100" y="760" width="700" height="170" rx="18" fill="#f7f9fc"/>
-    <text x="130" y="810" font-family="Arial" font-size="19" font-weight="700" fill="#071a35">Demo transfer notice</text>
-    <text x="130" y="850" font-family="Arial" font-size="17" fill="#64748b">This receipt records a fictional/simulated</text>
-    <text x="130" y="880" font-family="Arial" font-size="17" fill="#64748b">banking transaction. No real funds were moved.</text>
-    <text x="100" y="1020" font-family="Arial" font-size="16" fill="#94a3b8">Sender: ${escSvg(BANK_EMAIL)}</text>
-    <text x="100" y="1060" font-family="Arial" font-size="16" fill="#94a3b8">For demonstration purposes only.</text>
+  const rawAccount = String(senderAccountNumber || '').replace(/\s+/g, '');
+  const maskedAccount = rawAccount
+    ? (rawAccount.length > 4 ? `${'*'.repeat(Math.max(0, rawAccount.length - 4))}${rawAccount.slice(-4)}` : rawAccount)
+    : 'Not available';
+  const transferAmount = `${escSvg(Number(amount || 0).toFixed(2))} ${escSvg(currency)}`;
+  const feeAmount = Number(fee || 0);
+  const hasConversion = fundingCurrency && String(fundingCurrency).toUpperCase() !== String(currency).toUpperCase();
+  const rateText = Number.isFinite(Number(exchangeRate))
+    ? `1 ${escSvg(String(fundingCurrency || currency).toUpperCase())} = ${escSvg(Number(exchangeRate).toFixed(6))} ${escSvg(currency)}`
+    : 'Not available';
+  const debitText = Number.isFinite(Number(debitAmount))
+    ? `${escSvg(Number(debitAmount).toFixed(2))} ${escSvg(String(fundingCurrency || currency).toUpperCase())}`
+    : transferAmount;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1320" viewBox="0 0 900 1320">
+    <rect width="900" height="1320" fill="#f4f7fb"/>
+    <rect x="60" y="40" width="780" height="1240" rx="28" fill="#fff" stroke="#d9e2ef" stroke-width="3"/>
+    <text x="100" y="112" font-family="Arial" font-size="30" font-weight="700" fill="#071a35">${escSvg(BANK_NAME)}</text>
+    <text x="100" y="147" font-family="Arial" font-size="18" fill="#64748b">DIGITAL BANKING DEMO</text>
+    <rect x="635" y="78" width="145" height="48" rx="24" fill="#e8f7ee"/>
+    <text x="707" y="109" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#17633a">${escSvg(String(status || 'successful').toUpperCase())}</text>
+    <line x1="100" y1="182" x2="800" y2="182" stroke="#e2e8f0"/>
+
+    <text x="100" y="235" font-family="Arial" font-size="15" fill="#64748b">TRANSFER AMOUNT</text>
+    <text x="100" y="282" font-family="Arial" font-size="40" font-weight="700" fill="#071a35">${transferAmount}</text>
+
+    <rect x="100" y="325" width="700" height="205" rx="18" fill="#f7f9fc"/>
+    <text x="130" y="365" font-family="Arial" font-size="15" font-weight="700" fill="#64748b">SENDER / CUSTOMER</text>
+    <text x="130" y="400" font-family="Arial" font-size="21" font-weight="700" fill="#1e293b">${escSvg(senderName || 'Customer')}</text>
+    <text x="130" y="430" font-family="Arial" font-size="17" fill="#475569">${escSvg(senderEmail || 'Email not available')}</text>
+    <text x="130" y="470" font-family="Arial" font-size="15" fill="#64748b">ACCOUNT</text>
+    <text x="130" y="500" font-family="Arial" font-size="19" font-weight="700" fill="#1e293b">${escSvg(maskedAccount)}</text>
+
+    <text x="100" y="580" font-family="Arial" font-size="15" font-weight="700" fill="#64748b">RECIPIENT</text>
+    <text x="100" y="612" font-family="Arial" font-size="21" font-weight="700" fill="#1e293b">${escSvg(recipient)}</text>
+    <text x="100" y="640" font-family="Arial" font-size="17" fill="#475569">${escSvg(recipientEmail || 'Email not provided')}</text>
+
+    <text x="100" y="700" font-family="Arial" font-size="15" fill="#64748b">BANK</text>
+    <text x="100" y="732" font-family="Arial" font-size="20" font-weight="700" fill="#1e293b">${escSvg(bankName || 'External bank')}</text>
+
+    <text x="100" y="790" font-family="Arial" font-size="15" fill="#64748b">REFERENCE / TRANSFER NUMBER</text>
+    <text x="100" y="822" font-family="Arial" font-size="19" font-weight="700" fill="#1e293b">${escSvg(reference)}</text>
+
+    <text x="100" y="880" font-family="Arial" font-size="15" fill="#64748b">DATE &amp; TIME</text>
+    <text x="100" y="912" font-family="Arial" font-size="18" font-weight="700" fill="#1e293b">${escSvg(date)}</text>
+
+    <rect x="100" y="950" width="700" height="170" rx="18" fill="#f7f9fc"/>
+    <text x="130" y="988" font-family="Arial" font-size="15" font-weight="700" fill="#071a35">CONVERSION &amp; FEES</text>
+    <text x="130" y="1022" font-family="Arial" font-size="16" fill="#475569">Amount debited: ${debitText}</text>
+    <text x="130" y="1052" font-family="Arial" font-size="16" fill="#475569">Exchange rate: ${rateText}</text>
+    <text x="130" y="1082" font-family="Arial" font-size="16" fill="#475569">Demo transfer fee: ${escSvg(feeAmount.toFixed(2))} ${escSvg(currency)}</text>
+
+    <text x="100" y="1170" font-family="Arial" font-size="15" fill="#64748b">${hasConversion ? 'Currency conversion applied using fixed demo rates.' : 'No currency conversion was required.'}</text>
+    <text x="100" y="1202" font-family="Arial" font-size="15" fill="#94a3b8">Fictional / simulated transaction — no real funds were moved.</text>
+    <text x="100" y="1235" font-family="Arial" font-size="15" fill="#94a3b8">American Crest Demo Banking • ${escSvg(BANK_EMAIL)}</text>
   </svg>`;
 }
 
@@ -2161,7 +2210,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     if (recipientEmail && !/^\S+@\S+\.\S+$/.test(recipientEmail)) return res.status(400).json({ok:false,error:'Enter a valid recipient email.'});
 
     await client.query('BEGIN');
-    const userResult = await client.query(`SELECT id,name,email,status,primary_currency FROM acb_users WHERE id=$1 AND LOWER(role)='customer' FOR UPDATE`, [req.user.id]);
+    const userResult = await client.query(`SELECT id,name,email,status,primary_currency,account_number FROM acb_users WHERE id=$1 AND LOWER(role)='customer' FOR UPDATE`, [req.user.id]);
     if (!userResult.rowCount) { await client.query('ROLLBACK'); return res.status(404).json({ok:false,error:'Customer account not found.'}); }
     const customer = userResult.rows[0];
     if (String(customer.status).toLowerCase() === 'suspended') { await client.query('ROLLBACK'); return res.status(403).json({ok:false,error:'This account is suspended.'}); }
@@ -2201,7 +2250,23 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
     const user = await getUser(String(req.user.id));
     const date = new Date().toISOString();
-    const receipt = receiptSvg({reference,amount:amount.toFixed(2),currency,recipient,bankName:recipientBank,status:'pending',date});
+    const receipt = receiptSvg({
+      reference,
+      amount: amount.toFixed(2),
+      currency,
+      recipient,
+      recipientEmail,
+      bankName: recipientBank,
+      status: 'pending',
+      date,
+      senderName: customer.name,
+      senderEmail: customer.email,
+      senderAccountNumber: customer.account_number,
+      fee,
+      fundingCurrency,
+      debitAmount,
+      exchangeRate
+    });
     let emailSent = false;
     console.log(`[DEMO EMAIL] transfer ${reference} recipientEmail=${recipientEmail || '(missing)'}`);
     if (recipientEmail) {
@@ -4830,7 +4895,7 @@ async function updateTransferStatus(req, res) {
     if (!status) return res.status(400).json({error:'Invalid transfer status.'});
 
     await client.query('BEGIN');
-    const result = await client.query(`SELECT r.*,u.name,u.email FROM acb_requests r JOIN acb_users u ON u.id=r.user_id WHERE r.id=$1 FOR UPDATE`, [req.params.id]);
+    const result = await client.query(`SELECT r.*,u.name,u.email,u.account_number FROM acb_requests r JOIN acb_users u ON u.id=r.user_id WHERE r.id=$1 FOR UPDATE`, [req.params.id]);
     if (!result.rowCount) { await client.query('ROLLBACK'); return res.status(404).json({error:'Transfer not found.'}); }
     const request = result.rows[0];
     if (String(request.status).toLowerCase() !== 'pending') { await client.query('ROLLBACK'); return res.status(409).json({error:'This transfer has already been handled.'}); }
@@ -4847,7 +4912,23 @@ async function updateTransferStatus(req, res) {
       await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),request.user_id,`Transfer ${request.reference || request.id} was rejected. ${request.amount.toLocaleString()} ${request.currency} has been returned to your demo balance.`]);
       await client.query('COMMIT');
       const updatedUser = await getUser(String(request.user_id));
-      const receipt = receiptSvg({reference:request.reference || String(request.id),amount:Number(request.amount).toFixed(2),currency:request.currency,recipient:request.recipient,bankName:request.recipient_bank,status:'rejected',date:new Date().toISOString()});
+      const receipt = receiptSvg({
+        reference: request.reference || String(request.id),
+        amount: Number(request.amount).toFixed(2),
+        currency: request.currency,
+        recipient: request.recipient,
+        recipientEmail: request.recipient_email,
+        bankName: request.recipient_bank,
+        status: 'rejected',
+        date: new Date().toISOString(),
+        senderName: request.name,
+        senderEmail: request.email,
+        senderAccountNumber: request.account_number,
+        fee: Number(transferMeta.fee || 0),
+        fundingCurrency: transferMeta.fundingCurrency || request.currency,
+        debitAmount: Number(transferMeta.debitAmount ?? request.amount),
+        exchangeRate: Number(transferMeta.exchangeRate || 1)
+      });
       let emailSent = false;
       if (request.recipient_email) emailSent = await sendDemoEmail({to:request.recipient_email,subject:`Transfer rejected — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial"><h2>${BANK_NAME}</h2><p>The simulated transfer <b>${request.reference || request.id}</b> was rejected.</p><p>No real funds were moved. The sender's demo balance was restored.</p></div>`});
       if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [request.id]);
@@ -4859,7 +4940,24 @@ async function updateTransferStatus(req, res) {
     await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),request.user_id,`Transfer ${request.reference || request.id} was approved and marked successful.`]);
     await client.query('COMMIT');
     const updatedUser = await getUser(String(request.user_id));
-    const receipt = receiptSvg({reference:request.reference || String(request.id),amount:Number(request.amount).toFixed(2),currency:request.currency,recipient:request.recipient,bankName:request.recipient_bank,status:'approved',date:new Date().toISOString()});
+    const transferMeta = request.metadata && typeof request.metadata === 'object' ? request.metadata : {};
+    const receipt = receiptSvg({
+      reference: request.reference || String(request.id),
+      amount: Number(request.amount).toFixed(2),
+      currency: request.currency,
+      recipient: request.recipient,
+      recipientEmail: request.recipient_email,
+      bankName: request.recipient_bank,
+      status: 'approved',
+      date: new Date().toISOString(),
+      senderName: request.name,
+      senderEmail: request.email,
+      senderAccountNumber: request.account_number,
+      fee: Number(transferMeta.fee || 0),
+      fundingCurrency: transferMeta.fundingCurrency || request.currency,
+      debitAmount: Number(transferMeta.debitAmount ?? request.amount),
+      exchangeRate: Number(transferMeta.exchangeRate || 1)
+    });
     let emailSent = false;
     if (request.recipient_email) emailSent = await sendDemoEmail({to:request.recipient_email,subject:`Transfer approved — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>Your simulated transfer is successful.</b></p><p>Reference: <b>${request.reference || request.id}</b></p><p>Amount: <b>${Number(request.amount).toLocaleString()} ${request.currency}</b></p><p>Recipient: <b>${request.recipient}</b></p><p>Bank: <b>${request.recipient_bank}</b></p><p>Status: <b>SUCCESSFUL</b></p><p style="color:#64748b">This is a fictional/demo banking notification. No real funds were transferred.</p></div>`});
     if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [request.id]);
