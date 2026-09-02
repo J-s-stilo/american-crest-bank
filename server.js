@@ -11,10 +11,10 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
 const rateLimit = require('express-rate-limit');
-let nodemailer = null;
-try { nodemailer = require('nodemailer'); } catch { console.warn('Nodemailer unavailable; email delivery disabled.'); }
 
 const crypto = require('crypto');
+let nodemailer = null;
+try { nodemailer = require('nodemailer'); } catch {}
 
 const app = express();
 
@@ -47,6 +47,13 @@ const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || '')
   .toLowerCase();
 
 const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '');
+
+const BANK_NAME = String(process.env.BANK_NAME || 'American Crest Demo Banking').trim();
+const BANK_EMAIL = String(process.env.BANK_EMAIL || 'americancrestbank@gmail.com').trim();
+const SMTP_HOST = String(process.env.SMTP_HOST || '').trim();
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_USER = String(process.env.SMTP_USER || BANK_EMAIL).trim();
+const SMTP_PASSWORD = String(process.env.SMTP_PASSWORD || '').trim();
 
 if (!JWT_SECRET || !DATABASE_URL) {
 
@@ -102,47 +109,97 @@ const CURRENCIES = [
 
 ];
 
+// Demo FX rates expressed as units of each currency per 1 USD.
+// These are fixed demonstration rates, not live market rates.
+const DEMO_EXCHANGE_RATES = {USD:1,EUR:0.92,GBP:0.78,NGN:1535,IDR:16600,CAD:1.37,AUD:1.53,CHF:0.80,JPY:147,CNY:7.18,INR:83.5,MYR:4.68,SGD:1.35,AED:3.6725,ZAR:18.1,KES:129,GHS:15.2};
+const DEMO_TRANSFER_FEE_RATE = 0.01;
+function convertDemoAmount(amount, from, to) {
+  const f=DEMO_EXCHANGE_RATES[String(from).toUpperCase()];
+  const t=DEMO_EXCHANGE_RATES[String(to).toUpperCase()];
+  if(!f||!t) throw new Error('Unsupported demo currency.');
+  return Number(amount) * (t/f);
+}
+
 function uuid() {
 
   return crypto.randomUUID();
 
 }
 
+function makeReference(prefix = 'ACB') {
+  const stamp = Date.now().toString(36).toUpperCase();
+  const random = crypto.randomBytes(4).toString('hex').toUpperCase();
+  return `${prefix}-${stamp}-${random}`;
+}
 
-const DEMO_BANK_EMAIL = String(process.env.MAIL_FROM || 'americancrestbank@gmail.com').trim() || 'americancrestbank@gmail.com';
-const FX_TO_USD = {USD:1,NGN:.00062,EUR:1.09,GBP:1.27,IDR:.000063,CAD:.74,AUD:.66,CHF:1.12,JPY:.0068,CNY:.139,INR:.012,MYR:.236,SGD:.74,AED:.2723,ZAR:.055,KES:.0078,GHS:.068};
-function exchangeAmount(amount, from, to){from=String(from||'').toUpperCase();to=String(to||'').toUpperCase();if(from===to)return Number(amount);if(!FX_TO_USD[from]||!FX_TO_USD[to])throw new Error('Exchange rate unavailable for the selected currency.');return Number(amount)*FX_TO_USD[from]/FX_TO_USD[to];}
-function makeAccountNumber(){return String(crypto.randomInt(1000000000,10000000000));}
-async function assignAccountNumber(userId, client=pool){
-  const row=await client.query(`SELECT account_number FROM acb_users WHERE id=$1 FOR UPDATE`,[userId]);
-  if(!row.rowCount)return null;
-  if(row.rows[0].account_number)return String(row.rows[0].account_number);
-  for(let i=0;i<20;i++){
-    const candidate=makeAccountNumber();
-    try{const updated=await client.query(`UPDATE acb_users SET account_number=$1 WHERE id=$2 AND (account_number IS NULL OR account_number='') RETURNING account_number`,[candidate,userId]);if(updated.rowCount)return String(updated.rows[0].account_number);}catch(e){if(e.code!=='23505')throw e;}
+async function generateAccountNumber(client = pool) {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const value = String(1000000000 + crypto.randomInt(0, 9000000000));
+    const exists = await client.query(
+      `SELECT 1 FROM acb_users WHERE account_number=$1 LIMIT 1`,
+      [value]
+    );
+    if (!exists.rowCount) return value;
   }
-  throw new Error('Unable to assign a demo account number.');
+  throw new Error('Unable to generate account number.');
 }
-function smtpTransport(){
-  if(!nodemailer)return null;
-  const host=String(process.env.SMTP_HOST||'').trim(),user=String(process.env.SMTP_USER||'').trim(),pass=String(process.env.SMTP_PASS||'').trim();
-  if(!host||!user||!pass)return null;
-  const port=Number(process.env.SMTP_PORT||465);
-  return nodemailer.createTransport({host,port,secure:process.env.SMTP_SECURE?String(process.env.SMTP_SECURE).toLowerCase()==='true':port===465,auth:{user,pass}});
+
+function receiptSvg({ reference, amount, currency, recipient, bankName, status, date }) {
+  const escSvg = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
+    <rect width="900" height="1200" fill="#f4f7fb"/>
+    <rect x="60" y="50" width="780" height="1100" rx="28" fill="#fff" stroke="#d9e2ef" stroke-width="3"/>
+    <text x="100" y="125" font-family="Arial" font-size="30" font-weight="700" fill="#071a35">${escSvg(BANK_NAME)}</text>
+    <text x="100" y="160" font-family="Arial" font-size="18" fill="#64748b">DIGITAL BANKING DEMO</text>
+    <rect x="650" y="90" width="130" height="48" rx="24" fill="#fff3cd"/>
+    <text x="715" y="121" text-anchor="middle" font-family="Arial" font-size="16" font-weight="700" fill="#725b13">${escSvg(String(status).toUpperCase())}</text>
+    <line x1="100" y1="195" x2="800" y2="195" stroke="#e2e8f0"/>
+    <text x="100" y="255" font-family="Arial" font-size="16" fill="#64748b">TRANSFER AMOUNT</text>
+    <text x="100" y="305" font-family="Arial" font-size="44" font-weight="700" fill="#071a35">${escSvg(amount)} ${escSvg(currency)}</text>
+    <g font-family="Arial">
+      <text x="100" y="380" font-size="16" fill="#64748b">RECIPIENT</text><text x="100" y="410" font-size="22" font-weight="700" fill="#1e293b">${escSvg(recipient)}</text>
+      <text x="100" y="475" font-size="16" fill="#64748b">BANK</text><text x="100" y="505" font-size="22" font-weight="700" fill="#1e293b">${escSvg(bankName || 'External bank')}</text>
+      <text x="100" y="570" font-size="16" fill="#64748b">REFERENCE</text><text x="100" y="600" font-size="22" font-weight="700" fill="#1e293b">${escSvg(reference)}</text>
+      <text x="100" y="665" font-size="16" fill="#64748b">DATE &amp; TIME</text><text x="100" y="695" font-size="22" font-weight="700" fill="#1e293b">${escSvg(date)}</text>
+    </g>
+    <rect x="100" y="760" width="700" height="170" rx="18" fill="#f7f9fc"/>
+    <text x="130" y="810" font-family="Arial" font-size="19" font-weight="700" fill="#071a35">Demo transfer notice</text>
+    <text x="130" y="850" font-family="Arial" font-size="17" fill="#64748b">This receipt records a fictional/simulated</text>
+    <text x="130" y="880" font-family="Arial" font-size="17" fill="#64748b">banking transaction. No real funds were moved.</text>
+    <text x="100" y="1020" font-family="Arial" font-size="16" fill="#94a3b8">Sender: ${escSvg(BANK_EMAIL)}</text>
+    <text x="100" y="1060" font-family="Arial" font-size="16" fill="#94a3b8">For demonstration purposes only.</text>
+  </svg>`;
 }
-function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-function receiptSvg(t){
- const rows=[['Recipient',t.recipient],['Bank',t.bankName],['Account number',t.recipientAccount],['Recipient email',t.recipientEmail||'—'],['SWIFT / BIC',t.swiftBic||'—'],['Sent',t.amountDisplay],['Recipient receives',t.receiveDisplay],['Reference',t.reference],['Status',String(t.status||'SUCCESSFUL').toUpperCase()]];
- return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1180" viewBox="0 0 900 1180"><rect width="900" height="1180" fill="#f4f7fb"/><rect x="70" y="55" width="760" height="1070" rx="30" fill="#fff" stroke="#dbe3ed"/><rect x="70" y="55" width="760" height="150" rx="30" fill="#071a35"/><text x="110" y="115" font-family="Arial" font-size="27" font-weight="700" fill="#fff">AMERICAN CREST</text><text x="110" y="150" font-family="Arial" font-size="17" fill="#d6aa43">DIGITAL BANKING DEMO</text><text x="770" y="135" text-anchor="end" font-family="Arial" font-size="16" font-weight="700" fill="#b8f0cf">SUCCESSFUL</text><text x="110" y="255" font-family="Arial" font-size="14" fill="#718096">AMOUNT DEBITED</text><text x="110" y="305" font-family="Arial" font-size="42" font-weight="700" fill="#071a35">${escapeHtml(t.amountDisplay)}</text><text x="110" y="345" font-family="Arial" font-size="15" fill="#64748b">Recipient receives approximately ${escapeHtml(t.receiveDisplay)}</text>${rows.map((r,i)=>{let y=410+i*65;return `<line x1="110" y1="${y-23}" x2="790" y2="${y-23}" stroke="#edf1f5"/><text x="110" y="${y}" font-family="Arial" font-size="14" fill="#718096">${escapeHtml(r[0])}</text><text x="790" y="${y}" text-anchor="end" font-family="Arial" font-size="15" font-weight="700" fill="#182536">${escapeHtml(r[1]||'—')}</text>`}).join('')}<line x1="110" y1="1010" x2="790" y2="1010" stroke="#dbe3ed"/><text x="110" y="1050" font-family="Arial" font-size="13" fill="#725b13">DEMO SIMULATION — No real funds were transferred.</text><text x="110" y="1080" font-family="Arial" font-size="12" fill="#94a3b8">Generated by American Crest Demo Banking</text></svg>`;
-}
-async function sendTransferEmail({recipientEmail,transfer}){
- if(!recipientEmail)return {sent:false,reason:'No recipient email supplied.'};
- const transporter=smtpTransport();if(!transporter)return {sent:false,reason:'SMTP is not configured on the server.'};
- const amountDisplay=`${Number(transfer.amount).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${transfer.currency}`;
- const receiveDisplay=`${Number(transfer.receiveAmount).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${transfer.receiveCurrency}`;
- const svg=receiptSvg({...transfer,amountDisplay,receiveDisplay});
- const html=`<div style="font-family:Arial,sans-serif;max-width:650px;margin:auto;background:#fff;border:1px solid #dbe3ed;border-radius:18px;overflow:hidden"><div style="background:#071a35;color:#fff;padding:25px"><b style="font-size:21px">AMERICAN CREST</b><div style="color:#d6aa43;font-size:11px;margin-top:5px">DIGITAL BANKING DEMO</div></div><div style="padding:28px"><div style="color:#19733a;font-weight:bold">TRANSFER SUCCESSFUL</div><h2>Transfer notification</h2><p>A demo transfer has been recorded. No real funds were moved.</p><div style="background:#f7f9fc;border-radius:14px;padding:18px"><small>AMOUNT SENT</small><h1>${escapeHtml(amountDisplay)}</h1><p>Recipient receives approximately <b>${escapeHtml(receiveDisplay)}</b></p></div><p><b>Recipient:</b> ${escapeHtml(transfer.recipient)}<br><b>Bank:</b> ${escapeHtml(transfer.bankName)}<br><b>Account:</b> ${escapeHtml(transfer.recipientAccount)}<br><b>Reference:</b> ${escapeHtml(transfer.reference)}</p><div style="background:#fff3cd;color:#725b13;padding:12px;border-radius:10px;font-size:12px">DEMO ONLY — This is a fictional banking simulation. External banks do not receive real money.</div></div></div>`;
- try{await transporter.sendMail({from:DEMO_BANK_EMAIL,to:recipientEmail,replyTo:DEMO_BANK_EMAIL,subject:`American Crest Demo Banking — Transfer Successful`,html,attachments:[{filename:`american-crest-demo-receipt-${transfer.reference}.svg`,content:Buffer.from(svg),contentType:'image/svg+xml'}]});return {sent:true};}catch(e){console.error('Transfer email error:',e);return {sent:false,reason:'Email delivery failed.'};}
+
+async function sendDemoEmail({ to, subject, html, receipt }) {
+  if (!to || !/^\S+@\S+\.\S+$/.test(String(to))) return false;
+  if (!nodemailer || !SMTP_HOST || !SMTP_PASSWORD) {
+    console.warn('Demo email not sent: SMTP is not configured.');
+    return false;
+  }
+  try {
+    const transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_PORT === 465,
+      auth: { user: SMTP_USER, pass: SMTP_PASSWORD },
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000
+    });
+    await transporter.verify();
+    await transporter.sendMail({
+      from: `${BANK_NAME} <${BANK_EMAIL}>`,
+      to,
+      subject,
+      html,
+      attachments: receipt ? [{ filename: 'american-crest-demo-transfer-receipt.svg', content: receipt, contentType: 'image/svg+xml' }] : []
+    });
+    return true;
+  } catch (error) {
+    console.error('Demo email error:', error.message);
+    return false;
+  }
 }
 
 function normalizeEmail(value) {
@@ -320,7 +377,7 @@ async function getUser(userId) {
 
       id,name,email,phone,phone_verified,role,status,primary_currency,
 
-      profile_image,account_number,created_at
+      account_number,profile_image,created_at
 
     FROM acb_users
 
@@ -366,7 +423,7 @@ async function getUser(userId) {
 
         `
 
-        SELECT id,kind,title,amount,currency,status,reference,meta,created_at
+        SELECT id,kind,title,amount,currency,created_at,reference,status,metadata
 
         FROM acb_transactions
 
@@ -428,7 +485,9 @@ async function getUser(userId) {
 
         SELECT
 
-          id,currency,amount,recipient,recipient_email,bank_name,recipient_account,recipient_country,swift_bic,receive_currency,receive_amount,exchange_rate,reference,note,status,
+          id,currency,amount,recipient,note,status,
+
+          recipient_bank,recipient_account,recipient_email,recipient_country,swift_bic,reference,
 
           created_at,handled_at
 
@@ -470,11 +529,11 @@ async function getUser(userId) {
 
     email: user.email || '',
 
-    phone: user.phone || '',
-
     accountNumber: user.account_number || '',
 
     account_number: user.account_number || '',
+
+    phone: user.phone || '',
 
     phoneVerified: !!user.phone_verified,
 
@@ -520,7 +579,13 @@ async function getUser(userId) {
 
       created_at: row.created_at,
 
-      date: row.created_at
+      date: row.created_at,
+
+      reference: row.reference || String(row.id),
+
+      status: row.status || 'completed',
+
+      metadata: row.metadata || {}
 
     })),
 
@@ -564,27 +629,21 @@ async function getUser(userId) {
 
       recipient: row.recipient,
 
-      recipientEmail: row.recipient_email || '',
+      note: row.note,
 
-      bankName: row.bank_name || '',
+      status: row.status,
+
+      recipientBank: row.recipient_bank || '',
 
       recipientAccount: row.recipient_account || '',
+
+      recipientEmail: row.recipient_email || '',
 
       recipientCountry: row.recipient_country || '',
 
       swiftBic: row.swift_bic || '',
 
-      receiveCurrency: row.receive_currency || row.currency,
-
-      receiveAmount: Number(row.receive_amount || row.amount || 0),
-
-      exchangeRate: Number(row.exchange_rate || 1),
-
       reference: row.reference || String(row.id),
-
-      note: row.note,
-
-      status: row.status,
 
       created_at: row.created_at,
 
@@ -1298,8 +1357,6 @@ async function initDb() {
 
       profile_image TEXT NOT NULL DEFAULT '',
 
-      account_number TEXT,
-
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 
     )
@@ -1311,6 +1368,9 @@ async function initDb() {
     ALTER TABLE acb_users ALTER COLUMN email DROP NOT NULL
 
   `);
+
+  await pool.query(`ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS account_number TEXT`);
+  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS acb_users_account_number_unique ON acb_users(account_number) WHERE account_number IS NOT NULL AND account_number <> ''`);
 
   await pool.query(`
 
@@ -1331,8 +1391,6 @@ async function initDb() {
     WHERE phone IS NOT NULL AND phone <> ''
 
   `);
-  await pool.query(`ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS account_number TEXT`);
-  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS acb_users_account_number_unique ON acb_users(account_number) WHERE account_number IS NOT NULL AND account_number <> ''`);
 
   await pool.query(`
 
@@ -1378,6 +1436,7 @@ async function initDb() {
 
   `);
 
+
   await pool.query(`
 
     CREATE TABLE IF NOT EXISTS acb_transactions (
@@ -1397,20 +1456,12 @@ async function initDb() {
       amount NUMERIC(24,2) NOT NULL,
 
       currency TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'completed',
-      reference TEXT,
-      meta JSONB NOT NULL DEFAULT '{}'::jsonb,
+
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 
     )
 
   `);
-
-  await pool.query(`ALTER TABLE acb_transactions ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'completed'`);
-  await pool.query(`ALTER TABLE acb_transactions ADD COLUMN IF NOT EXISTS reference TEXT`);
-  await pool.query(`ALTER TABLE acb_transactions ADD COLUMN IF NOT EXISTS meta JSONB NOT NULL DEFAULT '{}'::jsonb`);
-  await pool.query(`UPDATE acb_transactions SET reference=id::text WHERE reference IS NULL OR reference=''`);
-  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS acb_transactions_reference_unique ON acb_transactions(reference) WHERE reference IS NOT NULL AND reference <> ''`);
 
   await pool.query(`
 
@@ -1451,16 +1502,9 @@ async function initDb() {
       amount NUMERIC(24,2) NOT NULL,
 
       recipient TEXT NOT NULL,
-      recipient_email TEXT NOT NULL DEFAULT '',
-      bank_name TEXT NOT NULL DEFAULT '',
-      recipient_account TEXT NOT NULL DEFAULT '',
-      recipient_country TEXT NOT NULL DEFAULT '',
-      swift_bic TEXT NOT NULL DEFAULT '',
-      receive_currency TEXT NOT NULL DEFAULT '',
-      receive_amount NUMERIC(24,2) NOT NULL DEFAULT 0,
-      exchange_rate NUMERIC(24,10) NOT NULL DEFAULT 1,
-      reference TEXT,
+
       note TEXT NOT NULL DEFAULT '',
+
       status TEXT NOT NULL DEFAULT 'pending',
 
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -1471,16 +1515,32 @@ async function initDb() {
 
   `);
 
-  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT NOT NULL DEFAULT ''`);
-  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS bank_name TEXT NOT NULL DEFAULT ''`);
+  await pool.query(`ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS account_number TEXT`);
+  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS acb_users_account_number_unique ON acb_users(account_number) WHERE account_number IS NOT NULL AND account_number <> ''`);
+  await pool.query(`ALTER TABLE acb_transactions ADD COLUMN IF NOT EXISTS reference TEXT`);
+  await pool.query(`ALTER TABLE acb_transactions ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'completed'`);
+  await pool.query(`ALTER TABLE acb_transactions ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_bank TEXT NOT NULL DEFAULT ''`);
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_account TEXT NOT NULL DEFAULT ''`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT NOT NULL DEFAULT ''`);
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_country TEXT NOT NULL DEFAULT ''`);
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS swift_bic TEXT NOT NULL DEFAULT ''`);
-  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS receive_currency TEXT NOT NULL DEFAULT ''`);
-  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS receive_amount NUMERIC(24,2) NOT NULL DEFAULT 0`);
-  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS exchange_rate NUMERIC(24,10) NOT NULL DEFAULT 1`);
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS reference TEXT`);
-  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS acb_requests_reference_unique ON acb_requests(reference) WHERE reference IS NOT NULL AND reference <> ''`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS debit_transaction_id UUID`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS email_sent_at TIMESTAMPTZ`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb`);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS acb_demo_service_requests (
+      id UUID PRIMARY KEY,
+      user_id UUID NOT NULL REFERENCES acb_users(id) ON DELETE CASCADE,
+      service TEXT NOT NULL,
+      details JSONB NOT NULL DEFAULT '{}'::jsonb,
+      status TEXT NOT NULL DEFAULT 'received',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      handled_at TIMESTAMPTZ
+    )
+  `);
 
   await pool.query(`
 
@@ -1516,7 +1576,6 @@ async function initDb() {
 
   for (const row of existingUsers.rows) {
 
-    await assignAccountNumber(row.id);
     await ensureBalances(row.id);
 
   }
@@ -1749,7 +1808,8 @@ async function verifyRegistrationHandler(req, res) {
     const duplicate = await client.query(`SELECT id FROM acb_users WHERE ($1::text IS NOT NULL AND LOWER(email)=LOWER($1::text)) OR ($2::text IS NOT NULL AND phone=$2::text) LIMIT 1`, [payload.email || null, payload.phone || null]);
     if (duplicate.rowCount) { await client.query('ROLLBACK'); return res.status(409).json({ok:false,error:'That email address or phone number is already registered.'}); }
     const userId = uuid();
-    await client.query(`INSERT INTO acb_users (id,name,email,phone,password_hash,role,status,primary_currency,profile_image,phone_verified,account_number) VALUES ($1,$2,$3,$4,$5,'customer','Active',$6,'',$7,$8)`, [userId,payload.name,payload.email,payload.phone,payload.passwordHash,payload.currency,!!payload.phone,makeAccountNumber()]);
+    const accountNumber = await generateAccountNumber(client);
+    await client.query(`INSERT INTO acb_users (id,name,email,phone,password_hash,role,status,primary_currency,account_number,profile_image,phone_verified) VALUES ($1,$2,$3,$4,$5,'customer','Active',$6,$7,'',$8)`, [userId,payload.name,payload.email,payload.phone,payload.passwordHash,payload.currency,accountNumber,!!payload.phone]);
     await ensureBalances(userId, client);
     await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your American Crest demo account was created successfully.']);
     const admin = await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
@@ -2061,57 +2121,97 @@ CUSTOMER FUNDS REQUEST
 
 */
 
-app.post('/api/requests', auth, writeLimiter, async (req,res)=>{
- const client=await pool.connect();
- try{
-  const currency=String(req.body.currency||'').trim().toUpperCase();
-  const receiveCurrency=String(req.body.receiveCurrency||req.body.destinationCurrency||currency).trim().toUpperCase();
-  const amount=Number(req.body.amount);
-  const recipient=normalizeText(req.body.recipient||req.body.recipientName).slice(0,160);
-  const recipientEmail=normalizeEmail(req.body.recipientEmail||req.body.email||req.body.emailAddress);
-  const bankName=normalizeText(req.body.recipientBank||req.body.bankName).slice(0,160);
-  const recipientAccount=normalizeText(req.body.recipientAccount||req.body.accountNumber).replace(/[^0-9A-Za-z -]/g,'').slice(0,40);
-  const recipientCountry=normalizeText(req.body.recipientCountry||req.body.country).slice(0,80);
-  const swiftBic=normalizeText(req.body.swiftBic||req.body.swift||req.body.bic).toUpperCase().slice(0,20);
-  const note=normalizeText(req.body.note).slice(0,500);
-  if(!validCurrency(currency)||!validCurrency(receiveCurrency)||!Number.isFinite(amount)||amount<=0||amount>1000000000000)return res.status(400).json({ok:false,error:'Enter a valid amount and currency.'});
-  if(recipient.length<2)return res.status(400).json({ok:false,error:'Enter the recipient name.'});
-  if(!bankName||recipientAccount.length<3)return res.status(400).json({ok:false,error:'Enter the destination bank and account number.'});
-  if(recipientEmail&&!/^\S+@\S+\.\S+$/.test(recipientEmail))return res.status(400).json({ok:false,error:'Enter a valid recipient email.'});
-  if(swiftBic&&!/^[A-Z0-9]{6,20}$/.test(swiftBic))return res.status(400).json({ok:false,error:'Enter a valid SWIFT/BIC or leave it blank.'});
-  const receiveAmount=Number(exchangeAmount(amount,currency,receiveCurrency).toFixed(2));
-  const exchangeRate=Number((receiveAmount/amount).toFixed(10));
-  const reference=`ACB-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
-  const requestId=uuid();
-  await client.query('BEGIN');
-  const u=await client.query(`SELECT id,name,email,account_number FROM acb_users WHERE id=$1 AND LOWER(role)='customer' FOR UPDATE`,[req.user.id]);
-  if(!u.rowCount){await client.query('ROLLBACK');return res.status(404).json({ok:false,error:'Customer account not found.'});}
-  const bal=await client.query(`SELECT amount FROM acb_balances WHERE user_id=$1 AND currency=$2 FOR UPDATE`,[req.user.id,currency]);
-  const available=Number(bal.rows[0]?.amount||0);
-  if(available<amount){await client.query('ROLLBACK');return res.status(400).json({ok:false,error:`Insufficient ${currency} demo balance.`});}
-  await client.query(`UPDATE acb_balances SET amount=amount-$1 WHERE user_id=$2 AND currency=$3`,[amount,req.user.id,currency]);
-  await client.query(`INSERT INTO acb_requests (id,user_id,currency,amount,recipient,recipient_email,bank_name,recipient_account,recipient_country,swift_bic,receive_currency,receive_amount,exchange_rate,reference,note,status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,'successful')`,[requestId,req.user.id,currency,amount,recipient,recipientEmail,bankName,recipientAccount,recipientCountry,swiftBic,receiveCurrency,receiveAmount,exchangeRate,reference,note]);
-  await client.query(`INSERT INTO acb_transactions (id,user_id,kind,title,amount,currency,status,reference,meta) VALUES ($1,$2,'debit',$3,$4,$5,'successful',$6,$7::jsonb)`,[uuid(),req.user.id,`Transfer to ${recipient}`,amount,currency,reference,JSON.stringify({recipient,recipientEmail,recipientBank:bankName,recipientAccount,recipientCountry,swiftBic,receiveCurrency,receiveAmount,exchangeRate,note})]);
-  await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`,[uuid(),req.user.id,`Transfer ${reference} completed successfully. ${amount.toLocaleString()} ${currency} was debited.`]);
-  const admin=await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
-  if(admin.rowCount)await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`,[uuid(),admin.rows[0].id,`Demo transfer ${reference}: ${amount} ${currency} sent by ${u.rows[0].name} to ${recipient} at ${bankName}.`]);
-  await client.query('COMMIT');
-  const emailResult=await sendTransferEmail({recipientEmail,transfer:{reference,amount,currency,receiveAmount,receiveCurrency,recipient,bankName,recipientAccount,recipientCountry,swiftBic,note,status:'successful'}});
-  if(recipientEmail)await pool.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`,[uuid(),req.user.id,emailResult.sent?`Demo receipt sent to ${recipientEmail}.`:`Email notification was not delivered: ${emailResult.reason}`]);
-  const customer=await getUser(req.user.id);
-  return res.status(201).json({ok:true,success:true,message:'Demo transfer completed successfully. Your account was debited.',request:{id:requestId,reference,status:'successful',created_at:new Date().toISOString(),recipient,recipientEmail,bankName,recipientAccount,recipientCountry,swiftBic,amount,currency,receiveCurrency,receiveAmount,exchangeRate,note,emailSent:emailResult.sent},user:customer,customer});
- }catch(error){try{await client.query('ROLLBACK')}catch{};console.error('Transfer error:',error);return res.status(500).json({ok:false,error:error.message||'Unable to complete demo transfer.'});}finally{client.release();}
+app.post('/api/requests', auth, writeLimiter, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const currency = String(req.body.currency || '').trim().toUpperCase();
+    const amount = Number(req.body.amount);
+    const recipient = normalizeText(req.body.recipient || req.body.recipientName).slice(0, 120);
+    const recipientBank = normalizeText(req.body.recipientBank || req.body.bankName).slice(0, 160);
+    const recipientAccount = normalizeText(req.body.recipientAccount || req.body.accountNumber).slice(0, 80);
+    const recipientEmail = normalizeEmail(req.body.recipientEmail || req.body.email);
+    const recipientCountry = normalizeText(req.body.recipientCountry || req.body.country).slice(0, 80);
+    const swiftBic = normalizeText(req.body.swiftBic || req.body.swift || req.body.bic).toUpperCase().slice(0, 20);
+    const note = normalizeText(req.body.note).slice(0, 500);
+
+    if (!validCurrency(currency) || !Number.isFinite(amount) || amount <= 0 || amount > 1000000000000) {
+      return res.status(400).json({ ok:false, error:'Enter a valid amount and currency.' });
+    }
+    if (recipient.length < 2) return res.status(400).json({ ok:false, error:'Enter the recipient name.' });
+    if (recipientBank.length < 2) return res.status(400).json({ ok:false, error:'Enter the recipient bank name.' });
+    if (recipientAccount.length < 3) return res.status(400).json({ ok:false, error:'Enter the recipient account number.' });
+    if (recipientEmail && !/^\S+@\S+\.\S+$/.test(recipientEmail)) return res.status(400).json({ok:false,error:'Enter a valid recipient email.'});
+
+    await client.query('BEGIN');
+    const userResult = await client.query(`SELECT id,name,email,status,primary_currency FROM acb_users WHERE id=$1 AND LOWER(role)='customer' FOR UPDATE`, [req.user.id]);
+    if (!userResult.rowCount) { await client.query('ROLLBACK'); return res.status(404).json({ok:false,error:'Customer account not found.'}); }
+    const customer = userResult.rows[0];
+    if (String(customer.status).toLowerCase() === 'suspended') { await client.query('ROLLBACK'); return res.status(403).json({ok:false,error:'This account is suspended.'}); }
+
+    await client.query(`INSERT INTO acb_balances(user_id,currency,amount) VALUES($1,$2,0) ON CONFLICT(user_id,currency) DO NOTHING`, [req.user.id,currency]);
+    const balancesResult = await client.query(`SELECT currency,amount FROM acb_balances WHERE user_id=$1 FOR UPDATE`, [req.user.id]);
+    const balances = Object.fromEntries(balancesResult.rows.map(r=>[String(r.currency).toUpperCase(),Number(r.amount||0)]));
+    const fee = amount * DEMO_TRANSFER_FEE_RATE;
+    const targetTotal = amount + fee;
+    let fundingCurrency = currency;
+    let debitAmount = targetTotal;
+    if ((balances[currency] || 0) < targetTotal) {
+      const primary = String(customer.primary_currency || 'NGN').toUpperCase();
+      const candidates = [primary,...Object.keys(balances).filter(c=>c!==primary)];
+      let found = null;
+      for (const candidate of candidates) {
+        const converted = convertDemoAmount(targetTotal, currency, candidate);
+        if ((balances[candidate] || 0) >= converted) { found={currency:candidate,amount:converted}; break; }
+      }
+      if (!found) { await client.query('ROLLBACK'); return res.status(400).json({ok:false,error:`Insufficient demo funds. Required ${targetTotal.toLocaleString()} ${currency}, including a ${DEMO_TRANSFER_FEE_RATE*100}% demo transfer fee.`}); }
+      fundingCurrency=found.currency;
+      debitAmount=found.amount;
+    }
+    const exchangeRate = convertDemoAmount(1, fundingCurrency, currency);
+
+    const requestId = uuid();
+    const reference = makeReference('ACBTRF');
+    const debitTransactionId = uuid();
+
+    await client.query(`UPDATE acb_balances SET amount=amount-$1 WHERE user_id=$2 AND currency=$3`, [debitAmount,req.user.id,fundingCurrency]);
+    await client.query(`INSERT INTO acb_transactions(id,user_id,kind,title,amount,currency,reference,status,metadata) VALUES($1,$2,'debit',$3,$4,$5,$6,'pending',$7)`, [debitTransactionId,req.user.id,`Transfer to ${recipient}`,debitAmount,fundingCurrency,reference,JSON.stringify({recipient,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,requestId,requestedAmount:amount,requestedCurrency:currency,fee,fundingCurrency,exchangeRate})]);
+    await client.query(`INSERT INTO acb_requests(id,user_id,currency,amount,recipient,note,status,recipient_bank,recipient_account,recipient_email,recipient_country,swift_bic,reference,debit_transaction_id,metadata) VALUES($1,$2,$3,$4,$5,$6,'pending',$7,$8,$9,$10,$11,$12,$13,$14)`, [requestId,req.user.id,currency,amount,recipient,note,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,reference,debitTransactionId,JSON.stringify({demo:true,fee,fundingCurrency,debitAmount,exchangeRate})]);
+    await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),req.user.id,`Transfer ${reference}: your account was debited ${debitAmount.toLocaleString()} ${fundingCurrency} for ${amount.toLocaleString()} ${currency}. Status: PENDING.`]);
+    const admin = await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
+    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),admin.rows[0].id,`Pending demo transfer ${reference}: ${customer.name} → ${recipient}, ${amount.toLocaleString()} ${currency} (debit ${debitAmount.toLocaleString()} ${fundingCurrency}).`]);
+    await client.query('COMMIT');
+
+    const user = await getUser(String(req.user.id));
+    const date = new Date().toISOString();
+    const receipt = receiptSvg({reference,amount:amount.toFixed(2),currency,recipient,bankName:recipientBank,status:'pending',date});
+    let emailSent = false;
+    if (recipientEmail) {
+      emailSent = await sendDemoEmail({
+        to: recipientEmail,
+        subject: `Transfer pending — ${reference}`,
+        receipt,
+        html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>A simulated transfer is pending.</b></p><p>A demo transfer has been initiated for you and is awaiting processing.</p><div style="padding:18px;background:#f4f7fb;border-radius:14px"><p><b>Amount:</b> ${amount.toLocaleString()} ${currency}</p><p><b>Reference:</b> ${reference}</p><p><b>Recipient bank:</b> ${recipientBank}</p><p><b>Status:</b> PENDING</p></div><p style="color:#64748b">This is a fictional/demo banking notification. No real funds were transferred.</p></div>`
+      });
+      if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [requestId]);
+    }
+
+    return res.status(201).json({ok:true,success:true,message:'Demo transfer submitted and the account was debited.',emailSent,request:{id:requestId,status:'pending',reference,created_at:date,recipient,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,amount,currency,note,fee,fundingCurrency,debitAmount,exchangeRate,totalDebited:debitAmount},user,customer:user});
+  } catch (error) {
+    try { await client.query('ROLLBACK'); } catch {}
+    console.error('Transfer request error:', error);
+    return res.status(500).json({ok:false,error:'Unable to submit transfer.'});
+  } finally { client.release(); }
 });
 
 /*
 
-\=========================================================
+=========================================================
 
 ADMIN LOGIN
 
-\=========================================================
-
+=========================================================
 */
+
 
 app.post('/api/admin/login', authLimiter, async (req, res) => {
 
@@ -4701,19 +4801,54 @@ ADMIN TRANSFER STATUS
 
 */
 
-async function updateTransferStatus(req,res){
- const raw=String(req.body.status||'').toLowerCase();const status=raw==='approved'||raw==='successful'?'successful':raw==='declined'||raw==='rejected'?'rejected':'';
- if(!status)return res.status(400).json({ok:false,error:'Use successful or rejected status.'});
- if(!validUUID(req.params.id))return res.status(400).json({ok:false,error:'Invalid transfer ID.'});
- const client=await pool.connect();
- try{await client.query('BEGIN');const r=await client.query(`SELECT r.* FROM acb_requests r WHERE r.id=$1 FOR UPDATE`,[req.params.id]);if(!r.rowCount){await client.query('ROLLBACK');return res.status(404).json({ok:false,error:'Transfer not found.'});}const q=r.rows[0];
-  if(status==='rejected'&&q.status!=='rejected'){
-   const debit=await client.query(`SELECT id FROM acb_transactions WHERE user_id=$1 AND reference=$2 AND kind='debit' LIMIT 1`,[q.user_id,q.reference]);
-   if(debit.rowCount){await client.query(`UPDATE acb_balances SET amount=amount+$1 WHERE user_id=$2 AND currency=$3`,[q.amount,q.user_id,q.currency]);await client.query(`INSERT INTO acb_transactions (id,user_id,kind,title,amount,currency,status,reference,meta) VALUES ($1,$2,'credit','Transfer reversal',$3,$4,'successful',$5,$6::jsonb)`,[uuid(),q.user_id,q.amount,q.currency,`REV-${q.reference}`,JSON.stringify({originalReference:q.reference})]);}
-   await client.query(`UPDATE acb_requests SET status='rejected',handled_at=NOW() WHERE id=$1`,[q.id]);await client.query(`UPDATE acb_transactions SET status='rejected' WHERE reference=$1`,[q.reference]);await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`,[uuid(),q.user_id,`Demo transfer ${q.reference||q.id} was rejected and the debit was reversed.`]);
-  }else{await client.query(`UPDATE acb_requests SET status='successful',handled_at=NOW() WHERE id=$1`,[q.id]);await client.query(`UPDATE acb_transactions SET status='successful' WHERE reference=$1`,[q.reference]);}
-  await client.query('COMMIT');const user=await getUser(String(q.user_id));return res.json({ok:true,success:true,status,user,customer:user});
- }catch(e){try{await client.query('ROLLBACK')}catch{};console.error('Transfer status error:',e);return res.status(500).json({ok:false,error:'Unable to update transfer.'});}finally{client.release();}
+async function updateTransferStatus(req, res) {
+  const client = await pool.connect();
+  try {
+    if (!validUUID(req.params.id)) return res.status(400).json({error:'Invalid transfer ID.'});
+    const requested = String(req.body.status || '').trim().toLowerCase();
+    const status = requested === 'successful' || requested === 'approved' ? 'approved' : requested === 'declined' || requested === 'rejected' ? 'rejected' : '';
+    if (!status) return res.status(400).json({error:'Invalid transfer status.'});
+
+    await client.query('BEGIN');
+    const result = await client.query(`SELECT r.*,u.name,u.email FROM acb_requests r JOIN acb_users u ON u.id=r.user_id WHERE r.id=$1 FOR UPDATE`, [req.params.id]);
+    if (!result.rowCount) { await client.query('ROLLBACK'); return res.status(404).json({error:'Transfer not found.'}); }
+    const request = result.rows[0];
+    if (String(request.status).toLowerCase() !== 'pending') { await client.query('ROLLBACK'); return res.status(409).json({error:'This transfer has already been handled.'}); }
+
+    if (status === 'rejected') {
+      const transferMeta = request.metadata && typeof request.metadata === 'object' ? request.metadata : {};
+      const fundingCurrency = String(transferMeta.fundingCurrency || request.currency).toUpperCase();
+      const debitAmount = Number(transferMeta.debitAmount ?? request.amount);
+      await client.query(`INSERT INTO acb_balances(user_id,currency,amount) VALUES($1,$2,$3) ON CONFLICT(user_id,currency) DO UPDATE SET amount=acb_balances.amount+EXCLUDED.amount`, [request.user_id,fundingCurrency,debitAmount]);
+      const reversalReference = makeReference('ACBRVS');
+      await client.query(`INSERT INTO acb_transactions(id,user_id,kind,title,amount,currency,reference,status,metadata) VALUES($1,$2,'credit',$3,$4,$5,$6,'completed',$7)`, [uuid(),request.user_id,`Transfer reversal — ${request.recipient}`,debitAmount,fundingCurrency,reversalReference,JSON.stringify({transferReference:request.reference,requestId:request.id,requestedAmount:request.amount,requestedCurrency:request.currency})]);
+      await client.query(`UPDATE acb_transactions SET status='rejected' WHERE id=$1`, [request.debit_transaction_id]);
+      await client.query(`UPDATE acb_requests SET status='rejected',handled_at=NOW() WHERE id=$1`, [request.id]);
+      await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),request.user_id,`Transfer ${request.reference || request.id} was rejected. ${request.amount.toLocaleString()} ${request.currency} has been returned to your demo balance.`]);
+      await client.query('COMMIT');
+      const updatedUser = await getUser(String(request.user_id));
+      const receipt = receiptSvg({reference:request.reference || String(request.id),amount:Number(request.amount).toFixed(2),currency:request.currency,recipient:request.recipient,bankName:request.recipient_bank,status:'rejected',date:new Date().toISOString()});
+      let emailSent = false;
+      if (request.recipient_email) emailSent = await sendDemoEmail({to:request.recipient_email,subject:`Transfer rejected — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial"><h2>${BANK_NAME}</h2><p>The simulated transfer <b>${request.reference || request.id}</b> was rejected.</p><p>No real funds were moved. The sender's demo balance was restored.</p></div>`});
+      if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [request.id]);
+      return res.json({ok:true,status:'rejected',emailSent,user:updatedUser,customer:updatedUser});
+    }
+
+    await client.query(`UPDATE acb_requests SET status='approved',handled_at=NOW() WHERE id=$1`, [request.id]);
+    await client.query(`UPDATE acb_transactions SET status='completed',title=$1 WHERE id=$2`, [`Transfer to ${request.recipient}`,request.debit_transaction_id]);
+    await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),request.user_id,`Transfer ${request.reference || request.id} was approved and marked successful.`]);
+    await client.query('COMMIT');
+    const updatedUser = await getUser(String(request.user_id));
+    const receipt = receiptSvg({reference:request.reference || String(request.id),amount:Number(request.amount).toFixed(2),currency:request.currency,recipient:request.recipient,bankName:request.recipient_bank,status:'approved',date:new Date().toISOString()});
+    let emailSent = false;
+    if (request.recipient_email) emailSent = await sendDemoEmail({to:request.recipient_email,subject:`Transfer approved — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>Your simulated transfer is successful.</b></p><p>Reference: <b>${request.reference || request.id}</b></p><p>Amount: <b>${Number(request.amount).toLocaleString()} ${request.currency}</b></p><p>Recipient: <b>${request.recipient}</b></p><p>Bank: <b>${request.recipient_bank}</b></p><p>Status: <b>SUCCESSFUL</b></p><p style="color:#64748b">This is a fictional/demo banking notification. No real funds were transferred.</p></div>`});
+    if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [request.id]);
+    return res.json({ok:true,status:'approved',message:'Demo transfer approved.',emailSent,user:updatedUser,customer:updatedUser,balance:updatedUser?.balances?.[request.currency] ?? 0});
+  } catch(error) {
+    try { await client.query('ROLLBACK'); } catch {}
+    console.error('Transfer status error:',error);
+    return res.status(500).json({error:'Unable to update transfer.'});
+  } finally { client.release(); }
 }
 
 app.patch(
@@ -4776,7 +4911,54 @@ OLD REJECT ROUTE
 
 */
 
-app.post('/api/admin/requests/:id/reject', auth, adminOnly, writeLimiter, async (req,res)=>{req.body.status='rejected';return updateTransferStatus(req,res);});
+app.post(
+  '/api/admin/requests/:id/reject',
+  auth,
+  adminOnly,
+  writeLimiter,
+  async (req, res) => {
+    req.body.status = 'rejected';
+    await updateTransferStatus(req, res);
+  }
+);
+
+/*
+=========================================================
+DEMO SERVICE WORKFLOWS
+=========================================================
+*/
+app.get('/api/demo/services', auth, async (req,res) => {
+  try {
+    const result = await pool.query(`SELECT id,service,details,status,created_at,handled_at FROM acb_demo_service_requests WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100`, [req.user.id]);
+    return res.json({ok:true,requests:result.rows.map(row=>({...row,id:String(row.id)}))});
+  } catch(error) { console.error('Demo services load error:',error); return res.status(500).json({ok:false,error:'Unable to load demo service requests.'}); }
+});
+
+app.post('/api/demo/services', auth, writeLimiter, async (req,res) => {
+  try {
+    const service = normalizeText(req.body.service).slice(0,80);
+    const details = req.body.details && typeof req.body.details === 'object' ? req.body.details : {note:normalizeText(req.body.details).slice(0,500)};
+    const allowed = ['Add Money','Buy Data','Airtime','Pay Bills','Cards','Loans','Savings','Referral','Settings','Gift Cards'];
+    if (!allowed.includes(service)) return res.status(400).json({ok:false,error:'Unknown demo service.'});
+    const id=uuid();
+    await pool.query(`INSERT INTO acb_demo_service_requests(id,user_id,service,details) VALUES($1,$2,$3,$4)`, [id,req.user.id,service,JSON.stringify(details)]);
+    const admin=await pool.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
+    if(admin.rowCount) await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),admin.rows[0].id,`Demo ${service} request received from customer ${req.user.id}.`]);
+    await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),req.user.id,`${service}: your demo request was received. No real payment, purchase, loan or card issuance occurs.`]);
+    return res.status(201).json({ok:true,id,service,status:'received',message:`${service} demo request received.`});
+  } catch(error) { console.error('Demo service error:',error); return res.status(500).json({ok:false,error:'Unable to submit demo service request.'}); }
+});
+
+app.get('/api/bank-directory', auth, async (_req,res) => {
+  return res.json({ok:true,banks:[
+    {name:'American Crest Demo Banking',country:'United States',swift:'ACBDUS00'},
+    {name:'Northstar Demo Bank',country:'Canada',swift:'NSDBCA00'},
+    {name:'Harborline Demo Bank',country:'United Kingdom',swift:'HLDBGB00'},
+    {name:'Summit Demo Bank',country:'Nigeria',swift:'SUMDNG00'},
+    {name:'Pacific Demo Bank',country:'Australia',swift:'PDBAAU00'},
+    {name:'Global Union Demo Bank',country:'Singapore',swift:'GUDBSG00'}
+  ]});
+});
 
 /*
 
