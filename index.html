@@ -1669,7 +1669,6 @@ throw new Error('The server returned an invalid login response.');
 
 token=String(data.token);
 me=data.user;
-balanceHidden=loadBalancePreference(me);
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
@@ -3554,13 +3553,6 @@ window.addEventListener(
 'load',
 
 ()=>{
-
-  /* Preserve a login that completed before the browser load event. */
-  if(token && me){
-    $('publicSite').style.display='none';
-    $('dashboard').style.display='block';
-    return;
-  }
 
 $('publicSite').style.display='block';
 
