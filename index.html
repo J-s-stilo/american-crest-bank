@@ -3790,93 +3790,114 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 </script>
 
 <script>
-/* AMERICAN CREST DEMO — additive transfer/receipt integration v2 */
+/* ACB DEMO ADDITIVE TRANSFER + PIN LAYER */
 (function(){
   'use strict';
-  const R={USD:1,EUR:.92,GBP:.78,NGN:1535,IDR:16600,CAD:1.37,AUD:1.53,CHF:.80,JPY:147,CNY:7.18,INR:83.5,MYR:4.68,SGD:1.35,AED:3.6725,ZAR:18.1,KES:129,GHS:15.2};
-  const F=.01;
+  const R=window.DEMO_EXCHANGE_RATES||{USD:1,EUR:.92,GBP:.78,NGN:1535,IDR:16600,CAD:1.37,AUD:1.53,CHF:.80,JPY:147,CNY:7.18,INR:83.5,MYR:4.68,SGD:1.35,AED:3.6725,ZAR:18.1,KES:129,GHS:15.2};
+  const F=Number(window.DEMO_EXCHANGE_FEE_RATE||.01);
   const $=id=>document.getElementById(id);
-  const cur=()=>String($('transferCurrency')?.value||'USD').toUpperCase();
-  const money2=(n,c)=>typeof window.money==='function'?window.money(n,c):Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' '+c;
-  function quote(){
-    const requested=cur(), amount=Number($('transferAmount')?.value||0), balances=window.me?.balances||{};
-    if(!amount||amount<=0||!R[requested]) return null;
-    const totalRequested=amount*(1+F);
-    const primary=String(window.me?.primaryCurrency||window.me?.primary_currency||'USD').toUpperCase();
-    const candidates=Object.keys(R).filter(c=>Number(balances[c]||0)>0).sort((a,b)=>{
-      if(a===primary)return -1;if(b===primary)return 1;return Number(balances[b]||0)-Number(balances[a]||0);
-    });
-    let funding=null, debit=0, rate=0;
+  const cur=v=>String(v||'USD').toUpperCase();
+  const money=(v,c)=>typeof window.money==='function'?window.money(v,c):`${Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${c}`;
+  function balances(){return window.me&&window.me.balances&&typeof window.me.balances==='object'?window.me.balances:{};}
+  function chooseFunding(target,amount){
+    const b=balances(), t=cur(target), tr=Number(amount||0);
+    if(R[t]==null)return null;
+    const candidates=Object.keys(R).filter(c=>Number(b[c]||0)>0).sort((a,z)=>a===t?-1:z===t?1:0);
     for(const c of candidates){
-      rate=R[requested]/R[c];
-      debit=totalRequested/rate;
-      if(Number(balances[c]||0)>=debit-1e-9){funding=c;break;}
+      const base=tr*(R[c]/R[t]);
+      const total=base*(1+F);
+      if(Number(b[c]||0)+1e-9>=total)return {fundingCurrency:c,fundingAmount:total,convertedAmount:base,fee:base*F,rate:R[t]/R[c]};
     }
-    return {requested,amount,fee:amount*F,totalRequested,funding,debit,rate};
+    return null;
   }
-  function renderQuote(){
-    const q=quote();
-    const panel=$('transferPanel3');
-    if(!panel||!q)return;
-    let box=$('acbAutoExchangeQuote');
-    if(!box){
-      box=document.createElement('div');box.id='acbAutoExchangeQuote';
-      box.style.cssText='margin:10px 0 14px;padding:13px 15px;border:1px solid #d9e8fb;border-radius:12px;background:#eef5ff;color:#28415f;font-size:12px;line-height:1.55';
-      const nav=panel.querySelector('.transferNav'); if(nav) nav.parentNode.insertBefore(box,nav); else panel.appendChild(box);
-    }
-    if(!q.funding){box.textContent='No available demo balance can fund this transfer after the 1.00% demo fee.';return;}
-    box.innerHTML='<strong>Automatic currency conversion</strong><br>'+money2(q.amount,q.requested)+' transfer + '+money2(q.fee,q.requested)+' demo fee = '+money2(q.totalRequested,q.requested)+' total.<br>Debit from available <strong>'+q.funding+'</strong> balance: <strong>'+money2(q.debit,q.funding)+'</strong> at 1 '+q.funding+' = '+q.rate.toLocaleString(undefined,{maximumFractionDigits:8})+' '+q.requested+'.';
+  function addReviewBox(){
+    const panel=$('transferPanel3'); if(!panel||$('acbConversionSummary'))return;
+    const nav=panel.querySelector('.transferNav');
+    const box=document.createElement('div'); box.id='acbConversionSummary';
+    box.style.cssText='margin:14px 0;padding:14px;border:1px solid #dbe4ef;border-radius:14px;background:#f7faff;font-size:13px;line-height:1.7';
+    box.innerHTML='<strong>Currency & fee breakdown</strong><div id="acbConversionText">—</div>';
+    if(nav)panel.insertBefore(box,nav);else panel.appendChild(box);
   }
+  function updateSummary(){
+    addReviewBox();
+    const target=cur($('transferCurrency')?.value), amount=Number($('transferAmount')?.value||0), pick=chooseFunding(target,amount), out=$('acbConversionText');
+    if(!out)return;
+    if(!amount||!pick){out.textContent=amount?'No available demo balance can cover this converted amount and fee.':'Enter an amount to calculate conversion.';return;}
+    out.innerHTML=`Sending <b>${money(amount,target)}</b> • Funding wallet: <b>${money(pick.fundingAmount,pick.fundingCurrency)}</b><br>Exchange rate: <b>1 ${pick.fundingCurrency} = ${(R[target]/R[pick.fundingCurrency]).toLocaleString(undefined,{maximumFractionDigits:6})} ${target}</b> • Demo fee: <b>${money(pick.fee,pick.fundingCurrency)}</b>`;
+  }
+  function pinKey(){const id=window.me?.id||window.me?.userId||window.me?.user_id||'current';return 'acb_demo_transfer_pin_'+id;}
+  function getPin(){try{return localStorage.getItem(pinKey())||''}catch(e){return ''}}
+  function pinModal(resolve){
+    let m=$('acbPinModal');
+    if(!m){m=document.createElement('div');m.id='acbPinModal';m.style.cssText='position:fixed;inset:0;background:rgba(3,15,35,.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px';m.innerHTML='<div style="width:min(420px,100%);background:#fff;border-radius:22px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.28);font-family:Arial,sans-serif"><div style="font-size:12px;font-weight:800;letter-spacing:.12em;color:#1769e0">AMERICAN CREST BANK • DEMO</div><h2 id="acbPinTitle" style="margin:8px 0">Set your transfer PIN</h2><p id="acbPinHelp" style="color:#64748b">Create a 4-digit PIN for confirming demo transfers. This PIN is stored only in this browser for this fictional demo.</p><input id="acbPinInput" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="4-digit PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center"><input id="acbPinConfirm" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="Confirm PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center;margin-top:10px"><div id="acbPinError" style="color:#b42318;margin-top:10px;min-height:20px;font-size:13px"></div><button id="acbPinBtn" style="width:100%;border:0;border-radius:12px;padding:14px;background:#1769e0;color:#fff;font-weight:800;font-size:15px">Save PIN</button><button id="acbPinCancel" style="width:100%;border:0;background:none;padding:12px;margin-top:4px;color:#64748b">Cancel</button></div>';document.body.appendChild(m);}
+    const existing=getPin(); const first=!existing;
+    $('acbPinTitle').textContent=first?'Set your transfer PIN':'Enter your transfer PIN';
+    $('acbPinHelp').textContent=first?'Create a 4-digit PIN for confirming demo transfers. You will use it on future transfers.':'Enter your 4-digit transfer PIN to continue. No additional verification code is required for this demo transfer.';
+    $('acbPinConfirm').style.display=first?'block':'none'; $('acbPinBtn').textContent=first?'Save PIN':'Verify PIN'; $('acbPinInput').value=''; $('acbPinConfirm').value=''; $('acbPinError').textContent=''; m.style.display='flex';
+    $('acbPinCancel').onclick=()=>{m.style.display='none';resolve(false)};
+    $('acbPinBtn').onclick=()=>{const a=$('acbPinInput').value,b=$('acbPinConfirm').value;if(!/^\d{4}$/.test(a)){return $('acbPinError').textContent='PIN must contain exactly 4 digits.'}if(first&&a!==b){return $('acbPinError').textContent='PINs do not match.'}if(first){try{localStorage.setItem(pinKey(),a)}catch(e){}m.style.display='none';resolve(true)}else if(a===existing){m.style.display='none';resolve(true)}else $('acbPinError').textContent='Incorrect PIN.'};
+    $('acbPinInput').focus();
+  }
+  function requirePin(){return new Promise(resolve=>pinModal(resolve));}
+
+  const oldOpen=window.openTransfer;
+  window.openTransfer=function(){if(typeof oldOpen==='function')oldOpen();setTimeout(updateSummary,0)};
+  const oldNext=window.nextTransferStep;
   window.nextTransferStep=function(step){
-    if(typeof window.clearError==='function')clearError('transferError');
-    if(step===2){
-      const recipient=($('transferRecipient')?.value||'').trim(),bank=($('transferBankName')?.value||'').trim(),account=($('transferRecipientAccount')?.value||'').trim(),email=($('transferRecipientEmail')?.value||'').trim();
-      if(recipient.length<2)return window.showError('transferError','Enter the recipient name.');
-      if(bank.length<2)return window.showError('transferError','Enter the recipient bank name.');
-      if(account.length<3)return window.showError('transferError','Enter the recipient account number.');
-      if(email&&!/^\S+@\S+\.\S+$/.test(email))return window.showError('transferError','Enter a valid recipient email.');
-    }
-    if(step===3){
-      const amount=Number($('transferAmount')?.value||0); if(!amount||amount<=0)return window.showError('transferError','Enter a valid amount.');
-      if(!R[cur()])return window.showError('transferError','That demo currency is not supported.');
-      window.showTransferStep(step); renderQuote(); return;
-    }
-    window.showTransferStep(step);
+    if(step===3){const amount=Number($('transferAmount')?.value||0),target=cur($('transferCurrency')?.value),pick=chooseFunding(target,amount);if(!pick)return window.showError('transferError','Your available demo balance cannot cover this transfer after automatic currency conversion and the demo fee.');}
+    const result=typeof oldNext==='function'?oldNext(step):undefined; setTimeout(updateSummary,0); return result;
   };
-  const oldOpen=window.openReceipt;
-  window.openReceipt=function(receipt){
-    if(!receipt)return;
-    const status=String(receipt.status||'pending').toLowerCase(), ok=['approved','completed','success','successful'].includes(status);
-    const requested=String(receipt.currency||'USD').toUpperCase(), fee=Number(receipt.fee||0), total=Number(receipt.totalRequested||Number(receipt.amount||0)+fee);
-    const set=(id,v)=>{const e=$(id);if(e)e.textContent=v==null||v===''?'—':String(v)};
-    set('receiptStatus',ok?'SUCCESSFUL • DEMO':status==='rejected'?'REJECTED • DEMO':'PROCESSING • DEMO');
-    set('receiptStatusText',ok?'Successful (Demo)':status==='rejected'?'Rejected':'Processing');
-    set('receiptAmount',money2(receipt.amount,requested));set('receiptRecipient',receipt.recipient);set('receiptBank',receipt.bankName||receipt.recipientBank);set('receiptAccount',receipt.recipientAccount);set('receiptEmail',receipt.recipientEmail);set('receiptSwift',receipt.swiftBic);set('receiptCurrency',requested);set('receiptDate',typeof window.formatNotificationDate==='function'?formatNotificationDate(receipt.date||new Date().toISOString()):new Date(receipt.date||Date.now()).toLocaleString());set('receiptReference',receipt.id||'DEMO-'+Date.now());
-    const paper=$('receiptPaper'); if(paper){
-      paper.style.maxWidth='520px';paper.style.width='100%';paper.style.overflow='hidden';
-      let breakdown=$('acbReceiptBreakdown');
-      if(!breakdown){breakdown=document.createElement('div');breakdown.id='acbReceiptBreakdown';breakdown.style.cssText='margin-top:14px;border:1px solid #e1e7ef;border-radius:12px;overflow:hidden;background:#fff';paper.querySelector('.receiptBody')?.appendChild(breakdown);}
-      const funding=receipt.fundingCurrency||receipt.debitCurrency||requested, debit=Number(receipt.debitAmount||receipt.totalDebited||0), rate=Number(receipt.exchangeRate||0);
-      breakdown.innerHTML='<div style="padding:12px 14px;background:#f5f8fc;font-weight:800;color:#071a35">Amount breakdown</div><div style="padding:10px 14px;border-top:1px solid #edf1f5;display:flex;justify-content:space-between;gap:12px"><span>Transfer amount</span><strong>'+money2(receipt.amount,requested)+'</strong></div><div style="padding:10px 14px;border-top:1px solid #edf1f5;display:flex;justify-content:space-between;gap:12px"><span>Exchange / conversion</span><strong>'+ (rate?('1 '+funding+' = '+rate.toLocaleString(undefined,{maximumFractionDigits:8})+' '+requested):'Not required') +'</strong></div><div style="padding:10px 14px;border-top:1px solid #edf1f5;display:flex;justify-content:space-between;gap:12px"><span>Transfer / exchange fee</span><strong>'+money2(fee,requested)+'</strong></div><div style="padding:12px 14px;border-top:1px solid #edf1f5;background:#f5f8fc;display:flex;justify-content:space-between;gap:12px"><span>Total debited</span><strong>'+ (debit?money2(debit,funding):money2(total,requested)) +'</strong></div>';
-      const title=paper.querySelector('.receiptTitle h3'); if(title) title.textContent=ok?'Payment/Transfer Successful':'Transfer Status';
-      const sub=paper.querySelector('.receiptTitle p'); if(sub) sub.textContent=ok?'You sent a demo transfer. Keep this receipt for your records.':'This fictional/demo transfer is not yet complete.';
-      let mark=paper.querySelector('.acbDemoWatermark');if(!mark){mark=document.createElement('div');mark.className='acbDemoWatermark';mark.textContent='AMERICAN CREST BANK • DEMO';mark.style.cssText='text-align:center;color:#94a3b8;font-size:10px;font-weight:800;letter-spacing:1px;padding:8px 0 0';paper.querySelector('.receiptBody')?.appendChild(mark)}
-    }
-    window.lastTransferReceipt=receipt;$('receiptModal')?.classList.add('show');
-    if(typeof oldOpen==='function'){};
-  };
+  const sel=$('transferCurrency'), amt=$('transferAmount');
+  if(sel)sel.addEventListener('change',()=>{if(typeof window.clearError==='function')window.clearError('transferError');updateSummary()}); if(amt)amt.addEventListener('input',()=>{if(typeof window.clearError==='function')window.clearError('transferError');updateSummary()});
+
   window.transfer=async function(){
     const btn=$('transferBtn');if(btn?.disabled)return;
-    const q=quote(); if(!q)return window.showError('transferError','Enter a valid amount and choose a supported currency.');
-    if(!q.funding)return window.showError('transferError','Insufficient demo funds after automatic currency conversion and fee.');
-    const payload={currency:q.requested,requestedCurrency:q.requested,amount:q.amount,fundingCurrency:q.funding,debitAmount:q.debit,exchangeRate:q.rate,transferFee:q.fee,totalRequested:q.totalRequested,recipient:($('transferRecipient')?.value||'').trim(),recipientEmail:($('transferRecipientEmail')?.value||'').trim(),recipientBank:($('transferBankName')?.value||'').trim(),recipientAccount:($('transferRecipientAccount')?.value||'').trim(),recipientCountry:$('transferCountry')?.value||'',swiftBic:($('transferSwift')?.value||'').trim(),note:($('transferNote')?.value||'').trim()};
-    clearError('transferError');setLoading('transferBtn',true,'Sending');
-    try{const data=await api('/requests',{method:'POST',body:JSON.stringify(payload)});if(data?.user)window.me=data.user;closeTransfer();refreshDashboard(false);const r=data?.request||{};window.openReceipt({id:r.reference||r.id||'',status:r.status||data?.status||'pending',amount:q.amount,currency:q.requested,recipient:payload.recipient,bankName:payload.recipientBank,recipientAccount:payload.recipientAccount,recipientEmail:payload.recipientEmail,swiftBic:payload.swiftBic,recipientCountry:payload.recipientCountry,note:payload.note,date:r.created_at||new Date().toISOString(),fee:q.fee,totalRequested:q.totalRequested,fundingCurrency:r.fundingCurrency||q.funding,debitAmount:Number(r.debitAmount||q.debit),exchangeRate:Number(r.exchangeRate||q.rate),emailSent:data?.emailSent});toast(data?.emailSent?'Transfer completed. Receipt generated and email accepted by the mail server.':'Transfer completed. Receipt generated; email delivery was not accepted by the mail server.');}
-    catch(e){showError('transferError',e?.message||'Unable to submit transfer.');}finally{setLoading('transferBtn',false)}
+    const target=cur($('transferCurrency')?.value), requestedAmount=Number($('transferAmount')?.value||0), pick=chooseFunding(target,requestedAmount);
+    const payload={currency:target,amount:requestedAmount,recipient:($('transferRecipient')?.value||'').trim(),recipientEmail:($('transferRecipientEmail')?.value||'').trim(),recipientBank:($('transferBankName')?.value||'').trim(),recipientAccount:($('transferRecipientAccount')?.value||'').trim(),recipientCountry:$('transferCountry')?.value||'',swiftBic:($('transferSwift')?.value||'').trim(),note:($('transferNote')?.value||'').trim()};
+    if(!pick)return window.showError('transferError','Your available demo balance cannot cover this transfer after automatic currency conversion and the demo fee.');
+    if(!payload.amount||payload.amount<=0)return window.showError('transferError','Enter a valid amount.');
+    if(payload.recipient.length<2||payload.recipientBank.length<2||payload.recipientAccount.length<3)return window.showError('transferError','Complete the recipient and bank details.');
+    if(payload.recipientEmail&&!/^\S+@\S+\.\S+$/.test(payload.recipientEmail))return window.showError('transferError','Enter a valid recipient email.');
+    if(!(await requirePin()))return;
+    if(typeof window.setLoading==='function')setLoading('transferBtn',true,'Sending');
+    try{
+      /* The existing server only debits one wallet. We submit the wallet that actually funds the converted request. */
+      const serverPayload={...payload,currency:pick.fundingCurrency,amount:Number(pick.fundingAmount.toFixed(2)),note:(payload.note?payload.note+' | ':'')+`Demo conversion: ${requestedAmount} ${target} from ${pick.fundingCurrency}; rate ${pick.rate}; fee ${pick.fee.toFixed(2)} ${pick.fundingCurrency}.`};
+      const data=await window.api('/requests',{method:'POST',body:JSON.stringify(serverPayload)});
+      if(data?.user)window.me=data.user;
+      if(typeof window.closeTransfer==='function')closeTransfer();
+      if(typeof window.refreshDashboard==='function')refreshDashboard(false);
+      const request=data?.request||{}; const status=String(request.status||data?.status||'pending').toLowerCase();
+      window.openReceipt({id:request.reference||request.id||data?.request_id||'',status,amount:requestedAmount,currency:target,recipient:payload.recipient,bankName:payload.recipientBank,recipientBank:payload.recipientBank,recipientAccount:payload.recipientAccount,recipientEmail:payload.recipientEmail,swiftBic:payload.swiftBic,recipientCountry:payload.recipientCountry,note:payload.note,date:request.created_at||data?.created_at||new Date().toISOString(),exchangeRate:pick.rate,fundingCurrency:pick.fundingCurrency,fundingAmount:pick.fundingAmount,fee:pick.fee,totalDebited:pick.fundingAmount,emailSent:data?.emailSent});
+      if(typeof window.toast==='function')toast(data?.emailSent?'Transfer submitted. Receipt emailed to the recipient.':'Transfer submitted. Email delivery was not confirmed by the server.');
+    }catch(e){if(typeof window.showError==='function')showError('transferError',String(e?.message||'Unable to submit demo transfer.'));}
+    finally{if(typeof window.setLoading==='function')setLoading('transferBtn',false)}
   };
-  const amt=$('transferAmount');if(amt)amt.addEventListener('input',renderQuote);const cs=$('transferCurrency');if(cs)cs.addEventListener('change',renderQuote);
-})();
-</script>
 
+  /* Keep one receipt modal and make the detailed receipt the only rendered result. */
+  const oldReceipt=window.openReceipt;
+  window.openReceipt=function(r){
+    if(!r)return; const status=String(r.status||'pending').toLowerCase(), ok=['approved','completed','success'].includes(status);
+    const set=(id,v)=>{const e=$(id);if(e)e.textContent=v==null||v===''?'—':String(v)};
+    set('receiptStatus',ok?'SUCCESSFUL • DEMO':status==='rejected'?'REJECTED • DEMO':'PROCESSING • DEMO');
+    set('receiptStatusText',ok?'Successful':status==='rejected'?'Rejected':'Processing');
+    set('receiptAmount',money(r.amount,r.currency));set('receiptRecipient',r.recipient);set('receiptBank',r.bankName||r.recipientBank);set('receiptAccount',r.recipientAccount);set('receiptEmail',r.recipientEmail);set('receiptSwift',r.swiftBic);set('receiptCurrency',cur(r.currency));set('receiptDate',typeof window.formatNotificationDate==='function'?formatNotificationDate(r.date):new Date(r.date||Date.now()).toLocaleString());set('receiptReference',r.id||'DEMO-'+Date.now());
+    set('receiptNote',r.note||'Fictional American Crest Bank demo transaction. No real funds are transferred.');
+    const paper=$('receiptPaper');
+    if(paper){
+      let box=$('acbReceiptBreakdown');
+      if(!box){box=document.createElement('div');box.id='acbReceiptBreakdown';box.style.cssText='margin:16px 0;padding:16px;border:1px solid #dbe4ef;border-radius:14px;background:#f7faff;font-size:13px;line-height:1.75';paper.appendChild(box);}
+      const parts=[];
+      if(r.exchangeRate)parts.push(`<div><span>Exchange rate</span><strong style="float:right">1 ${r.fundingCurrency||r.currency} = ${Number(r.exchangeRate).toLocaleString(undefined,{maximumFractionDigits:6})} ${r.currency}</strong></div>`);
+      if(r.fee!=null)parts.push(`<div><span>Transfer/exchange fee</span><strong style="float:right">${money(r.fee,r.fundingCurrency||r.currency)}</strong></div>`);
+      if(r.fundingAmount!=null)parts.push(`<div><span>Total debited</span><strong style="float:right">${money(r.fundingAmount,r.fundingCurrency||r.currency)}</strong></div>`);
+      if(parts.length)box.innerHTML='<strong>Amount breakdown</strong>'+parts.join(''); else box.innerHTML='';
+    }
+    const modal=$('receiptModal');if(modal)modal.classList.add('show'); window.lastTransferReceipt=r;
+  };
+})();
+
+</script>
 </body>
+
 </html>
