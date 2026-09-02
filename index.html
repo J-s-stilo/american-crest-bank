@@ -1011,9 +1011,11 @@ Sign In
     <button onclick="closeAppMenu();openFeature('profile')">●<span>Profile</span></button>
     <button onclick="closeAppMenu();openFeature('settings')">⚙<span>Settings</span></button>
     <button onclick="closeAppMenu();toggleChat()">☁<span>Support</span></button>
+    <button onclick="openLogoutVerification()">⇥<span>Log Out</span></button>
   </div>
   <div class="appMenuNotice">All banking, card, loan, transfer and payment features in this application are simulations. No real funds are moved.</div>
 </aside>
+<div class="featureModal" id="logoutVerificationModal" aria-hidden="true"><div class="featureBackdrop" onclick="closeLogoutVerification()"></div><div class="featureBox" role="dialog" aria-modal="true" aria-labelledby="logoutVerificationTitle"><button class="featureClose" type="button" onclick="closeLogoutVerification()">×</button><div class="featureIcon">⇥</div><div class="featureEyebrow">AMERICAN CREST DEMO</div><h2 id="logoutVerificationTitle">Verify Logout</h2><p>Enter the 6-digit verification code shown below to complete logout.</p><div class="featureCard" style="text-align:center;margin:12px 0 16px"><strong id="logoutVerificationCode" style="font-size:28px;letter-spacing:6px;color:var(--navy)">------</strong></div><div class="featureForm"><label for="logoutVerificationInput">Verification code</label><input id="logoutVerificationInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code"><div id="logoutVerificationError" style="display:none;color:#b42318;font-size:12px;font-weight:700"></div><button class="btn primary full" type="button" onclick="verifyLogoutCode()">Verify &amp; Log Out</button></div></div></div>
 <div class="featureModal" id="featureModal"><div class="featureBackdrop" onclick="closeFeature()"></div><div class="featureBox"><button class="featureClose" onclick="closeFeature()">×</button><div class="featureIcon" id="featureIcon">✦</div><div class="featureEyebrow">AMERICAN CREST DEMO</div><h2 id="featureTitle">Feature</h2><p id="featureDescription">Demo feature.</p><div id="featureContent"></div></div></div>
 <div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
@@ -3459,6 +3461,44 @@ LOGOUT
 
 */
 
+function openLogoutVerification(){
+  if(!token || !me){ return; }
+  closeAppMenu();
+  const code=String(Math.floor(100000+Math.random()*900000));
+  window.__acbLogoutVerificationCode=code;
+  const codeEl=document.getElementById('logoutVerificationCode');
+  const input=document.getElementById('logoutVerificationInput');
+  const err=document.getElementById('logoutVerificationError');
+  if(codeEl) codeEl.textContent=code;
+  if(input){ input.value=''; setTimeout(()=>input.focus(),50); }
+  if(err){ err.textContent=''; err.style.display='none'; }
+  const modal=document.getElementById('logoutVerificationModal');
+  if(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
+}
+
+function closeLogoutVerification(){
+  const modal=document.getElementById('logoutVerificationModal');
+  if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+}
+
+function verifyLogoutCode(){
+  const input=document.getElementById('logoutVerificationInput');
+  const err=document.getElementById('logoutVerificationError');
+  const entered=(input?.value||'').trim();
+  const expected=window.__acbLogoutVerificationCode||'';
+  if(!/^\d{6}$/.test(entered)){
+    if(err){ err.textContent='Enter the 6-digit verification code.'; err.style.display='block'; }
+    return;
+  }
+  if(entered!==expected){
+    if(err){ err.textContent='Incorrect verification code.'; err.style.display='block'; }
+    return;
+  }
+  window.__acbLogoutVerificationCode='';
+  closeLogoutVerification();
+  logout(true);
+}
+
 function logout(show=true){
 
 token='';
@@ -3512,16 +3552,11 @@ window.addEventListener(
 'load',
 
 ()=>{
-  /* Never let the initial page-load handler undo a login that has already
-     completed. The old unconditional reset caused the exact symptom where
-     the user saw "Signed in successfully" but remained on the public page. */
-  if(token && me){
-    $('publicSite').style.display='none';
-    $('dashboard').style.display='block';
-    return;
-  }
-  $('publicSite').style.display='block';
-  $('dashboard').style.display='none';
+
+$('publicSite').style.display='block';
+
+$('dashboard').style.display='none';
+
 }
 
 );
@@ -4177,128 +4212,6 @@ if(a)a.addEventListener('input',()=>showQuote(quote(C(c?.value),N(a.value)),C(c?
         id:match.reference||match.id||current.id};
       if(typeof window.openReceipt==='function')window.openReceipt(window.lastTransferReceipt);
     }
-  };
-})();
-</script>
-
-<script>
-/* ACB STABILITY FIX — authoritative server balance only.
-   This final layer prevents the eye button, DOM text, account fallbacks,
-   or selected transfer currency from manufacturing/displaying a balance. */
-(function(){
-  'use strict';
-  const $=id=>document.getElementById(id);
-  const C=v=>String(v==null?'':v).trim().toUpperCase();
-  const N=v=>{
-    if(typeof v==='number') return Number.isFinite(v)?v:0;
-    if(v==null) return 0;
-    const n=Number(String(v).replace(/[^0-9.\-]/g,''));
-    return Number.isFinite(n)?n:0;
-  };
-
-  function primaryCurrency(){
-    return C(me?.primaryCurrency||me?.primary_currency||'NGN') || 'NGN';
-  }
-
-  function serverBalance(currency){
-    const c=C(currency||primaryCurrency());
-    const balances=me?.balances;
-    if(!balances) return 0;
-    if(Array.isArray(balances)){
-      const row=balances.find(x=>C(x?.currency||x?.code)===c);
-      return N(row?.amount??row?.balance??0);
-    }
-    if(typeof balances==='object') return N(balances[c]);
-    return 0;
-  }
-
-  function renderAuthoritativeBalance(){
-    if(!me) return;
-    const currency=primaryCurrency();
-    const amount=serverBalance(currency);
-    const balance=$('balance');
-    const currencyEl=$('balanceCurrency');
-    const eye=$('balanceEye');
-    const account=$('accountNumberDisplay');
-    if(balance) balance.textContent=balanceHidden?'••••••':window.money(amount,currency);
-    if(currencyEl) currencyEl.textContent='Primary currency: '+currency;
-    if(eye){
-      eye.textContent=balanceHidden?'🙈':'👁️';
-      eye.setAttribute('aria-label',balanceHidden?'Show balance':'Hide balance');
-      eye.setAttribute('aria-pressed',balanceHidden?'true':'false');
-    }
-    if(account) account.textContent='Account Number: '+(me.accountNumber||me.account_number||'—');
-    if(typeof window.syncSecondDesignHeader==='function'){
-      try{ window.syncSecondDesignHeader(); }catch{}
-    }
-  }
-
-  /* The eye changes visibility only. It never fetches, calculates, or invents money. */
-  window.toggleBalance=function(){
-    balanceHidden=!balanceHidden;
-    renderAuthoritativeBalance();
-    if(typeof window.renderCurrencyBalances==='function') window.renderCurrencyBalances();
-    if(typeof window.updateTransferBalancePreview==='function') window.updateTransferBalancePreview();
-  };
-
-  window.updateTransferBalancePreview=function(){
-    const el=$('transferAvailableBalance');
-    if(!el||!me)return;
-    const currency=primaryCurrency();
-    const amount=serverBalance(currency);
-    el.textContent=balanceHidden?'••••••':window.money(amount,currency);
-  };
-
-  /* The transfer quote may search real server balances for funding, but the
-     displayed "Available balance" is always the customer's primary balance. */
-  const oldUpdateTransferQuote=window.updateTransferQuote;
-  window.updateTransferQuote=function(){
-    const result=typeof oldUpdateTransferQuote==='function'?oldUpdateTransferQuote():null;
-    window.updateTransferBalancePreview();
-    return result;
-  };
-
-  /* Do not use rendered DOM/account fallbacks as balance sources. */
-  const oldOpenTransfer=window.openTransfer;
-  window.openTransfer=async function(){
-    if(!me)return window.openModal('login');
-    if(token && typeof window.loadMe==='function'){
-      const ok=await window.loadMe();
-      if(!ok)return;
-    }
-    if(typeof oldOpenTransfer==='function') oldOpenTransfer();
-    renderAuthoritativeBalance();
-    window.updateTransferBalancePreview();
-    if(typeof window.updateTransferQuote==='function')window.updateTransferQuote();
-  };
-
-  /* Login/dashboard race fix: fetch the authoritative /me record BEFORE the
-     dashboard paints, so the first render cannot briefly show the HTML default
-     (£0.00) or stale login data. */
-  const oldShowDashboard=window.showDashboard;
-  window.showDashboard=async function(){
-    if(!me)return;
-    if(token && typeof window.loadMe==='function'){
-      const ok=await window.loadMe();
-      if(!ok)return;
-    }
-    if(typeof oldShowDashboard==='function') oldShowDashboard();
-    renderAuthoritativeBalance();
-    window.updateTransferBalancePreview();
-  };
-
-  /* Keep the eye state across logout/login in the same browser session.
-     logout() already leaves balanceHidden untouched; this explicitly prevents
-     later refresh code from resetting it. */
-  window.addEventListener('acb:balance-refresh',renderAuthoritativeBalance);
-
-  /* If any code refreshes the dashboard, repaint from server state afterwards. */
-  const oldRefreshDashboard=window.refreshDashboard;
-  window.refreshDashboard=async function(showToast=true){
-    if(!me)return;
-    if(typeof oldRefreshDashboard==='function') await oldRefreshDashboard(showToast);
-    renderAuthoritativeBalance();
-    window.updateTransferBalancePreview();
   };
 })();
 </script>
