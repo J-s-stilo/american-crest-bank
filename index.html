@@ -3974,14 +3974,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     const target=C($('transferCurrency')?.value||'USD');
     const amount=N($('transferAmount')?.value);
     const q=quote(target,amount);
-    const balances=readBalances();
-    const primary=C(window.me?.primaryCurrency||window.me?.primary_currency||'USD');
-    const visible=balances[target]>0?target:primary;
-    const balEl=$('transferAvailableBalance');
-    if(balEl){
-      const value=balances[visible]||0;
-      balEl.textContent=typeof window.money==='function'?window.money(value,visible):`${value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${visible}`;
-    }
+    updateTransferBalancePreview();
     return q;
   }
 
