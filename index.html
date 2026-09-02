@@ -2146,7 +2146,11 @@ updateTransferCurrencySymbol();
 function closeTransfer(){$('transferModal').classList.remove('show');}
 function updateTransferBalancePreview(){
  const currency=$('transferCurrency')?.value||me?.primaryCurrency||me?.primary_currency||'NGN';
- const balance=me?.balances?.[currency]??0;
+ const balances=me?.balances||{};
+ const primary=me?.primaryCurrency||me?.primary_currency||'NGN';
+ let balance=Number(balances[currency]??0);
+ // Display the customer's main balance when the selected transfer currency has no separate wallet.
+ if(!(balance>0) && balances[primary]!=null) balance=Number(balances[primary]??0);
  const el=$('transferAvailableBalance');
  if(el)el.textContent=balanceHidden?'••••••':money(balance,currency);
 }
