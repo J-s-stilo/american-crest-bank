@@ -1762,7 +1762,7 @@ throw new Error('The server returned an invalid login response.');
 }
 
 token=String(data.token);
-me=data.user;
+me={...(me||{}),...(data.user||{})};
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
@@ -1853,7 +1853,12 @@ const data=await api('/me');
 
 if(!data.user)throw new Error('Invalid user response.');
 
-me=data.user;
+me={
+  ...(me||{}),
+  ...(data.user||{}),
+  profileImage:data.user?.profileImage||data.user?.profile_image||me?.profileImage||me?.profile_image||'',
+  profile_image:data.user?.profile_image||data.user?.profileImage||me?.profile_image||me?.profileImage||''
+};
 
 return true;
 
