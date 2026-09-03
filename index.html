@@ -1828,7 +1828,7 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
-
+renderBalance();
 refreshDashboard(false);
 
 renderAvatar();
@@ -1896,7 +1896,6 @@ function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.prima
 function renderBalance(){
 
 if(!me)return;
-syncSecondDesignHeader();
 
 const currency=
 
