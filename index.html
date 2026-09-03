@@ -4057,7 +4057,6 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
   if(amount)amount.addEventListener('input',updateTransferQuote);
   const originalOpen=window.openTransfer;
   window.openTransfer=async function(){
-    await refreshBalanceState();
     if(typeof originalOpen==='function')originalOpen();
     updateTransferQuote();
   };
