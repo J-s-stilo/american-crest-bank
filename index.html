@@ -1805,10 +1805,11 @@ function loadRealCustomerLiveChat(){
   else window.addEventListener('load',start,{once:true});
 }
 
-function showDashboard(){
+async function showDashboard(){
 
 if(!me)return;
-
+const loaded=await loadMe();
+if(!loaded)return;
 // Seed the current notification set so existing notifications do not pop up on login.
 knownNotificationIds=new Set();
 lastNotificationId=null;
