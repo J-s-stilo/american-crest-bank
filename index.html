@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>American Crest Banking — Demo</title><style>
+<title>American Crest Banking — Banking</title><style>
 
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -227,7 +227,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .transferStep{display:flex;align-items:center;gap:7px;color:#9aa7b5;font-size:11px;font-weight:800;white-space:nowrap}.transferStep span{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#edf1f5;color:#718094}.transferStep.active,.transferStep.done{color:#1769e0}.transferStep.active span,.transferStep.done span{background:#1769e0;color:#fff}.transferStepLine{height:2px;background:#e5eaf0;flex:1}.transferPanel{padding:24px 34px 16px}.hiddenTransferPanel{display:none}.transferPanelIcon,.transferReviewIcon{width:50px;height:50px;border-radius:15px;background:#eaf2ff;color:#1769e0;display:grid;place-items:center;font-size:23px;font-weight:900;margin-bottom:16px}.transferReviewIcon{background:#eaf8f0;color:#198754}.transferPanel h3{font-size:23px;margin:0 0 6px;color:#071a35}.transferPanelSub{margin:0 0 20px;color:#6b7b8e;font-size:13px;line-height:1.5}.transferRecipientCard{display:flex;align-items:center;gap:12px;border:1px solid #dfe6ee;background:#f8fafc;border-radius:15px;padding:13px;margin-bottom:16px}.transferRecipientIcon{width:40px;height:40px;border-radius:50%;background:#fff;color:#1769e0;display:grid;place-items:center;font-weight:900;border:1px solid #d9e4f2}.transferRecipientCard strong,.transferRecipientCard span{display:block}.transferRecipientCard strong{font-size:12px}.transferRecipientCard span{font-size:11px;color:#718094;margin-top:2px}.transferField{margin-bottom:13px}.transferField label{font-size:12px;color:#273b52}.transferField label em{font-style:normal;color:#8794a3;font-weight:500}.transferField input,.transferField select,.transferField textarea{border:1px solid #cfd9e4;border-radius:12px;padding:14px 15px;background:#fff;font-size:14px}.transferField textarea{min-height:78px}.transferHint{font-size:11px;color:#8492a1;margin:-2px 0 17px}.transferNextBtn{border:0;border-radius:12px;background:#1769e0;color:#fff;font-weight:800;font-size:14px;padding:14px 18px;min-width:145px;cursor:pointer;box-shadow:0 8px 20px rgba(23,105,224,.18)}.transferNextBtn span{margin-left:8px}.transferBalanceCard{display:flex;justify-content:space-between;align-items:center;background:#f3f7fc;border:1px solid #dfe8f2;border-radius:15px;padding:15px 17px;margin-bottom:17px}.transferBalanceCard span{display:block;font-size:11px;color:#748397}.transferBalanceCard strong{display:block;font-size:21px;color:#071a35;margin-top:3px}.transferBalanceLabel{font-size:9px!important;font-weight:900;letter-spacing:1px;color:#1769e0!important}.transferAmountRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}.transferMoneyInput{position:relative}.transferMoneyInput span{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-weight:800;color:#738297;z-index:1}.transferMoneyInput input{padding-left:34px!important}.transferFeeRow{display:flex;justify-content:space-between;align-items:center;padding:10px 0 13px;color:#6e7e90;font-size:11px;border-top:1px solid #edf1f5}.transferFeeRow strong{color:#1769e0}.transferNav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:7px}.transferBackBtn{border:1px solid #d5dee8;background:#fff;color:#1e344d;border-radius:12px;padding:13px 17px;font-weight:800;cursor:pointer}.transferSendBtn{min-width:170px}.transferReviewCard{border:1px solid #dce5ee;border-radius:16px;overflow:hidden;margin:18px 0 13px}.transferReviewLine{display:flex;justify-content:space-between;gap:20px;padding:13px 15px;border-bottom:1px solid #edf1f5;font-size:12px}.transferReviewLine span{color:#718094}.transferReviewLine strong{text-align:right;color:#142b45;max-width:65%;word-break:break-word}.transferReviewLine.total{background:#f5f8fc;border-bottom:0;padding:16px 15px}.transferReviewLine.total strong{font-size:18px;color:#1769e0}.transferProcessingNote{background:#f7faff;border:1px solid #dfe9f7;color:#60738a;border-radius:12px;padding:11px 13px;font-size:11px;line-height:1.5;margin-bottom:15px}.transferFooter{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #edf1f5;padding:14px 34px;color:#8a97a6;font-size:10px}.transferFooter button{border:0;background:none;color:#68798b;font-weight:700;cursor:pointer}.transferErrorWrap{padding:0 34px}.transferErrorWrap .error{margin:12px 0 0}.transferPayPalBox .loadingBtn{opacity:.7;pointer-events:none}
 @media(max-width:560px){.transferHeader{padding:26px 22px 18px}.transferSteps{padding:15px 22px 5px}.transferPanel{padding:20px 22px 14px}.transferFooter{padding:13px 22px}.transferHeader h2{font-size:27px}.transferSecure{display:none}.transferAmountRow{grid-template-columns:1fr}.transferStep small{display:none}.transferStepLine{min-width:18px}.transferReviewLine{font-size:11px}}
 
-/* ADD-ON: standalone demo exchange engine + full transaction history */
+/* ADD-ON: standalone Banking exchange engine + full transaction history */
 .exchangeCard{background:linear-gradient(135deg,#f7fbff,#edf4ff);border:1px solid #dce8f8;border-radius:16px;padding:18px;margin-top:18px}
 .exchangeCard h4{color:var(--navy);font-size:16px;margin-bottom:5px}.exchangeCard p{color:var(--muted);font-size:12px;line-height:1.5}
 .exchangeMini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.exchangeMini button{padding:11px;border:1px solid #d8e2ef;background:#fff;border-radius:9px;font-weight:bold;color:var(--navy)}
@@ -438,7 +438,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .dashAvatarSmall img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;border-radius:50%!important;}
 
 /* ===== FUNCTIONAL UPGRADE LAYER ===== */
-.transferGrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.transferGrid2 .field{margin:0}.transferGrid2 input,.transferGrid2 select{width:100%}.appMenuOverlay{position:fixed;inset:0;background:rgba(2,8,23,.62);z-index:9997;opacity:0;visibility:hidden;transition:.22s}.appMenuOverlay.show{opacity:1;visibility:visible}.appMenu{position:fixed;left:0;top:0;bottom:0;width:min(390px,92vw);background:#fff;z-index:9998;transform:translateX(-105%);transition:.25s;box-shadow:18px 0 50px #0004;overflow:auto;padding:20px}.appMenu.show{transform:translateX(0)}.appMenuHead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #e7edf5}.appMenuHead strong{display:block;font-size:21px;color:var(--navy)}.appMenuHead small{color:var(--muted)}.appMenuHead button{border:0;background:#eef2f7;border-radius:12px;width:42px;height:42px;font-size:25px}.appMenuProfile{display:flex;gap:12px;align-items:center;padding:18px 4px}.menuAvatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800;border:2px solid var(--gold);overflow:hidden}.menuAvatar img{width:100%;height:100%;object-fit:cover}.appMenuProfile strong,.appMenuProfile small{display:block}.appMenuProfile small{color:var(--muted);font-size:12px;margin-top:3px}.menuDemoBadge{display:inline-block;margin-top:7px;padding:4px 8px;border-radius:999px;background:#fff3cd;color:#725b13;font-size:9px;font-weight:800}.appMenuGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.appMenuGrid button{min-height:72px;border:1px solid #e1e8f1;background:#f8fafc;border-radius:15px;text-align:left;padding:12px;color:var(--navy);font-weight:800;font-size:21px}.appMenuGrid button span{display:block;font-size:12px;margin-top:7px;color:#526174}.appMenuGrid button:hover{background:#eef5ff;border-color:#bcd3f5}.appMenuNotice{margin-top:18px;padding:13px;border-radius:13px;background:#fff8e6;color:#735b19;font-size:11px;line-height:1.5}.featureModal{position:fixed;inset:0;display:none;z-index:10010}.featureModal.show{display:block}.featureBackdrop{position:absolute;inset:0;background:rgba(2,8,23,.7)}.featureBox{position:relative;width:min(620px,92vw);max-height:88vh;overflow:auto;background:#fff;margin:6vh auto 0;border-radius:24px;padding:28px;box-shadow:0 30px 90px #0005}.featureClose{position:absolute;right:16px;top:14px;width:40px;height:40px;border:0;border-radius:12px;background:#eef2f7;font-size:24px}.featureIcon{width:58px;height:58px;border-radius:17px;background:#eaf2ff;color:var(--blue);display:grid;place-items:center;font-size:28px;margin-bottom:15px}.featureEyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#9a741d}.featureBox h2{color:var(--navy);font-size:30px;margin:5px 0 8px}.featureBox>p{color:#64748b;line-height:1.6;margin-bottom:18px}.featureCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.featureCard{border:1px solid #e2e8f0;border-radius:16px;padding:16px;background:#f8fafc}.featureCard h4{color:var(--navy);margin-bottom:7px}.featureCard p{font-size:12px;color:#64748b;line-height:1.5}.featureWarn{padding:13px;border-radius:13px;background:#fff3cd;color:#725b13;font-size:12px;line-height:1.5;margin:15px 0}.featureForm{display:grid;gap:12px}.featureForm input,.featureForm select,.featureForm textarea{width:100%;border:1px solid #d9e2ed;border-radius:11px;padding:12px}.featureForm label{font-size:12px;font-weight:800;color:#526174}.countryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.countryChoice{padding:12px;border:1px solid #dbe4ee;background:#fff;border-radius:12px;text-align:left}.countryChoice strong{display:block;color:var(--navy)}.countryChoice small{color:#718096}.loanCard{border-radius:20px;padding:22px;background:linear-gradient(135deg,#071a35,#123e70);color:#fff;margin:10px 0}.loanCard h3{color:#fff;margin-bottom:8px}.loanCard p{color:#dbe7f5;font-size:13px;line-height:1.6}.accountMini{display:flex;justify-content:space-between;gap:12px;padding:14px;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:9px}.accountMini strong{color:var(--navy)}.accountMini span{color:#64748b;font-size:12px}.@media(max-width:560px){.transferGrid2,.featureCards{grid-template-columns:1fr}.featureBox{margin-top:3vh;padding:22px}}
+.transferGrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.transferGrid2 .field{margin:0}.transferGrid2 input,.transferGrid2 select{width:100%}.appMenuOverlay{position:fixed;inset:0;background:rgba(2,8,23,.62);z-index:9997;opacity:0;visibility:hidden;transition:.22s}.appMenuOverlay.show{opacity:1;visibility:visible}.appMenu{position:fixed;left:0;top:0;bottom:0;width:min(390px,92vw);background:#fff;z-index:9998;transform:translateX(-105%);transition:.25s;box-shadow:18px 0 50px #0004;overflow:auto;padding:20px}.appMenu.show{transform:translateX(0)}.appMenuHead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #e7edf5}.appMenuHead strong{display:block;font-size:21px;color:var(--navy)}.appMenuHead small{color:var(--muted)}.appMenuHead button{border:0;background:#eef2f7;border-radius:12px;width:42px;height:42px;font-size:25px}.appMenuProfile{display:flex;gap:12px;align-items:center;padding:18px 4px}.menuAvatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800;border:2px solid var(--gold);overflow:hidden}.menuAvatar img{width:100%;height:100%;object-fit:cover}.appMenuProfile strong,.appMenuProfile small{display:block}.appMenuProfile small{color:var(--muted);font-size:12px;margin-top:3px}.menuBankingBadge{display:inline-block;margin-top:7px;padding:4px 8px;border-radius:999px;background:#fff3cd;color:#725b13;font-size:9px;font-weight:800}.appMenuGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.appMenuGrid button{min-height:72px;border:1px solid #e1e8f1;background:#f8fafc;border-radius:15px;text-align:left;padding:12px;color:var(--navy);font-weight:800;font-size:21px}.appMenuGrid button span{display:block;font-size:12px;margin-top:7px;color:#526174}.appMenuGrid button:hover{background:#eef5ff;border-color:#bcd3f5}.appMenuNotice{margin-top:18px;padding:13px;border-radius:13px;background:#fff8e6;color:#735b19;font-size:11px;line-height:1.5}.featureModal{position:fixed;inset:0;display:none;z-index:10010}.featureModal.show{display:block}.featureBackdrop{position:absolute;inset:0;background:rgba(2,8,23,.7)}.featureBox{position:relative;width:min(620px,92vw);max-height:88vh;overflow:auto;background:#fff;margin:6vh auto 0;border-radius:24px;padding:28px;box-shadow:0 30px 90px #0005}.featureClose{position:absolute;right:16px;top:14px;width:40px;height:40px;border:0;border-radius:12px;background:#eef2f7;font-size:24px}.featureIcon{width:58px;height:58px;border-radius:17px;background:#eaf2ff;color:var(--blue);display:grid;place-items:center;font-size:28px;margin-bottom:15px}.featureEyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#9a741d}.featureBox h2{color:var(--navy);font-size:30px;margin:5px 0 8px}.featureBox>p{color:#64748b;line-height:1.6;margin-bottom:18px}.featureCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.featureCard{border:1px solid #e2e8f0;border-radius:16px;padding:16px;background:#f8fafc}.featureCard h4{color:var(--navy);margin-bottom:7px}.featureCard p{font-size:12px;color:#64748b;line-height:1.5}.featureWarn{padding:13px;border-radius:13px;background:#fff3cd;color:#725b13;font-size:12px;line-height:1.5;margin:15px 0}.featureForm{display:grid;gap:12px}.featureForm input,.featureForm select,.featureForm textarea{width:100%;border:1px solid #d9e2ed;border-radius:11px;padding:12px}.featureForm label{font-size:12px;font-weight:800;color:#526174}.countryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.countryChoice{padding:12px;border:1px solid #dbe4ee;background:#fff;border-radius:12px;text-align:left}.countryChoice strong{display:block;color:var(--navy)}.countryChoice small{color:#718096}.loanCard{border-radius:20px;padding:22px;background:linear-gradient(135deg,#071a35,#123e70);color:#fff;margin:10px 0}.loanCard h3{color:#fff;margin-bottom:8px}.loanCard p{color:#dbe7f5;font-size:13px;line-height:1.6}.accountMini{display:flex;justify-content:space-between;gap:12px;padding:14px;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:9px}.accountMini strong{color:var(--navy)}.accountMini span{color:#64748b;font-size:12px}.@media(max-width:560px){.transferGrid2,.featureCards{grid-template-columns:1fr}.featureBox{margin-top:3vh;padding:22px}}
 
 /* ACB HOMEPAGE ENHANCEMENT — ADDITIVE ONLY */
 .homeReveal{opacity:0;transform:translateY(32px);transition:opacity .75s ease,transform .75s ease}.homeReveal.is-visible{opacity:1;transform:none}.homeLift{transition:transform .3s ease,box-shadow .3s ease}.homeLift:hover{transform:translateY(-6px);box-shadow:0 20px 45px #071a5320}.heroVisual{position:relative}.heroVisual img{transition:opacity .55s ease,transform 6s ease}.heroVisual.homeSlide img{transform:scale(1.04)}.homeSlideDots{position:absolute;left:20px;bottom:18px;display:flex;gap:7px;z-index:2}.homeSlideDots button{width:9px;height:9px;border:0;border-radius:50%;padding:0;background:#ffffff99}.homeSlideDots button.active{background:var(--gold);transform:scale(1.25)}.homeStory{background:linear-gradient(135deg,#071a35,#0d315d);color:#fff}.homeStoryGrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.homeStoryCard{padding:30px;border:1px solid #ffffff18;border-radius:22px;background:#ffffff08}.homeStoryCard h3{font-size:25px;margin-bottom:10px}.homeStoryCard p{color:#c8d7e9;line-height:1.7}.homeSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.homeStep{background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;position:relative}.homeStepNum{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eaf2ff;color:var(--blue);font-weight:900;margin-bottom:14px}.homeStep h3{color:var(--navy);font-size:17px;margin-bottom:7px}.homeStep p{color:var(--muted);font-size:13px;line-height:1.6}.homeFeatureBand{display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:stretch}.homeFeaturePanel{border-radius:22px;padding:32px;background:#fff;border:1px solid var(--border);box-shadow:0 12px 35px #071a5310}.homeFeaturePanel.darkPanel{background:linear-gradient(145deg,#0a2445,#123e70);color:#fff;border:0}.homeFeaturePanel h3{font-size:27px;color:var(--navy);margin-bottom:10px}.darkPanel h3{color:#fff}.homeFeaturePanel p{color:var(--muted);line-height:1.7}.darkPanel p{color:#c9d8e9}.homePills{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}.homePill{padding:9px 12px;border-radius:999px;background:#eef4fb;color:#31506f;font-size:12px;font-weight:800}.darkPanel .homePill{background:#ffffff12;color:#e5eef8}.homeFaq{max-width:850px;margin:auto}.homeFaqItem{border:1px solid var(--border);border-radius:14px;background:#fff;margin-bottom:10px;overflow:hidden}.homeFaqQ{width:100%;border:0;background:#fff;padding:17px 18px;text-align:left;font-weight:800;color:var(--navy);display:flex;justify-content:space-between;align-items:center}.homeFaqA{display:none;padding:0 18px 17px;color:var(--muted);font-size:13px;line-height:1.65}.homeFaqItem.open .homeFaqA{display:block}.homeFaqItem.open .homeFaqQ span{transform:rotate(45deg)}.homeFaqQ span{font-size:22px;transition:transform .2s}.homeCta{background:linear-gradient(135deg,#eef4fb,#fff);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.homeCtaBox{max-width:900px;margin:auto;text-align:center;padding:20px}.homeCtaBox h2{color:var(--navy);font-size:36px;margin-bottom:10px}.homeCtaBox p{color:var(--muted);line-height:1.6;margin-bottom:20px}.homeTrustLine{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}.homeTrustLine span{padding:8px 11px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:11px;color:#607080;font-weight:800}@media(max-width:800px){.homeStoryGrid,.homeFeatureBand{grid-template-columns:1fr}.homeSteps{grid-template-columns:1fr 1fr}}@media(max-width:560px){.homeSteps{grid-template-columns:1fr}.homeFeaturePanel{padding:24px}.homeCtaBox h2{font-size:29px}}
@@ -492,7 +492,7 @@ Manage with confidence.
 
 </h1><p>
 
-Manage your fictional demo account, balances, transactions,
+Manage your fictional Banking account, balances, transactions,
 
 notifications and digital services from one dashboard.
 
@@ -602,7 +602,7 @@ alt="Customer using online banking">
 
 <h3>Send Money</h3>
 
-<p>Create a demo transaction using your selected currency.</p>
+<p>Create a Banking transaction using your selected currency.</p>
 
 </div><div class="card">
 
@@ -610,7 +610,7 @@ alt="Customer using online banking">
 
 <h3>Multi-Currency</h3>
 
-<p>Maintain demo balances and transaction records in different currencies.</p>
+<p>Maintain Banking balances and transaction records in different currencies.</p>
 
 </div></div>
 
@@ -622,13 +622,13 @@ alt="Customer using online banking">
 
 <h2>Account control</h2>
 
-<p>Keep demo account information, balances and activity organized from one dashboard.</p>
+<p>Keep Banking account information, balances and activity organized from one dashboard.</p>
 
 </div><div class="securityGrid"><div class="securityBox">
 
 <strong>Account Dashboard</strong>
 
-<span>View current demo balances and account information.</span>
+<span>View current Banking balances and account information.</span>
 
 </div><div class="securityBox">
 
@@ -640,7 +640,7 @@ alt="Customer using online banking">
 
 <strong>Digital Services</strong>
 
-<span>Access the available demo service interfaces from your dashboard.</span>
+<span>Access the available Banking service interfaces from your dashboard.</span>
 
 </div></div>
 
@@ -653,13 +653,13 @@ alt="Customer using online banking">
 <div class="homeStoryGrid">
 <div>
 <div class="eyebrow" style="color:var(--gold)">A SIMPLE DIGITAL EXPERIENCE</div>
-<h2 style="font-size:clamp(30px,5vw,48px);line-height:1.08;margin-bottom:15px">One place to understand your banking services — demo journey.</h2>
-<p style="color:#c8d7e9;line-height:1.7;max-width:620px">Explore the account experience from opening a demo account to reviewing balances, moving through currency options, viewing activity and contacting support.</p>
+<h2 style="font-size:clamp(30px,5vw,48px);line-height:1.08;margin-bottom:15px">One place to understand your banking services — Banking journey.</h2>
+<p style="color:#c8d7e9;line-height:1.7;max-width:620px">Explore the account experience from opening a Banking account to reviewing balances, moving through currency options, viewing activity and contacting support.</p>
 <div class="homeTrustLine"><span>Account setup</span><span>Transfers</span><span>Currency tools</span><span>Activity</span></div>
 </div>
 <div class="homeStoryCard homeLift">
 <h3>Built around clarity</h3>
-<p>Each part of the demo experience is designed to explain what happens next, so visitors can move from the welcome page into the appropriate account feature without losing the existing navigation.</p>
+<p>Each part of the Banking experience is designed to explain what happens next, so visitors can move from the welcome page into the appropriate account feature without losing the existing navigation.</p>
 </div>
 </div>
 </div>
@@ -667,11 +667,11 @@ alt="Customer using online banking">
 
 <section class="section">
 <div class="inner">
-<div class="head homeReveal"><h2>How the experience works</h2><p>A simple four-step journey through the American Crest demo.</p></div>
+<div class="head homeReveal"><h2>How the experience works</h2><p>A simple four-step journey through the American Crest Banking.</p></div>
 <div class="homeSteps">
-<div class="homeStep homeLift homeReveal"><div class="homeStepNum">01</div><h3>Create your demo account</h3><p>Choose your account details and preferred primary currency.</p></div>
+<div class="homeStep homeLift homeReveal"><div class="homeStepNum">01</div><h3>Create your Banking account</h3><p>Choose your account details and preferred primary currency.</p></div>
 <div class="homeStep homeLift homeReveal"><div class="homeStepNum">02</div><h3>Enter your dashboard</h3><p>Review the account overview, balance presentation and available services.</p></div>
-<div class="homeStep homeLift homeReveal"><div class="homeStepNum">03</div><h3>Explore transactions</h3><p>Use the available bank service transfer — demo and currency tools to explore the workflow.</p></div>
+<div class="homeStep homeLift homeReveal"><div class="homeStepNum">03</div><h3>Explore transactions</h3><p>Use the available bank service transfer — Banking and currency tools to explore the workflow.</p></div>
 <div class="homeStep homeLift homeReveal"><div class="homeStepNum">04</div><h3>Stay informed</h3><p>Review activity, notifications and support options from the account experience.</p></div>
 </div>
 </div>
@@ -681,25 +681,25 @@ alt="Customer using online banking">
 <div class="inner">
 <div class="homeFeatureBand">
 <div class="homeFeaturePanel homeLift homeReveal"><h3>Designed for everyday digital banking tasks</h3><p>The homepage now introduces the main experience before visitors enter the dashboard, while your existing buttons and account controls remain in place.</p><div class="homePills"><span class="homePill">Balances</span><span class="homePill">Payments</span><span class="homePill">Transfers</span><span class="homePill">Currencies</span><span class="homePill">Notifications</span><span class="homePill">Support</span></div></div>
-<div class="homeFeaturePanel darkPanel homeLift homeReveal"><h3>Professional. Clear. Connected.</h3><p>Subtle motion, clean cards and progressive storytelling make the page feel active without changing the structure you already like.</p><button class="btn primary" onclick="openModal('register')" style="margin-top:18px">Explore the Demo</button></div>
+<div class="homeFeaturePanel darkPanel homeLift homeReveal"><h3>Professional. Clear. Connected.</h3><p>Subtle motion, clean cards and progressive storytelling make the page feel active without changing the structure you already like.</p><button class="btn primary" onclick="openModal('register')" style="margin-top:18px">Explore the Banking</button></div>
 </div>
 </div>
 </section>
 
 <section class="section" style="background:#f8fafc">
 <div class="inner">
-<div class="head homeReveal"><h2>Frequently asked questions</h2><p>Quick answers about the fictional/banking services — demo experience.</p></div>
+<div class="head homeReveal"><h2>Frequently asked questions</h2><p>Quick answers about the fictional/banking services — Banking experience.</p></div>
 <div class="homeFaq">
-<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Is American Crest a real bank? <span>+</span></button><div class="homeFaqA">No. American Crest on this website is presented as a fictional/banking services — demo application.</div></div>
-<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">What can I explore after signing in? <span>+</span></button><div class="homeFaqA">The demo can present account information, balances, transaction workflows, currency features, notifications and support interfaces.</div></div>
-<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Can I create a demo account? <span>+</span></button><div class="homeFaqA">Yes. Use the existing Open Account button to enter the account-creation flow already provided on the site.</div></div>
+<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Is American Crest a real bank? <span>+</span></button><div class="homeFaqA">No. American Crest on this website is presented as a fictional/banking services — Banking application.</div></div>
+<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">What can I explore after signing in? <span>+</span></button><div class="homeFaqA">The Banking can present account information, balances, transaction workflows, currency features, notifications and support interfaces.</div></div>
+<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Can I create a Banking account? <span>+</span></button><div class="homeFaqA">Yes. Use the existing Open Account button to enter the account-creation flow already provided on the site.</div></div>
 <div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Will the existing homepage controls change? <span>+</span></button><div class="homeFaqA">No. These homepage enhancements are additive and are designed to leave your existing navigation and account controls in place.</div></div>
 </div>
 </div>
 </section>
 
 <section class="section homeCta">
-<div class="homeCtaBox homeReveal"><h2>Ready to explore the American Crest demo?</h2><p>Open a demo account or sign in to continue to the existing banking experience.</p><button class="btn primary" onclick="openModal('register')">Open an Account</button> <button class="btn outline" onclick="openModal('login')">Sign In</button></div>
+<div class="homeCtaBox homeReveal"><h2>Ready to explore the American Crest Banking?</h2><p>Open a Banking account or sign in to continue to the existing banking experience.</p><button class="btn primary" onclick="openModal('register')">Open an Account</button> <button class="btn outline" onclick="openModal('login')">Sign In</button></div>
 </section>
 
 <section class="section" id="support">
@@ -708,7 +708,7 @@ alt="Customer using online banking">
 
 <h2>Customer Support</h2>
 
-<p>Send a message through the bank service support — demo system.</p>
+<p>Send a message through the bank service support — Banking system.</p>
 
 </div><div class="contact"><div class="box">
 
@@ -732,7 +732,7 @@ Open Customer Support
 
 <p>
 
-Bank Account — Demo, transfers, multi-currency balances,
+Bank Account — Banking, transfers, multi-currency balances,
 
 notifications and service interfaces are available inside the dashboard.
 
@@ -756,7 +756,7 @@ notifications and service interfaces are available inside the dashboard.
 
 <p>Online banking services and account management.</p>
 
-<div class="copy">© 2026 American Crest Banking — Demo only.</div>
+<div class="copy">© 2026 American Crest Banking — Banking only.</div>
 
 </div>
 
@@ -804,12 +804,12 @@ function toggleHomeFaq(button){
 <div class="dashHero"><div><div class="dashGreeting">Good evening, <span id="welcomeName">Customer</span></div><div class="dashWelcome">Welcome back to your account</div></div><button class="currencySelector" type="button" onclick="openExchange()"><span class="ukFlag">🇬🇧</span><span id="primaryCurrencyDisplay">GBP</span><span>⌄</span></button></div>
 <div id="notificationCenter" class="notificationCenter dashNotificationLayer"><div class="notificationCenterHead"><button id="notificationBell" class="notificationBell hiddenNotificationBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCount" class="notificationBadge">0</span></button><div id="notificationBoard" class="notificationBoard"><div class="notificationBoardHead"><strong>Notifications</strong><button class="notificationBoardClose" type="button" onclick="toggleNotificationBoard(false)" aria-label="Close">×</button></div><div id="notifications" class="notificationList"></div></div></div></div>
 <div class="balanceHeroCard"><div class="balanceLeft"><div class="balanceLabel">Available Balance <button id="balanceEye" class="balanceEyeNew" type="button" onclick="toggleBalance()" aria-label="Hide balance">👁️</button></div><div id="balance" class="balanceAmountNew">£0.00</div><div id="balanceCurrency" class="balanceAccountNew">Primary currency: GBP</div><div class="accountNumberNew" id="accountNumberDisplay">Account Number: —</div></div><div class="accountLevelNew"><span>Account Level</span><strong>Personal</strong></div></div>
-<div class="mainActionCard"><button class="homeAction addMoney" type="button" onclick="openDemoService('Add Money')"><span>↓</span><strong>Add Money</strong></button><button class="homeAction sendMoney" type="button" onclick="openTransfer()"><span>↑</span><strong>Send Money</strong></button><button class="homeAction exchangeMoney" type="button" onclick="openExchange()"><span>⇄</span><strong>Exchange</strong></button><button class="homeAction buyData" type="button" onclick="openDemoService('Buy Data')"><span>▥</span><strong>Buy Data</strong></button><button class="homeAction moreAction" type="button" onclick="openAppMenu()"><span>•••</span><strong>More</strong></button></div>
-<section class="quickActionsCard"><div class="sectionTitleRow"><h2>Quick Actions</h2><button type="button" onclick="openAppMenu()">View All</button></div><div class="quickActionGrid"><button type="button" onclick="openDemoService('Airtime')"><span class="qaIcon qaBlue">▯</span><span>Airtime<br>Top-up</span></button><button type="button" onclick="openDemoService('Pay Bills')"><span class="qaIcon qaOrange">▤</span><span>Pay Bills</span></button><button type="button" onclick="openTransactionHistory()"><span class="qaIcon qaGreen">↶</span><span>Transactions</span></button><button type="button" onclick="openFeature('settings')"><span class="qaIcon qaPurple">⚙</span><span>Settings</span></button></div></section>
+<div class="mainActionCard"><button class="homeAction addMoney" type="button" onclick="openBankingService('Add Money')"><span>↓</span><strong>Add Money</strong></button><button class="homeAction sendMoney" type="button" onclick="openTransfer()"><span>↑</span><strong>Send Money</strong></button><button class="homeAction exchangeMoney" type="button" onclick="openExchange()"><span>⇄</span><strong>Exchange</strong></button><button class="homeAction buyData" type="button" onclick="openBankingService('Buy Data')"><span>▥</span><strong>Buy Data</strong></button><button class="homeAction moreAction" type="button" onclick="openAppMenu()"><span>•••</span><strong>More</strong></button></div>
+<section class="quickActionsCard"><div class="sectionTitleRow"><h2>Quick Actions</h2><button type="button" onclick="openAppMenu()">View All</button></div><div class="quickActionGrid"><button type="button" onclick="openBankingService('Airtime')"><span class="qaIcon qaBlue">▯</span><span>Airtime<br>Top-up</span></button><button type="button" onclick="openBankingService('Pay Bills')"><span class="qaIcon qaOrange">▤</span><span>Pay Bills</span></button><button type="button" onclick="openTransactionHistory()"><span class="qaIcon qaGreen">↶</span><span>Transactions</span></button><button type="button" onclick="openFeature('settings')"><span class="qaIcon qaPurple">⚙</span><span>Settings</span></button></div></section>
 <section class="referCard"><div><h2>Refer &amp; Earn</h2><p>Invite friends and earn<br>exciting rewards</p><button type="button" onclick="openFeature('referral')">Refer Now</button></div><div class="giftGraphic">🎁<span>🪙</span><span>🪙</span></div></section>
 <section class="recentCard"><div class="sectionTitleRow"><h2>Recent Transactions</h2><button type="button" onclick="openTransactionHistory()">View All</button></div><div id="transactions" class="recentTransactions"></div><span id="historyCount" class="historyCountHidden"></span></section>
 <div class="hiddenLegacyStats"><span id="statusStat">Active</span><span id="txCount">0</span><span id="emailStat">—</span><div id="currencyBalances"></div><div id="liveBanner"></div></div>
-<section class="servicesGrid" id="dashboardServices"><div class="service"><div class="serviceIcon">📱</div><h3>Buy Data</h3><p>Data Service — Demo bundle interface.</p><button class="btn outline" onclick="openDemoService('Buy Data')">Open</button><div class="serviceLive">Bank Service Request — Demo ready — Bank Management Service Available — Demo.</div></div><div class="service"><div class="serviceIcon">☎️</div><h3>Airtime</h3><p>Mobile Service — Demo airtime interface.</p><button class="btn outline" onclick="openDemoService('Airtime')">Open</button><div class="serviceLive">Bank Service Request — Demo ready — Bank Management Service Available — Demo.</div></div><div class="service"><div class="serviceIcon">💡</div><h3>Pay Bills</h3><p>Utility Payment Service — Demo payment interface.</p><button class="btn outline" onclick="openDemoService('Pay Bills')">Open</button><div class="serviceLive">Bank Service Request — Demo ready — Bank Management Service Available — Demo.</div></div><div class="service"><div class="serviceIcon">💳</div><h3>Cards</h3><p>Bank Card Service — Demo service interface.</p><button class="btn outline" onclick="openDemoService('Cards')">Open</button><div class="serviceLive">Bank Card Service — Demo interface — Bank Management Service Available — Demo.</div></div></section>
+<section class="servicesGrid" id="dashboardServices"><div class="service"><div class="serviceIcon">📱</div><h3>Buy Data</h3><p>Data Service — Banking bundle interface.</p><button class="btn outline" onclick="openBankingService('Buy Data')">Open</button><div class="serviceLive">Bank Service Request — Banking ready — Bank Management Service Available — Banking.</div></div><div class="service"><div class="serviceIcon">☎️</div><h3>Airtime</h3><p>Mobile Service — Banking airtime interface.</p><button class="btn outline" onclick="openBankingService('Airtime')">Open</button><div class="serviceLive">Bank Service Request — Banking ready — Bank Management Service Available — Banking.</div></div><div class="service"><div class="serviceIcon">💡</div><h3>Pay Bills</h3><p>Utility Payment Service — Banking payment interface.</p><button class="btn outline" onclick="openBankingService('Pay Bills')">Open</button><div class="serviceLive">Bank Service Request — Banking ready — Bank Management Service Available — Banking.</div></div><div class="service"><div class="serviceIcon">💳</div><h3>Cards</h3><p>Bank Card Service — Banking service interface.</p><button class="btn outline" onclick="openBankingService('Cards')">Open</button><div class="serviceLive">Bank Card Service — Banking interface — Bank Management Service Available — Banking.</div></div></section>
 <div class="legacyHidden"><div class="profilePanel"><div class="profileCard"><h3>My Profile</h3><label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
 
 Display Name
@@ -910,11 +910,11 @@ Refresh Customer List
 
 <div class="authImage"><div>
 
-<h3>Welcome to the demo</h3>
+<h3>Welcome to the Banking</h3>
 
 <p>
 
-A simple fictional banking demo.
+A simple fictional banking Banking.
 
 No real bank account, payment, transfer or funds are created.
 
@@ -922,7 +922,7 @@ No real bank account, payment, transfer or funds are created.
 
 </div></div><div class="authForm"><div id="loginForm"><h2>Welcome Back</h2>
 
-<p>Sign in to your demo account.</p><div class="error" id="loginError"></div><div class="field">
+<p>Sign in to your Banking account.</p><div class="error" id="loginError"></div><div class="field">
 
 <label>Email</label>
 
@@ -948,7 +948,7 @@ Create Account
 
 </div></div><div id="registerForm" style="display:none"><h2>Create Account</h2>
 
-<p>Create a new demo account.</p><div class="error" id="registerError"></div><div class="field">
+<p>Create a new Banking account.</p><div class="error" id="registerError"></div><div class="field">
 
 <label>Full Name</label>
 
@@ -1021,15 +1021,15 @@ Sign In
 </div>
 
 </div><div class="modal" id="exchangeModal"><div class="modalBox" style="display:block;max-width:560px;padding:30px"><button class="close" onclick="closeExchange()">×</button>
-<h2>Currency Exchange</h2><p>Standalone demo exchange engine. Enter an amount, choose the currencies, and the converted amount and demo fee update automatically.</p>
-<div class="exchangeSummary"><div class="exchangeStat"><small>Source</small><strong id="exchangeSourcePreview">$0.00 USD</strong></div><div class="exchangeStat"><small>Demo fee</small><strong id="exchangeFeePreview">$0.00</strong></div><div class="exchangeStat"><small>You receive</small><strong id="exchangeReceivePreview">€0.00 EUR</strong></div></div>
+<h2>Currency Exchange</h2><p>Standalone Banking exchange engine. Enter an amount, choose the currencies, and the converted amount and Banking fee update automatically.</p>
+<div class="exchangeSummary"><div class="exchangeStat"><small>Source</small><strong id="exchangeSourcePreview">$0.00 USD</strong></div><div class="exchangeStat"><small>Banking fee</small><strong id="exchangeFeePreview">$0.00</strong></div><div class="exchangeStat"><small>You receive</small><strong id="exchangeReceivePreview">€0.00 EUR</strong></div></div>
 <div class="exchangeGrid"><div class="field"><label>From</label><select id="exchangeFrom"></select></div><div class="field"><label>To</label><select id="exchangeTo"></select></div></div>
 <div class="field"><label>Amount</label><input id="exchangeAmount" type="number" min="0.01" step="0.01" placeholder="0.00"></div>
-<div class="exchangeRateBox" id="exchangeRateBox">Enter an amount to see the demo exchange rate and fee.</div>
+<div class="exchangeRateBox" id="exchangeRateBox">Enter an amount to see the Banking exchange rate and fee.</div>
 <div class="exchangeResult"><small>Converted amount</small><strong id="exchangeResultAmount">—</strong><span id="exchangeResultCaption">The converted amount will appear here.</span></div>
 <div style="display:flex;gap:10px;margin-top:15px"><button type="button" class="btn outline" style="flex:1" onclick="swapExchangeCurrencies()">⇄ Swap</button><button type="button" class="btn primary" style="flex:1" onclick="useExchangeForTransfer()">Use for Transfer</button></div></div></div>
 <div class="modal" id="historyModal"><div class="modalBox" style="display:block;max-width:650px;padding:30px"><button class="close" onclick="closeTransactionHistory()">×</button>
-<h2>Transaction History</h2><p>Review your demo account activity. Tap any transaction for more details.</p>
+<h2>Transaction History</h2><p>Review your Banking account activity. Tap any transaction for more details.</p>
 <div class="historyTotals"><div class="historyTotal"><small>Total credited</small><strong id="historyCreditTotal">—</strong></div><div class="historyTotal"><small>Total debited</small><strong id="historyDebitTotal">—</strong></div></div>
 <div class="historyByCurrency" id="historyCurrencyTotals"></div><div class="historyList" id="historyList"></div>
 <div class="historyDetail" id="historyDetail"><strong style="color:var(--navy)">Transaction details</strong><div class="historyDetailGrid" id="historyDetailGrid"></div></div></div></div>
@@ -1056,7 +1056,7 @@ Sign In
 <div class="transferAmountRow"><div class="field transferField transferCurrencyField"><label>Currency</label><select id="transferCurrency">
 <option value="NGN">NGN — Nigerian Naira</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British Pound</option><option value="IDR">IDR — Indonesian Rupiah</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="CHF">CHF — Swiss Franc</option><option value="JPY">JPY — Japanese Yen</option><option value="CNY">CNY — Chinese Yuan</option><option value="INR">INR — Indian Rupee</option><option value="MYR">MYR — Malaysian Ringgit</option><option value="SGD">SGD — Singapore Dollar</option><option value="AED">AED — UAE Dirham</option><option value="ZAR">ZAR — South African Rand</option><option value="KES">KES — Kenyan Shilling</option><option value="GHS">GHS — Ghanaian Cedi</option>
 </select></div><div class="field transferField transferAmountField"><label>Amount</label><div class="transferMoneyInput"><span id="transferCurrencySymbol">$</span><input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00"></div></div></div>
-<div class="transferFeeRow"><span>Transfer fee</span><strong>Included in demo</strong></div>
+<div class="transferFeeRow"><span>Transfer fee</span><strong>Included in Banking</strong></div>
 <div class="field transferField"><label>Note <em>(optional)</em></label><textarea id="transferNote" placeholder="Add a message for the recipient"></textarea></div>
 <div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(1)">← Back</button><button type="button" class="transferNextBtn" onclick="nextTransferStep(3)">Review <span>→</span></button></div>
 </div>
@@ -1066,28 +1066,28 @@ Sign In
 <div class="transferProcessingNote">Your request will be sent to the Bank Management Service for processing. The transaction receipt will appear after the request is recorded.</div>
 <div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(2)">← Back</button><button id="transferBtn" type="button" class="transferNextBtn transferSendBtn" onclick="transfer()">Send Money <span>→</span></button></div>
 </div>
-<div class="transferFooter"><span>🔒 Your bank service transfer — demo is protected</span><button type="button" onclick="closeTransfer()">Cancel</button></div>
-</div></div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Demo</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting Bank Management Service review.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>BANK</small><strong id="receiptBank">—</strong></div><div class="receiptItem"><small>ACCOUNT</small><strong id="receiptAccount">—</strong></div><div class="receiptItem"><small>RECIPIENT EMAIL</small><strong id="receiptEmail">—</strong></div><div class="receiptItem"><small>SWIFT / BIC</small><strong id="receiptSwift">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+<div class="transferFooter"><span>🔒 Your bank service transfer — Banking is protected</span><button type="button" onclick="closeTransfer()">Cancel</button></div>
+</div></div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Banking</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting Bank Management Service review.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>BANK</small><strong id="receiptBank">—</strong></div><div class="receiptItem"><small>ACCOUNT</small><strong id="receiptAccount">—</strong></div><div class="receiptItem"><small>RECIPIENT EMAIL</small><strong id="receiptEmail">—</strong></div><div class="receiptItem"><small>SWIFT / BIC</small><strong id="receiptSwift">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
 <h2>Verify Sign In</h2>
-<p>Enter the 6-digit demo verification code to continue.</p>
+<p>Enter the 6-digit Banking verification code to continue.</p>
 <div class="error" id="loginVerifyError"></div>
 <div class="field"><label>Verification Code</label><input id="loginVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
-<div id="loginVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<div id="loginVerifyBankingCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
 <button id="loginVerifyBtn" class="btn primary full" onclick="verifyLoginCode()">Verify &amp; Continue</button>
 </div>
 </div><div class="modal" id="registrationVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelRegistrationVerification()">×</button>
 <h2>Verify Account</h2>
-<p>Enter the 6-digit demo verification code to complete your account creation.</p>
+<p>Enter the 6-digit Banking verification code to complete your account creation.</p>
 <div class="error" id="registrationVerifyError"></div>
 <div class="field"><label>Verification Code</label><input id="registrationVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
-<div id="registrationVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
+<div id="registrationVerifyBankingCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
 <button id="registrationVerifyBtn" class="btn primary full" onclick="verifyRegistrationCode()">Verify &amp; Continue</button>
 </div>
 </div>
 <div class="appMenuOverlay" id="appMenuOverlay" onclick="closeAppMenu(event)"></div>
 <aside class="appMenu" id="appMenu" aria-label="Customer menu">
-  <div class="appMenuHead"><div><strong>American Crest</strong><small>Banking Services — Demo</small></div><button type="button" onclick="closeAppMenu()">×</button></div>
-  <div class="appMenuProfile"><div class="menuAvatar" id="menuAvatar">AC</div><div><strong id="menuName">Customer</strong><small id="menuEmail">—</small><span class="menuDemoBadge">BANK ACCOUNT — Banking</span></div></div>
+  <div class="appMenuHead"><div><strong>American Crest</strong><small>Banking Services — Banking</small></div><button type="button" onclick="closeAppMenu()">×</button></div>
+  <div class="appMenuProfile"><div class="menuAvatar" id="menuAvatar">AC</div><div><strong id="menuName">Customer</strong><small id="menuEmail">—</small><span class="menuBankingBadge">BANK ACCOUNT — Banking</span></div></div>
   <div class="appMenuGrid">
     <button onclick="closeAppMenu();window.scrollTo({top:0,behavior:'smooth'})">⌂<span>Dashboard</span></button>
     <button onclick="closeAppMenu();openTransfer()">↑<span>Transfer</span></button>
@@ -1107,23 +1107,23 @@ Sign In
     <button onclick="closeAppMenu();toggleChat()">☁<span>Support</span></button>
     <button onclick="openLogoutVerification()">⇥<span>Log Out</span></button>
   </div>
-  <div class="appMenuNotice">All banking, card, loan, transfer and payment features in this application are simulations. Bank Service Transfer — Demo.</div>
+  <div class="appMenuNotice">All banking, card, loan, transfer and payment features in this application are simulations. Bank Service Transfer — Banking.</div>
 </aside>
 <div class="featureModal" id="logoutVerificationModal" aria-hidden="true"><div class="featureBackdrop" onclick="closeLogoutVerification()"></div><div class="featureBox" role="dialog" aria-modal="true" aria-labelledby="logoutVerificationTitle"><button class="featureClose" type="button" onclick="closeLogoutVerification()">×</button><div class="featureIcon">⇥</div><div class="featureEyebrow">AMERICAN CREST Banking</div><h2 id="logoutVerificationTitle">Verify Logout</h2><p>Enter the 6-digit verification code shown below to complete logout.</p><div class="featureCard" style="text-align:center;margin:12px 0 16px"><strong id="logoutVerificationCode" style="font-size:28px;letter-spacing:6px;color:var(--navy)">------</strong></div><div class="featureForm"><label for="logoutVerificationInput">Verification code</label><input id="logoutVerificationInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code"><div id="logoutVerificationError" style="display:none;color:#b42318;font-size:12px;font-weight:700"></div><button class="btn primary full" type="button" onclick="verifyLogoutCode()">Verify &amp; Log Out</button></div></div></div>
-<div class="featureModal" id="featureModal"><div class="featureBackdrop" onclick="closeFeature()"></div><div class="featureBox"><button class="featureClose" onclick="closeFeature()">×</button><div class="featureIcon" id="featureIcon">✦</div><div class="featureEyebrow">AMERICAN CREST Banking</div><h2 id="featureTitle">Feature</h2><p id="featureDescription">Bank Service — Demo.</p><div id="featureContent"></div></div></div>
+<div class="featureModal" id="featureModal"><div class="featureBackdrop" onclick="closeFeature()"></div><div class="featureBox"><button class="featureClose" onclick="closeFeature()">×</button><div class="featureIcon" id="featureIcon">✦</div><div class="featureEyebrow">AMERICAN CREST Banking</div><h2 id="featureTitle">Feature</h2><p id="featureDescription">Bank Service — Banking.</p><div id="featureContent"></div></div></div>
 <div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
 <h2 id="serviceTitle">Service</h2>
 
-<p id="serviceText">Demo service interface.</p><div class="field">
+<p id="serviceText">Banking service interface.</p><div class="field">
 
 <label>Request details</label>
 
-<input id="serviceInput" placeholder="Enter bank service request — demo details">
+<input id="serviceInput" placeholder="Enter bank service request — Banking details">
 
-</div><button class="btn primary full" onclick="submitDemoService()">
+</div><button class="btn primary full" onclick="submitBankingService()">
 
-Submit Demo Request
+Submit Banking Request
 
 </button></div>
 
@@ -1622,7 +1622,7 @@ pendingRegistrationVerification={
 
 verificationId:String(data.verificationId),
 
-demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
+BankingCode:data.BankingVerificationCode?String(data.BankingVerificationCode):''
 
 };
 
@@ -1632,11 +1632,11 @@ clearError('registrationVerifyError');
 
 $('registrationVerifyCode').value='';
 
-$('registrationVerifyDemoCode').textContent=pendingRegistrationVerification.demoCode
+$('registrationVerifyBankingCode').textContent=pendingRegistrationVerification.BankingCode
 
-? 'Demo verification code: '+pendingRegistrationVerification.demoCode
+? 'Banking verification code: '+pendingRegistrationVerification.BankingCode
 
-: 'A verification code has been generated for this demo.';
+: 'A verification code has been generated for this Banking.';
 
 $('registrationVerifyModal').classList.add('show');
 
@@ -1664,7 +1664,7 @@ closeModal();
 
 showDashboard();
 
-toast('Bank Account — Demo created successfully.');
+toast('Bank Account — Banking created successfully.');
 
 }catch(error){
 
@@ -1730,14 +1730,14 @@ if(data&&data.verificationRequired&&data.verificationId){
     verificationId:String(data.verificationId),
     email:email,
     password:password,
-    demoCode:data.demoVerificationCode?String(data.demoVerificationCode):''
+    BankingCode:data.BankingVerificationCode?String(data.BankingVerificationCode):''
   };
   closeModal();
   clearError('loginVerifyError');
   $('loginVerifyCode').value='';
-  $('loginVerifyDemoCode').textContent=pendingLoginVerification.demoCode
-    ? 'Demo verification code: '+pendingLoginVerification.demoCode
-    : 'A verification code has been generated for this demo.';
+  $('loginVerifyBankingCode').textContent=pendingLoginVerification.BankingCode
+    ? 'Banking verification code: '+pendingLoginVerification.BankingCode
+    : 'A verification code has been generated for this Banking.';
   $('loginVerifyModal').classList.add('show');
   setTimeout(()=>$('loginVerifyCode').focus(),100);
   return;
@@ -1835,7 +1835,7 @@ me=verified.user;
 pendingRegistrationVerification=null;
 $('registrationVerifyModal').classList.remove('show');
 showDashboard();
-toast('Bank Account — Demo created successfully.');
+toast('Bank Account — Banking created successfully.');
 }catch(error){
 showError('registrationVerifyError',error.message||'Unable to verify the account.');
 }finally{
@@ -2039,7 +2039,7 @@ balanceHidden?'Show balance':'Hide balance'
 
 $('liveBanner').innerHTML=
 
-'<strong>Bank Account — Demo active.</strong> '+
+'<strong>Bank Account — Banking active.</strong> '+
 
 'Customer account data, balances, requests, notifications and support are synchronized with the server database.';
 
@@ -2215,7 +2215,7 @@ function populateExchangeCurrencies(){const from=$('exchangeFrom'),to=$('exchang
 function openExchange(){if(!me)return openModal('login');populateExchangeCurrencies();const amount=$('exchangeAmount');if(amount&&!amount.value)amount.value='';$('exchangeModal').classList.add('show');updateExchangeQuote();}
 function closeExchange(){const modal=$('exchangeModal');if(modal)modal.classList.remove('show');}
 function swapExchangeCurrencies(){const from=$('exchangeFrom'),to=$('exchangeTo');if(!from||!to)return;const value=from.value;from.value=to.value;to.value=value;updateExchangeQuote();}
-function updateExchangeQuote(){const from=$('exchangeFrom')?.value||'USD',to=$('exchangeTo')?.value||'EUR',amount=Number($('exchangeAmount')?.value||0);const fee=Math.max(0,amount*Banking_EXCHANGE_FEE_RATE),net=Math.max(0,amount-fee),converted=net*(Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from]),rate=Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from];lastExchangeQuote={from,to,amount,fee,net,converted,rate};$('exchangeSourcePreview').textContent=money(amount,from);$('exchangeFeePreview').textContent=money(fee,from);$('exchangeReceivePreview').textContent=money(converted,to);$('exchangeResultAmount').textContent=amount>0?money(converted,to):money(0,to);$('exchangeResultCaption').textContent=amount>0?`${money(amount,from)} less ${money(fee,from)} demo fee at 1.00% → ${money(converted,to)}`:'Enter an amount to calculate the conversion.';$('exchangeRateBox').textContent=amount>0?`Demo rate: 1 ${from} = ${rate.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}. Demo fee: 1.00% (${money(fee,from)}). No real funds are exchanged.`:'Enter an amount to see the demo exchange rate and fee.';return lastExchangeQuote;}
+function updateExchangeQuote(){const from=$('exchangeFrom')?.value||'USD',to=$('exchangeTo')?.value||'EUR',amount=Number($('exchangeAmount')?.value||0);const fee=Math.max(0,amount*Banking_EXCHANGE_FEE_RATE),net=Math.max(0,amount-fee),converted=net*(Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from]),rate=Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from];lastExchangeQuote={from,to,amount,fee,net,converted,rate};$('exchangeSourcePreview').textContent=money(amount,from);$('exchangeFeePreview').textContent=money(fee,from);$('exchangeReceivePreview').textContent=money(converted,to);$('exchangeResultAmount').textContent=amount>0?money(converted,to):money(0,to);$('exchangeResultCaption').textContent=amount>0?`${money(amount,from)} less ${money(fee,from)} Banking fee at 1.00% → ${money(converted,to)}`:'Enter an amount to calculate the conversion.';$('exchangeRateBox').textContent=amount>0?`Banking rate: 1 ${from} = ${rate.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}. Banking fee: 1.00% (${money(fee,from)}). No real funds are exchanged.`:'Enter an amount to see the Banking exchange rate and fee.';return lastExchangeQuote;}
 function useExchangeForTransfer(){const quote=updateExchangeQuote();if(!quote||quote.amount<=0)return toast('Enter an amount to exchange first.');closeExchange();openTransfer();$('transferCurrency').value=quote.to;$('transferAmount').value=quote.converted.toFixed(2);toast('Converted amount added to the transfer form.');}
 function openTransactionHistory(){if(!me)return openModal('login');renderTransactionHistory();$('historyModal').classList.add('show');}
 function closeTransactionHistory(){const modal=$('historyModal');if(modal)modal.classList.remove('show');}
@@ -2652,7 +2652,7 @@ refreshAdmin(false);
 
 }
 
-toast('Message sent to Bank Service Support — Demo.');
+toast('Message sent to Bank Service Support — Banking.');
 
 }catch(error){
 
@@ -2672,13 +2672,13 @@ SERVICES
 
 */
 
-function openDemoService(service){
+function openBankingService(service){
 
 $('serviceTitle').textContent=service;
 
 $('serviceText').textContent=
 
-'This is a fictional demo service interface and is not connected to real payments.';
+'This is a fictional Banking service interface and is not connected to real payments.';
 
 $('serviceInput').value='';
 
@@ -2692,7 +2692,7 @@ $('serviceModal').classList.remove('show');
 
 }
 
-function submitDemoService(){
+function submitBankingService(){
 
 const service=$('serviceTitle').textContent;
 
@@ -2700,13 +2700,13 @@ const details=$('serviceInput').value.trim();
 
 if(!details){
 
-return toast('Enter the bank service request — demo details.');
+return toast('Enter the bank service request — Banking details.');
 
 }
 
 closeService();
 
-toast(service+' bank service request — demo submitted.');
+toast(service+' bank service request — Banking submitted.');
 
 }
 
@@ -3137,7 +3137,7 @@ await loadMe();
 
 refreshDashboard(false);
 
-toast('Request approved and demo funds credited.');
+toast('Request approved and Banking funds credited.');
 
 }catch(error){
 
@@ -3259,7 +3259,7 @@ toast(
 
 money(amount,currency)+
 
-' credited to the demo customer.'
+' credited to the Banking customer.'
 
 );
 
@@ -3679,39 +3679,39 @@ function openAppMenu(){
   if(!me)return openModal('login');
   const menu=$('appMenu'),overlay=$('appMenuOverlay');
   if(menu)menu.classList.add('show'); if(overlay)overlay.classList.add('show');
-  $('menuName').textContent=me.name||'Customer'; $('menuEmail').textContent=me.email||me.phone||'Bank Account — Demo';
+  $('menuName').textContent=me.name||'Customer'; $('menuEmail').textContent=me.email||me.phone||'Bank Account — Banking';
   const av=$('menuAvatar'); if(av){av.innerHTML=me.profileImage?`<img src="${esc(me.profileImage)}" alt="Profile">`:(me.name||'AC').slice(0,2).toUpperCase();}
 }
 function closeAppMenu(event){if(event&&event.target&&event.target.id!=='appMenuOverlay')return; $('appMenu')?.classList.remove('show');$('appMenuOverlay')?.classList.remove('show');}
 function closeFeature(){ $('featureModal')?.classList.remove('show'); }
 function featureMarkup(key){
  const map={
- accounts:{icon:'▣',title:'Accounts',desc:'Your demo account overview and available currencies.',html:`<div class="accountMini"><div><strong>Primary account</strong><span>${esc(me?.accountNumber||'—')}</span></div><strong>${money(me?.balances?.[me?.primaryCurrency||me?.primary_currency||'NGN']||0,me?.primaryCurrency||me?.primary_currency||'NGN')}</strong></div><div class="featureCards">${(me?.accounts||[]).filter(a=>Number(a.balance||a.amount||0)!==0 || a.currency===(me?.primaryCurrency||me?.primary_currency)).slice(0,8).map(a=>`<div class="featureCard"><h4>${esc(a.currency)}</h4><p>Demo available balance</p><strong>${money(a.balance||a.amount||0,a.currency)}</strong></div>`).join('')||'<div class="featureCard"><h4>Ready</h4><p>Your demo currency accounts are initialized by the server.</p></div>'}</div>`},
- cards:{icon:'▤',title:'Cards',desc:'Explore your fictional debit and credit card services.',html:`<div class="featureCards"><div class="featureCard"><h4>Demo Debit Card</h4><p>Physical-style card interface for the simulation.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#071a35,#16477e);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 4821</div><small>Banking CARD</small></div></div><div class="featureCard"><h4>Demo Credit Card</h4><p>Credit card presentation and controls are simulated.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#3a123d,#7d2f70);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 7305</div><small>Banking CREDIT</small></div></div></div><div class="featureWarn">Bank Management Service Available — Demo and no card can be used for real purchases.</div><button class="btn primary full" onclick="submitFeatureService('Cards',{action:'card-service'})">Request Demo Card Service</button>`},
- loans:{icon:'$',title:'Loans',desc:'A complete financing service — demo journey, from eligibility to application status.',html:`<div class="loanCard"><h3>Personal Demo Loan</h3><p>Illustrative borrowing limits, repayment periods and application steps. Nothing here creates real credit.</p></div><div class="featureCards"><div class="featureCard"><h4>Eligibility</h4><p>Demo assessment based on account activity.</p><strong>Review available</strong></div><div class="featureCard"><h4>Repayment</h4><p>Choose an illustrative term.</p><strong>6–36 months</strong></div></div><div class="featureWarn">Loan approval, interest, disbursement and repayment are simulated only.</div><button class="btn primary full" onclick="submitFeatureService('Loans',{amount:'',term:'12 months',purpose:'Financing Service — Demo application'})">Start Demo Loan Application</button>`},
- savings:{icon:'◎',title:'Savings',desc:'Create a fictional savings goal and track how the plan works.',html:`<div class="featureForm"><label>Goal name<input id="featureGoal" placeholder="e.g. Emergency fund"></label><label>Target amount<input id="featureGoalAmount" type="number" min="1" placeholder="1000"></label><button class="btn primary" onclick="submitGoal()">Create Demo Goal</button></div><div class="featureWarn">Savings goals do not move or lock real funds.</div>`},
- giftcards:{icon:'▰',title:'Gift Cards',desc:'Browse demo gift-card availability across multiple countries.',html:`<div class="countryGrid">${['United States','Nigeria','United Kingdom','Canada','Australia','Germany','France','Singapore'].map(c=>`<button class="countryChoice" onclick="selectGiftCountry('${c}')"><strong>${c}</strong><small>Gift cards &amp; vouchers</small></button>`).join('')}</div><div id="giftCountryResult" class="featureWarn">Select a country to view demo denominations.</div>`},
- airtime:{icon:'☎',title:'Airtime Top-up',desc:'Choose a country and enter a mobile service — demo top-up request.',html:serviceForm('Airtime','Phone number','Amount')},
+ accounts:{icon:'▣',title:'Accounts',desc:'Your Banking account overview and available currencies.',html:`<div class="accountMini"><div><strong>Primary account</strong><span>${esc(me?.accountNumber||'—')}</span></div><strong>${money(me?.balances?.[me?.primaryCurrency||me?.primary_currency||'NGN']||0,me?.primaryCurrency||me?.primary_currency||'NGN')}</strong></div><div class="featureCards">${(me?.accounts||[]).filter(a=>Number(a.balance||a.amount||0)!==0 || a.currency===(me?.primaryCurrency||me?.primary_currency)).slice(0,8).map(a=>`<div class="featureCard"><h4>${esc(a.currency)}</h4><p>Banking available balance</p><strong>${money(a.balance||a.amount||0,a.currency)}</strong></div>`).join('')||'<div class="featureCard"><h4>Ready</h4><p>Your Banking currency accounts are initialized by the server.</p></div>'}</div>`},
+ cards:{icon:'▤',title:'Cards',desc:'Explore your fictional debit and credit card services.',html:`<div class="featureCards"><div class="featureCard"><h4>Banking Debit Card</h4><p>Physical-style card interface for the simulation.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#071a35,#16477e);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 4821</div><small>Banking CARD</small></div></div><div class="featureCard"><h4>Banking Credit Card</h4><p>Credit card presentation and controls are simulated.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#3a123d,#7d2f70);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 7305</div><small>Banking CREDIT</small></div></div></div><div class="featureWarn">Bank Management Service Available — Banking and no card can be used for real purchases.</div><button class="btn primary full" onclick="submitFeatureService('Cards',{action:'card-service'})">Request Banking Card Service</button>`},
+ loans:{icon:'$',title:'Loans',desc:'A complete financing service — Banking journey, from eligibility to application status.',html:`<div class="loanCard"><h3>Personal Banking Loan</h3><p>Illustrative borrowing limits, repayment periods and application steps. Nothing here creates real credit.</p></div><div class="featureCards"><div class="featureCard"><h4>Eligibility</h4><p>Banking assessment based on account activity.</p><strong>Review available</strong></div><div class="featureCard"><h4>Repayment</h4><p>Choose an illustrative term.</p><strong>6–36 months</strong></div></div><div class="featureWarn">Loan approval, interest, disbursement and repayment are simulated only.</div><button class="btn primary full" onclick="submitFeatureService('Loans',{amount:'',term:'12 months',purpose:'Financing Service — Banking application'})">Start Banking Loan Application</button>`},
+ savings:{icon:'◎',title:'Savings',desc:'Create a fictional savings goal and track how the plan works.',html:`<div class="featureForm"><label>Goal name<input id="featureGoal" placeholder="e.g. Emergency fund"></label><label>Target amount<input id="featureGoalAmount" type="number" min="1" placeholder="1000"></label><button class="btn primary" onclick="submitGoal()">Create Banking Goal</button></div><div class="featureWarn">Savings goals do not move or lock real funds.</div>`},
+ giftcards:{icon:'▰',title:'Gift Cards',desc:'Browse Banking gift-card availability across multiple countries.',html:`<div class="countryGrid">${['United States','Nigeria','United Kingdom','Canada','Australia','Germany','France','Singapore'].map(c=>`<button class="countryChoice" onclick="selectGiftCountry('${c}')"><strong>${c}</strong><small>Gift cards &amp; vouchers</small></button>`).join('')}</div><div id="giftCountryResult" class="featureWarn">Select a country to view Banking denominations.</div>`},
+ airtime:{icon:'☎',title:'Airtime Top-up',desc:'Choose a country and enter a mobile service — Banking top-up request.',html:serviceForm('Airtime','Phone number','Amount')},
  data:{icon:'▥',title:'Buy Data',desc:'Choose a country, carrier and bundle in the simulated data store.',html:serviceForm('Buy Data','Phone number','Bundle')},
  bills:{icon:'▤',title:'Pay Bills',desc:'Open a simulated bill-payment interface for common categories.',html:serviceForm('Pay Bills','Bill/customer number','Amount')},
  referral:{icon:'🎁',title:'Refer & Earn',desc:'Your fictional referral center.',html:`<div class="featureCard"><h4>Your referral code</h4><p id="refCode">ACB-${esc((me?.name||'USER').replace(/[^A-Za-z0-9]/g,'').slice(0,6).toUpperCase())}-Banking</p><button class="btn outline" onclick="navigator.clipboard?.writeText($('refCode').textContent);toast('Referral code copied.')">Copy code</button></div><div class="featureWarn">Referral rewards are illustrative and cannot be redeemed for real money.</div>`},
- verification:{icon:'✓',title:'Identity Verification',desc:'View your demo verification state and document workflow.',html:`<div class="featureCard"><h4>Verification status</h4><p>Your demo account can display verification progress without collecting sensitive documents.</p><strong style="color:#159447">Banking VERIFIED</strong></div><div class="featureWarn">For this simulation, do not upload real identity documents.</div>`},
+ verification:{icon:'✓',title:'Identity Verification',desc:'View your Banking verification state and document workflow.',html:`<div class="featureCard"><h4>Verification status</h4><p>Your Banking account can display verification progress without collecting sensitive documents.</p><strong style="color:#159447">Banking VERIFIED</strong></div><div class="featureWarn">For this simulation, do not upload real identity documents.</div>`},
  profile:{icon:'●',title:'My Profile',desc:'Manage the information shown on your fictional customer profile.',html:`<div class="featureForm"><label>Display name<input id="featureProfileName" value="${esc(me?.name||'')}"></label><label>Email<input value="${esc(me?.email||'')}" disabled></label><label>Account number<input value="${esc(me?.accountNumber||'—')}" disabled></label><button class="btn primary" onclick="saveFeatureProfile()">Save Profile</button></div>`},
- settings:{icon:'⚙',title:'Settings',desc:'Application preferences and security information.',html:`<div class="featureCards"><div class="featureCard"><h4>Session security</h4><p>Bearer-token authentication is used by the demo API.</p></div><div class="featureCard"><h4>Notifications</h4><p>Transfer and support updates appear in the notification center.</p></div></div><div class="featureWarn">Never place real banking credentials, card PINs or secrets in this demo.</div>`}
+ settings:{icon:'⚙',title:'Settings',desc:'Application preferences and security information.',html:`<div class="featureCards"><div class="featureCard"><h4>Session security</h4><p>Bearer-token authentication is used by the Banking API.</p></div><div class="featureCard"><h4>Notifications</h4><p>Transfer and support updates appear in the notification center.</p></div></div><div class="featureWarn">Never place real banking credentials, card PINs or secrets in this Banking.</div>`}
  };
- return map[key]||{icon:'✦',title:key,desc:'Bank Service — Demo',html:'<div class="featureWarn">This feature is available as a fictional simulation.</div>'};
+ return map[key]||{icon:'✦',title:key,desc:'Bank Service — Banking',html:'<div class="featureWarn">This feature is available as a fictional simulation.</div>'};
 }
 function serviceForm(service,a,b){return `<div class="featureForm"><label>Country<select id="featureCountry"><option>United States</option><option>Nigeria</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Singapore</option></select></label><label>${a}<input id="featurePrimary" placeholder="Enter ${a.toLowerCase()}"></label><label>${b}<input id="featureSecondary" placeholder="Enter ${b.toLowerCase()}"></label><button class="btn primary" onclick="submitServiceForm('${service}')">Continue</button></div><div class="featureWarn">Security notice: this is a simulated purchase/request. No real airtime, data, bills or gift cards are purchased.</div>`}
 function openFeature(key){if(!me)return openModal('login');const f=featureMarkup(key);$('featureIcon').textContent=f.icon;$('featureTitle').textContent=f.title;$('featureDescription').textContent=f.desc;$('featureContent').innerHTML=f.html;$('featureModal').classList.add('show');}
-async function submitFeatureService(service,details={}){try{const data=await api('/demo/services',{method:'POST',body:JSON.stringify({service,details})});if(!data.ok)throw new Error(data.error||'Unable to submit request.');closeFeature();toast(data.message||service+' bank service request — demo received.');}catch(e){toast(e.message||'Unable to submit bank service request — demo.');}}
-async function submitServiceForm(service){const primary=$('featurePrimary')?.value.trim(),secondary=$('featureSecondary')?.value.trim(),country=$('featureCountry')?.value;if(!primary||!secondary)return toast('Complete the bank service request — demo fields.');await submitFeatureService(service,{country,primary,secondary});}
+async function submitFeatureService(service,details={}){try{const data=await api('/Banking/services',{method:'POST',body:JSON.stringify({service,details})});if(!data.ok)throw new Error(data.error||'Unable to submit request.');closeFeature();toast(data.message||service+' bank service request — Banking received.');}catch(e){toast(e.message||'Unable to submit bank service request — Banking.');}}
+async function submitServiceForm(service){const primary=$('featurePrimary')?.value.trim(),secondary=$('featureSecondary')?.value.trim(),country=$('featureCountry')?.value;if(!primary||!secondary)return toast('Complete the bank service request — Banking fields.');await submitFeatureService(service,{country,primary,secondary});}
 async function submitGoal(){const goal=$('featureGoal')?.value.trim(),amount=Number($('featureGoalAmount')?.value||0);if(!goal||amount<=0)return toast('Enter a goal and target amount.');await submitFeatureService('Savings',{goal,targetAmount:amount});}
-function selectGiftCountry(country){$('giftCountryResult').innerHTML=`<strong>${esc(country)} gift cards</strong><br>Demo denominations: 25, 50, 100, 250. Availability is simulated and checkout is disabled for security.`;}
+function selectGiftCountry(country){$('giftCountryResult').innerHTML=`<strong>${esc(country)} gift cards</strong><br>Banking denominations: 25, 50, 100, 250. Availability is simulated and checkout is disabled for security.`;}
 async function saveFeatureProfile(){const name=$('featureProfileName')?.value.trim();if(!name||name.length<2)return toast('Enter a valid display name.');try{const data=await api('/profile',{method:'PUT',body:JSON.stringify({name})});if(data.user)me=data.user;$('welcomeName').textContent=me.name;$('dashName').textContent=me.name;$('profileName').value=me.name;closeFeature();toast('Profile updated.');}catch(e){toast(e.message||'Unable to update profile.');}}
 
 // Make the existing service cards open the richer feature screens.
-const originalOpenDemoService=window.openDemoService;
-window.openDemoService=function(service){const map={'Buy Data':'data','Airtime':'airtime','Pay Bills':'bills','Cards':'cards','Add Money':'accounts','Settings':'settings'};if(map[service])return openFeature(map[service]);return originalOpenDemoService?originalOpenDemoService(service):openFeature('accounts');};
+const originalOpenBankingService=window.openBankingService;
+window.openBankingService=function(service){const map={'Buy Data':'data','Airtime':'airtime','Pay Bills':'bills','Cards':'cards','Add Money':'accounts','Settings':'settings'};if(map[service])return openFeature(map[service]);return originalOpenBankingService?originalOpenBankingService(service):openFeature('accounts');};
 
 // Upgrade transfer state and submit handler.
 window.showTransferStep=function(step){[1,2,3].forEach(n=>{const panel=$('transferPanel'+n);if(panel)panel.classList.toggle('hiddenTransferPanel',n!==step);const dot=$('transferStepDot'+n);if(dot){dot.classList.toggle('active',n===step);dot.classList.toggle('done',n<step);}});if(step===3){const currency=$('transferCurrency').value,amount=Number($('transferAmount').value||0);$('transferReviewRecipient').textContent=$('transferRecipient').value.trim()||'—';$('transferReviewBank').textContent=$('transferBankName').value.trim()||'—';$('transferReviewAccount').textContent=$('transferRecipientAccount').value.trim()||'—';$('transferReviewEmail').textContent=$('transferRecipientEmail').value.trim()||'—';$('transferReviewSwift').textContent=$('transferSwift').value.trim()||'—';$('transferReviewAmount').textContent=amount>0?money(amount,currency):'—';$('transferReviewTotal').textContent=amount>0?money(amount,currency):'—';$('transferReviewNote').textContent=$('transferNote').value.trim()||'No note';}};
@@ -3720,7 +3720,7 @@ window.showTransferStep=function(step){[1,2,3].forEach(n=>{const panel=$('transf
 const oldOpenReceipt=window.openReceipt;window.openReceipt=function(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();if($('receiptBank'))$('receiptBank').textContent=receipt.bankName||'External bank';if($('receiptAccount'))$('receiptAccount').textContent=receipt.recipientAccount||'—';if($('receiptEmail'))$('receiptEmail').textContent=receipt.recipientEmail||'—';if($('receiptSwift'))$('receiptSwift').textContent=receipt.swiftBic||'—';$('receiptModal').classList.add('show');};
 
 // Make dashboard account number explicit whenever data refreshes.
-const oldShowDashboard=window.showDashboard;window.showDashboard=function(){if(oldShowDashboard)oldShowDashboard();if(me){$('accountNumberDisplay').textContent='Account Number: '+(me.accountNumber||me.account_number||'—');$('menuName').textContent=me.name||'Customer';$('menuEmail').textContent=me.email||me.phone||'Bank Account — Demo';}};
+const oldShowDashboard=window.showDashboard;window.showDashboard=function(){if(oldShowDashboard)oldShowDashboard();if(me){$('accountNumberDisplay').textContent='Account Number: '+(me.accountNumber||me.account_number||'—');$('menuName').textContent=me.name||'Customer';$('menuEmail').textContent=me.email||me.phone||'Bank Account — Banking';}};
 
 /* Better detailed transaction history with status and reference. */
 window.renderTransactionHistory=function(){
@@ -3740,7 +3740,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 /*
  * AMERICAN CREST Banking — TRANSFER UPGRADE (ADDITIVE)
  * This layer is intentionally appended so the existing application code/design
- * remains intact. It supports the currencies already offered by the demo UI,
+ * remains intact. It supports the currencies already offered by the Banking UI,
  * sends the complete recipient payload to the server, and renders a clearly
  * marked Banking receipt. It does not perform real-world banking.
  */
@@ -3803,7 +3803,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 
       const currency = acbCurrency(acbEl('transferCurrency')?.value);
       if (!acbCurrencyRates[currency])
-        return window.showError('transferError', 'That demo currency is not supported.');
+        return window.showError('transferError', 'That Banking currency is not supported.');
     }
 
     window.showTransferStep(step);
@@ -3845,7 +3845,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     try {
       /*
        * The server is still called normally. This is the only place where a
-       * persistent demo debit can be confirmed.
+       * persistent Banking debit can be confirmed.
        */
       const data = await window.api('/requests', {
         method: 'POST',
@@ -3877,11 +3877,11 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 
       if (typeof window.toast === 'function')
         toast(status === 'approved' || status === 'completed'
-          ? 'Bank Service Transfer — Demo completed and the server returned the updated account data.'
-          : 'Bank Service Transfer — Bank Service Request — Demo recorded and awaiting processing.');
+          ? 'Bank Service Transfer — Banking completed and the server returned the updated account data.'
+          : 'Bank Service Transfer — Bank Service Request — Banking recorded and awaiting processing.');
 
     } catch (error) {
-      const message = String(error?.message || 'Unable to submit Bank Service transfer — Demo.');
+      const message = String(error?.message || 'Unable to submit Bank Service transfer — Banking.');
 
       /*
        * Do not manufacture a successful server transaction when the API says
@@ -3898,7 +3898,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 
   /*
    * Receipt renderer: bank-style layout, but explicitly labelled as a
-   * fictional/demo document so it cannot be mistaken for a real bank record.
+   * fictional/Banking document so it cannot be mistaken for a real bank record.
    */
   const originalOpenReceipt = window.openReceipt;
 
@@ -3911,7 +3911,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     acbSet('receiptStatus', successful ? 'SUCCESSFUL • Banking' :
       status === 'rejected' ? 'REJECTED • Banking' : 'PROCESSING • Banking');
 
-    acbSet('receiptStatusText', successful ? 'Successful (Demo)' :
+    acbSet('receiptStatusText', successful ? 'Successful (Banking)' :
       status === 'rejected' ? 'Rejected' : 'Processing');
 
     acbSet('receiptAmount', acbMoney(receipt.amount, acbCurrency(receipt.currency)));
@@ -3928,7 +3928,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     acbSet('receiptReference', receipt.id || 'Banking-' + Date.now());
 
     const note = receipt.note ? 'Note: ' + receipt.note :
-      'Fictional American Crest Bank demo transaction. No real funds are transferred.';
+      'Fictional American Crest Bank Banking transaction. No real funds are transferred.';
 
     acbSet('receiptNote', note);
 
@@ -3977,17 +3977,17 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     addReviewBox();
     const target=cur($('transferCurrency')?.value), amount=Number($('transferAmount')?.value||0), pick=chooseFunding(target,amount), out=$('acbConversionText');
     if(!out)return;
-    if(!amount||!pick){out.textContent=amount?'No available demo balance can cover this converted amount and fee.':'Enter an amount to calculate conversion.';return;}
-    out.innerHTML=`Sending <b>${money(amount,target)}</b> • Funding wallet: <b>${money(pick.fundingAmount,pick.fundingCurrency)}</b><br>Exchange rate: <b>1 ${pick.fundingCurrency} = ${(R[target]/R[pick.fundingCurrency]).toLocaleString(undefined,{maximumFractionDigits:6})} ${target}</b> • Demo fee: <b>${money(pick.fee,pick.fundingCurrency)}</b>`;
+    if(!amount||!pick){out.textContent=amount?'No available Banking balance can cover this converted amount and fee.':'Enter an amount to calculate conversion.';return;}
+    out.innerHTML=`Sending <b>${money(amount,target)}</b> • Funding wallet: <b>${money(pick.fundingAmount,pick.fundingCurrency)}</b><br>Exchange rate: <b>1 ${pick.fundingCurrency} = ${(R[target]/R[pick.fundingCurrency]).toLocaleString(undefined,{maximumFractionDigits:6})} ${target}</b> • Banking fee: <b>${money(pick.fee,pick.fundingCurrency)}</b>`;
   }
-  function pinKey(){const id=window.me?.id||window.me?.userId||window.me?.user_id||'current';return 'acb_demo_transfer_pin_'+id;}
+  function pinKey(){const id=window.me?.id||window.me?.userId||window.me?.user_id||'current';return 'acb_Banking_transfer_pin_'+id;}
   function getPin(){try{return localStorage.getItem(pinKey())||''}catch(e){return ''}}
   function pinModal(resolve){
     let m=$('acbPinModal');
-    if(!m){m=document.createElement('div');m.id='acbPinModal';m.style.cssText='position:fixed;inset:0;background:rgba(3,15,35,.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px';m.innerHTML='<div style="width:min(420px,100%);background:#fff;border-radius:22px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.28);font-family:Arial,sans-serif"><div style="font-size:12px;font-weight:800;letter-spacing:.12em;color:#1769e0">AMERICAN CREST BANK • Banking</div><h2 id="acbPinTitle" style="margin:8px 0">Set your transfer PIN</h2><p id="acbPinHelp" style="color:#64748b">Create a 4-digit PIN for confirming bank service transfer — demos. This PIN is stored only in this browser for this fictional demo.</p><input id="acbPinInput" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="4-digit PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center"><input id="acbPinConfirm" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="Confirm PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center;margin-top:10px"><div id="acbPinError" style="color:#b42318;margin-top:10px;min-height:20px;font-size:13px"></div><button id="acbPinBtn" style="width:100%;border:0;border-radius:12px;padding:14px;background:#1769e0;color:#fff;font-weight:800;font-size:15px">Save PIN</button><button id="acbPinCancel" style="width:100%;border:0;background:none;padding:12px;margin-top:4px;color:#64748b">Cancel</button></div>';document.body.appendChild(m);}
+    if(!m){m=document.createElement('div');m.id='acbPinModal';m.style.cssText='position:fixed;inset:0;background:rgba(3,15,35,.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px';m.innerHTML='<div style="width:min(420px,100%);background:#fff;border-radius:22px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.28);font-family:Arial,sans-serif"><div style="font-size:12px;font-weight:800;letter-spacing:.12em;color:#1769e0">AMERICAN CREST BANK • Banking</div><h2 id="acbPinTitle" style="margin:8px 0">Set your transfer PIN</h2><p id="acbPinHelp" style="color:#64748b">Create a 4-digit PIN for confirming bank service transfer — Bankings. This PIN is stored only in this browser for this fictional Banking.</p><input id="acbPinInput" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="4-digit PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center"><input id="acbPinConfirm" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="Confirm PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center;margin-top:10px"><div id="acbPinError" style="color:#b42318;margin-top:10px;min-height:20px;font-size:13px"></div><button id="acbPinBtn" style="width:100%;border:0;border-radius:12px;padding:14px;background:#1769e0;color:#fff;font-weight:800;font-size:15px">Save PIN</button><button id="acbPinCancel" style="width:100%;border:0;background:none;padding:12px;margin-top:4px;color:#64748b">Cancel</button></div>';document.body.appendChild(m);}
     const existing=getPin(); const first=!existing;
     $('acbPinTitle').textContent=first?'Set your transfer PIN':'Enter your transfer PIN';
-    $('acbPinHelp').textContent=first?'Create a 4-digit PIN for confirming bank service transfer — demos. You will use it on future transfers.':'Enter your 4-digit transfer PIN to continue. No additional verification code is required for this bank service transfer — demo.';
+    $('acbPinHelp').textContent=first?'Create a 4-digit PIN for confirming bank service transfer — Bankings. You will use it on future transfers.':'Enter your 4-digit transfer PIN to continue. No additional verification code is required for this bank service transfer — Banking.';
     $('acbPinConfirm').style.display=first?'block':'none'; $('acbPinBtn').textContent=first?'Save PIN':'Verify PIN'; $('acbPinInput').value=''; $('acbPinConfirm').value=''; $('acbPinError').textContent=''; m.style.display='flex';
     $('acbPinCancel').onclick=()=>{m.style.display='none';resolve(false)};
     $('acbPinBtn').onclick=()=>{const a=$('acbPinInput').value,b=$('acbPinConfirm').value;if(!/^\d{4}$/.test(a)){return $('acbPinError').textContent='PIN must contain exactly 4 digits.'}if(first&&a!==b){return $('acbPinError').textContent='PINs do not match.'}if(first){try{localStorage.setItem(pinKey(),a)}catch(e){}m.style.display='none';resolve(true)}else if(a===existing){m.style.display='none';resolve(true)}else $('acbPinError').textContent='Incorrect PIN.'};
@@ -4104,9 +4104,9 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     if(step===3){
       const amount=N($('transferAmount')?.value),target=C($('transferCurrency')?.value);
       if(amount<=0)return showError('Enter a valid amount.');
-      if(R[target]==null)return showError('That demo currency is not supported.');
+      if(R[target]==null)return showError('That Banking currency is not supported.');
       await refreshBalanceState();
-      if(!quote(target,amount))return showError('The available demo balance is not sufficient for this amount and fee.');
+      if(!quote(target,amount))return showError('The available Banking balance is not sufficient for this amount and fee.');
     }
     if(typeof window.showTransferStep==='function')window.showTransferStep(step);
     updateTransferQuote();
@@ -4117,7 +4117,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     await refreshBalanceState();
     const target=C($('transferCurrency')?.value),requested=N($('transferAmount')?.value),q=quote(target,requested);
     if(requested<=0)return showError('Enter a valid amount.');
-    if(!q)return showError('The available demo balance is not sufficient for this amount and fee.');
+    if(!q)return showError('The available Banking balance is not sufficient for this amount and fee.');
     const recipient=($('transferRecipient')?.value||'').trim();
     const bank=($('transferBankName')?.value||'').trim();
     const account=($('transferRecipientAccount')?.value||'').trim();
@@ -4140,7 +4140,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         recipientAccount:account,
         recipientCountry:$('transferCountry')?.value||'',
         swiftBic:($('transferSwift')?.value||'').trim(),
-        note:(note?note+' | ':'')+`Demo conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`
+        note:(note?note+' | ':'')+`Banking conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`
       };
       const data=await window.api('/requests',{method:'POST',body:JSON.stringify(payload)});
       if(data?.user)window.me=data.user;
@@ -4155,9 +4155,9 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,
         fundingCurrency:q.source,fundingAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent
       });
-      if(typeof window.toast==='function')toast(data?.emailSent?'Bank Service transfer submitted — Demo. Receipt email accepted by the server.':'Bank Service transfer submitted — Demo. The server did not confirm email delivery.');
+      if(typeof window.toast==='function')toast(data?.emailSent?'Bank Service transfer submitted — Banking. Receipt email accepted by the server.':'Bank Service transfer submitted — Banking. The server did not confirm email delivery.');
     }catch(e){
-      showError(String(e?.message||'Unable to submit Bank Service transfer — Demo.'));
+      showError(String(e?.message||'Unable to submit Bank Service transfer — Banking.'));
     }finally{
       if(typeof window.setLoading==='function')setLoading('transferBtn',false);
     }
@@ -4176,7 +4176,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 </script>
 <script>
 /* ACB receipt status sync: when admin approval changes the server request to approved,
-   the already-open demo receipt updates from PROCESSING to SUCCESSFUL. */
+   the already-open Banking receipt updates from PROCESSING to SUCCESSFUL. */
 (function(){
   'use strict';
   window.syncOpenTransferReceipt=function(){
@@ -4213,10 +4213,10 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     const modal=el('receiptModal'); if(!modal)return null;
     if(modal.dataset.acbReferenceReceipt!=='1'){
       modal.dataset.acbReferenceReceipt='1';
-      modal.innerHTML=`<div class="acbReceiptBackdrop" onclick="closeReceipt()"></div><div class="acbReceiptShell" role="dialog" aria-modal="true" aria-label="American Crest bank service transfer — demo receipt"><button type="button" class="acbReceiptClose" onclick="closeReceipt()">×</button><div id="acbReceiptPaper" class="acbReceiptPaper"></div><div class="acbReceiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div>`;
+      modal.innerHTML=`<div class="acbReceiptBackdrop" onclick="closeReceipt()"></div><div class="acbReceiptShell" role="dialog" aria-modal="true" aria-label="American Crest bank service transfer — Banking receipt"><button type="button" class="acbReceiptClose" onclick="closeReceipt()">×</button><div id="acbReceiptPaper" class="acbReceiptPaper"></div><div class="acbReceiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div>`;
       const style=document.createElement('style');
       style.textContent=`
-#acbReceiptPaper{font-family:Arial,Helvetica,sans-serif;color:#10213d;background:#fff}.acbReceiptBackdrop{position:absolute;inset:0;background:rgba(4,17,38,.58)}.acbReceiptShell{position:relative;z-index:1;width:min(980px,calc(100% - 24px));max-height:94vh;overflow:auto;background:#eef2f7;border-radius:16px;padding:12px;box-shadow:0 25px 70px rgba(0,0,0,.3)}.acbReceiptClose{position:absolute;right:18px;top:18px;z-index:5;width:38px;height:38px;border:0;border-radius:50%;background:#fff;color:#173d73;font-size:28px;line-height:1;box-shadow:0 2px 10px rgba(0,0,0,.12)}.acbReceiptPage{max-width:960px;margin:0 auto;background:#fff;border:1px solid #dfe5ec;border-radius:17px;overflow:hidden;box-shadow:0 3px 16px rgba(15,35,65,.08)}.acbRHeader{padding:25px 38px 15px}.acbRBrand{display:flex;align-items:center;gap:22px}.acbRCrest{width:120px;height:135px;flex:0 0 120px}.acbRName{flex:1;text-align:center}.acbRName .main{font-family:Georgia,serif;font-weight:700;letter-spacing:1px;font-size:45px;color:#0b326d;line-height:1}.acbRName .bank{font-family:Georgia,serif;font-size:38px;letter-spacing:9px;color:#c49a42;margin-top:4px}.acbRName .demoBank{font-weight:800;letter-spacing:4px;color:#12366d;font-size:19px;margin-top:4px}.acbRBadge{align-self:flex-start;background:#103e80;color:#fff;font-weight:900;font-size:23px;padding:12px 25px;border-radius:16px;white-space:nowrap}.acbRRule{display:flex;align-items:center;gap:14px;margin-top:9px;color:#12366d}.acbRRule:before,.acbRRule:after{content:"";height:1px;background:#cfd6df;flex:1}.acbRRule span{font-size:22px}.acbRTitle{text-align:center;font-size:33px;color:#12366d;font-weight:900;margin:18px 0 22px}.acbRSuccess{margin:0 38px 18px;border:1px solid #b8dfcc;background:#f3fcf7;border-radius:13px;padding:19px 24px;display:flex;align-items:center;gap:20px}.acbRCheck{width:67px;height:67px;border-radius:50%;background:#16a45c;color:#fff;display:grid;place-items:center;font-size:46px;font-weight:900;flex:0 0 67px}.acbRSuccess strong{display:block;color:#11904e;font-size:25px}.acbRSuccess span{display:block;color:#121c2d;font-size:18px;margin-top:5px}.acbRAmount{margin:0 38px 20px;border:1px solid #b9cddd;background:#f7faff;border-radius:13px;display:grid;grid-template-columns:1.15fr .85fr;padding:20px}.acbRAmt{text-align:center;border-right:1px solid #d4dce5;padding-right:20px}.acbRCur{text-align:center;padding-left:20px}.acbRLabel{font-weight:800;color:#626a75;font-size:18px}.acbRBig{font-size:44px;font-weight:900;color:#0a2349;margin-top:10px}.acbRCur strong{display:block;font-size:30px;color:#0a2349;margin-top:9px}.acbRCur small{font-size:18px;color:#5e6672}.acbRSection{margin:0 38px 0}.acbRSectionTitle{display:flex;align-items:center;gap:12px;border-bottom:1px solid #d8dee6;padding:0 0 10px;color:#12366d;font-weight:900;font-size:22px}.acbRIcon{width:39px;height:39px;background:#103e80;color:#fff;border-radius:7px;display:grid;place-items:center;font-size:21px}.acbRRows{margin-bottom:12px}.acbRRow{display:grid;grid-template-columns:52% 48%;border-bottom:1px solid #e0e4e9;min-height:49px;align-items:center;font-size:18px}.acbRRow .label{padding-left:18px}.acbRRow .value{font-weight:500;padding-left:8px;word-break:break-word}.acbRStatus{color:#149653!important;font-weight:800!important}.acbRExchange{margin:0 38px 18px;border:1px solid #b9cddd;background:#f7faff;border-radius:13px;padding:12px 20px}.acbRExchange .acbRSectionTitle{border-bottom:0;padding-bottom:7px}.acbRExchange em{font-weight:500;color:#6a7078;font-size:16px}.acbRNotice{margin:0 38px 18px;background:#f8f8f8;border-radius:13px;padding:15px 23px;display:flex;gap:14px;align-items:flex-start;color:#182536;font-size:15px;line-height:1.45}.acbRInfo{width:30px;height:30px;border:2px solid #8c9298;border-radius:50%;display:grid;place-items:center;color:#737981;font-weight:900;flex:0 0 30px}.acbRSignature{margin:0 38px 15px;text-align:right;padding-right:18px}.acbRSignature .sig{font-family:cursive;font-size:31px;font-style:italic;color:#0a326e}.acbRSignature .sigline{border-bottom:1px solid #9ca7b3;margin:4px 0 5px}.acbRSignature strong{color:#12366d;letter-spacing:2px;font-size:14px}.acbRFooter{background:#123f82;color:#fff;padding:14px 24px;display:flex;justify-content:space-between;gap:16px;font-size:15px;font-weight:700}.acbReceiptActions{display:flex;gap:10px;padding:12px 4px 3px}.acbReceiptActions button{flex:1}.acbReceiptShell{box-sizing:border-box}@media(max-width:700px){.acbRHeader{padding:18px 15px 10px}.acbRBrand{gap:9px}.acbRCrest{width:67px;height:82px;flex-basis:67px}.acbRName .main{font-size:24px}.acbRName .bank{font-size:21px;letter-spacing:5px}.acbRName .demoBank{font-size:10px;letter-spacing:2px}.acbRBadge{font-size:13px;padding:8px 10px;border-radius:10px}.acbRTitle{font-size:22px;margin:12px 0 15px}.acbRSuccess,.acbRAmount,.acbRSection,.acbRExchange,.acbRNotice{margin-left:10px;margin-right:10px}.acbRSuccess{padding:13px;gap:10px}.acbRCheck{width:48px;height:48px;flex-basis:48px;font-size:32px}.acbRSuccess strong{font-size:17px}.acbRSuccess span{font-size:13px}.acbRAmount{padding:12px}.acbRBig{font-size:26px}.acbRLabel{font-size:12px}.acbRCur strong{font-size:21px}.acbRCur small{font-size:12px}.acbRRow{grid-template-columns:52% 48%;font-size:13px;min-height:39px}.acbRRow .label{padding-left:4px}.acbRSectionTitle{font-size:16px}.acbRIcon{width:30px;height:30px;font-size:15px}.acbRExchange{padding:8px 10px}.acbRExchange em{font-size:11px}.acbRNotice{padding:11px 13px;font-size:12px}.acbRSignature{margin-left:10px;margin-right:10px}.acbRFooter{font-size:10px;padding:10px 12px}.acbReceiptActions{padding-bottom:0}}
+#acbReceiptPaper{font-family:Arial,Helvetica,sans-serif;color:#10213d;background:#fff}.acbReceiptBackdrop{position:absolute;inset:0;background:rgba(4,17,38,.58)}.acbReceiptShell{position:relative;z-index:1;width:min(980px,calc(100% - 24px));max-height:94vh;overflow:auto;background:#eef2f7;border-radius:16px;padding:12px;box-shadow:0 25px 70px rgba(0,0,0,.3)}.acbReceiptClose{position:absolute;right:18px;top:18px;z-index:5;width:38px;height:38px;border:0;border-radius:50%;background:#fff;color:#173d73;font-size:28px;line-height:1;box-shadow:0 2px 10px rgba(0,0,0,.12)}.acbReceiptPage{max-width:960px;margin:0 auto;background:#fff;border:1px solid #dfe5ec;border-radius:17px;overflow:hidden;box-shadow:0 3px 16px rgba(15,35,65,.08)}.acbRHeader{padding:25px 38px 15px}.acbRBrand{display:flex;align-items:center;gap:22px}.acbRCrest{width:120px;height:135px;flex:0 0 120px}.acbRName{flex:1;text-align:center}.acbRName .main{font-family:Georgia,serif;font-weight:700;letter-spacing:1px;font-size:45px;color:#0b326d;line-height:1}.acbRName .bank{font-family:Georgia,serif;font-size:38px;letter-spacing:9px;color:#c49a42;margin-top:4px}.acbRName .BankingBank{font-weight:800;letter-spacing:4px;color:#12366d;font-size:19px;margin-top:4px}.acbRBadge{align-self:flex-start;background:#103e80;color:#fff;font-weight:900;font-size:23px;padding:12px 25px;border-radius:16px;white-space:nowrap}.acbRRule{display:flex;align-items:center;gap:14px;margin-top:9px;color:#12366d}.acbRRule:before,.acbRRule:after{content:"";height:1px;background:#cfd6df;flex:1}.acbRRule span{font-size:22px}.acbRTitle{text-align:center;font-size:33px;color:#12366d;font-weight:900;margin:18px 0 22px}.acbRSuccess{margin:0 38px 18px;border:1px solid #b8dfcc;background:#f3fcf7;border-radius:13px;padding:19px 24px;display:flex;align-items:center;gap:20px}.acbRCheck{width:67px;height:67px;border-radius:50%;background:#16a45c;color:#fff;display:grid;place-items:center;font-size:46px;font-weight:900;flex:0 0 67px}.acbRSuccess strong{display:block;color:#11904e;font-size:25px}.acbRSuccess span{display:block;color:#121c2d;font-size:18px;margin-top:5px}.acbRAmount{margin:0 38px 20px;border:1px solid #b9cddd;background:#f7faff;border-radius:13px;display:grid;grid-template-columns:1.15fr .85fr;padding:20px}.acbRAmt{text-align:center;border-right:1px solid #d4dce5;padding-right:20px}.acbRCur{text-align:center;padding-left:20px}.acbRLabel{font-weight:800;color:#626a75;font-size:18px}.acbRBig{font-size:44px;font-weight:900;color:#0a2349;margin-top:10px}.acbRCur strong{display:block;font-size:30px;color:#0a2349;margin-top:9px}.acbRCur small{font-size:18px;color:#5e6672}.acbRSection{margin:0 38px 0}.acbRSectionTitle{display:flex;align-items:center;gap:12px;border-bottom:1px solid #d8dee6;padding:0 0 10px;color:#12366d;font-weight:900;font-size:22px}.acbRIcon{width:39px;height:39px;background:#103e80;color:#fff;border-radius:7px;display:grid;place-items:center;font-size:21px}.acbRRows{margin-bottom:12px}.acbRRow{display:grid;grid-template-columns:52% 48%;border-bottom:1px solid #e0e4e9;min-height:49px;align-items:center;font-size:18px}.acbRRow .label{padding-left:18px}.acbRRow .value{font-weight:500;padding-left:8px;word-break:break-word}.acbRStatus{color:#149653!important;font-weight:800!important}.acbRExchange{margin:0 38px 18px;border:1px solid #b9cddd;background:#f7faff;border-radius:13px;padding:12px 20px}.acbRExchange .acbRSectionTitle{border-bottom:0;padding-bottom:7px}.acbRExchange em{font-weight:500;color:#6a7078;font-size:16px}.acbRNotice{margin:0 38px 18px;background:#f8f8f8;border-radius:13px;padding:15px 23px;display:flex;gap:14px;align-items:flex-start;color:#182536;font-size:15px;line-height:1.45}.acbRInfo{width:30px;height:30px;border:2px solid #8c9298;border-radius:50%;display:grid;place-items:center;color:#737981;font-weight:900;flex:0 0 30px}.acbRSignature{margin:0 38px 15px;text-align:right;padding-right:18px}.acbRSignature .sig{font-family:cursive;font-size:31px;font-style:italic;color:#0a326e}.acbRSignature .sigline{border-bottom:1px solid #9ca7b3;margin:4px 0 5px}.acbRSignature strong{color:#12366d;letter-spacing:2px;font-size:14px}.acbRFooter{background:#123f82;color:#fff;padding:14px 24px;display:flex;justify-content:space-between;gap:16px;font-size:15px;font-weight:700}.acbReceiptActions{display:flex;gap:10px;padding:12px 4px 3px}.acbReceiptActions button{flex:1}.acbReceiptShell{box-sizing:border-box}@media(max-width:700px){.acbRHeader{padding:18px 15px 10px}.acbRBrand{gap:9px}.acbRCrest{width:67px;height:82px;flex-basis:67px}.acbRName .main{font-size:24px}.acbRName .bank{font-size:21px;letter-spacing:5px}.acbRName .BankingBank{font-size:10px;letter-spacing:2px}.acbRBadge{font-size:13px;padding:8px 10px;border-radius:10px}.acbRTitle{font-size:22px;margin:12px 0 15px}.acbRSuccess,.acbRAmount,.acbRSection,.acbRExchange,.acbRNotice{margin-left:10px;margin-right:10px}.acbRSuccess{padding:13px;gap:10px}.acbRCheck{width:48px;height:48px;flex-basis:48px;font-size:32px}.acbRSuccess strong{font-size:17px}.acbRSuccess span{font-size:13px}.acbRAmount{padding:12px}.acbRBig{font-size:26px}.acbRLabel{font-size:12px}.acbRCur strong{font-size:21px}.acbRCur small{font-size:12px}.acbRRow{grid-template-columns:52% 48%;font-size:13px;min-height:39px}.acbRRow .label{padding-left:4px}.acbRSectionTitle{font-size:16px}.acbRIcon{width:30px;height:30px;font-size:15px}.acbRExchange{padding:8px 10px}.acbRExchange em{font-size:11px}.acbRNotice{padding:11px 13px;font-size:12px}.acbRSignature{margin-left:10px;margin-right:10px}.acbRFooter{font-size:10px;padding:10px 12px}.acbReceiptActions{padding-bottom:0}}
 @media print{body{background:#fff!important}.acbReceiptBackdrop,.acbReceiptClose,.acbReceiptActions{display:none!important}.acbReceiptShell{width:100%!important;max-height:none!important;overflow:visible!important;background:#fff!important;box-shadow:none!important;padding:0!important}.acbReceiptPage{box-shadow:none!important;border:1px solid #ddd!important}.modal{display:block!important;position:static!important;background:#fff!important}`;
       document.head.appendChild(style);
     }
@@ -4248,12 +4248,12 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       exchange=`<div class="acbRExchange"><div class="acbRSectionTitle"><span class="acbRIcon">↔</span><span>EXCHANGE INFORMATION <em>(When Applicable)</em></span></div><div class="acbRRow"><span class="label">Exchange Rate / Conversion</span><span class="value">1 ${esc(source)} = ${rate.toFixed(6)} ${esc(c)}</span></div><div class="acbRRow"><span class="label">Exchange Fee</span><span class="value">${esc(money(fee,source))}</span></div><div class="acbRRow"><span class="label">Converted Amount</span><span class="value">${esc(money(converted,c))}</span></div></div>`;
     }
     const paper=el('acbReceiptPaper');
-    paper.innerHTML=`<div class="acbReceiptPage"><div class="acbRHeader"><div class="acbRBrand">${crestSvg()}<div class="acbRName"><div class="main">AMERICAN CREST</div><div class="bank">BANK</div><div class="demoBank">BANKING SERVICES — Banking</div></div><div class="acbRBadge">Banking</div></div><div class="acbRRule"><span>★</span></div><div class="acbRTitle">TRANSFER RECEIPT</div></div><div class="acbRSuccess"><div class="acbRCheck">✓</div><div><strong>${successful?'PAYMENT SUCCESSFULLY PROCESSED — Banking':status==='rejected'?'TRANSFER REJECTED':'TRANSFER PROCESSING'}</strong><span>${successful?'Your payment has been successfully processed.':status==='rejected'?'Your transfer was not completed.':'Your bank service request has been recorded — Demo.'}</span></div></div><div class="acbRAmount"><div class="acbRAmt"><div class="acbRLabel">AMOUNT SENT</div><div class="acbRBig">${esc(money(amount,c))}</div></div><div class="acbRCur"><div class="acbRLabel">CURRENCY</div><strong>${esc(c)}</strong><small>(${esc(names[c]||c)})</small></div></div><div class="acbRSection"><div class="acbRSectionTitle"><span class="acbRIcon">☷</span><span>TRANSFER DETAILS</span></div><div class="acbRRows"><div class="acbRRow"><span class="label">Customer / Sender Name</span><span class="value">${esc(senderName)}</span></div><div class="acbRRow"><span class="label">Customer / Sender Email</span><span class="value">${esc(senderEmail)}</span></div><div class="acbRRow"><span class="label">Sender Account Number</span><span class="value">${esc(senderAccount)}</span></div><div class="acbRRow"><span class="label">Recipient Name</span><span class="value">${esc(recipient)}</span></div><div class="acbRRow"><span class="label">Recipient Email</span><span class="value">${esc(recipientEmail)}</span></div><div class="acbRRow"><span class="label">Transfer / Reference Number</span><span class="value">${esc(ref)}</span></div><div class="acbRRow"><span class="label">Date</span><span class="value">${esc(formatDate(date))}</span></div><div class="acbRRow"><span class="label">Time</span><span class="value">${esc(formatTime(date))}</span></div><div class="acbRRow"><span class="label">Status</span><span class="value acbRStatus">${successful?'Successful':status==='rejected'?'Rejected':'Processing'}</span></div></div></div>${exchange}<div class="acbRNotice"><span class="acbRInfo">i</span><div>This is a computer generated receipt and does not require a signature.<br><strong>Thank you for using American Crest Bank Banking Services — Demo.</strong></div></div><div class="acbRSignature"><div class="sig">American Crest Bank</div><div class="sigline"></div><strong>★</strong><div>BANKING SERVICES — Banking</div></div><div class="acbRFooter"><span>🔒 &nbsp;This is a demo receipt for demonstration purposes only.</span><span>www.americancrest.demo</span></div></div>`;
+    paper.innerHTML=`<div class="acbReceiptPage"><div class="acbRHeader"><div class="acbRBrand">${crestSvg()}<div class="acbRName"><div class="main">AMERICAN CREST</div><div class="bank">BANK</div><div class="BankingBank">BANKING SERVICES — Banking</div></div><div class="acbRBadge">Banking</div></div><div class="acbRRule"><span>★</span></div><div class="acbRTitle">TRANSFER RECEIPT</div></div><div class="acbRSuccess"><div class="acbRCheck">✓</div><div><strong>${successful?'PAYMENT SUCCESSFULLY PROCESSED — Banking':status==='rejected'?'TRANSFER REJECTED':'TRANSFER PROCESSING'}</strong><span>${successful?'Your payment has been successfully processed.':status==='rejected'?'Your transfer was not completed.':'Your bank service request has been recorded — Banking.'}</span></div></div><div class="acbRAmount"><div class="acbRAmt"><div class="acbRLabel">AMOUNT SENT</div><div class="acbRBig">${esc(money(amount,c))}</div></div><div class="acbRCur"><div class="acbRLabel">CURRENCY</div><strong>${esc(c)}</strong><small>(${esc(names[c]||c)})</small></div></div><div class="acbRSection"><div class="acbRSectionTitle"><span class="acbRIcon">☷</span><span>TRANSFER DETAILS</span></div><div class="acbRRows"><div class="acbRRow"><span class="label">Customer / Sender Name</span><span class="value">${esc(senderName)}</span></div><div class="acbRRow"><span class="label">Customer / Sender Email</span><span class="value">${esc(senderEmail)}</span></div><div class="acbRRow"><span class="label">Sender Account Number</span><span class="value">${esc(senderAccount)}</span></div><div class="acbRRow"><span class="label">Recipient Name</span><span class="value">${esc(recipient)}</span></div><div class="acbRRow"><span class="label">Recipient Email</span><span class="value">${esc(recipientEmail)}</span></div><div class="acbRRow"><span class="label">Transfer / Reference Number</span><span class="value">${esc(ref)}</span></div><div class="acbRRow"><span class="label">Date</span><span class="value">${esc(formatDate(date))}</span></div><div class="acbRRow"><span class="label">Time</span><span class="value">${esc(formatTime(date))}</span></div><div class="acbRRow"><span class="label">Status</span><span class="value acbRStatus">${successful?'Successful':status==='rejected'?'Rejected':'Processing'}</span></div></div></div>${exchange}<div class="acbRNotice"><span class="acbRInfo">i</span><div>This is a computer generated receipt and does not require a signature.<br><strong>Thank you for using American Crest Bank Banking Services — Banking.</strong></div></div><div class="acbRSignature"><div class="sig">American Crest Bank</div><div class="sigline"></div><strong>★</strong><div>BANKING SERVICES — Banking</div></div><div class="acbRFooter"><span>🔒 &nbsp;This is a Banking receipt for Bankingnstration purposes only.</span><span>www.americancrest.Banking</span></div></div>`;
     window.lastTransferReceipt=receipt;
     modal.classList.add('show');
   };
   window.closeReceipt=function(){const modal=el('receiptModal');if(modal)modal.classList.remove('show');};
-  window.printReceipt=function(){const paper=el('acbReceiptPaper');if(!paper)return;if(typeof window.print==='function'){const win=window.open('','_blank','width=1050,height=1200');if(!win)return;if(typeof paper.cloneNode==='function'){win.document.write('<!doctype html><html><head><title>American Crest Demo Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif}'+Array.from(document.querySelectorAll('style')).map(s=>s.textContent).join('')+'</style></head><body>'+paper.outerHTML+'</body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),300);}}};
+  window.printReceipt=function(){const paper=el('acbReceiptPaper');if(!paper)return;if(typeof window.print==='function'){const win=window.open('','_blank','width=1050,height=1200');if(!win)return;if(typeof paper.cloneNode==='function'){win.document.write('<!doctype html><html><head><title>American Crest Banking Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif}'+Array.from(document.querySelectorAll('style')).map(s=>s.textContent).join('')+'</style></head><body>'+paper.outerHTML+'</body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),300);}}};
 })();
 </script>
 
