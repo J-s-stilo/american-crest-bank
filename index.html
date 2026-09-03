@@ -1853,12 +1853,20 @@ const data=await api('/me');
 
 if(!data.user)throw new Error('Invalid user response.');
 
+const savedProfileImage=
+  me?.profileImage||
+  me?.profile_image||
+  '';
+
 me={
   ...(me||{}),
-  ...(data.user||{}),
-  profileImage:data.user?.profileImage||data.user?.profile_image||me?.profileImage||me?.profile_image||'',
-  profile_image:data.user?.profile_image||data.user?.profileImage||me?.profile_image||me?.profileImage||''
+  ...(data.user||{})
 };
+
+if(!me.profileImage&&!me.profile_image&&savedProfileImage){
+  me.profileImage=savedProfileImage;
+  me.profile_image=savedProfileImage;
+}
 
 return true;
 
@@ -2412,7 +2420,12 @@ body:JSON.stringify({name:name})
 
 );
 
-me=data.user;
+me={
+  ...(me||{}),
+  ...(data.user||{})
+};
+
+renderAvatar();
 
 $('welcomeName').textContent=me.name;
 
