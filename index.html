@@ -22,19 +22,19 @@ a{text-decoration:none;color:inherit}
 
 button:disabled{opacity:.6;cursor:not-allowed}
 
-.prototype{background:#fff3cd;color:#725b13;text-align:center;padding:7px;font-size:11px;font-weight:bold}
+.prototype{background:#000;color:#fff;text-align:center;padding:10px 7px;font-size:11px;font-weight:bold;letter-spacing:.3px}
 
 .top{background:#041327;color:#dbe7f5;padding:9px 5%;display:flex;justify-content:space-between;font-size:12px}
 
-header{background:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 15px #0001}
+header{background:#000;color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 15px #0008}
 
 .nav{max-width:1200px;margin:auto;min-height:72px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;gap:20px}
 
-.logo{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;color:#fff}
 
 .mark{width:40px;height:40px;border-radius:50%;background:var(--navy);color:var(--gold);border:2px solid var(--gold);display:grid;place-items:center;font-size:12px}
 
-.links{display:flex;gap:24px;font-size:14px;font-weight:bold}
+.links{display:flex;gap:24px;font-size:14px;font-weight:bold;color:#fff}
 
 .actions{display:flex;gap:8px}
 
@@ -44,9 +44,11 @@ header{background:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 15px #0
 
 .dark{background:var(--navy);color:#fff}
 
-.outline{background:#fff;border:1px solid #d8e0eb;color:var(--navy)}
+.outline{background:#fff;border:1px solid #d8e0eb;color:#111}
 
 .full{width:100%}
+
+header .nav a{color:#fff} header .nav .btn{color:#fff} header .nav .outline{color:#111}
 
 .hero{min-height:560px;background:linear-gradient(135deg,#f7faff,#eef4fb);color:var(--text);display:flex;align-items:center;padding:38px 0}
 
@@ -916,7 +918,7 @@ Refresh Customer List
 
 A simple safety banking Banking.
 
-Simulated bank account, payment, transfer or funds are created.
+online bank bank account, payment, transfer or funds are created.
 
 </p>
 
@@ -1047,7 +1049,7 @@ Sign In
 <div class="field transferField"><label>Country</label><select id="transferCountry"><option value="United States">United States</option><option value="Nigeria">Nigeria</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Singapore">Singapore</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="South Africa">South Africa</option></select></div>
 <div class="field transferField"><label>SWIFT / BIC <em>(optional)</em></label><input id="transferSwift" type="text" maxlength="20" placeholder="e.g. BankingXX00"></div>
 </div>
-<div class="transferHint">This is a safety banking simulation. External banks demo receive real funds.</div>
+<div class="transferHint">This is a safety banking online banking. External banks service receive real funds.</div>
 <button type="button" class="transferNextBtn" onclick="nextTransferStep(2)">Next <span>→</span></button>
 </div>
 <div class="transferPanel hiddenTransferPanel" id="transferPanel2">
@@ -1916,7 +1918,7 @@ function showDashboard(){
 
 if(!me)return;
 
-// Seed the current notification set so existing notifications demo pop up on login.
+// Seed the current notification set so existing notifications service pop up on login.
 knownNotificationIds=new Set();
 lastNotificationId=null;
 
@@ -2215,7 +2217,7 @@ function populateExchangeCurrencies(){const from=$('exchangeFrom'),to=$('exchang
 function openExchange(){if(!me)return openModal('login');populateExchangeCurrencies();const amount=$('exchangeAmount');if(amount&&!amount.value)amount.value='';$('exchangeModal').classList.add('show');updateExchangeQuote();}
 function closeExchange(){const modal=$('exchangeModal');if(modal)modal.classList.remove('show');}
 function swapExchangeCurrencies(){const from=$('exchangeFrom'),to=$('exchangeTo');if(!from||!to)return;const value=from.value;from.value=to.value;to.value=value;updateExchangeQuote();}
-function updateExchangeQuote(){const from=$('exchangeFrom')?.value||'USD',to=$('exchangeTo')?.value||'EUR',amount=Number($('exchangeAmount')?.value||0);const fee=Math.max(0,amount*Banking_EXCHANGE_FEE_RATE),net=Math.max(0,amount-fee),converted=net*(Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from]),rate=Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from];lastExchangeQuote={from,to,amount,fee,net,converted,rate};$('exchangeSourcePreview').textContent=money(amount,from);$('exchangeFeePreview').textContent=money(fee,from);$('exchangeReceivePreview').textContent=money(converted,to);$('exchangeResultAmount').textContent=amount>0?money(converted,to):money(0,to);$('exchangeResultCaption').textContent=amount>0?`${money(amount,from)} less ${money(fee,from)} Banking fee at 1.00% → ${money(converted,to)}`:'Enter an amount to calculate the conversion.';$('exchangeRateBox').textContent=amount>0?`Banking rate: 1 ${from} = ${rate.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}. Banking fee: 1.00% (${money(fee,from)}). Simulated funds are exchanged.`:'Enter an amount to see the Banking exchange rate and fee.';return lastExchangeQuote;}
+function updateExchangeQuote(){const from=$('exchangeFrom')?.value||'USD',to=$('exchangeTo')?.value||'EUR',amount=Number($('exchangeAmount')?.value||0);const fee=Math.max(0,amount*Banking_EXCHANGE_FEE_RATE),net=Math.max(0,amount-fee),converted=net*(Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from]),rate=Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from];lastExchangeQuote={from,to,amount,fee,net,converted,rate};$('exchangeSourcePreview').textContent=money(amount,from);$('exchangeFeePreview').textContent=money(fee,from);$('exchangeReceivePreview').textContent=money(converted,to);$('exchangeResultAmount').textContent=amount>0?money(converted,to):money(0,to);$('exchangeResultCaption').textContent=amount>0?`${money(amount,from)} less ${money(fee,from)} Banking fee at 1.00% → ${money(converted,to)}`:'Enter an amount to calculate the conversion.';$('exchangeRateBox').textContent=amount>0?`Banking rate: 1 ${from} = ${rate.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}. Banking fee: 1.00% (${money(fee,from)}). online bank funds are exchanged.`:'Enter an amount to see the Banking exchange rate and fee.';return lastExchangeQuote;}
 function useExchangeForTransfer(){const quote=updateExchangeQuote();if(!quote||quote.amount<=0)return toast('Enter an amount to exchange first.');closeExchange();openTransfer();$('transferCurrency').value=quote.to;$('transferAmount').value=quote.converted.toFixed(2);toast('Converted amount added to the transfer form.');}
 function openTransactionHistory(){if(!me)return openModal('login');renderTransactionHistory();$('historyModal').classList.add('show');}
 function closeTransactionHistory(){const modal=$('historyModal');if(modal)modal.classList.remove('show');}
@@ -3687,21 +3689,21 @@ function closeFeature(){ $('featureModal')?.classList.remove('show'); }
 function featureMarkup(key){
  const map={
  accounts:{icon:'▣',title:'Accounts',desc:'Your Banking account overview and available currencies.',html:`<div class="accountMini"><div><strong>Primary account</strong><span>${esc(me?.accountNumber||'—')}</span></div><strong>${money(me?.balances?.[me?.primaryCurrency||me?.primary_currency||'NGN']||0,me?.primaryCurrency||me?.primary_currency||'NGN')}</strong></div><div class="featureCards">${(me?.accounts||[]).filter(a=>Number(a.balance||a.amount||0)!==0 || a.currency===(me?.primaryCurrency||me?.primary_currency)).slice(0,8).map(a=>`<div class="featureCard"><h4>${esc(a.currency)}</h4><p>Banking available balance</p><strong>${money(a.balance||a.amount||0,a.currency)}</strong></div>`).join('')||'<div class="featureCard"><h4>Ready</h4><p>Your Banking currency accounts are initialized by the server.</p></div>'}</div>`},
- cards:{icon:'▤',title:'Cards',desc:'Explore your safety debit and credit card services.',html:`<div class="featureCards"><div class="featureCard"><h4>Banking Debit Card</h4><p>Physical-style card interface for the simulation.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#071a35,#16477e);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 4821</div><small>Banking CARD</small></div></div><div class="featureCard"><h4>Banking Credit Card</h4><p>Credit card presentation and controls are authentic.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#3a123d,#7d2f70);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 7305</div><small>Banking CREDIT</small></div></div></div><div class="featureWarn">Bank Management Service Available — Banking and no card can be used for real purchases.</div><button class="btn primary full" onclick="submitFeatureService('Cards',{action:'card-service'})">Request Banking Card Service</button>`},
+ cards:{icon:'▤',title:'Cards',desc:'Explore your safety debit and credit card services.',html:`<div class="featureCards"><div class="featureCard"><h4>Banking Debit Card</h4><p>Physical-style card interface for the online banking.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#071a35,#16477e);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 4821</div><small>Banking CARD</small></div></div><div class="featureCard"><h4>Banking Credit Card</h4><p>Credit card presentation and controls are authentic.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#3a123d,#7d2f70);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 7305</div><small>Banking CREDIT</small></div></div></div><div class="featureWarn">Bank Management Service Available — Banking and no card can be used for real purchases.</div><button class="btn primary full" onclick="submitFeatureService('Cards',{action:'card-service'})">Request Banking Card Service</button>`},
  loans:{icon:'$',title:'Loans',desc:'A complete financing service — Banking journey, from eligibility to application status.',html:`<div class="loanCard"><h3>Personal Banking Loan</h3><p>Illustrative borrowing limits, repayment periods and application steps. Nothing here creates real credit.</p></div><div class="featureCards"><div class="featureCard"><h4>Eligibility</h4><p>Banking assessment based on account activity.</p><strong>Review available</strong></div><div class="featureCard"><h4>Repayment</h4><p>Choose an illustrative term.</p><strong>6–36 months</strong></div></div><div class="featureWarn">Loan approval, interest, disbursement and repayment are authentic only.</div><button class="btn primary full" onclick="submitFeatureService('Loans',{amount:'',term:'12 months',purpose:'Financing Service — Banking application'})">Start Banking Loan Application</button>`},
- savings:{icon:'◎',title:'Savings',desc:'Create a safety savings goal and track how the plan works.',html:`<div class="featureForm"><label>Goal name<input id="featureGoal" placeholder="e.g. Emergency fund"></label><label>Target amount<input id="featureGoalAmount" type="number" min="1" placeholder="1000"></label><button class="btn primary" onclick="submitGoal()">Create Banking Goal</button></div><div class="featureWarn">Savings goals demo move or lock real funds.</div>`},
+ savings:{icon:'◎',title:'Savings',desc:'Create a safety savings goal and track how the plan works.',html:`<div class="featureForm"><label>Goal name<input id="featureGoal" placeholder="e.g. Emergency fund"></label><label>Target amount<input id="featureGoalAmount" type="number" min="1" placeholder="1000"></label><button class="btn primary" onclick="submitGoal()">Create Banking Goal</button></div><div class="featureWarn">Savings goals service move or lock real funds.</div>`},
  giftcards:{icon:'▰',title:'Gift Cards',desc:'Browse Banking gift-card availability across multiple countries.',html:`<div class="countryGrid">${['United States','Nigeria','United Kingdom','Canada','Australia','Germany','France','Singapore'].map(c=>`<button class="countryChoice" onclick="selectGiftCountry('${c}')"><strong>${c}</strong><small>Gift cards &amp; vouchers</small></button>`).join('')}</div><div id="giftCountryResult" class="featureWarn">Select a country to view Banking denominations.</div>`},
  airtime:{icon:'☎',title:'Airtime Top-up',desc:'Choose a country and enter a mobile service — Banking top-up request.',html:serviceForm('Airtime','Phone number','Amount')},
  data:{icon:'▥',title:'Buy Data',desc:'Choose a country, carrier and bundle in the authentic data store.',html:serviceForm('Buy Data','Phone number','Bundle')},
  bills:{icon:'▤',title:'Pay Bills',desc:'Open a authentic bill-payment interface for common categories.',html:serviceForm('Pay Bills','Bill/customer number','Amount')},
  referral:{icon:'🎁',title:'Refer & Earn',desc:'Your safety referral center.',html:`<div class="featureCard"><h4>Your referral code</h4><p id="refCode">ACB-${esc((me?.name||'USER').replace(/[^A-Za-z0-9]/g,'').slice(0,6).toUpperCase())}-Banking</p><button class="btn outline" onclick="navigator.clipboard?.writeText($('refCode').textContent);toast('Referral code copied.')">Copy code</button></div><div class="featureWarn">Referral rewards are illustrative and cannot be redeemed for real money.</div>`},
- verification:{icon:'✓',title:'Identity Verification',desc:'View your Banking verification state and document workflow.',html:`<div class="featureCard"><h4>Verification status</h4><p>Your Banking account can display verification progress without collecting sensitive documents.</p><strong style="color:#159447">Banking VERIFIED</strong></div><div class="featureWarn">For this simulation, demo upload real identity documents.</div>`},
+ verification:{icon:'✓',title:'Identity Verification',desc:'View your Banking verification state and document workflow.',html:`<div class="featureCard"><h4>Verification status</h4><p>Your Banking account can display verification progress without collecting sensitive documents.</p><strong style="color:#159447">Banking VERIFIED</strong></div><div class="featureWarn">For this online banking, service upload real identity documents.</div>`},
  profile:{icon:'●',title:'My Profile',desc:'Manage the information shown on your safety customer profile.',html:`<div class="featureForm"><label>Display name<input id="featureProfileName" value="${esc(me?.name||'')}"></label><label>Email<input value="${esc(me?.email||'')}" disabled></label><label>Account number<input value="${esc(me?.accountNumber||'—')}" disabled></label><button class="btn primary" onclick="saveFeatureProfile()">Save Profile</button></div>`},
  settings:{icon:'⚙',title:'Settings',desc:'Application preferences and security information.',html:`<div class="featureCards"><div class="featureCard"><h4>Session security</h4><p>Bearer-token authentication is used by the Banking API.</p></div><div class="featureCard"><h4>Notifications</h4><p>Transfer and support updates appear in the notification center.</p></div></div><div class="featureWarn">Never place real banking credentials, card PINs or secrets in this Banking.</div>`}
  };
- return map[key]||{icon:'✦',title:key,desc:'Bank Service — Banking',html:'<div class="featureWarn">This feature is available as a safety simulation.</div>'};
+ return map[key]||{icon:'✦',title:key,desc:'Bank Service — Banking',html:'<div class="featureWarn">This feature is available as a safety online banking.</div>'};
 }
-function serviceForm(service,a,b){return `<div class="featureForm"><label>Country<select id="featureCountry"><option>United States</option><option>Nigeria</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Singapore</option></select></label><label>${a}<input id="featurePrimary" placeholder="Enter ${a.toLowerCase()}"></label><label>${b}<input id="featureSecondary" placeholder="Enter ${b.toLowerCase()}"></label><button class="btn primary" onclick="submitServiceForm('${service}')">Continue</button></div><div class="featureWarn">Security notice: this is a authentic purchase/request. Simulated airtime, data, bills or gift cards are purchased.</div>`}
+function serviceForm(service,a,b){return `<div class="featureForm"><label>Country<select id="featureCountry"><option>United States</option><option>Nigeria</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Singapore</option></select></label><label>${a}<input id="featurePrimary" placeholder="Enter ${a.toLowerCase()}"></label><label>${b}<input id="featureSecondary" placeholder="Enter ${b.toLowerCase()}"></label><button class="btn primary" onclick="submitServiceForm('${service}')">Continue</button></div><div class="featureWarn">Security notice: this is a authentic purchase/request. online bank airtime, data, bills or gift cards are purchased.</div>`}
 function openFeature(key){if(!me)return openModal('login');const f=featureMarkup(key);$('featureIcon').textContent=f.icon;$('featureTitle').textContent=f.title;$('featureDescription').textContent=f.desc;$('featureContent').innerHTML=f.html;$('featureModal').classList.add('show');}
 async function submitFeatureService(service,details={}){try{const data=await api('/Banking/services',{method:'POST',body:JSON.stringify({service,details})});if(!data.ok)throw new Error(data.error||'Unable to submit request.');closeFeature();toast(data.message||service+' bank service request — Banking received.');}catch(e){toast(e.message||'Unable to submit bank service request — Banking.');}}
 async function submitServiceForm(service){const primary=$('featurePrimary')?.value.trim(),secondary=$('featureSecondary')?.value.trim(),country=$('featureCountry')?.value;if(!primary||!secondary)return toast('Complete the bank service request — Banking fields.');await submitFeatureService(service,{country,primary,secondary});}
@@ -3884,7 +3886,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       const message = String(error?.message || 'Unable to submit Bank Service transfer — Banking.');
 
       /*
-       * Demo manufacture a successful server transaction when the API says
+       * service manufacture a successful server transaction when the API says
        * there are insufficient funds. The error is shown clearly so the
        * backend can be corrected instead of hiding the real accounting state.
        */
@@ -3928,7 +3930,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     acbSet('receiptReference', receipt.id || 'Banking-' + Date.now());
 
     const note = receipt.note ? 'Note: ' + receipt.note :
-      'Safety American Crest Bank Banking transaction. Simulated funds are transferred.';
+      'Safety American Crest Bank Banking transaction. online bank funds are transferred.';
 
     acbSet('receiptNote', note);
 
@@ -3938,7 +3940,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     if (modal) modal.classList.add('show');
 
     if (typeof originalOpenReceipt === 'function') {
-      /* The DOM above is authoritative; demo invoke the older renderer. */
+      /* The DOM above is authoritative; service invoke the older renderer. */
     }
   };
 })();
@@ -3990,7 +3992,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     $('acbPinHelp').textContent=first?'Create a 4-digit PIN for confirming bank service transfer — Bankings. You will use it on future transfers.':'Enter your 4-digit transfer PIN to continue. No additional verification code is required for this bank service transfer — Banking.';
     $('acbPinConfirm').style.display=first?'block':'none'; $('acbPinBtn').textContent=first?'Save PIN':'Verify PIN'; $('acbPinInput').value=''; $('acbPinConfirm').value=''; $('acbPinError').textContent=''; m.style.display='flex';
     $('acbPinCancel').onclick=()=>{m.style.display='none';resolve(false)};
-    $('acbPinBtn').onclick=()=>{const a=$('acbPinInput').value,b=$('acbPinConfirm').value;if(!/^\d{4}$/.test(a)){return $('acbPinError').textContent='PIN must contain exactly 4 digits.'}if(first&&a!==b){return $('acbPinError').textContent='PINs demo match.'}if(first){try{localStorage.setItem(pinKey(),a)}catch(e){}m.style.display='none';resolve(true)}else if(a===existing){m.style.display='none';resolve(true)}else $('acbPinError').textContent='Incorrect PIN.'};
+    $('acbPinBtn').onclick=()=>{const a=$('acbPinInput').value,b=$('acbPinConfirm').value;if(!/^\d{4}$/.test(a)){return $('acbPinError').textContent='PIN must contain exactly 4 digits.'}if(first&&a!==b){return $('acbPinError').textContent='PINs service match.'}if(first){try{localStorage.setItem(pinKey(),a)}catch(e){}m.style.display='none';resolve(true)}else if(a===existing){m.style.display='none';resolve(true)}else $('acbPinError').textContent='Incorrect PIN.'};
     $('acbPinInput').focus();
   }
   function requirePin(){return new Promise(resolve=>pinModal(resolve));}
