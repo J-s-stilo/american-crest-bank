@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>American Crest Bank — Banking Services (Demo)</title><style>
+<title>American Crest Banking — Demo</title><style>
 
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -439,9 +439,12 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 /* ===== FUNCTIONAL UPGRADE LAYER ===== */
 .transferGrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.transferGrid2 .field{margin:0}.transferGrid2 input,.transferGrid2 select{width:100%}.appMenuOverlay{position:fixed;inset:0;background:rgba(2,8,23,.62);z-index:9997;opacity:0;visibility:hidden;transition:.22s}.appMenuOverlay.show{opacity:1;visibility:visible}.appMenu{position:fixed;left:0;top:0;bottom:0;width:min(390px,92vw);background:#fff;z-index:9998;transform:translateX(-105%);transition:.25s;box-shadow:18px 0 50px #0004;overflow:auto;padding:20px}.appMenu.show{transform:translateX(0)}.appMenuHead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #e7edf5}.appMenuHead strong{display:block;font-size:21px;color:var(--navy)}.appMenuHead small{color:var(--muted)}.appMenuHead button{border:0;background:#eef2f7;border-radius:12px;width:42px;height:42px;font-size:25px}.appMenuProfile{display:flex;gap:12px;align-items:center;padding:18px 4px}.menuAvatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800;border:2px solid var(--gold);overflow:hidden}.menuAvatar img{width:100%;height:100%;object-fit:cover}.appMenuProfile strong,.appMenuProfile small{display:block}.appMenuProfile small{color:var(--muted);font-size:12px;margin-top:3px}.menuDemoBadge{display:inline-block;margin-top:7px;padding:4px 8px;border-radius:999px;background:#fff3cd;color:#725b13;font-size:9px;font-weight:800}.appMenuGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.appMenuGrid button{min-height:72px;border:1px solid #e1e8f1;background:#f8fafc;border-radius:15px;text-align:left;padding:12px;color:var(--navy);font-weight:800;font-size:21px}.appMenuGrid button span{display:block;font-size:12px;margin-top:7px;color:#526174}.appMenuGrid button:hover{background:#eef5ff;border-color:#bcd3f5}.appMenuNotice{margin-top:18px;padding:13px;border-radius:13px;background:#fff8e6;color:#735b19;font-size:11px;line-height:1.5}.featureModal{position:fixed;inset:0;display:none;z-index:10010}.featureModal.show{display:block}.featureBackdrop{position:absolute;inset:0;background:rgba(2,8,23,.7)}.featureBox{position:relative;width:min(620px,92vw);max-height:88vh;overflow:auto;background:#fff;margin:6vh auto 0;border-radius:24px;padding:28px;box-shadow:0 30px 90px #0005}.featureClose{position:absolute;right:16px;top:14px;width:40px;height:40px;border:0;border-radius:12px;background:#eef2f7;font-size:24px}.featureIcon{width:58px;height:58px;border-radius:17px;background:#eaf2ff;color:var(--blue);display:grid;place-items:center;font-size:28px;margin-bottom:15px}.featureEyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#9a741d}.featureBox h2{color:var(--navy);font-size:30px;margin:5px 0 8px}.featureBox>p{color:#64748b;line-height:1.6;margin-bottom:18px}.featureCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.featureCard{border:1px solid #e2e8f0;border-radius:16px;padding:16px;background:#f8fafc}.featureCard h4{color:var(--navy);margin-bottom:7px}.featureCard p{font-size:12px;color:#64748b;line-height:1.5}.featureWarn{padding:13px;border-radius:13px;background:#fff3cd;color:#725b13;font-size:12px;line-height:1.5;margin:15px 0}.featureForm{display:grid;gap:12px}.featureForm input,.featureForm select,.featureForm textarea{width:100%;border:1px solid #d9e2ed;border-radius:11px;padding:12px}.featureForm label{font-size:12px;font-weight:800;color:#526174}.countryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.countryChoice{padding:12px;border:1px solid #dbe4ee;background:#fff;border-radius:12px;text-align:left}.countryChoice strong{display:block;color:var(--navy)}.countryChoice small{color:#718096}.loanCard{border-radius:20px;padding:22px;background:linear-gradient(135deg,#071a35,#123e70);color:#fff;margin:10px 0}.loanCard h3{color:#fff;margin-bottom:8px}.loanCard p{color:#dbe7f5;font-size:13px;line-height:1.6}.accountMini{display:flex;justify-content:space-between;gap:12px;padding:14px;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:9px}.accountMini strong{color:var(--navy)}.accountMini span{color:#64748b;font-size:12px}.@media(max-width:560px){.transferGrid2,.featureCards{grid-template-columns:1fr}.featureBox{margin-top:3vh;padding:22px}}
+
+/* ACB HOMEPAGE ENHANCEMENT — ADDITIVE ONLY */
+.homeReveal{opacity:0;transform:translateY(32px);transition:opacity .75s ease,transform .75s ease}.homeReveal.is-visible{opacity:1;transform:none}.homeLift{transition:transform .3s ease,box-shadow .3s ease}.homeLift:hover{transform:translateY(-6px);box-shadow:0 20px 45px #071a5320}.heroVisual{position:relative}.heroVisual img{transition:opacity .55s ease,transform 6s ease}.heroVisual.homeSlide img{transform:scale(1.04)}.homeSlideDots{position:absolute;left:20px;bottom:18px;display:flex;gap:7px;z-index:2}.homeSlideDots button{width:9px;height:9px;border:0;border-radius:50%;padding:0;background:#ffffff99}.homeSlideDots button.active{background:var(--gold);transform:scale(1.25)}.homeStory{background:linear-gradient(135deg,#071a35,#0d315d);color:#fff}.homeStoryGrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.homeStoryCard{padding:30px;border:1px solid #ffffff18;border-radius:22px;background:#ffffff08}.homeStoryCard h3{font-size:25px;margin-bottom:10px}.homeStoryCard p{color:#c8d7e9;line-height:1.7}.homeSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.homeStep{background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;position:relative}.homeStepNum{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eaf2ff;color:var(--blue);font-weight:900;margin-bottom:14px}.homeStep h3{color:var(--navy);font-size:17px;margin-bottom:7px}.homeStep p{color:var(--muted);font-size:13px;line-height:1.6}.homeFeatureBand{display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:stretch}.homeFeaturePanel{border-radius:22px;padding:32px;background:#fff;border:1px solid var(--border);box-shadow:0 12px 35px #071a5310}.homeFeaturePanel.darkPanel{background:linear-gradient(145deg,#0a2445,#123e70);color:#fff;border:0}.homeFeaturePanel h3{font-size:27px;color:var(--navy);margin-bottom:10px}.darkPanel h3{color:#fff}.homeFeaturePanel p{color:var(--muted);line-height:1.7}.darkPanel p{color:#c9d8e9}.homePills{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}.homePill{padding:9px 12px;border-radius:999px;background:#eef4fb;color:#31506f;font-size:12px;font-weight:800}.darkPanel .homePill{background:#ffffff12;color:#e5eef8}.homeFaq{max-width:850px;margin:auto}.homeFaqItem{border:1px solid var(--border);border-radius:14px;background:#fff;margin-bottom:10px;overflow:hidden}.homeFaqQ{width:100%;border:0;background:#fff;padding:17px 18px;text-align:left;font-weight:800;color:var(--navy);display:flex;justify-content:space-between;align-items:center}.homeFaqA{display:none;padding:0 18px 17px;color:var(--muted);font-size:13px;line-height:1.65}.homeFaqItem.open .homeFaqA{display:block}.homeFaqItem.open .homeFaqQ span{transform:rotate(45deg)}.homeFaqQ span{font-size:22px;transition:transform .2s}.homeCta{background:linear-gradient(135deg,#eef4fb,#fff);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.homeCtaBox{max-width:900px;margin:auto;text-align:center;padding:20px}.homeCtaBox h2{color:var(--navy);font-size:36px;margin-bottom:10px}.homeCtaBox p{color:var(--muted);line-height:1.6;margin-bottom:20px}.homeTrustLine{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}.homeTrustLine span{padding:8px 11px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:11px;color:#607080;font-weight:800}@media(max-width:800px){.homeStoryGrid,.homeFeatureBand{grid-template-columns:1fr}.homeSteps{grid-template-columns:1fr 1fr}}@media(max-width:560px){.homeSteps{grid-template-columns:1fr}.homeFeaturePanel{padding:24px}.homeCtaBox h2{font-size:29px}}
 </style></head><body><div class="prototype">
 
-AMERICAN CREST BANK — FICTIONAL / DEMO BANKING APPLICATION
+AMERICAN CREST BANK — FICTIONAL / BANKING SERVICES — DEMO APPLICATION
 
 </div><div id="publicSite"><div class="top">
 
@@ -599,7 +602,7 @@ alt="Customer using online banking">
 
 <h3>Send Money</h3>
 
-<p>Create a bank transfer using your selected currency.</p>
+<p>Create a demo transaction using your selected currency.</p>
 
 </div><div class="card">
 
@@ -607,7 +610,7 @@ alt="Customer using online banking">
 
 <h3>Multi-Currency</h3>
 
-<p>Maintain balances and transaction records in different currencies.</p>
+<p>Maintain demo balances and transaction records in different currencies.</p>
 
 </div></div>
 
@@ -619,13 +622,13 @@ alt="Customer using online banking">
 
 <h2>Account control</h2>
 
-<p>Keep account information, balances and activity organized from one dashboard.</p>
+<p>Keep demo account information, balances and activity organized from one dashboard.</p>
 
 </div><div class="securityGrid"><div class="securityBox">
 
 <strong>Account Dashboard</strong>
 
-<span>View current balances and account information.</span>
+<span>View current demo balances and account information.</span>
 
 </div><div class="securityBox">
 
@@ -637,19 +640,75 @@ alt="Customer using online banking">
 
 <strong>Digital Services</strong>
 
-<span>Access available banking services from your dashboard.</span>
+<span>Access the available demo service interfaces from your dashboard.</span>
 
 </div></div>
 
 </div>
 
-</section><section class="section" id="support">
+</section>
+<!-- ADDITIVE HOMEPAGE STORY SECTIONS -->
+<section class="section homeStory">
+<div class="inner homeReveal">
+<div class="homeStoryGrid">
+<div>
+<div class="eyebrow" style="color:var(--gold)">A SIMPLE DIGITAL EXPERIENCE</div>
+<h2 style="font-size:clamp(30px,5vw,48px);line-height:1.08;margin-bottom:15px">One place to understand your banking services — demo journey.</h2>
+<p style="color:#c8d7e9;line-height:1.7;max-width:620px">Explore the account experience from opening a demo account to reviewing balances, moving through currency options, viewing activity and contacting support.</p>
+<div class="homeTrustLine"><span>Account setup</span><span>Transfers</span><span>Currency tools</span><span>Activity</span></div>
+</div>
+<div class="homeStoryCard homeLift">
+<h3>Built around clarity</h3>
+<p>Each part of the demo experience is designed to explain what happens next, so visitors can move from the welcome page into the appropriate account feature without losing the existing navigation.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="inner">
+<div class="head homeReveal"><h2>How the experience works</h2><p>A simple four-step journey through the American Crest demo.</p></div>
+<div class="homeSteps">
+<div class="homeStep homeLift homeReveal"><div class="homeStepNum">01</div><h3>Create your demo account</h3><p>Choose your account details and preferred primary currency.</p></div>
+<div class="homeStep homeLift homeReveal"><div class="homeStepNum">02</div><h3>Enter your dashboard</h3><p>Review the account overview, balance presentation and available services.</p></div>
+<div class="homeStep homeLift homeReveal"><div class="homeStepNum">03</div><h3>Explore transactions</h3><p>Use the available bank service transfer — demo and currency tools to explore the workflow.</p></div>
+<div class="homeStep homeLift homeReveal"><div class="homeStepNum">04</div><h3>Stay informed</h3><p>Review activity, notifications and support options from the account experience.</p></div>
+</div>
+</div>
+</section>
+
+<section class="section" style="padding-top:20px">
+<div class="inner">
+<div class="homeFeatureBand">
+<div class="homeFeaturePanel homeLift homeReveal"><h3>Designed for everyday digital banking tasks</h3><p>The homepage now introduces the main experience before visitors enter the dashboard, while your existing buttons and account controls remain in place.</p><div class="homePills"><span class="homePill">Balances</span><span class="homePill">Payments</span><span class="homePill">Transfers</span><span class="homePill">Currencies</span><span class="homePill">Notifications</span><span class="homePill">Support</span></div></div>
+<div class="homeFeaturePanel darkPanel homeLift homeReveal"><h3>Professional. Clear. Connected.</h3><p>Subtle motion, clean cards and progressive storytelling make the page feel active without changing the structure you already like.</p><button class="btn primary" onclick="openModal('register')" style="margin-top:18px">Explore the Demo</button></div>
+</div>
+</div>
+</section>
+
+<section class="section" style="background:#f8fafc">
+<div class="inner">
+<div class="head homeReveal"><h2>Frequently asked questions</h2><p>Quick answers about the fictional/banking services — demo experience.</p></div>
+<div class="homeFaq">
+<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Is American Crest a real bank? <span>+</span></button><div class="homeFaqA">No. American Crest on this website is presented as a fictional/banking services — demo application.</div></div>
+<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">What can I explore after signing in? <span>+</span></button><div class="homeFaqA">The demo can present account information, balances, transaction workflows, currency features, notifications and support interfaces.</div></div>
+<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Can I create a demo account? <span>+</span></button><div class="homeFaqA">Yes. Use the existing Open Account button to enter the account-creation flow already provided on the site.</div></div>
+<div class="homeFaqItem homeReveal"><button class="homeFaqQ" type="button" onclick="toggleHomeFaq(this)">Will the existing homepage controls change? <span>+</span></button><div class="homeFaqA">No. These homepage enhancements are additive and are designed to leave your existing navigation and account controls in place.</div></div>
+</div>
+</div>
+</section>
+
+<section class="section homeCta">
+<div class="homeCtaBox homeReveal"><h2>Ready to explore the American Crest demo?</h2><p>Open a demo account or sign in to continue to the existing banking experience.</p><button class="btn primary" onclick="openModal('register')">Open an Account</button> <button class="btn outline" onclick="openModal('login')">Sign In</button></div>
+</section>
+
+<section class="section" id="support">
 
 <div class="inner"><div class="head">
 
 <h2>Customer Support</h2>
 
-<p>Send a message through bank service support.</p>
+<p>Send a message through the bank service support — demo system.</p>
 
 </div><div class="contact"><div class="box">
 
@@ -657,7 +716,7 @@ alt="Customer using online banking">
 
 <p style="margin-bottom:18px">
 
-Sign in to send a support message and continue the conversation with Bank Service Support.
+Sign in to send a support message and continue the conversation with the administrator.
 
 </p>
 
@@ -673,7 +732,7 @@ Open Customer Support
 
 <p>
 
-Demo account, transfers, multi-currency balances,
+Bank Account — Demo, transfers, multi-currency balances,
 
 notifications and service interfaces are available inside the dashboard.
 
@@ -701,7 +760,42 @@ notifications and service interfaces are available inside the dashboard.
 
 </div>
 
-</footer></div><div id="dashboard" class="customerDashboard">
+</footer></div>
+<script>
+/* ACB HOMEPAGE MOTION — additive and isolated from dashboard logic */
+(function(){
+  const revealItems=document.querySelectorAll('#publicSite .homeReveal');
+  if('IntersectionObserver' in window){
+    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}})},{threshold:.12});
+    revealItems.forEach(el=>observer.observe(el));
+  }else{revealItems.forEach(el=>el.classList.add('is-visible'));}
+
+  const hero=document.querySelector('#publicSite .heroVisual');
+  const image=hero?.querySelector('img');
+  if(hero&&image){
+    const slides=[
+      'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=85',
+      'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1100&q=85',
+      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1100&q=85',
+      'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1100&q=85',
+      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1100&q=85'
+    ];
+    const dots=document.createElement('div');dots.className='homeSlideDots';
+    slides.forEach((src,i)=>{const b=document.createElement('button');b.type='button';b.className=i===0?'active':'';b.setAttribute('aria-label','Show homepage image '+(i+1));b.onclick=()=>showSlide(i);dots.appendChild(b);});
+    hero.appendChild(dots);
+    let index=0,timer;
+    function showSlide(i){index=i;image.style.opacity='0';setTimeout(()=>{image.src=slides[index];image.style.opacity='1';hero.classList.toggle('homeSlide',true);},220);dots.querySelectorAll('button').forEach((b,n)=>b.classList.toggle('active',n===index));}
+    function start(){timer=setInterval(()=>showSlide((index+1)%slides.length),5200);}
+    hero.addEventListener('mouseenter',()=>clearInterval(timer));hero.addEventListener('mouseleave',start);start();
+  }
+})();
+function toggleHomeFaq(button){
+  const item=button.closest('.homeFaqItem');
+  document.querySelectorAll('#publicSite .homeFaqItem.open').forEach(open=>{if(open!==item)open.classList.remove('open');});
+  item.classList.toggle('open');
+}
+</script>
+<div id="dashboard" class="customerDashboard">
 <div class="mobileDashHeader">
 <button class="dashMenuBtn" type="button" onclick="openAppMenu()" aria-label="Menu" title="Open menu">☰</button>
 <div class="dashBrand"><span class="dashBrandMark">AC</span><span><strong>American Crest</strong><small>Banking</small></span></div>
@@ -715,7 +809,7 @@ notifications and service interfaces are available inside the dashboard.
 <section class="referCard"><div><h2>Refer &amp; Earn</h2><p>Invite friends and earn<br>exciting rewards</p><button type="button" onclick="openFeature('referral')">Refer Now</button></div><div class="giftGraphic">🎁<span>🪙</span><span>🪙</span></div></section>
 <section class="recentCard"><div class="sectionTitleRow"><h2>Recent Transactions</h2><button type="button" onclick="openTransactionHistory()">View All</button></div><div id="transactions" class="recentTransactions"></div><span id="historyCount" class="historyCountHidden"></span></section>
 <div class="hiddenLegacyStats"><span id="statusStat">Active</span><span id="txCount">0</span><span id="emailStat">—</span><div id="currencyBalances"></div><div id="liveBanner"></div></div>
-<section class="servicesGrid" id="dashboardServices"><div class="service"><div class="serviceIcon">📱</div><h3>Buy Data</h3><p>Data bundle service.</p><button class="btn outline" onclick="openDemoService('Buy Data')">Open</button><div class="serviceLive">Bank service available.</div></div><div class="service"><div class="serviceIcon">☎️</div><h3>Airtime</h3><p>Mobile airtime service.</p><button class="btn outline" onclick="openDemoService('Airtime')">Open</button><div class="serviceLive">Bank service available.</div></div><div class="service"><div class="serviceIcon">💡</div><h3>Pay Bills</h3><p>Utility payment service.</p><button class="btn outline" onclick="openDemoService('Pay Bills')">Open</button><div class="serviceLive">Bank service available.</div></div><div class="service"><div class="serviceIcon">💳</div><h3>Cards</h3><p>Card service interface.</p><button class="btn outline" onclick="openDemoService('Cards')">Open</button><div class="serviceLive">Card service available.</div></div></section>
+<section class="servicesGrid" id="dashboardServices"><div class="service"><div class="serviceIcon">📱</div><h3>Buy Data</h3><p>Data Service — Demo bundle interface.</p><button class="btn outline" onclick="openDemoService('Buy Data')">Open</button><div class="serviceLive">Bank Service Request — Demo ready — Bank Management Service Available — Demo.</div></div><div class="service"><div class="serviceIcon">☎️</div><h3>Airtime</h3><p>Mobile Service — Demo airtime interface.</p><button class="btn outline" onclick="openDemoService('Airtime')">Open</button><div class="serviceLive">Bank Service Request — Demo ready — Bank Management Service Available — Demo.</div></div><div class="service"><div class="serviceIcon">💡</div><h3>Pay Bills</h3><p>Utility Payment Service — Demo payment interface.</p><button class="btn outline" onclick="openDemoService('Pay Bills')">Open</button><div class="serviceLive">Bank Service Request — Demo ready — Bank Management Service Available — Demo.</div></div><div class="service"><div class="serviceIcon">💳</div><h3>Cards</h3><p>Bank Card Service — Demo service interface.</p><button class="btn outline" onclick="openDemoService('Cards')">Open</button><div class="serviceLive">Bank Card Service — Demo interface — Bank Management Service Available — Demo.</div></div></section>
 <div class="legacyHidden"><div class="profilePanel"><div class="profileCard"><h3>My Profile</h3><label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
 
 Display Name
@@ -730,7 +824,7 @@ Tap the + button beside your profile picture or choose an image below.
 
 Choose Profile Picture
 
-</button></div></div><div class="admin" id="adminPanel"><h2>Bank Management</h2><p style="font-size:13px;color:#718096;margin-bottom:10px">
+</button></div></div><div class="admin" id="adminPanel"><h2>Bank Account — Bank Management Serviceistration</h2><p style="font-size:13px;color:#718096;margin-bottom:10px">
 
 Customers and customer activity are loaded directly from the server database.
 
@@ -953,7 +1047,7 @@ Sign In
 <div class="field transferField"><label>Country</label><select id="transferCountry"><option value="United States">United States</option><option value="Nigeria">Nigeria</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Singapore">Singapore</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="South Africa">South Africa</option></select></div>
 <div class="field transferField"><label>SWIFT / BIC <em>(optional)</em></label><input id="transferSwift" type="text" maxlength="20" placeholder="e.g. DEMOXX00"></div>
 </div>
-<div class="transferHint">This application is a fictional banking service for demonstration purposes.</div>
+<div class="transferHint">This is a fictional banking simulation. External banks do not receive real funds.</div>
 <button type="button" class="transferNextBtn" onclick="nextTransferStep(2)">Next <span>→</span></button>
 </div>
 <div class="transferPanel hiddenTransferPanel" id="transferPanel2">
@@ -962,20 +1056,20 @@ Sign In
 <div class="transferAmountRow"><div class="field transferField transferCurrencyField"><label>Currency</label><select id="transferCurrency">
 <option value="NGN">NGN — Nigerian Naira</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British Pound</option><option value="IDR">IDR — Indonesian Rupiah</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="CHF">CHF — Swiss Franc</option><option value="JPY">JPY — Japanese Yen</option><option value="CNY">CNY — Chinese Yuan</option><option value="INR">INR — Indian Rupee</option><option value="MYR">MYR — Malaysian Ringgit</option><option value="SGD">SGD — Singapore Dollar</option><option value="AED">AED — UAE Dirham</option><option value="ZAR">ZAR — South African Rand</option><option value="KES">KES — Kenyan Shilling</option><option value="GHS">GHS — Ghanaian Cedi</option>
 </select></div><div class="field transferField transferAmountField"><label>Amount</label><div class="transferMoneyInput"><span id="transferCurrencySymbol">$</span><input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00"></div></div></div>
-<div class="transferFeeRow"><span>Transfer fee</span><strong>Included in banking service</strong></div>
+<div class="transferFeeRow"><span>Transfer fee</span><strong>Included in demo</strong></div>
 <div class="field transferField"><label>Note <em>(optional)</em></label><textarea id="transferNote" placeholder="Add a message for the recipient"></textarea></div>
 <div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(1)">← Back</button><button type="button" class="transferNextBtn" onclick="nextTransferStep(3)">Review <span>→</span></button></div>
 </div>
 <div class="transferPanel hiddenTransferPanel" id="transferPanel3">
 <div class="transferReviewIcon">✓</div><h3>Review your transfer</h3><p class="transferPanelSub">Make sure everything looks right before sending.</p>
 <div class="transferReviewCard"><div class="transferReviewLine"><span>Sending to</span><strong id="transferReviewRecipient">—</strong></div><div class="transferReviewLine"><span>Bank</span><strong id="transferReviewBank">—</strong></div><div class="transferReviewLine"><span>Account</span><strong id="transferReviewAccount">—</strong></div><div class="transferReviewLine"><span>Recipient email</span><strong id="transferReviewEmail">—</strong></div><div class="transferReviewLine"><span>SWIFT / BIC</span><strong id="transferReviewSwift">—</strong></div><div class="transferReviewLine"><span>Amount</span><strong id="transferReviewAmount">—</strong></div><div class="transferReviewLine"><span>Note</span><strong id="transferReviewNote">No note</strong></div><div class="transferReviewLine total"><span>Total</span><strong id="transferReviewTotal">—</strong></div></div>
-<div class="transferProcessingNote">Your request will be sent to Bank Management for processing. The transaction receipt will appear after the request is recorded.</div>
+<div class="transferProcessingNote">Your request will be sent to the Bank Management Service for processing. The transaction receipt will appear after the request is recorded.</div>
 <div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(2)">← Back</button><button id="transferBtn" type="button" class="transferNextBtn transferSendBtn" onclick="transfer()">Send Money <span>→</span></button></div>
 </div>
-<div class="transferFooter"><span>🔒 Your demo transfer is protected</span><button type="button" onclick="closeTransfer()">Cancel</button></div>
-</div></div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Services</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting Bank Management review.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>BANK</small><strong id="receiptBank">—</strong></div><div class="receiptItem"><small>ACCOUNT</small><strong id="receiptAccount">—</strong></div><div class="receiptItem"><small>RECIPIENT EMAIL</small><strong id="receiptEmail">—</strong></div><div class="receiptItem"><small>SWIFT / BIC</small><strong id="receiptSwift">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+<div class="transferFooter"><span>🔒 Your bank service transfer — demo is protected</span><button type="button" onclick="closeTransfer()">Cancel</button></div>
+</div></div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Demo</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting Bank Management Service review.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>BANK</small><strong id="receiptBank">—</strong></div><div class="receiptItem"><small>ACCOUNT</small><strong id="receiptAccount">—</strong></div><div class="receiptItem"><small>RECIPIENT EMAIL</small><strong id="receiptEmail">—</strong></div><div class="receiptItem"><small>SWIFT / BIC</small><strong id="receiptSwift">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
 <h2>Verify Sign In</h2>
-<p>Enter the 6-digit verification code to continue.</p>
+<p>Enter the 6-digit demo verification code to continue.</p>
 <div class="error" id="loginVerifyError"></div>
 <div class="field"><label>Verification Code</label><input id="loginVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
 <div id="loginVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
@@ -983,7 +1077,7 @@ Sign In
 </div>
 </div><div class="modal" id="registrationVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelRegistrationVerification()">×</button>
 <h2>Verify Account</h2>
-<p>Enter the 6-digit verification code to complete your account creation.</p>
+<p>Enter the 6-digit demo verification code to complete your account creation.</p>
 <div class="error" id="registrationVerifyError"></div>
 <div class="field"><label>Verification Code</label><input id="registrationVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></div>
 <div id="registrationVerifyDemoCode" style="margin:10px 0;padding:12px;border-radius:9px;background:#eef5ff;color:var(--navy);font-weight:bold;text-align:center"></div>
@@ -992,8 +1086,8 @@ Sign In
 </div>
 <div class="appMenuOverlay" id="appMenuOverlay" onclick="closeAppMenu(event)"></div>
 <aside class="appMenu" id="appMenu" aria-label="Customer menu">
-  <div class="appMenuHead"><div><strong>American Crest</strong><small>Demo Banking</small></div><button type="button" onclick="closeAppMenu()">×</button></div>
-  <div class="appMenuProfile"><div class="menuAvatar" id="menuAvatar">AC</div><div><strong id="menuName">Customer</strong><small id="menuEmail">—</small><span class="menuDemoBadge">BANKING SERVICES</span></div></div>
+  <div class="appMenuHead"><div><strong>American Crest</strong><small>Banking Services — Demo</small></div><button type="button" onclick="closeAppMenu()">×</button></div>
+  <div class="appMenuProfile"><div class="menuAvatar" id="menuAvatar">AC</div><div><strong id="menuName">Customer</strong><small id="menuEmail">—</small><span class="menuDemoBadge">BANK ACCOUNT — DEMO</span></div></div>
   <div class="appMenuGrid">
     <button onclick="closeAppMenu();window.scrollTo({top:0,behavior:'smooth'})">⌂<span>Dashboard</span></button>
     <button onclick="closeAppMenu();openTransfer()">↑<span>Transfer</span></button>
@@ -1013,23 +1107,23 @@ Sign In
     <button onclick="closeAppMenu();toggleChat()">☁<span>Support</span></button>
     <button onclick="openLogoutVerification()">⇥<span>Log Out</span></button>
   </div>
-  <div class="appMenuNotice">American Crest Bank provides a fictional banking experience for demonstration purposes.</div>
+  <div class="appMenuNotice">All banking, card, loan, transfer and payment features in this application are simulations. Bank Service Transfer — Demo.</div>
 </aside>
-<div class="featureModal" id="logoutVerificationModal" aria-hidden="true"><div class="featureBackdrop" onclick="closeLogoutVerification()"></div><div class="featureBox" role="dialog" aria-modal="true" aria-labelledby="logoutVerificationTitle"><button class="featureClose" type="button" onclick="closeLogoutVerification()">×</button><div class="featureIcon">⇥</div><div class="featureEyebrow">AMERICAN CREST BANK</div><h2 id="logoutVerificationTitle">Verify Logout</h2><p>Enter the 6-digit verification code shown below to complete logout.</p><div class="featureCard" style="text-align:center;margin:12px 0 16px"><strong id="logoutVerificationCode" style="font-size:28px;letter-spacing:6px;color:var(--navy)">------</strong></div><div class="featureForm"><label for="logoutVerificationInput">Verification code</label><input id="logoutVerificationInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code"><div id="logoutVerificationError" style="display:none;color:#b42318;font-size:12px;font-weight:700"></div><button class="btn primary full" type="button" onclick="verifyLogoutCode()">Verify &amp; Log Out</button></div></div></div>
-<div class="featureModal" id="featureModal"><div class="featureBackdrop" onclick="closeFeature()"></div><div class="featureBox"><button class="featureClose" onclick="closeFeature()">×</button><div class="featureIcon" id="featureIcon">✦</div><div class="featureEyebrow">AMERICAN CREST BANK</div><h2 id="featureTitle">Feature</h2><p id="featureDescription">Banking service.</p><div id="featureContent"></div></div></div>
+<div class="featureModal" id="logoutVerificationModal" aria-hidden="true"><div class="featureBackdrop" onclick="closeLogoutVerification()"></div><div class="featureBox" role="dialog" aria-modal="true" aria-labelledby="logoutVerificationTitle"><button class="featureClose" type="button" onclick="closeLogoutVerification()">×</button><div class="featureIcon">⇥</div><div class="featureEyebrow">AMERICAN CREST DEMO</div><h2 id="logoutVerificationTitle">Verify Logout</h2><p>Enter the 6-digit verification code shown below to complete logout.</p><div class="featureCard" style="text-align:center;margin:12px 0 16px"><strong id="logoutVerificationCode" style="font-size:28px;letter-spacing:6px;color:var(--navy)">------</strong></div><div class="featureForm"><label for="logoutVerificationInput">Verification code</label><input id="logoutVerificationInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code"><div id="logoutVerificationError" style="display:none;color:#b42318;font-size:12px;font-weight:700"></div><button class="btn primary full" type="button" onclick="verifyLogoutCode()">Verify &amp; Log Out</button></div></div></div>
+<div class="featureModal" id="featureModal"><div class="featureBackdrop" onclick="closeFeature()"></div><div class="featureBox"><button class="featureClose" onclick="closeFeature()">×</button><div class="featureIcon" id="featureIcon">✦</div><div class="featureEyebrow">AMERICAN CREST DEMO</div><h2 id="featureTitle">Feature</h2><p id="featureDescription">Bank Service — Demo.</p><div id="featureContent"></div></div></div>
 <div class="modal" id="serviceModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="closeService()">×</button>
 
 <h2 id="serviceTitle">Service</h2>
 
-<p id="serviceText">Bank service interface.</p><div class="field">
+<p id="serviceText">Demo service interface.</p><div class="field">
 
 <label>Request details</label>
 
-<input id="serviceInput" placeholder="Enter service request details">
+<input id="serviceInput" placeholder="Enter bank service request — demo details">
 
 </div><button class="btn primary full" onclick="submitDemoService()">
 
-Submit Service Request
+Submit Demo Request
 
 </button></div>
 
@@ -1570,7 +1664,7 @@ closeModal();
 
 showDashboard();
 
-toast('Demo account created successfully.');
+toast('Bank Account — Demo created successfully.');
 
 }catch(error){
 
@@ -1668,7 +1762,7 @@ throw new Error('The server returned an invalid login response.');
 }
 
 token=String(data.token);
-me=data.user;
+me={...(me||{}),...(data.user||{})};
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
@@ -1741,7 +1835,7 @@ me=verified.user;
 pendingRegistrationVerification=null;
 $('registrationVerifyModal').classList.remove('show');
 showDashboard();
-toast('Demo account created successfully.');
+toast('Bank Account — Demo created successfully.');
 }catch(error){
 showError('registrationVerifyError',error.message||'Unable to verify the account.');
 }finally{
@@ -1759,7 +1853,20 @@ const data=await api('/me');
 
 if(!data.user)throw new Error('Invalid user response.');
 
-me=data.user;
+const savedProfileImage=
+  me?.profileImage||
+  me?.profile_image||
+  '';
+
+me={
+  ...(me||{}),
+  ...(data.user||{})
+};
+
+if(!me.profileImage&&!me.profile_image&&savedProfileImage){
+  me.profileImage=savedProfileImage;
+  me.profile_image=savedProfileImage;
+}
 
 return true;
 
@@ -1932,7 +2039,7 @@ balanceHidden?'Show balance':'Hide balance'
 
 $('liveBanner').innerHTML=
 
-'<strong>Demo account active.</strong> '+
+'<strong>Bank Account — Demo active.</strong> '+
 
 'Customer account data, balances, requests, notifications and support are synchronized with the server database.';
 
@@ -2256,7 +2363,7 @@ refreshAdmin(false);
 
 }
 
-toast('Request sent to the demo administrator.');
+toast('Request sent to the Bank Management Service.');
 
 }catch(error){
 
@@ -2313,7 +2420,12 @@ body:JSON.stringify({name:name})
 
 );
 
-me=data.user;
+me={
+  ...(me||{}),
+  ...(data.user||{})
+};
+
+renderAvatar();
 
 $('welcomeName').textContent=me.name;
 
@@ -2540,7 +2652,7 @@ refreshAdmin(false);
 
 }
 
-toast('Message sent to demo support.');
+toast('Message sent to Bank Service Support — Demo.');
 
 }catch(error){
 
@@ -2588,13 +2700,13 @@ const details=$('serviceInput').value.trim();
 
 if(!details){
 
-return toast('Enter the demo request details.');
+return toast('Enter the bank service request — demo details.');
 
 }
 
 closeService();
 
-toast(service+' demo request submitted.');
+toast(service+' bank service request — demo submitted.');
 
 }
 
@@ -3567,7 +3679,7 @@ function openAppMenu(){
   if(!me)return openModal('login');
   const menu=$('appMenu'),overlay=$('appMenuOverlay');
   if(menu)menu.classList.add('show'); if(overlay)overlay.classList.add('show');
-  $('menuName').textContent=me.name||'Customer'; $('menuEmail').textContent=me.email||me.phone||'Demo account';
+  $('menuName').textContent=me.name||'Customer'; $('menuEmail').textContent=me.email||me.phone||'Bank Account — Demo';
   const av=$('menuAvatar'); if(av){av.innerHTML=me.profileImage?`<img src="${esc(me.profileImage)}" alt="Profile">`:(me.name||'AC').slice(0,2).toUpperCase();}
 }
 function closeAppMenu(event){if(event&&event.target&&event.target.id!=='appMenuOverlay')return; $('appMenu')?.classList.remove('show');$('appMenuOverlay')?.classList.remove('show');}
@@ -3575,11 +3687,11 @@ function closeFeature(){ $('featureModal')?.classList.remove('show'); }
 function featureMarkup(key){
  const map={
  accounts:{icon:'▣',title:'Accounts',desc:'Your demo account overview and available currencies.',html:`<div class="accountMini"><div><strong>Primary account</strong><span>${esc(me?.accountNumber||'—')}</span></div><strong>${money(me?.balances?.[me?.primaryCurrency||me?.primary_currency||'NGN']||0,me?.primaryCurrency||me?.primary_currency||'NGN')}</strong></div><div class="featureCards">${(me?.accounts||[]).filter(a=>Number(a.balance||a.amount||0)!==0 || a.currency===(me?.primaryCurrency||me?.primary_currency)).slice(0,8).map(a=>`<div class="featureCard"><h4>${esc(a.currency)}</h4><p>Demo available balance</p><strong>${money(a.balance||a.amount||0,a.currency)}</strong></div>`).join('')||'<div class="featureCard"><h4>Ready</h4><p>Your demo currency accounts are initialized by the server.</p></div>'}</div>`},
- cards:{icon:'▤',title:'Cards',desc:'Explore your fictional debit and credit card services.',html:`<div class="featureCards"><div class="featureCard"><h4>Demo Debit Card</h4><p>Physical-style card interface for the simulation.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#071a35,#16477e);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 4821</div><small>DEMO CARD</small></div></div><div class="featureCard"><h4>Demo Credit Card</h4><p>Credit card presentation and controls are simulated.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#3a123d,#7d2f70);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 7305</div><small>DEMO CREDIT</small></div></div></div><div class="featureWarn">No real card is issued and no card can be used for real purchases.</div><button class="btn primary full" onclick="submitFeatureService('Cards',{action:'card-service'})">Request Demo Card Service</button>`},
- loans:{icon:'$',title:'Loans',desc:'A complete demo loan journey, from eligibility to application status.',html:`<div class="loanCard"><h3>Personal Demo Loan</h3><p>Illustrative borrowing limits, repayment periods and application steps. Nothing here creates real credit.</p></div><div class="featureCards"><div class="featureCard"><h4>Eligibility</h4><p>Demo assessment based on account activity.</p><strong>Review available</strong></div><div class="featureCard"><h4>Repayment</h4><p>Choose an illustrative term.</p><strong>6–36 months</strong></div></div><div class="featureWarn">Loan approval, interest, disbursement and repayment are simulated only.</div><button class="btn primary full" onclick="submitFeatureService('Loans',{amount:'',term:'12 months',purpose:'Demo loan application'})">Start Demo Loan Application</button>`},
+ cards:{icon:'▤',title:'Cards',desc:'Explore your fictional debit and credit card services.',html:`<div class="featureCards"><div class="featureCard"><h4>Demo Debit Card</h4><p>Physical-style card interface for the simulation.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#071a35,#16477e);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 4821</div><small>DEMO CARD</small></div></div><div class="featureCard"><h4>Demo Credit Card</h4><p>Credit card presentation and controls are simulated.</p><div style="margin-top:12px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#3a123d,#7d2f70);color:#fff"><strong>AMERICAN CREST</strong><div style="margin-top:30px;font-size:18px;letter-spacing:3px">•••• •••• •••• 7305</div><small>DEMO CREDIT</small></div></div></div><div class="featureWarn">Bank Management Service Available — Demo and no card can be used for real purchases.</div><button class="btn primary full" onclick="submitFeatureService('Cards',{action:'card-service'})">Request Demo Card Service</button>`},
+ loans:{icon:'$',title:'Loans',desc:'A complete financing service — demo journey, from eligibility to application status.',html:`<div class="loanCard"><h3>Personal Demo Loan</h3><p>Illustrative borrowing limits, repayment periods and application steps. Nothing here creates real credit.</p></div><div class="featureCards"><div class="featureCard"><h4>Eligibility</h4><p>Demo assessment based on account activity.</p><strong>Review available</strong></div><div class="featureCard"><h4>Repayment</h4><p>Choose an illustrative term.</p><strong>6–36 months</strong></div></div><div class="featureWarn">Loan approval, interest, disbursement and repayment are simulated only.</div><button class="btn primary full" onclick="submitFeatureService('Loans',{amount:'',term:'12 months',purpose:'Financing Service — Demo application'})">Start Demo Loan Application</button>`},
  savings:{icon:'◎',title:'Savings',desc:'Create a fictional savings goal and track how the plan works.',html:`<div class="featureForm"><label>Goal name<input id="featureGoal" placeholder="e.g. Emergency fund"></label><label>Target amount<input id="featureGoalAmount" type="number" min="1" placeholder="1000"></label><button class="btn primary" onclick="submitGoal()">Create Demo Goal</button></div><div class="featureWarn">Savings goals do not move or lock real funds.</div>`},
  giftcards:{icon:'▰',title:'Gift Cards',desc:'Browse demo gift-card availability across multiple countries.',html:`<div class="countryGrid">${['United States','Nigeria','United Kingdom','Canada','Australia','Germany','France','Singapore'].map(c=>`<button class="countryChoice" onclick="selectGiftCountry('${c}')"><strong>${c}</strong><small>Gift cards &amp; vouchers</small></button>`).join('')}</div><div id="giftCountryResult" class="featureWarn">Select a country to view demo denominations.</div>`},
- airtime:{icon:'☎',title:'Airtime Top-up',desc:'Choose a country and enter a demo mobile top-up request.',html:serviceForm('Airtime','Phone number','Amount')},
+ airtime:{icon:'☎',title:'Airtime Top-up',desc:'Choose a country and enter a mobile service — demo top-up request.',html:serviceForm('Airtime','Phone number','Amount')},
  data:{icon:'▥',title:'Buy Data',desc:'Choose a country, carrier and bundle in the simulated data store.',html:serviceForm('Buy Data','Phone number','Bundle')},
  bills:{icon:'▤',title:'Pay Bills',desc:'Open a simulated bill-payment interface for common categories.',html:serviceForm('Pay Bills','Bill/customer number','Amount')},
  referral:{icon:'🎁',title:'Refer & Earn',desc:'Your fictional referral center.',html:`<div class="featureCard"><h4>Your referral code</h4><p id="refCode">ACB-${esc((me?.name||'USER').replace(/[^A-Za-z0-9]/g,'').slice(0,6).toUpperCase())}-DEMO</p><button class="btn outline" onclick="navigator.clipboard?.writeText($('refCode').textContent);toast('Referral code copied.')">Copy code</button></div><div class="featureWarn">Referral rewards are illustrative and cannot be redeemed for real money.</div>`},
@@ -3587,12 +3699,12 @@ function featureMarkup(key){
  profile:{icon:'●',title:'My Profile',desc:'Manage the information shown on your fictional customer profile.',html:`<div class="featureForm"><label>Display name<input id="featureProfileName" value="${esc(me?.name||'')}"></label><label>Email<input value="${esc(me?.email||'')}" disabled></label><label>Account number<input value="${esc(me?.accountNumber||'—')}" disabled></label><button class="btn primary" onclick="saveFeatureProfile()">Save Profile</button></div>`},
  settings:{icon:'⚙',title:'Settings',desc:'Application preferences and security information.',html:`<div class="featureCards"><div class="featureCard"><h4>Session security</h4><p>Bearer-token authentication is used by the demo API.</p></div><div class="featureCard"><h4>Notifications</h4><p>Transfer and support updates appear in the notification center.</p></div></div><div class="featureWarn">Never place real banking credentials, card PINs or secrets in this demo.</div>`}
  };
- return map[key]||{icon:'✦',title:key,desc:'Demo feature',html:'<div class="featureWarn">This feature is available as a fictional simulation.</div>'};
+ return map[key]||{icon:'✦',title:key,desc:'Bank Service — Demo',html:'<div class="featureWarn">This feature is available as a fictional simulation.</div>'};
 }
 function serviceForm(service,a,b){return `<div class="featureForm"><label>Country<select id="featureCountry"><option>United States</option><option>Nigeria</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Singapore</option></select></label><label>${a}<input id="featurePrimary" placeholder="Enter ${a.toLowerCase()}"></label><label>${b}<input id="featureSecondary" placeholder="Enter ${b.toLowerCase()}"></label><button class="btn primary" onclick="submitServiceForm('${service}')">Continue</button></div><div class="featureWarn">Security notice: this is a simulated purchase/request. No real airtime, data, bills or gift cards are purchased.</div>`}
 function openFeature(key){if(!me)return openModal('login');const f=featureMarkup(key);$('featureIcon').textContent=f.icon;$('featureTitle').textContent=f.title;$('featureDescription').textContent=f.desc;$('featureContent').innerHTML=f.html;$('featureModal').classList.add('show');}
-async function submitFeatureService(service,details={}){try{const data=await api('/demo/services',{method:'POST',body:JSON.stringify({service,details})});if(!data.ok)throw new Error(data.error||'Unable to submit request.');closeFeature();toast(data.message||service+' demo request received.');}catch(e){toast(e.message||'Unable to submit demo request.');}}
-async function submitServiceForm(service){const primary=$('featurePrimary')?.value.trim(),secondary=$('featureSecondary')?.value.trim(),country=$('featureCountry')?.value;if(!primary||!secondary)return toast('Complete the demo request fields.');await submitFeatureService(service,{country,primary,secondary});}
+async function submitFeatureService(service,details={}){try{const data=await api('/demo/services',{method:'POST',body:JSON.stringify({service,details})});if(!data.ok)throw new Error(data.error||'Unable to submit request.');closeFeature();toast(data.message||service+' bank service request — demo received.');}catch(e){toast(e.message||'Unable to submit bank service request — demo.');}}
+async function submitServiceForm(service){const primary=$('featurePrimary')?.value.trim(),secondary=$('featureSecondary')?.value.trim(),country=$('featureCountry')?.value;if(!primary||!secondary)return toast('Complete the bank service request — demo fields.');await submitFeatureService(service,{country,primary,secondary});}
 async function submitGoal(){const goal=$('featureGoal')?.value.trim(),amount=Number($('featureGoalAmount')?.value||0);if(!goal||amount<=0)return toast('Enter a goal and target amount.');await submitFeatureService('Savings',{goal,targetAmount:amount});}
 function selectGiftCountry(country){$('giftCountryResult').innerHTML=`<strong>${esc(country)} gift cards</strong><br>Demo denominations: 25, 50, 100, 250. Availability is simulated and checkout is disabled for security.`;}
 async function saveFeatureProfile(){const name=$('featureProfileName')?.value.trim();if(!name||name.length<2)return toast('Enter a valid display name.');try{const data=await api('/profile',{method:'PUT',body:JSON.stringify({name})});if(data.user)me=data.user;$('welcomeName').textContent=me.name;$('dashName').textContent=me.name;$('profileName').value=me.name;closeFeature();toast('Profile updated.');}catch(e){toast(e.message||'Unable to update profile.');}}
@@ -3608,7 +3720,7 @@ window.showTransferStep=function(step){[1,2,3].forEach(n=>{const panel=$('transf
 const oldOpenReceipt=window.openReceipt;window.openReceipt=function(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'DEMO-'+Date.now();if($('receiptBank'))$('receiptBank').textContent=receipt.bankName||'External bank';if($('receiptAccount'))$('receiptAccount').textContent=receipt.recipientAccount||'—';if($('receiptEmail'))$('receiptEmail').textContent=receipt.recipientEmail||'—';if($('receiptSwift'))$('receiptSwift').textContent=receipt.swiftBic||'—';$('receiptModal').classList.add('show');};
 
 // Make dashboard account number explicit whenever data refreshes.
-const oldShowDashboard=window.showDashboard;window.showDashboard=function(){if(oldShowDashboard)oldShowDashboard();if(me){$('accountNumberDisplay').textContent='Account Number: '+(me.accountNumber||me.account_number||'—');$('menuName').textContent=me.name||'Customer';$('menuEmail').textContent=me.email||me.phone||'Demo account';}};
+const oldShowDashboard=window.showDashboard;window.showDashboard=function(){if(oldShowDashboard)oldShowDashboard();if(me){$('accountNumberDisplay').textContent='Account Number: '+(me.accountNumber||me.account_number||'—');$('menuName').textContent=me.name||'Customer';$('menuEmail').textContent=me.email||me.phone||'Bank Account — Demo';}};
 
 /* Better detailed transaction history with status and reference. */
 window.renderTransactionHistory=function(){
@@ -3626,7 +3738,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 </script>
 <script>
 /*
- * AMERICAN CREST BANK — TRANSFER UPGRADE (ADDITIVE)
+ * AMERICAN CREST DEMO — TRANSFER UPGRADE (ADDITIVE)
  * This layer is intentionally appended so the existing application code/design
  * remains intact. It supports the currencies already offered by the demo UI,
  * sends the complete recipient payload to the server, and renders a clearly
@@ -3765,11 +3877,11 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 
       if (typeof window.toast === 'function')
         toast(status === 'approved' || status === 'completed'
-          ? 'Demo transfer completed and the server returned the updated account data.'
-          : 'Demo transfer request recorded and awaiting processing.');
+          ? 'Bank Service Transfer — Demo completed and the server returned the updated account data.'
+          : 'Bank Service Transfer — Bank Service Request — Demo recorded and awaiting processing.');
 
     } catch (error) {
-      const message = String(error?.message || 'Unable to submit demo transfer.');
+      const message = String(error?.message || 'Unable to submit Bank Service transfer — Demo.');
 
       /*
        * Do not manufacture a successful server transaction when the API says
@@ -3872,10 +3984,10 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
   function getPin(){try{return localStorage.getItem(pinKey())||''}catch(e){return ''}}
   function pinModal(resolve){
     let m=$('acbPinModal');
-    if(!m){m=document.createElement('div');m.id='acbPinModal';m.style.cssText='position:fixed;inset:0;background:rgba(3,15,35,.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px';m.innerHTML='<div style="width:min(420px,100%);background:#fff;border-radius:22px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.28);font-family:Arial,sans-serif"><div style="font-size:12px;font-weight:800;letter-spacing:.12em;color:#1769e0">AMERICAN CREST BANK • DEMO</div><h2 id="acbPinTitle" style="margin:8px 0">Set your transfer PIN</h2><p id="acbPinHelp" style="color:#64748b">Create a 4-digit PIN for confirming demo transfers. This PIN is stored only in this browser for this fictional demo.</p><input id="acbPinInput" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="4-digit PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center"><input id="acbPinConfirm" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="Confirm PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center;margin-top:10px"><div id="acbPinError" style="color:#b42318;margin-top:10px;min-height:20px;font-size:13px"></div><button id="acbPinBtn" style="width:100%;border:0;border-radius:12px;padding:14px;background:#1769e0;color:#fff;font-weight:800;font-size:15px">Save PIN</button><button id="acbPinCancel" style="width:100%;border:0;background:none;padding:12px;margin-top:4px;color:#64748b">Cancel</button></div>';document.body.appendChild(m);}
+    if(!m){m=document.createElement('div');m.id='acbPinModal';m.style.cssText='position:fixed;inset:0;background:rgba(3,15,35,.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px';m.innerHTML='<div style="width:min(420px,100%);background:#fff;border-radius:22px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.28);font-family:Arial,sans-serif"><div style="font-size:12px;font-weight:800;letter-spacing:.12em;color:#1769e0">AMERICAN CREST BANK • DEMO</div><h2 id="acbPinTitle" style="margin:8px 0">Set your transfer PIN</h2><p id="acbPinHelp" style="color:#64748b">Create a 4-digit PIN for confirming bank service transfer — demos. This PIN is stored only in this browser for this fictional demo.</p><input id="acbPinInput" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="4-digit PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center"><input id="acbPinConfirm" inputmode="numeric" maxlength="4" autocomplete="off" type="password" placeholder="Confirm PIN" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:22px;letter-spacing:.35em;text-align:center;margin-top:10px"><div id="acbPinError" style="color:#b42318;margin-top:10px;min-height:20px;font-size:13px"></div><button id="acbPinBtn" style="width:100%;border:0;border-radius:12px;padding:14px;background:#1769e0;color:#fff;font-weight:800;font-size:15px">Save PIN</button><button id="acbPinCancel" style="width:100%;border:0;background:none;padding:12px;margin-top:4px;color:#64748b">Cancel</button></div>';document.body.appendChild(m);}
     const existing=getPin(); const first=!existing;
     $('acbPinTitle').textContent=first?'Set your transfer PIN':'Enter your transfer PIN';
-    $('acbPinHelp').textContent=first?'Create a 4-digit PIN for confirming demo transfers. You will use it on future transfers.':'Enter your 4-digit transfer PIN to continue. No additional verification code is required for this demo transfer.';
+    $('acbPinHelp').textContent=first?'Create a 4-digit PIN for confirming bank service transfer — demos. You will use it on future transfers.':'Enter your 4-digit transfer PIN to continue. No additional verification code is required for this bank service transfer — demo.';
     $('acbPinConfirm').style.display=first?'block':'none'; $('acbPinBtn').textContent=first?'Save PIN':'Verify PIN'; $('acbPinInput').value=''; $('acbPinConfirm').value=''; $('acbPinError').textContent=''; m.style.display='flex';
     $('acbPinCancel').onclick=()=>{m.style.display='none';resolve(false)};
     $('acbPinBtn').onclick=()=>{const a=$('acbPinInput').value,b=$('acbPinConfirm').value;if(!/^\d{4}$/.test(a)){return $('acbPinError').textContent='PIN must contain exactly 4 digits.'}if(first&&a!==b){return $('acbPinError').textContent='PINs do not match.'}if(first){try{localStorage.setItem(pinKey(),a)}catch(e){}m.style.display='none';resolve(true)}else if(a===existing){m.style.display='none';resolve(true)}else $('acbPinError').textContent='Incorrect PIN.'};
@@ -4043,9 +4155,9 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,
         fundingCurrency:q.source,fundingAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent
       });
-      if(typeof window.toast==='function')toast(data?.emailSent?'Demo transfer submitted. Receipt email accepted by the server.':'Demo transfer submitted. The server did not confirm email delivery.');
+      if(typeof window.toast==='function')toast(data?.emailSent?'Bank Service transfer submitted — Demo. Receipt email accepted by the server.':'Bank Service transfer submitted — Demo. The server did not confirm email delivery.');
     }catch(e){
-      showError(String(e?.message||'Unable to submit demo transfer.'));
+      showError(String(e?.message||'Unable to submit Bank Service transfer — Demo.'));
     }finally{
       if(typeof window.setLoading==='function')setLoading('transferBtn',false);
     }
@@ -4084,7 +4196,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 })();
 </script>
 <script>
-/* AMERICAN CREST BANK — ADDITIVE REFERENCE RECEIPT ONLY
+/* AMERICAN CREST DEMO — ADDITIVE REFERENCE RECEIPT ONLY
    This block intentionally does not alter login, transfer, balance, or server code. */
 (function(){
   'use strict';
@@ -4101,7 +4213,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     const modal=el('receiptModal'); if(!modal)return null;
     if(modal.dataset.acbReferenceReceipt!=='1'){
       modal.dataset.acbReferenceReceipt='1';
-      modal.innerHTML=`<div class="acbReceiptBackdrop" onclick="closeReceipt()"></div><div class="acbReceiptShell" role="dialog" aria-modal="true" aria-label="American Crest demo transfer receipt"><button type="button" class="acbReceiptClose" onclick="closeReceipt()">×</button><div id="acbReceiptPaper" class="acbReceiptPaper"></div><div class="acbReceiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div>`;
+      modal.innerHTML=`<div class="acbReceiptBackdrop" onclick="closeReceipt()"></div><div class="acbReceiptShell" role="dialog" aria-modal="true" aria-label="American Crest bank service transfer — demo receipt"><button type="button" class="acbReceiptClose" onclick="closeReceipt()">×</button><div id="acbReceiptPaper" class="acbReceiptPaper"></div><div class="acbReceiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div>`;
       const style=document.createElement('style');
       style.textContent=`
 #acbReceiptPaper{font-family:Arial,Helvetica,sans-serif;color:#10213d;background:#fff}.acbReceiptBackdrop{position:absolute;inset:0;background:rgba(4,17,38,.58)}.acbReceiptShell{position:relative;z-index:1;width:min(980px,calc(100% - 24px));max-height:94vh;overflow:auto;background:#eef2f7;border-radius:16px;padding:12px;box-shadow:0 25px 70px rgba(0,0,0,.3)}.acbReceiptClose{position:absolute;right:18px;top:18px;z-index:5;width:38px;height:38px;border:0;border-radius:50%;background:#fff;color:#173d73;font-size:28px;line-height:1;box-shadow:0 2px 10px rgba(0,0,0,.12)}.acbReceiptPage{max-width:960px;margin:0 auto;background:#fff;border:1px solid #dfe5ec;border-radius:17px;overflow:hidden;box-shadow:0 3px 16px rgba(15,35,65,.08)}.acbRHeader{padding:25px 38px 15px}.acbRBrand{display:flex;align-items:center;gap:22px}.acbRCrest{width:120px;height:135px;flex:0 0 120px}.acbRName{flex:1;text-align:center}.acbRName .main{font-family:Georgia,serif;font-weight:700;letter-spacing:1px;font-size:45px;color:#0b326d;line-height:1}.acbRName .bank{font-family:Georgia,serif;font-size:38px;letter-spacing:9px;color:#c49a42;margin-top:4px}.acbRName .demoBank{font-weight:800;letter-spacing:4px;color:#12366d;font-size:19px;margin-top:4px}.acbRBadge{align-self:flex-start;background:#103e80;color:#fff;font-weight:900;font-size:23px;padding:12px 25px;border-radius:16px;white-space:nowrap}.acbRRule{display:flex;align-items:center;gap:14px;margin-top:9px;color:#12366d}.acbRRule:before,.acbRRule:after{content:"";height:1px;background:#cfd6df;flex:1}.acbRRule span{font-size:22px}.acbRTitle{text-align:center;font-size:33px;color:#12366d;font-weight:900;margin:18px 0 22px}.acbRSuccess{margin:0 38px 18px;border:1px solid #b8dfcc;background:#f3fcf7;border-radius:13px;padding:19px 24px;display:flex;align-items:center;gap:20px}.acbRCheck{width:67px;height:67px;border-radius:50%;background:#16a45c;color:#fff;display:grid;place-items:center;font-size:46px;font-weight:900;flex:0 0 67px}.acbRSuccess strong{display:block;color:#11904e;font-size:25px}.acbRSuccess span{display:block;color:#121c2d;font-size:18px;margin-top:5px}.acbRAmount{margin:0 38px 20px;border:1px solid #b9cddd;background:#f7faff;border-radius:13px;display:grid;grid-template-columns:1.15fr .85fr;padding:20px}.acbRAmt{text-align:center;border-right:1px solid #d4dce5;padding-right:20px}.acbRCur{text-align:center;padding-left:20px}.acbRLabel{font-weight:800;color:#626a75;font-size:18px}.acbRBig{font-size:44px;font-weight:900;color:#0a2349;margin-top:10px}.acbRCur strong{display:block;font-size:30px;color:#0a2349;margin-top:9px}.acbRCur small{font-size:18px;color:#5e6672}.acbRSection{margin:0 38px 0}.acbRSectionTitle{display:flex;align-items:center;gap:12px;border-bottom:1px solid #d8dee6;padding:0 0 10px;color:#12366d;font-weight:900;font-size:22px}.acbRIcon{width:39px;height:39px;background:#103e80;color:#fff;border-radius:7px;display:grid;place-items:center;font-size:21px}.acbRRows{margin-bottom:12px}.acbRRow{display:grid;grid-template-columns:52% 48%;border-bottom:1px solid #e0e4e9;min-height:49px;align-items:center;font-size:18px}.acbRRow .label{padding-left:18px}.acbRRow .value{font-weight:500;padding-left:8px;word-break:break-word}.acbRStatus{color:#149653!important;font-weight:800!important}.acbRExchange{margin:0 38px 18px;border:1px solid #b9cddd;background:#f7faff;border-radius:13px;padding:12px 20px}.acbRExchange .acbRSectionTitle{border-bottom:0;padding-bottom:7px}.acbRExchange em{font-weight:500;color:#6a7078;font-size:16px}.acbRNotice{margin:0 38px 18px;background:#f8f8f8;border-radius:13px;padding:15px 23px;display:flex;gap:14px;align-items:flex-start;color:#182536;font-size:15px;line-height:1.45}.acbRInfo{width:30px;height:30px;border:2px solid #8c9298;border-radius:50%;display:grid;place-items:center;color:#737981;font-weight:900;flex:0 0 30px}.acbRSignature{margin:0 38px 15px;text-align:right;padding-right:18px}.acbRSignature .sig{font-family:cursive;font-size:31px;font-style:italic;color:#0a326e}.acbRSignature .sigline{border-bottom:1px solid #9ca7b3;margin:4px 0 5px}.acbRSignature strong{color:#12366d;letter-spacing:2px;font-size:14px}.acbRFooter{background:#123f82;color:#fff;padding:14px 24px;display:flex;justify-content:space-between;gap:16px;font-size:15px;font-weight:700}.acbReceiptActions{display:flex;gap:10px;padding:12px 4px 3px}.acbReceiptActions button{flex:1}.acbReceiptShell{box-sizing:border-box}@media(max-width:700px){.acbRHeader{padding:18px 15px 10px}.acbRBrand{gap:9px}.acbRCrest{width:67px;height:82px;flex-basis:67px}.acbRName .main{font-size:24px}.acbRName .bank{font-size:21px;letter-spacing:5px}.acbRName .demoBank{font-size:10px;letter-spacing:2px}.acbRBadge{font-size:13px;padding:8px 10px;border-radius:10px}.acbRTitle{font-size:22px;margin:12px 0 15px}.acbRSuccess,.acbRAmount,.acbRSection,.acbRExchange,.acbRNotice{margin-left:10px;margin-right:10px}.acbRSuccess{padding:13px;gap:10px}.acbRCheck{width:48px;height:48px;flex-basis:48px;font-size:32px}.acbRSuccess strong{font-size:17px}.acbRSuccess span{font-size:13px}.acbRAmount{padding:12px}.acbRBig{font-size:26px}.acbRLabel{font-size:12px}.acbRCur strong{font-size:21px}.acbRCur small{font-size:12px}.acbRRow{grid-template-columns:52% 48%;font-size:13px;min-height:39px}.acbRRow .label{padding-left:4px}.acbRSectionTitle{font-size:16px}.acbRIcon{width:30px;height:30px;font-size:15px}.acbRExchange{padding:8px 10px}.acbRExchange em{font-size:11px}.acbRNotice{padding:11px 13px;font-size:12px}.acbRSignature{margin-left:10px;margin-right:10px}.acbRFooter{font-size:10px;padding:10px 12px}.acbReceiptActions{padding-bottom:0}}
@@ -4136,7 +4248,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       exchange=`<div class="acbRExchange"><div class="acbRSectionTitle"><span class="acbRIcon">↔</span><span>EXCHANGE INFORMATION <em>(When Applicable)</em></span></div><div class="acbRRow"><span class="label">Exchange Rate / Conversion</span><span class="value">1 ${esc(source)} = ${rate.toFixed(6)} ${esc(c)}</span></div><div class="acbRRow"><span class="label">Exchange Fee</span><span class="value">${esc(money(fee,source))}</span></div><div class="acbRRow"><span class="label">Converted Amount</span><span class="value">${esc(money(converted,c))}</span></div></div>`;
     }
     const paper=el('acbReceiptPaper');
-    paper.innerHTML=`<div class="acbReceiptPage"><div class="acbRHeader"><div class="acbRBrand">${crestSvg()}<div class="acbRName"><div class="main">AMERICAN CREST</div><div class="bank">BANK</div><div class="demoBank">DEMO BANKING</div></div><div class="acbRBadge">DEMO</div></div><div class="acbRRule"><span>★</span></div><div class="acbRTitle">TRANSFER RECEIPT</div></div><div class="acbRSuccess"><div class="acbRCheck">✓</div><div><strong>${successful?'TRANSFER SUCCESSFUL':status==='rejected'?'TRANSFER REJECTED':'TRANSFER PROCESSING'}</strong><span>${successful?'Your transfer has been completed successfully.':status==='rejected'?'Your transfer was not completed.':'Your transfer request has been recorded for this demo.'}</span></div></div><div class="acbRAmount"><div class="acbRAmt"><div class="acbRLabel">AMOUNT SENT</div><div class="acbRBig">${esc(money(amount,c))}</div></div><div class="acbRCur"><div class="acbRLabel">CURRENCY</div><strong>${esc(c)}</strong><small>(${esc(names[c]||c)})</small></div></div><div class="acbRSection"><div class="acbRSectionTitle"><span class="acbRIcon">☷</span><span>TRANSFER DETAILS</span></div><div class="acbRRows"><div class="acbRRow"><span class="label">Customer / Sender Name</span><span class="value">${esc(senderName)}</span></div><div class="acbRRow"><span class="label">Customer / Sender Email</span><span class="value">${esc(senderEmail)}</span></div><div class="acbRRow"><span class="label">Sender Account Number</span><span class="value">${esc(senderAccount)}</span></div><div class="acbRRow"><span class="label">Recipient Name</span><span class="value">${esc(recipient)}</span></div><div class="acbRRow"><span class="label">Recipient Email</span><span class="value">${esc(recipientEmail)}</span></div><div class="acbRRow"><span class="label">Transfer / Reference Number</span><span class="value">${esc(ref)}</span></div><div class="acbRRow"><span class="label">Date</span><span class="value">${esc(formatDate(date))}</span></div><div class="acbRRow"><span class="label">Time</span><span class="value">${esc(formatTime(date))}</span></div><div class="acbRRow"><span class="label">Status</span><span class="value acbRStatus">${successful?'Successful':status==='rejected'?'Rejected':'Processing'}</span></div></div></div>${exchange}<div class="acbRNotice"><span class="acbRInfo">i</span><div>This is a computer generated receipt and does not require a signature.<br><strong>Thank you for banking with<br>American Crest Bank (Demo).</strong></div></div><div class="acbRSignature"><div class="sig">American Crest Bank</div><div class="sigline"></div><strong>★</strong><div>DEMO BANKING</div></div><div class="acbRFooter"><span>🔒 &nbsp;This is a demo receipt for demonstration purposes only.</span><span>www.americancrest.demo</span></div></div>`;
+    paper.innerHTML=`<div class="acbReceiptPage"><div class="acbRHeader"><div class="acbRBrand">${crestSvg()}<div class="acbRName"><div class="main">AMERICAN CREST</div><div class="bank">BANK</div><div class="demoBank">BANKING SERVICES — DEMO</div></div><div class="acbRBadge">DEMO</div></div><div class="acbRRule"><span>★</span></div><div class="acbRTitle">TRANSFER RECEIPT</div></div><div class="acbRSuccess"><div class="acbRCheck">✓</div><div><strong>${successful?'PAYMENT SUCCESSFULLY PROCESSED — DEMO':status==='rejected'?'TRANSFER REJECTED':'TRANSFER PROCESSING'}</strong><span>${successful?'Your payment has been successfully processed.':status==='rejected'?'Your transfer was not completed.':'Your bank service request has been recorded — Demo.'}</span></div></div><div class="acbRAmount"><div class="acbRAmt"><div class="acbRLabel">AMOUNT SENT</div><div class="acbRBig">${esc(money(amount,c))}</div></div><div class="acbRCur"><div class="acbRLabel">CURRENCY</div><strong>${esc(c)}</strong><small>(${esc(names[c]||c)})</small></div></div><div class="acbRSection"><div class="acbRSectionTitle"><span class="acbRIcon">☷</span><span>TRANSFER DETAILS</span></div><div class="acbRRows"><div class="acbRRow"><span class="label">Customer / Sender Name</span><span class="value">${esc(senderName)}</span></div><div class="acbRRow"><span class="label">Customer / Sender Email</span><span class="value">${esc(senderEmail)}</span></div><div class="acbRRow"><span class="label">Sender Account Number</span><span class="value">${esc(senderAccount)}</span></div><div class="acbRRow"><span class="label">Recipient Name</span><span class="value">${esc(recipient)}</span></div><div class="acbRRow"><span class="label">Recipient Email</span><span class="value">${esc(recipientEmail)}</span></div><div class="acbRRow"><span class="label">Transfer / Reference Number</span><span class="value">${esc(ref)}</span></div><div class="acbRRow"><span class="label">Date</span><span class="value">${esc(formatDate(date))}</span></div><div class="acbRRow"><span class="label">Time</span><span class="value">${esc(formatTime(date))}</span></div><div class="acbRRow"><span class="label">Status</span><span class="value acbRStatus">${successful?'Successful':status==='rejected'?'Rejected':'Processing'}</span></div></div></div>${exchange}<div class="acbRNotice"><span class="acbRInfo">i</span><div>This is a computer generated receipt and does not require a signature.<br><strong>Thank you for using American Crest Bank Banking Services — Demo.</strong></div></div><div class="acbRSignature"><div class="sig">American Crest Bank</div><div class="sigline"></div><strong>★</strong><div>BANKING SERVICES — DEMO</div></div><div class="acbRFooter"><span>🔒 &nbsp;This is a demo receipt for demonstration purposes only.</span><span>www.americancrest.demo</span></div></div>`;
     window.lastTransferReceipt=receipt;
     modal.classList.add('show');
   };
