@@ -916,7 +916,7 @@ Refresh Customer List
 
 A simple safety banking Banking.
 
-No real bank account, payment, transfer or funds are created.
+No bank bank account, payment, transfer or funds are created.
 
 </p>
 
@@ -2215,7 +2215,7 @@ function populateExchangeCurrencies(){const from=$('exchangeFrom'),to=$('exchang
 function openExchange(){if(!me)return openModal('login');populateExchangeCurrencies();const amount=$('exchangeAmount');if(amount&&!amount.value)amount.value='';$('exchangeModal').classList.add('show');updateExchangeQuote();}
 function closeExchange(){const modal=$('exchangeModal');if(modal)modal.classList.remove('show');}
 function swapExchangeCurrencies(){const from=$('exchangeFrom'),to=$('exchangeTo');if(!from||!to)return;const value=from.value;from.value=to.value;to.value=value;updateExchangeQuote();}
-function updateExchangeQuote(){const from=$('exchangeFrom')?.value||'USD',to=$('exchangeTo')?.value||'EUR',amount=Number($('exchangeAmount')?.value||0);const fee=Math.max(0,amount*Banking_EXCHANGE_FEE_RATE),net=Math.max(0,amount-fee),converted=net*(Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from]),rate=Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from];lastExchangeQuote={from,to,amount,fee,net,converted,rate};$('exchangeSourcePreview').textContent=money(amount,from);$('exchangeFeePreview').textContent=money(fee,from);$('exchangeReceivePreview').textContent=money(converted,to);$('exchangeResultAmount').textContent=amount>0?money(converted,to):money(0,to);$('exchangeResultCaption').textContent=amount>0?`${money(amount,from)} less ${money(fee,from)} Banking fee at 1.00% → ${money(converted,to)}`:'Enter an amount to calculate the conversion.';$('exchangeRateBox').textContent=amount>0?`Banking rate: 1 ${from} = ${rate.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}. Banking fee: 1.00% (${money(fee,from)}). No real funds are exchanged.`:'Enter an amount to see the Banking exchange rate and fee.';return lastExchangeQuote;}
+function updateExchangeQuote(){const from=$('exchangeFrom')?.value||'USD',to=$('exchangeTo')?.value||'EUR',amount=Number($('exchangeAmount')?.value||0);const fee=Math.max(0,amount*Banking_EXCHANGE_FEE_RATE),net=Math.max(0,amount-fee),converted=net*(Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from]),rate=Banking_EXCHANGE_RATES[to]/Banking_EXCHANGE_RATES[from];lastExchangeQuote={from,to,amount,fee,net,converted,rate};$('exchangeSourcePreview').textContent=money(amount,from);$('exchangeFeePreview').textContent=money(fee,from);$('exchangeReceivePreview').textContent=money(converted,to);$('exchangeResultAmount').textContent=amount>0?money(converted,to):money(0,to);$('exchangeResultCaption').textContent=amount>0?`${money(amount,from)} less ${money(fee,from)} Banking fee at 1.00% → ${money(converted,to)}`:'Enter an amount to calculate the conversion.';$('exchangeRateBox').textContent=amount>0?`Banking rate: 1 ${from} = ${rate.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}. Banking fee: 1.00% (${money(fee,from)}). No bank funds are exchanged.`:'Enter an amount to see the Banking exchange rate and fee.';return lastExchangeQuote;}
 function useExchangeForTransfer(){const quote=updateExchangeQuote();if(!quote||quote.amount<=0)return toast('Enter an amount to exchange first.');closeExchange();openTransfer();$('transferCurrency').value=quote.to;$('transferAmount').value=quote.converted.toFixed(2);toast('Converted amount added to the transfer form.');}
 function openTransactionHistory(){if(!me)return openModal('login');renderTransactionHistory();$('historyModal').classList.add('show');}
 function closeTransactionHistory(){const modal=$('historyModal');if(modal)modal.classList.remove('show');}
@@ -3701,7 +3701,7 @@ function featureMarkup(key){
  };
  return map[key]||{icon:'✦',title:key,desc:'Bank Service — Banking',html:'<div class="featureWarn">This feature is available as a safety simulation.</div>'};
 }
-function serviceForm(service,a,b){return `<div class="featureForm"><label>Country<select id="featureCountry"><option>United States</option><option>Nigeria</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Singapore</option></select></label><label>${a}<input id="featurePrimary" placeholder="Enter ${a.toLowerCase()}"></label><label>${b}<input id="featureSecondary" placeholder="Enter ${b.toLowerCase()}"></label><button class="btn primary" onclick="submitServiceForm('${service}')">Continue</button></div><div class="featureWarn">Security notice: this is a authentic purchase/request. No real airtime, data, bills or gift cards are purchased.</div>`}
+function serviceForm(service,a,b){return `<div class="featureForm"><label>Country<select id="featureCountry"><option>United States</option><option>Nigeria</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Singapore</option></select></label><label>${a}<input id="featurePrimary" placeholder="Enter ${a.toLowerCase()}"></label><label>${b}<input id="featureSecondary" placeholder="Enter ${b.toLowerCase()}"></label><button class="btn primary" onclick="submitServiceForm('${service}')">Continue</button></div><div class="featureWarn">Security notice: this is a authentic purchase/request. No bank airtime, data, bills or gift cards are purchased.</div>`}
 function openFeature(key){if(!me)return openModal('login');const f=featureMarkup(key);$('featureIcon').textContent=f.icon;$('featureTitle').textContent=f.title;$('featureDescription').textContent=f.desc;$('featureContent').innerHTML=f.html;$('featureModal').classList.add('show');}
 async function submitFeatureService(service,details={}){try{const data=await api('/Banking/services',{method:'POST',body:JSON.stringify({service,details})});if(!data.ok)throw new Error(data.error||'Unable to submit request.');closeFeature();toast(data.message||service+' bank service request — Banking received.');}catch(e){toast(e.message||'Unable to submit bank service request — Banking.');}}
 async function submitServiceForm(service){const primary=$('featurePrimary')?.value.trim(),secondary=$('featureSecondary')?.value.trim(),country=$('featureCountry')?.value;if(!primary||!secondary)return toast('Complete the bank service request — Banking fields.');await submitFeatureService(service,{country,primary,secondary});}
@@ -3928,7 +3928,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     acbSet('receiptReference', receipt.id || 'Banking-' + Date.now());
 
     const note = receipt.note ? 'Note: ' + receipt.note :
-      'Safety American Crest Bank Banking transaction. No real funds are transferred.';
+      'Safety American Crest Bank Banking transaction. No bank funds are transferred.';
 
     acbSet('receiptNote', note);
 
