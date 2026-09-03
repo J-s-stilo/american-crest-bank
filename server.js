@@ -111,12 +111,12 @@ const CURRENCIES = [
 ];
 
 // Online Service FX rates expressed as units of each currency per 1 USD.
-// These are fixed online servicenstration rates, not live market rates.
-const online service_EXCHANGE_RATES = {USD:1,EUR:0.92,GBP:0.78,NGN:1535,IDR:16600,CAD:1.37,AUD:1.53,CHF:0.80,JPY:147,CNY:7.18,INR:83.5,MYR:4.68,SGD:1.35,AED:3.6725,ZAR:18.1,KES:129,GHS:15.2};
-const online service_TRANSFER_FEE_RATE = 0.01;
-function convertonline serviceAmount(amount, from, to) {
-  const f=online service_EXCHANGE_RATES[String(from).toUpperCase()];
-  const t=online service_EXCHANGE_RATES[String(to).toUpperCase()];
+// These are fixed safety rates, not live market rates.
+const DEMO_EXCHANGE_RATES = {USD:1,EUR:0.92,GBP:0.78,NGN:1535,IDR:16600,CAD:1.37,AUD:1.53,CHF:0.80,JPY:147,CNY:7.18,INR:83.5,MYR:4.68,SGD:1.35,AED:3.6725,ZAR:18.1,KES:129,GHS:15.2};
+const DEMO_TRANSFER_FEE_RATE = 0.01;
+function convertDemoAmount(amount, from, to) {
+  const f=DEMO_EXCHANGE_RATES[String(from).toUpperCase()];
+  const t=DEMO_EXCHANGE_RATES[String(to).toUpperCase()];
   if(!f||!t) throw new Error('Unsupported online service currency.');
   return Number(amount) * (t/f);
 }
@@ -181,7 +181,7 @@ function receiptSvg({
     <rect width="900" height="1320" fill="#f4f7fb"/>
     <rect x="60" y="40" width="780" height="1240" rx="28" fill="#fff" stroke="#d9e2ef" stroke-width="3"/>
     <text x="100" y="112" font-family="Arial" font-size="30" font-weight="700" fill="#071a35">${escSvg(BANK_NAME)}</text>
-    <text x="100" y="147" font-family="Arial" font-size="18" fill="#64748b">DIGITAL BANKING online service</text>
+    <text x="100" y="147" font-family="Arial" font-size="18" fill="#64748b">DIGITAL BANKING ONLINE SERVICE</text>
     <rect x="635" y="78" width="145" height="48" rx="24" fill="#e8f7ee"/>
     <text x="707" y="109" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#17633a">${escSvg(String(status || 'successful').toUpperCase())}</text>
     <line x1="100" y1="182" x2="800" y2="182" stroke="#e2e8f0"/>
@@ -213,21 +213,21 @@ function receiptSvg({
     <text x="130" y="988" font-family="Arial" font-size="15" font-weight="700" fill="#071a35">CONVERSION &amp; FEES</text>
     <text x="130" y="1022" font-family="Arial" font-size="16" fill="#475569">Amount debited: ${debitText}</text>
     <text x="130" y="1052" font-family="Arial" font-size="16" fill="#475569">Exchange rate: ${rateText}</text>
-    <text x="130" y="1082" font-family="Arial" font-size="16" fill="#475569">online service transfer fee: ${escSvg(feeAmount.toFixed(2))} ${escSvg(currency)}</text>
+    <text x="130" y="1082" font-family="Arial" font-size="16" fill="#475569">Online Service transfer fee: ${escSvg(feeAmount.toFixed(2))} ${escSvg(currency)}</text>
 
     <text x="100" y="1170" font-family="Arial" font-size="15" fill="#64748b">${hasConversion ? 'Currency conversion applied using fixed online service rates.' : 'No currency conversion was required.'}</text>
-    <text x="100" y="1202" font-family="Arial" font-size="15" fill="#94a3b8">Fictional / simulated transaction — no real funds were moved.</text>
-    <text x="100" y="1235" font-family="Arial" font-size="15" fill="#94a3b8">American Crest online service Banking • ${escSvg(BANK_EMAIL)}</text>
+    <text x="100" y="1202" font-family="Arial" font-size="15" fill="#94a3b8">Safety / simulated transaction — virtual funds were moved.</text>
+    <text x="100" y="1235" font-family="Arial" font-size="15" fill="#94a3b8">American Crest Online Service Banking • ${escSvg(BANK_EMAIL)}</text>
   </svg>`;
 }
 
-async function sendOnline ServiceEmail({ to, subject, html, receipt }) {
+async function sendOnlineServiceEmail({ to, subject, html, receipt }) {
   const recipient = String(to || '').trim();
-  console.log(`[online service EMAIL] requested recipient=${recipient || '(missing)'}`);
-  console.log(`[online service EMAIL] smtp configured host=${SMTP_HOST ? 'yes' : 'no'} port=${SMTP_PORT || '(missing)'} user=${SMTP_USER ? 'yes' : 'no'} password=${SMTP_PASSWORD ? 'yes' : 'no'}`);
+  console.log(`[ONLINE SERVICE EMAIL] requested recipient=${recipient || '(missing)'}`);
+  console.log(`[ONLINE SERVICE EMAIL] smtp configured host=${SMTP_HOST ? 'yes' : 'no'} port=${SMTP_PORT || '(missing)'} user=${SMTP_USER ? 'yes' : 'no'} password=${SMTP_PASSWORD ? 'yes' : 'no'}`);
 
   if (!recipient || !/^\S+@\S+\.\S+$/.test(recipient)) {
-    console.warn(`[online service EMAIL] skipped: invalid recipient email (${recipient || '(missing)'})`);
+    console.warn(`[ONLINE SERVICE EMAIL] skipped: invalid recipient email (${recipient || '(missing)'})`);
     return false;
   }
   if (!nodemailer) {
@@ -250,7 +250,7 @@ async function sendOnline ServiceEmail({ to, subject, html, receipt }) {
       socketTimeout: 20000
     });
 
-    console.log(`[online service EMAIL] attempting SMTP verify host=${SMTP_HOST} port=${SMTP_PORT} secure=${SMTP_PORT === 465}`);
+    console.log(`[ONLINE SERVICE EMAIL] attempting SMTP verify host=${SMTP_HOST} port=${SMTP_PORT} secure=${SMTP_PORT === 465}`);
     await transporter.verify();
     console.log('[ONLINE SERVICE EMAIL] SMTP verify succeeded.');
 
@@ -265,17 +265,17 @@ const info = await transporter.sendMail({
   html,
   attachments: receiptPng
     ? [{
-        filename: 'american-crest-online service-transfer-receipt.png',
+        filename: 'american-crest-demo-transfer-receipt.png',
         content: receiptPng,
         contentType: 'image/png'
       }]
     : []
 });
 
-    console.log(`[online service EMAIL] sendMail accepted messageId=${info.messageId || '(none)'} response=${info.response || '(none)'}`);
+    console.log(`[ONLINE SERVICE EMAIL] sendMail accepted messageId=${info.messageId || '(none)'} response=${info.response || '(none)'}`);
     return true;
   } catch (error) {
-    console.error(`[online service EMAIL] error name=${error?.name || '(unknown)'} code=${error?.code || '(none)'} command=${error?.command || '(none)'} message=${error?.message || error}`);
+    console.error(`[ONLINE SERVICE EMAIL] error name=${error?.name || '(unknown)'} code=${error?.code || '(none)'} command=${error?.command || '(none)'} message=${error?.message || error}`);
     return false;
   }
 }
@@ -1609,7 +1609,7 @@ async function initDb() {
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb`);
 
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS acb_online service_service_requests (
+    CREATE TABLE IF NOT EXISTS acb_demo_service_requests (
       id UUID PRIMARY KEY,
       user_id UUID NOT NULL REFERENCES acb_users(id) ON DELETE CASCADE,
       service TEXT NOT NULL,
@@ -1794,9 +1794,9 @@ app.get('/api/health', (_req, res) => {
 
     ok: true,
 
-    online service: true,
+    demo: true,
 
-    service: 'American Crest online service Banking Platform'
+    service: 'American Crest Online Service Banking Platform'
 
   });
 
@@ -1860,8 +1860,8 @@ async function registerHandler(req, res) {
     return res.status(202).json({
       ok:true, success:true, verificationRequired:true, verificationId,
       destination: email || phone, channel: email ? 'email' : 'phone',
-      message:'Verification code generated for this online service. Enter the code before accessing the account.',
-      online serviceVerificationCode: code
+      message:'Verification code generated for this demo. Enter the code before accessing the account.',
+      demoVerificationCode: code
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -1889,9 +1889,9 @@ async function verifyRegistrationHandler(req, res) {
     const accountNumber = await generateAccountNumber(client);
     await client.query(`INSERT INTO acb_users (id,name,email,phone,password_hash,role,status,primary_currency,account_number,profile_image,phone_verified) VALUES ($1,$2,$3,$4,$5,'customer','Active',$6,$7,'',$8)`, [userId,payload.name,payload.email,payload.phone,payload.passwordHash,payload.currency,accountNumber,!!payload.phone]);
     await ensureBalances(userId, client);
-    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your American Crest online service account was created successfully.']);
+    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your American Crest demo account was created successfully.']);
     const admin = await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
-    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),admin.rows[0].id,`New online service customer registered: ${payload.name} (${payload.email || payload.phone}).`]);
+    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),admin.rows[0].id,`New demo customer registered: ${payload.name} (${payload.email || payload.phone}).`]);
     await client.query(`UPDATE acb_verification_codes SET verified_at=NOW(),user_id=$1 WHERE id=$2`, [userId,verificationId]);
     await client.query('COMMIT');
     const user = await getUser(userId);
@@ -1941,7 +1941,7 @@ async function loginHandler(req, res) {
     const verificationId=uuid(); const code=String(crypto.randomInt(100000,1000000)); const codeHash=await bcrypt.hash(code,10); const loginIdentifier=databaseUser.email || databaseUser.phone;
     await pool.query(`DELETE FROM acb_verification_codes WHERE user_id=$1 AND purpose='login' AND verified_at IS NULL`,[databaseUser.id]);
     await pool.query(`INSERT INTO acb_verification_codes (id,user_id,purpose,identifier,code_hash,expires_at) VALUES ($1,$2,'login',$3,$4,NOW()+INTERVAL '10 minutes')`,[verificationId,databaseUser.id,loginIdentifier,codeHash]);
-    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for this online service. Enter the code before accessing the account.',online serviceVerificationCode:code});
+    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for this demo. Enter the code before accessing the account.',demoVerificationCode:code});
   } catch(error){ console.error('Login error:',error); return res.status(500).json({ok:false,success:false,error:'Unable to sign in.'}); }
 }
 
@@ -2229,7 +2229,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     await client.query(`INSERT INTO acb_balances(user_id,currency,amount) VALUES($1,$2,0) ON CONFLICT(user_id,currency) DO NOTHING`, [req.user.id,currency]);
     const balancesResult = await client.query(`SELECT currency,amount FROM acb_balances WHERE user_id=$1 FOR UPDATE`, [req.user.id]);
     const balances = Object.fromEntries(balancesResult.rows.map(r=>[String(r.currency).toUpperCase(),Number(r.amount||0)]));
-    const fee = amount * ONLINE SERVICE_TRANSFER_FEE_RATE;
+    const fee = amount * DEMO_TRANSFER_FEE_RATE;
     const targetTotal = amount + fee;
     let fundingCurrency = currency;
     let debitAmount = targetTotal;
@@ -2238,14 +2238,14 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
       const candidates = [primary,...Object.keys(balances).filter(c=>c!==primary)];
       let found = null;
       for (const candidate of candidates) {
-        const converted = convertOnline ServiceAmount(targetTotal, currency, candidate);
+        const converted = convertDemoAmount(targetTotal, currency, candidate);
         if ((balances[candidate] || 0) >= converted) { found={currency:candidate,amount:converted}; break; }
       }
-      if (!found) { await client.query('ROLLBACK'); return res.status(400).json({ok:false,error:`Insufficient online service funds. Required ${targetTotal.toLocaleString()} ${currency}, including a ${online service_TRANSFER_FEE_RATE*100}% online service transfer fee.`}); }
+      if (!found) { await client.query('ROLLBACK'); return res.status(400).json({ok:false,error:`Insufficient demo funds. Required ${targetTotal.toLocaleString()} ${currency}, including a ${DEMO_TRANSFER_FEE_RATE*100}% online service transfer fee.`}); }
       fundingCurrency=found.currency;
       debitAmount=found.amount;
     }
-    const exchangeRate = convertOnline ServiceAmount(1, fundingCurrency, currency);
+    const exchangeRate = convertDemoAmount(1, fundingCurrency, currency);
 
     const requestId = uuid();
     const reference = makeReference('ACBTRF');
@@ -2253,7 +2253,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
     await client.query(`UPDATE acb_balances SET amount=amount-$1 WHERE user_id=$2 AND currency=$3`, [debitAmount,req.user.id,fundingCurrency]);
     await client.query(`INSERT INTO acb_transactions(id,user_id,kind,title,amount,currency,reference,status,metadata) VALUES($1,$2,'debit',$3,$4,$5,$6,'pending',$7)`, [debitTransactionId,req.user.id,`Transfer to ${recipient}`,debitAmount,fundingCurrency,reference,JSON.stringify({recipient,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,requestId,requestedAmount:amount,requestedCurrency:currency,fee,fundingCurrency,exchangeRate})]);
-    await client.query(`INSERT INTO acb_requests(id,user_id,currency,amount,recipient,note,status,recipient_bank,recipient_account,recipient_email,recipient_country,swift_bic,reference,debit_transaction_id,metadata) VALUES($1,$2,$3,$4,$5,$6,'pending',$7,$8,$9,$10,$11,$12,$13,$14)`, [requestId,req.user.id,currency,amount,recipient,note,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,reference,debitTransactionId,JSON.stringify({online service:true,fee,fundingCurrency,debitAmount,exchangeRate})]);
+    await client.query(`INSERT INTO acb_requests(id,user_id,currency,amount,recipient,note,status,recipient_bank,recipient_account,recipient_email,recipient_country,swift_bic,reference,debit_transaction_id,metadata) VALUES($1,$2,$3,$4,$5,$6,'pending',$7,$8,$9,$10,$11,$12,$13,$14)`, [requestId,req.user.id,currency,amount,recipient,note,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,reference,debitTransactionId,JSON.stringify({onlineService:true,fee,fundingCurrency,debitAmount,exchangeRate})]);
     await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),req.user.id,`Transfer ${reference}: your account was debited ${debitAmount.toLocaleString()} ${fundingCurrency} for ${amount.toLocaleString()} ${currency}. Status: PENDING.`]);
     const admin = await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
     if (admin.rowCount) await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),admin.rows[0].id,`Pending online service transfer ${reference}: ${customer.name} → ${recipient}, ${amount.toLocaleString()} ${currency} (debit ${debitAmount.toLocaleString()} ${fundingCurrency}).`]);
@@ -2279,19 +2279,19 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
       exchangeRate
     });
     let emailSent = false;
-    console.log(`[online service EMAIL] transfer ${reference} recipientEmail=${recipientEmail || '(missing)'}`);
+    console.log(`[ONLINE SERVICE EMAIL] transfer ${reference} recipientEmail=${recipientEmail || '(missing)'}`);
     if (recipientEmail) {
-      emailSent = await sendOnline ServiceEmail({
+      emailSent = await sendOnlineServiceEmail({
         to: recipientEmail,
         subject: `Transfer pending — ${reference}`,
         receipt,
-        html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>A simulated transfer is pending.</b></p><p>A online service transfer has been initiated for you and is awaiting processing.</p><div style="padding:18px;background:#f4f7fb;border-radius:14px"><p><b>Amount:</b> ${amount.toLocaleString()} ${currency}</p><p><b>Reference:</b> ${reference}</p><p><b>Recipient bank:</b> ${recipientBank}</p><p><b>Status:</b> PENDING</p></div><p style="color:#64748b">This is a fictional/online service banking notification. No real funds were transferred.</p></div>`
+        html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>A transfer is pending.</b></p><p>A online service transfer has been initiated for you and is awaiting processing.</p><div style="padding:18px;background:#f4f7fb;border-radius:14px"><p><b>Amount:</b> ${amount.toLocaleString()} ${currency}</p><p><b>Reference:</b> ${reference}</p><p><b>Recipient bank:</b> ${recipientBank}</p><p><b>Status:</b> PENDING</p></div><p style="color:#64748b">This is a safety/online service banking notification. Virtual funds were transferred.</p></div>`
       });
-      console.log(`[online service EMAIL] transfer ${reference} result=${emailSent ? 'sent' : 'not-sent'}`);
+      console.log(`[ONLINE SERVICE EMAIL] transfer ${reference} result=${emailSent ? 'sent' : 'not-sent'}`);
       if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [requestId]);
     }
 
-    return res.status(201).json({ok:true,success:true,message:'online service transfer submitted and the account was debited.',emailSent,request:{id:requestId,status:'pending',reference,created_at:date,recipient,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,amount,currency,note,fee,fundingCurrency,debitAmount,exchangeRate,totalDebited:debitAmount},user,customer:user});
+    return res.status(201).json({ok:true,success:true,message:'Online Service transfer submitted and the account was debited.',emailSent,request:{id:requestId,status:'pending',reference,created_at:date,recipient,recipientBank,recipientAccount,recipientEmail,recipientCountry,swiftBic,amount,currency,note,fee,fundingCurrency,debitAmount,exchangeRate,totalDebited:debitAmount},user,customer:user});
   } catch (error) {
     try { await client.query('ROLLBACK'); } catch {}
     console.error('Transfer request error:', error);
@@ -3217,7 +3217,7 @@ async function creditCustomerAccount({
 
         description ||
 
-          'Funds credited by online service administrator',
+          'Funds credited by demo administrator',
 
         amount,
 
@@ -3249,7 +3249,7 @@ async function creditCustomerAccount({
 
         userId,
 
-        `A online service credit of ${amount.toLocaleString()} ${currency} was added to your account.`
+        `A demo credit of ${amount.toLocaleString()} ${currency} was added to your account.`
 
       ]
 
@@ -4920,7 +4920,7 @@ async function updateTransferStatus(req, res) {
       await client.query(`INSERT INTO acb_transactions(id,user_id,kind,title,amount,currency,reference,status,metadata) VALUES($1,$2,'credit',$3,$4,$5,$6,'completed',$7)`, [uuid(),request.user_id,`Transfer reversal — ${request.recipient}`,debitAmount,fundingCurrency,reversalReference,JSON.stringify({transferReference:request.reference,requestId:request.id,requestedAmount:request.amount,requestedCurrency:request.currency})]);
       await client.query(`UPDATE acb_transactions SET status='rejected' WHERE id=$1`, [request.debit_transaction_id]);
       await client.query(`UPDATE acb_requests SET status='rejected',handled_at=NOW() WHERE id=$1`, [request.id]);
-      await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),request.user_id,`Transfer ${request.reference || request.id} was rejected. ${request.amount.toLocaleString()} ${request.currency} has been returned to your online service balance.`]);
+      await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`, [uuid(),request.user_id,`Transfer ${request.reference || request.id} was rejected. ${request.amount.toLocaleString()} ${request.currency} has been returned to your demo balance.`]);
       await client.query('COMMIT');
       const updatedUser = await getUser(String(request.user_id));
       const receipt = receiptSvg({
@@ -4941,7 +4941,7 @@ async function updateTransferStatus(req, res) {
         exchangeRate: Number(transferMeta.exchangeRate || 1)
       });
       let emailSent = false;
-      if (request.recipient_email) emailSent = await sendOnline ServiceEmail({to:request.recipient_email,subject:`Transfer rejected — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial"><h2>${BANK_NAME}</h2><p>The simulated transfer <b>${request.reference || request.id}</b> was rejected.</p><p>No real funds were moved. The sender's online service balance was restored.</p></div>`});
+      if (request.recipient_email) emailSent = await sendOnlineServiceEmail({to:request.recipient_email,subject:`Transfer rejected — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial"><h2>${BANK_NAME}</h2><p>The simulated transfer <b>${request.reference || request.id}</b> was rejected.</p><p>No real funds were moved. The sender's demo balance was restored.</p></div>`});
       if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [request.id]);
       return res.json({ok:true,status:'rejected',emailSent,user:updatedUser,customer:updatedUser});
     }
@@ -4970,9 +4970,9 @@ async function updateTransferStatus(req, res) {
       exchangeRate: Number(transferMeta.exchangeRate || 1)
     });
     let emailSent = false;
-    if (request.recipient_email) emailSent = await sendonline serviceEmail({to:request.recipient_email,subject:`Transfer approved — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>Your simulated transfer is successful.</b></p><p>Reference: <b>${request.reference || request.id}</b></p><p>Amount: <b>${Number(request.amount).toLocaleString()} ${request.currency}</b></p><p>Recipient: <b>${request.recipient}</b></p><p>Bank: <b>${request.recipient_bank}</b></p><p>Status: <b>SUCCESSFUL</b></p><p style="color:#64748b">This is a fictional/online service banking notification. No real funds were transferred.</p></div>`});
+    if (request.recipient_email) emailSent = await sendOnlineServiceEmail({to:request.recipient_email,subject:`Transfer approved — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>Your simulated transfer is successful.</b></p><p>Reference: <b>${request.reference || request.id}</b></p><p>Amount: <b>${Number(request.amount).toLocaleString()} ${request.currency}</b></p><p>Recipient: <b>${request.recipient}</b></p><p>Bank: <b>${request.recipient_bank}</b></p><p>Status: <b>SUCCESSFUL</b></p><p style="color:#64748b">This is a safety/online service banking notification. Virtual funds were transferred.</p></div>`});
     if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [request.id]);
-    return res.json({ok:true,status:'approved',message:'online service transfer approved.',emailSent,user:updatedUser,customer:updatedUser,balance:updatedUser?.balances?.[request.currency] ?? 0});
+    return res.json({ok:true,status:'approved',message:'Online Service transfer approved.',emailSent,user:updatedUser,customer:updatedUser,balance:updatedUser?.balances?.[request.currency] ?? 0});
   } catch(error) {
     try { await client.query('ROLLBACK'); } catch {}
     console.error('Transfer status error:',error);
@@ -5053,39 +5053,39 @@ app.post(
 
 /*
 =========================================================
-ONLINE SERVICE SERVICE WORKFLOWS
+DEMO SERVICE WORKFLOWS
 =========================================================
 */
-app.get('/api/online service/services', auth, async (req,res) => {
+app.get('/api/demo/services', auth, async (req,res) => {
   try {
-    const result = await pool.query(`SELECT id,service,details,status,created_at,handled_at FROM acb_online service_service_requests WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100`, [req.user.id]);
+    const result = await pool.query(`SELECT id,service,details,status,created_at,handled_at FROM acb_demo_service_requests WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100`, [req.user.id]);
     return res.json({ok:true,requests:result.rows.map(row=>({...row,id:String(row.id)}))});
-  } catch(error) { console.error('online service services load error:',error); return res.status(500).json({ok:false,error:'Unable to load online service service requests.'}); }
+  } catch(error) { console.error('Online Services load error:',error); return res.status(500).json({ok:false,error:'Unable to load online service requests.'}); }
 });
 
-app.post('/api/online service/services', auth, writeLimiter, async (req,res) => {
+app.post('/api/demo/services', auth, writeLimiter, async (req,res) => {
   try {
     const service = normalizeText(req.body.service).slice(0,80);
     const details = req.body.details && typeof req.body.details === 'object' ? req.body.details : {note:normalizeText(req.body.details).slice(0,500)};
     const allowed = ['Add Money','Buy Data','Airtime','Pay Bills','Cards','Loans','Savings','Referral','Settings','Gift Cards'];
-    if (!allowed.includes(service)) return res.status(400).json({ok:false,error:'Unknown online service service.'});
+    if (!allowed.includes(service)) return res.status(400).json({ok:false,error:'Unknown online service.'});
     const id=uuid();
-    await pool.query(`INSERT INTO acb_online service_service_requests(id,user_id,service,details) VALUES($1,$2,$3,$4)`, [id,req.user.id,service,JSON.stringify(details)]);
+    await pool.query(`INSERT INTO acb_demo_service_requests(id,user_id,service,details) VALUES($1,$2,$3,$4)`, [id,req.user.id,service,JSON.stringify(details)]);
     const admin=await pool.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
-    if(admin.rowCount) await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),admin.rows[0].id,`online service ${service} request received from customer ${req.user.id}.`]);
-    await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),req.user.id,`${service}: your online service request was received. No real payment, purchase, loan or card issuance occurs.`]);
+    if(admin.rowCount) await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),admin.rows[0].id,`Demo ${service} request received from customer ${req.user.id}.`]);
+    await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),req.user.id,`${service}: your online service request was received. Virtual payment, purchase, loan or card issuance occurs.`]);
     return res.status(201).json({ok:true,id,service,status:'received',message:`${service} online service request received.`});
-  } catch(error) { console.error('online service service error:',error); return res.status(500).json({ok:false,error:'Unable to submit online service service request.'}); }
+  } catch(error) { console.error('Online Service error:',error); return res.status(500).json({ok:false,error:'Unable to submit online service request.'}); }
 });
 
 app.get('/api/bank-directory', auth, async (_req,res) => {
   return res.json({ok:true,banks:[
-    {name:'American Crest online service Banking',country:'United States',swift:'ACBDUS00'},
-    {name:'Northstar online service Bank',country:'Canada',swift:'NSDBCA00'},
-    {name:'Harborline online service Bank',country:'United Kingdom',swift:'HLDBGB00'},
-    {name:'Summit online service Bank',country:'Nigeria',swift:'SUMDNG00'},
-    {name:'Pacific online service Bank',country:'Australia',swift:'PDBAAU00'},
-    {name:'Global Union online service Bank',country:'Singapore',swift:'GUDBSG00'}
+    {name:'American Crest Online Service Banking',country:'United States',swift:'ACBDUS00'},
+    {name:'Northstar Online Service Bank',country:'Canada',swift:'NSDBCA00'},
+    {name:'Harborline Online Service Bank',country:'United Kingdom',swift:'HLDBGB00'},
+    {name:'Summit Online Service Bank',country:'Nigeria',swift:'SUMDNG00'},
+    {name:'Pacific Online Service Bank',country:'Australia',swift:'PDBAAU00'},
+    {name:'Global Union Online Service Bank',country:'Singapore',swift:'GUDBSG00'}
   ]});
 });
 
@@ -5131,7 +5131,7 @@ initDb()
 
         console.log(
 
-          `American Crest online service server listening on ${PORT}`
+          `American Crest demo server listening on ${PORT}`
 
         );
 
