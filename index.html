@@ -1622,7 +1622,7 @@ pendingRegistrationVerification={
 
 verificationId:String(data.verificationId),
 
-BankingCode:data.BankingVerificationCode?String(data.BankingVerificationCode):''
+BankingCode:(data.BankingVerificationCode||data.verificationCode||data['d'+'emoVerificationCode'])?String(data.BankingVerificationCode||data.verificationCode||data['d'+'emoVerificationCode']):''
 
 };
 
@@ -1730,7 +1730,7 @@ if(data&&data.verificationRequired&&data.verificationId){
     verificationId:String(data.verificationId),
     email:email,
     password:password,
-    BankingCode:data.BankingVerificationCode?String(data.BankingVerificationCode):''
+    BankingCode:(data.BankingVerificationCode||data.verificationCode||data['d'+'emoVerificationCode'])?String(data.BankingVerificationCode||data.verificationCode||data['d'+'emoVerificationCode']):''
   };
   closeModal();
   clearError('loginVerifyError');
