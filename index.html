@@ -444,6 +444,12 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 /* ACB HOMEPAGE ENHANCEMENT — ADDITIVE ONLY */
 .homeReveal{opacity:0;transform:translateY(32px);transition:opacity .75s ease,transform .75s ease}.homeReveal.is-visible{opacity:1;transform:none}.homeLift{transition:transform .3s ease,box-shadow .3s ease}.homeLift:hover{transform:translateY(-6px);box-shadow:0 20px 45px #071a5320}.heroVisual{position:relative}.heroVisual img{transition:opacity .55s ease,transform 6s ease}.heroVisual.homeSlide img{transform:scale(1.04)}.homeSlideDots{position:absolute;left:20px;bottom:18px;display:flex;gap:7px;z-index:2}.homeSlideDots button{width:9px;height:9px;border:0;border-radius:50%;padding:0;background:#ffffff99}.homeSlideDots button.active{background:var(--gold);transform:scale(1.25)}.homeStory{background:linear-gradient(135deg,#071a35,#0d315d);color:#fff}.homeStoryGrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.homeStoryCard{padding:30px;border:1px solid #ffffff18;border-radius:22px;background:#ffffff08}.homeStoryCard h3{font-size:25px;margin-bottom:10px}.homeStoryCard p{color:#c8d7e9;line-height:1.7}.homeSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.homeStep{background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;position:relative}.homeStepNum{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eaf2ff;color:var(--blue);font-weight:900;margin-bottom:14px}.homeStep h3{color:var(--navy);font-size:17px;margin-bottom:7px}.homeStep p{color:var(--muted);font-size:13px;line-height:1.6}.homeFeatureBand{display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:stretch}.homeFeaturePanel{border-radius:22px;padding:32px;background:#fff;border:1px solid var(--border);box-shadow:0 12px 35px #071a5310}.homeFeaturePanel.darkPanel{background:linear-gradient(145deg,#0a2445,#123e70);color:#fff;border:0}.homeFeaturePanel h3{font-size:27px;color:var(--navy);margin-bottom:10px}.darkPanel h3{color:#fff}.homeFeaturePanel p{color:var(--muted);line-height:1.7}.darkPanel p{color:#c9d8e9}.homePills{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}.homePill{padding:9px 12px;border-radius:999px;background:#eef4fb;color:#31506f;font-size:12px;font-weight:800}.darkPanel .homePill{background:#ffffff12;color:#e5eef8}.homeFaq{max-width:850px;margin:auto}.homeFaqItem{border:1px solid var(--border);border-radius:14px;background:#fff;margin-bottom:10px;overflow:hidden}.homeFaqQ{width:100%;border:0;background:#fff;padding:17px 18px;text-align:left;font-weight:800;color:var(--navy);display:flex;justify-content:space-between;align-items:center}.homeFaqA{display:none;padding:0 18px 17px;color:var(--muted);font-size:13px;line-height:1.65}.homeFaqItem.open .homeFaqA{display:block}.homeFaqItem.open .homeFaqQ span{transform:rotate(45deg)}.homeFaqQ span{font-size:22px;transition:transform .2s}.homeCta{background:linear-gradient(135deg,#eef4fb,#fff);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.homeCtaBox{max-width:900px;margin:auto;text-align:center;padding:20px}.homeCtaBox h2{color:var(--navy);font-size:36px;margin-bottom:10px}.homeCtaBox p{color:var(--muted);line-height:1.6;margin-bottom:20px}.homeTrustLine{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}.homeTrustLine span{padding:8px 11px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:11px;color:#607080;font-weight:800}@media(max-width:800px){.homeStoryGrid,.homeFeatureBand{grid-template-columns:1fr}.homeSteps{grid-template-columns:1fr 1fr}}@media(max-width:560px){.homeSteps{grid-template-columns:1fr}.homeFeaturePanel{padding:24px}.homeCtaBox h2{font-size:29px}}
+
+/* HOME AVATAR LOGIN RESTORE FIX */
+#dashAvatarSmall{isolation:isolate;display:grid!important;place-items:center!important;}
+#dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:none;object-fit:cover!important;border-radius:50%!important;z-index:2!important;}
+#dashAvatarInitials{position:absolute!important;inset:0!important;z-index:1!important;}
+.dashAvatarSmall:after{z-index:3!important;}
 </style></head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -1760,6 +1766,35 @@ setLoading(buttonId,false);
 }
 }
 
+function getStoredProfileImage(user){
+  try{
+    const ids=[
+      user?.id,user?.userId,user?.user_id,
+      me?.id,me?.userId,me?.user_id
+    ].filter(v=>v!==undefined&&v!==null&&String(v)!=='');
+    for(const rawId of ids){
+      const saved=localStorage.getItem('acb_profile_image_'+String(rawId));
+      if(saved)return saved;
+    }
+  }catch(e){}
+  return '';
+}
+
+function restoreProfileImageForDashboard(){
+  if(!me)return;
+  const saved=getStoredProfileImage(me);
+  const image=me.profileImage||me.profile_image||saved||'';
+  if(image){
+    me.profileImage=image;
+    me.profile_image=image;
+    try{
+      const ids=[me.id,me.userId,me.user_id].filter(v=>v!==undefined&&v!==null&&String(v)!=='');
+      ids.forEach(id=>localStorage.setItem('acb_profile_image_'+String(id),image));
+    }catch(e){}
+  }
+  renderAvatar();
+}
+
 function completeLogin(data){
 if(!data||!data.token||!data.user){
 throw new Error('The server returned an invalid login response.');
@@ -1767,10 +1802,23 @@ throw new Error('The server returned an invalid login response.');
 
 token=String(data.token);
 me={...(me||{}),...(data.user||{})};
+
+// Restore the profile picture before the dashboard is shown.
+// The login response may omit profileImage even when the menu/server data has it.
+const loginStoredProfileImage=getStoredProfileImage(me);
+if(!me.profileImage&&!me.profile_image&&loginStoredProfileImage){
+  me.profileImage=loginStoredProfileImage;
+  me.profile_image=loginStoredProfileImage;
+}
 pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
 showDashboard();
+
+// Run once more after the dashboard DOM is visible so the HOME avatar cannot
+// be left on initials while the menu avatar restores correctly.
+requestAnimationFrame(()=>restoreProfileImageForDashboard());
+setTimeout(()=>restoreProfileImageForDashboard(),80);
 
 toast(String(me.role||'').toLowerCase()==='admin'?'Administrator signed in.':'Signed in successfully.');
 
@@ -1857,17 +1905,26 @@ const data=await api('/me');
 
 if(!data.user)throw new Error('Invalid user response.');
 
-const currentProfileId=String((data.user||{}).id||(data.user||{}).userId||(data.user||{}).user_id||me?.id||me?.userId||me?.user_id||'current');
-const savedProfileImage=
-  me?.profileImage||
-  me?.profile_image||
-  localStorage.getItem('acb_profile_image_'+currentProfileId)||
-  '';
-
+const previousProfileImage=me?.profileImage||me?.profile_image||'';
+const previousIds=[me?.id,me?.userId,me?.user_id].filter(v=>v!==undefined&&v!==null&&String(v)!=='');
 me={
   ...(me||{}),
   ...(data.user||{})
 };
+
+const currentProfileId=String(me?.id||me?.userId||me?.user_id||'current');
+let savedProfileImage=previousProfileImage||'';
+if(!savedProfileImage){
+  try{savedProfileImage=localStorage.getItem('acb_profile_image_'+currentProfileId)||'';}catch(e){}
+}
+if(!savedProfileImage){
+  try{
+    for(const oldId of previousIds){
+      const oldSaved=localStorage.getItem('acb_profile_image_'+String(oldId));
+      if(oldSaved){savedProfileImage=oldSaved;break;}
+    }
+  }catch(e){}
+}
 
 if(!me.profileImage&&!me.profile_image&&savedProfileImage){
   me.profileImage=savedProfileImage;
@@ -2549,7 +2606,7 @@ let compressed=canvas.toDataURL('image/jpeg',0.78);
 if(compressed.length>680000)compressed=canvas.toDataURL('image/jpeg',0.62);
 if(compressed.length>700000)throw new Error('Image is still too large. Please choose a smaller image.');
 const data=await api('/profile/image',{method:'POST',body:JSON.stringify({profileImage:compressed})});
-me=data.user||me;
+me={...(me||{}),...(data.user||{})};
 const id=String(me?.id||me?.userId||me?.user_id||'current');
 const savedImage=me?.profileImage||me?.profile_image||compressed;
 me.profileImage=savedImage;
