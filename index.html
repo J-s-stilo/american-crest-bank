@@ -1937,6 +1937,11 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
+try{
+  const id=me?.id||me?.userId||me?.user_id||'current';
+  const saved=localStorage.getItem('acb_balance_hidden_'+id);
+  if(saved!==null) balanceHidden=saved==='1';
+}catch(e){}
 renderBalance();
 refreshDashboard(false);
 
@@ -1988,14 +1993,21 @@ refreshAdmin(false);
 
 function renderAvatar(){
   if(!me)return;
+  const image=me.profileImage||me.profile_image||'';
+  if(image){
+    me.profileImage=image;
+    me.profile_image=image;
+  }
   const avatars=[];
   const dashAvatar=$('dashAvatarSmall');
   const legacyAvatar=$('avatar');
-  if(dashAvatar)avatars.push(dashAvatar);
-  if(legacyAvatar)avatars.push(legacyAvatar);
+  const menuAvatar=$('menuAvatar');
+  [dashAvatar,legacyAvatar,menuAvatar].forEach(avatar=>{
+    if(avatar&&!avatars.includes(avatar))avatars.push(avatar);
+  });
   avatars.forEach(avatar=>{
-    if(me.profileImage||me.profile_image){
-      avatar.innerHTML=`<img src="${esc(me.profileImage||me.profile_image)}" alt="Profile">`;
+    if(image){
+      avatar.innerHTML=`<img src="${esc(image)}" alt="Profile">`;
     }else{
       avatar.textContent=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
     }
@@ -2050,6 +2062,11 @@ $('liveBanner').innerHTML=
 function toggleBalance(){
 
 balanceHidden=!balanceHidden;
+
+try{
+  const id=me?.id||me?.userId||me?.user_id||'current';
+  localStorage.setItem('acb_balance_hidden_'+id,balanceHidden?'1':'0');
+}catch(e){}
 
 renderBalance();
 
@@ -3682,7 +3699,7 @@ function openAppMenu(){
   const menu=$('appMenu'),overlay=$('appMenuOverlay');
   if(menu)menu.classList.add('show'); if(overlay)overlay.classList.add('show');
   $('menuName').textContent=me.name||'Customer'; $('menuEmail').textContent=me.email||me.phone||'Bank Account — Banking';
-  const av=$('menuAvatar'); if(av){av.innerHTML=me.profileImage?`<img src="${esc(me.profileImage)}" alt="Profile">`:(me.name||'AC').slice(0,2).toUpperCase();}
+  const av=$('menuAvatar'); if(av){av.innerHTML=(me.profileImage||me.profile_image)?`<img src="${esc(me.profileImage||me.profile_image)}" alt="Profile">`:(me.name||'AC').slice(0,2).toUpperCase();}
 }
 function closeAppMenu(event){if(event&&event.target&&event.target.id!=='appMenuOverlay')return; $('appMenu')?.classList.remove('show');$('appMenuOverlay')?.classList.remove('show');}
 function closeFeature(){ $('featureModal')?.classList.remove('show'); }
@@ -4151,7 +4168,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       const r=data?.request||{};
       const status=String(r.status||data?.status||'pending').toLowerCase();
       if(typeof window.openReceipt==='function')window.openReceipt({
-        id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,
+        id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,selectedCurrency:target,
         recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,
         recipientCountry:payload.recipientCountry,swiftBic:payload.swiftBic,note,
         date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,
@@ -4231,13 +4248,14 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     const me=window.me||{};
     const status=String(receipt.status||'pending').toLowerCase();
     const successful=['approved','completed','success','successful'].includes(status);
-    const c=cur(receipt.currency||me.primaryCurrency||me.primary_currency||'USD');
+    const c=cur(receipt.selectedCurrency||receipt.currency||me.primaryCurrency||me.primary_currency||'USD');
     const source=cur(receipt.sourceCurrency||receipt.fundingCurrency||me.primaryCurrency||me.primary_currency||c);
     const amount=Number(receipt.amount||0);
     const recipient=receipt.recipient||'—';
     const recipientEmail=receipt.recipientEmail||'—';
     const senderName=me.name||me.full_name||'Customer';
     const senderEmail=me.email||'—';
+    const supportEmail='americancrestbank@gmail.com';
     const senderAccount=maskAccount(me.accountNumber||me.account_number||'');
     const ref=receipt.id||receipt.reference||'Banking-'+Date.now();
     const date=receipt.date||new Date().toISOString();
@@ -4250,7 +4268,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       exchange=`<div class="acbRExchange"><div class="acbRSectionTitle"><span class="acbRIcon">↔</span><span>EXCHANGE INFORMATION <em>(When Applicable)</em></span></div><div class="acbRRow"><span class="label">Exchange Rate / Conversion</span><span class="value">1 ${esc(source)} = ${rate.toFixed(6)} ${esc(c)}</span></div><div class="acbRRow"><span class="label">Exchange Fee</span><span class="value">${esc(money(fee,source))}</span></div><div class="acbRRow"><span class="label">Converted Amount</span><span class="value">${esc(money(converted,c))}</span></div></div>`;
     }
     const paper=el('acbReceiptPaper');
-    paper.innerHTML=`<div class="acbReceiptPage"><div class="acbRHeader"><div class="acbRBrand">${crestSvg()}<div class="acbRName"><div class="main">AMERICAN CREST</div><div class="bank">BANK</div><div class="BankingBank">BANKING SERVICES — Banking</div></div><div class="acbRBadge">Banking</div></div><div class="acbRRule"><span>★</span></div><div class="acbRTitle">TRANSFER RECEIPT</div></div><div class="acbRSuccess"><div class="acbRCheck">✓</div><div><strong>${successful?'PAYMENT SUCCESSFULLY PROCESSED — Banking':status==='rejected'?'TRANSFER REJECTED':'TRANSFER PROCESSING'}</strong><span>${successful?'Your payment has been successfully processed.':status==='rejected'?'Your transfer was not completed.':'Your bank service request has been recorded — Banking.'}</span></div></div><div class="acbRAmount"><div class="acbRAmt"><div class="acbRLabel">AMOUNT SENT</div><div class="acbRBig">${esc(money(amount,c))}</div></div><div class="acbRCur"><div class="acbRLabel">CURRENCY</div><strong>${esc(c)}</strong><small>(${esc(names[c]||c)})</small></div></div><div class="acbRSection"><div class="acbRSectionTitle"><span class="acbRIcon">☷</span><span>TRANSFER DETAILS</span></div><div class="acbRRows"><div class="acbRRow"><span class="label">Customer / Sender Name</span><span class="value">${esc(senderName)}</span></div><div class="acbRRow"><span class="label">Customer / Sender Email</span><span class="value">${esc(senderEmail)}</span></div><div class="acbRRow"><span class="label">Sender Account Number</span><span class="value">${esc(senderAccount)}</span></div><div class="acbRRow"><span class="label">Recipient Name</span><span class="value">${esc(recipient)}</span></div><div class="acbRRow"><span class="label">Recipient Email</span><span class="value">${esc(recipientEmail)}</span></div><div class="acbRRow"><span class="label">Transfer / Reference Number</span><span class="value">${esc(ref)}</span></div><div class="acbRRow"><span class="label">Date</span><span class="value">${esc(formatDate(date))}</span></div><div class="acbRRow"><span class="label">Time</span><span class="value">${esc(formatTime(date))}</span></div><div class="acbRRow"><span class="label">Status</span><span class="value acbRStatus">${successful?'Successful':status==='rejected'?'Rejected':'Processing'}</span></div></div></div>${exchange}<div class="acbRNotice"><span class="acbRInfo">i</span><div>This is a computer generated receipt and does not require a signature.<br><strong>Thank you for using American Crest Bank Banking Services — Banking.</strong></div></div><div class="acbRSignature"><div class="sig">American Crest Bank</div><div class="sigline"></div><strong>★</strong><div>BANKING SERVICES — Banking</div></div><div class="acbRFooter"><span>🔒 &nbsp;This is a Banking receipt for Bankingnstration purposes only.</span><span>www.americancrest.Banking</span></div></div>`;
+    paper.innerHTML=`<div class="acbReceiptPage"><div class="acbRHeader"><div class="acbRBrand">${crestSvg()}<div class="acbRName"><div class="main">AMERICAN CREST</div><div class="bank">BANK</div><div class="BankingBank">BANKING SERVICES — Banking</div></div><div class="acbRBadge">Banking</div></div><div class="acbRRule"><span>★</span></div><div class="acbRTitle">TRANSFER RECEIPT</div></div><div class="acbRSuccess"><div class="acbRCheck">✓</div><div><strong>${successful?'PAYMENT SUCCESSFULLY PROCESSED — Banking':status==='rejected'?'TRANSFER REJECTED':'TRANSFER PROCESSING'}</strong><span>${successful?'Your payment has been successfully processed.':status==='rejected'?'Your transfer was not completed.':'Your bank service request has been recorded — Banking.'}</span></div></div><div class="acbRAmount"><div class="acbRAmt"><div class="acbRLabel">AMOUNT SENT</div><div class="acbRBig">${esc(money(amount,c))}</div></div><div class="acbRCur"><div class="acbRLabel">CURRENCY</div><strong>${esc(c)}</strong><small>(${esc(names[c]||c)})</small></div></div><div class="acbRSection"><div class="acbRSectionTitle"><span class="acbRIcon">☷</span><span>TRANSFER DETAILS</span></div><div class="acbRRows"><div class="acbRRow"><span class="label">Customer / Sender Name</span><span class="value">${esc(senderName)}</span></div><div class="acbRRow"><span class="label">Customer / Sender Email</span><span class="value">${esc(senderEmail)}</span></div><div class="acbRRow"><span class="label">Sender Account Number</span><span class="value">${esc(senderAccount)}</span></div><div class="acbRRow"><span class="label">Recipient Name</span><span class="value">${esc(recipient)}</span></div><div class="acbRRow"><span class="label">Recipient Email</span><span class="value">${esc(recipientEmail)}</span></div><div class="acbRRow"><span class="label">Transfer / Reference Number</span><span class="value">${esc(ref)}</span></div><div class="acbRRow"><span class="label">Date</span><span class="value">${esc(formatDate(date))}</span></div><div class="acbRRow"><span class="label">Time</span><span class="value">${esc(formatTime(date))}</span></div><div class="acbRRow"><span class="label">Status</span><span class="value acbRStatus">${successful?'Successful':status==='rejected'?'Rejected':'Processing'}</span></div></div></div>${exchange}<div class="acbRNotice"><span class="acbRInfo">i</span><div>This is a computer generated receipt and does not require a signature.<br><strong>Thank you for using American Crest Bank Banking Services — Banking.</strong></div></div><div class="acbRSignature"><div class="sig">American Crest Bank</div><div class="sigline"></div><strong>★</strong><div>BANKING SERVICES — Banking</div></div><div class="acbRFooter"><span>🔒 &nbsp;This is a Banking receipt for demonstration purposes only.</span><span>www.americancrest.Banking</span></div></div>`;
     window.lastTransferReceipt=receipt;
     modal.classList.add('show');
   };
@@ -4259,9 +4277,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 })();
 </script>
 
-</body>
 
-</html>
 
 <!-- FINAL PHONE RECEIPT DESIGN OVERRIDE: layout only, keeps all receipt fields -->
 <style id="phoneReceiptDesignOverride">
@@ -4355,3 +4371,14 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 #receiptModal .acbReceiptActions button{font-size:11px!important;padding:8px!important;min-height:34px!important}
 @media(max-width:390px){.prHeader{padding-left:12px!important;padding-right:12px!important}.prSection{margin-left:15px!important;margin-right:15px!important}.prInfoBox,.prBreakdown{margin-left:14px!important;margin-right:14px!important}.prAmount{margin-left:16px!important;margin-right:16px!important}}
 </style>
+
+<script>
+/* Final inspection fix: safely close the notification popup from its close button. */
+function hideNotificationPopup(){
+  var popup=document.getElementById('notificationPopup');
+  if(popup) popup.classList.remove('show');
+}
+</script>
+
+</body>
+</html>
