@@ -2119,7 +2119,14 @@ function renderAvatar(){
   const accountId=String(me?.id||me?.userId||me?.user_id||'current');
   let image=me.profileImage||me.profile_image||'';
   if(!image){
-    try{image=localStorage.getItem('acb_profile_image_'+accountId)||'';}catch(e){}
+    try{
+      image=localStorage.getItem('acb_profile_image_'+accountId)||'';
+      // Login can return a different user ID format, so also restore by email.
+      if(!image){
+        const email=String(me?.email||'').trim().toLowerCase();
+        if(email) image=localStorage.getItem('acb_profile_image_email_'+email)||'';
+      }
+    }catch(e){}
   }
   if(image){
     me.profileImage=image;
