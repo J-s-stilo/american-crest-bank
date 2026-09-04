@@ -389,7 +389,7 @@ small{color:#7a8595}
 
     <div class="notice">
       Authorized administrator access only.
-      This portal is for the fictional/demo banking application.
+      This portal is for the online service.
     </div>
 
     <div id="loginError" class="error"></div>
@@ -1623,7 +1623,7 @@ function openCredit(customer){
   $("creditAmount").value = "";
 
   $("creditNote").value =
-    "Administrator account funding";
+    "Online Service account funding";
 
   const primaryCurrency =
     customer?.primary_currency ||
@@ -1820,7 +1820,7 @@ async function creditCustomer(){
             currency,
             description:
               description ||
-              "Administrator account funding"
+              "Online Service account funding"
           })
         }
       );
