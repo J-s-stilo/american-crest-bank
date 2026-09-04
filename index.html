@@ -437,7 +437,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 /* PROFILE PICTURE SIZE FIX ONLY — keep the existing 46px profile avatar contained */
 .dashAvatarSmall{overflow:hidden!important;width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;border-radius:50%!important;position:relative!important;}
-.dashAvatarSmall img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;border-radius:50%!important;}
+.dashAvatarSmall img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;border-radius:50%!important;}.dashAvatarSmall #dashAvatarInitials{width:100%;height:100%;place-items:center;}.dashAvatarSmall #dashAvatarImage{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 
 /* ===== FUNCTIONAL UPGRADE LAYER ===== */
 .transferGrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.transferGrid2 .field{margin:0}.transferGrid2 input,.transferGrid2 select{width:100%}.appMenuOverlay{position:fixed;inset:0;background:rgba(2,8,23,.62);z-index:9997;opacity:0;visibility:hidden;transition:.22s}.appMenuOverlay.show{opacity:1;visibility:visible}.appMenu{position:fixed;left:0;top:0;bottom:0;width:min(390px,92vw);background:#fff;z-index:9998;transform:translateX(-105%);transition:.25s;box-shadow:18px 0 50px #0004;overflow:auto;padding:20px}.appMenu.show{transform:translateX(0)}.appMenuHead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #e7edf5}.appMenuHead strong{display:block;font-size:21px;color:var(--navy)}.appMenuHead small{color:var(--muted)}.appMenuHead button{border:0;background:#eef2f7;border-radius:12px;width:42px;height:42px;font-size:25px}.appMenuProfile{display:flex;gap:12px;align-items:center;padding:18px 4px}.menuAvatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800;border:2px solid var(--gold);overflow:hidden}.menuAvatar img{width:100%;height:100%;object-fit:cover}.appMenuProfile strong,.appMenuProfile small{display:block}.appMenuProfile small{color:var(--muted);font-size:12px;margin-top:3px}.menuBankingBadge{display:inline-block;margin-top:7px;padding:4px 8px;border-radius:999px;background:#fff3cd;color:#725b13;font-size:9px;font-weight:800}.appMenuGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.appMenuGrid button{min-height:72px;border:1px solid #e1e8f1;background:#f8fafc;border-radius:15px;text-align:left;padding:12px;color:var(--navy);font-weight:800;font-size:21px}.appMenuGrid button span{display:block;font-size:12px;margin-top:7px;color:#526174}.appMenuGrid button:hover{background:#eef5ff;border-color:#bcd3f5}.appMenuNotice{margin-top:18px;padding:13px;border-radius:13px;background:#fff8e6;color:#735b19;font-size:11px;line-height:1.5}.featureModal{position:fixed;inset:0;display:none;z-index:10010}.featureModal.show{display:block}.featureBackdrop{position:absolute;inset:0;background:rgba(2,8,23,.7)}.featureBox{position:relative;width:min(620px,92vw);max-height:88vh;overflow:auto;background:#fff;margin:6vh auto 0;border-radius:24px;padding:28px;box-shadow:0 30px 90px #0005}.featureClose{position:absolute;right:16px;top:14px;width:40px;height:40px;border:0;border-radius:12px;background:#eef2f7;font-size:24px}.featureIcon{width:58px;height:58px;border-radius:17px;background:#eaf2ff;color:var(--blue);display:grid;place-items:center;font-size:28px;margin-bottom:15px}.featureEyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#9a741d}.featureBox h2{color:var(--navy);font-size:30px;margin:5px 0 8px}.featureBox>p{color:#64748b;line-height:1.6;margin-bottom:18px}.featureCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.featureCard{border:1px solid #e2e8f0;border-radius:16px;padding:16px;background:#f8fafc}.featureCard h4{color:var(--navy);margin-bottom:7px}.featureCard p{font-size:12px;color:#64748b;line-height:1.5}.featureWarn{padding:13px;border-radius:13px;background:#fff3cd;color:#725b13;font-size:12px;line-height:1.5;margin:15px 0}.featureForm{display:grid;gap:12px}.featureForm input,.featureForm select,.featureForm textarea{width:100%;border:1px solid #d9e2ed;border-radius:11px;padding:12px}.featureForm label{font-size:12px;font-weight:800;color:#526174}.countryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.countryChoice{padding:12px;border:1px solid #dbe4ee;background:#fff;border-radius:12px;text-align:left}.countryChoice strong{display:block;color:var(--navy)}.countryChoice small{color:#718096}.loanCard{border-radius:20px;padding:22px;background:linear-gradient(135deg,#071a35,#123e70);color:#fff;margin:10px 0}.loanCard h3{color:#fff;margin-bottom:8px}.loanCard p{color:#dbe7f5;font-size:13px;line-height:1.6}.accountMini{display:flex;justify-content:space-between;gap:12px;padding:14px;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:9px}.accountMini strong{color:var(--navy)}.accountMini span{color:#64748b;font-size:12px}.@media(max-width:560px){.transferGrid2,.featureCards{grid-template-columns:1fr}.featureBox{margin-top:3vh;padding:22px}}
@@ -803,14 +803,7 @@ function toggleHomeFaq(button){
 <div class="mobileDashHeader">
 <button class="dashMenuBtn" type="button" onclick="openAppMenu()" aria-label="Menu" title="Open menu">☰</button>
 <div class="dashBrand"><span class="dashBrandMark">AC</span><span><strong>American Crest</strong><small>Banking</small></span></div>
-<div class="dashHeaderRight"><button class="dashBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCountTop" class="dashBadge">0</span></button><div class="dashAvatarSmall" id="dashAvatarSmall" role="button" tabindex="0"
-onclick="chooseProfileImage()"
-onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseProfileImage();}"
-aria-label="Change profile picture"
-title="Change profile picture">
-<img id="dashAvatarImage" src="" alt="Profile picture">
-<span id="dashAvatarInitials">DE</span>
-</div>       
+<div class="dashHeaderRight"><button class="dashBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCountTop" class="dashBadge">0</span></button><div class="dashAvatarSmall" id="dashAvatarSmall" role="button" tabindex="0" onclick="chooseProfileImage()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseProfileImage();}" aria-label="Change profile picture" title="Change profile picture"><img id="dashAvatarImage" src="" alt="Profile picture" style="display:none"><span id="dashAvatarInitials">DE</span></div><input id="profileImageInput" class="hiddenFile" type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" onchange="handleProfileImage(event)"></div>
 </div>
 <div class="dashHero"><div><div class="dashGreeting">Good evening, <span id="welcomeName">Customer</span></div><div class="dashWelcome">Welcome back to your account</div></div><button class="currencySelector" type="button" onclick="openExchange()"><span class="ukFlag">🇬🇧</span><span id="primaryCurrencyDisplay">GBP</span><span>⌄</span></button></div>
 <div id="notificationCenter" class="notificationCenter dashNotificationLayer"><div class="notificationCenterHead"><button id="notificationBell" class="notificationBell hiddenNotificationBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCount" class="notificationBadge">0</span></button><div id="notificationBoard" class="notificationBoard"><div class="notificationBoardHead"><strong>Notifications</strong><button class="notificationBoardClose" type="button" onclick="toggleNotificationBoard(false)" aria-label="Close">×</button></div><div id="notifications" class="notificationList"></div></div></div></div>
@@ -2021,12 +2014,27 @@ function renderAvatar(){
 
   const initials=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
 
-  // Homepage avatar: explicitly update the visible homepage element.
+  // Homepage avatar ONLY: update the fixed image element directly.
+  // This does not rebuild the dashboard or affect the menu avatar.
   const dashAvatar=$('dashAvatarSmall');
-  if(dashAvatar){
-    dashAvatar.innerHTML=image
-      ? `<img src="${esc(image)}" alt="Profile">`
-      : initials;
+  const dashAvatarImage=$('dashAvatarImage');
+  const dashAvatarInitials=$('dashAvatarInitials');
+  if(dashAvatar && dashAvatarImage && dashAvatarInitials){
+    if(image){
+      dashAvatarImage.onload=null;
+      dashAvatarImage.onerror=function(){
+        this.style.display='none';
+        dashAvatarInitials.style.display='grid';
+      };
+      dashAvatarImage.src=image;
+      dashAvatarImage.style.display='block';
+      dashAvatarInitials.style.display='none';
+    }else{
+      dashAvatarImage.removeAttribute('src');
+      dashAvatarImage.style.display='none';
+      dashAvatarInitials.textContent=initials;
+      dashAvatarInitials.style.display='grid';
+    }
   }
 
   // Keep the existing menu/legacy profile behavior unchanged.
