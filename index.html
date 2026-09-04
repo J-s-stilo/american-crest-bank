@@ -2000,28 +2000,39 @@ refreshAdmin(false);
 
 function renderAvatar(){
   if(!me)return;
-  const profileId=String(me?.id||me?.userId||me?.user_id||'current');
-  const image=me.profileImage||me.profile_image||localStorage.getItem('acb_profile_image_'+profileId)||'';
+
+  // PROFILE IMAGE ONLY: use the server image first, then this account's saved local backup.
+  const accountId=String(me?.id||me?.userId||me?.user_id||'current');
+  let image=me.profileImage||me.profile_image||'';
+  if(!image){
+    try{image=localStorage.getItem('acb_profile_image_'+accountId)||'';}catch(e){}
+  }
   if(image){
     me.profileImage=image;
     me.profile_image=image;
-    try{localStorage.setItem('acb_profile_image_'+profileId,image);}catch(e){}
   }
-  const avatars=[];
+
+  const initials=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
+
+  // Homepage avatar: explicitly update the visible homepage element.
   const dashAvatar=$('dashAvatarSmall');
+  if(dashAvatar){
+    dashAvatar.innerHTML=image
+      ? `<img src="${esc(image)}" alt="Profile">`
+      : initials;
+  }
+
+  // Keep the existing menu/legacy profile behavior unchanged.
   const legacyAvatar=$('avatar');
   const menuAvatar=$('menuAvatar');
-  [dashAvatar,legacyAvatar,menuAvatar].forEach(avatar=>{
-    if(avatar&&!avatars.includes(avatar))avatars.push(avatar);
-  });
-  avatars.forEach(avatar=>{
-    if(image){
-      avatar.innerHTML=`<img src="${esc(image)}" alt="Profile">`;
-    }else{
-      avatar.textContent=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
-    }
+  [legacyAvatar,menuAvatar].forEach(avatar=>{
+    if(!avatar)return;
+    avatar.innerHTML=image
+      ? `<img src="${esc(image)}" alt="Profile">`
+      : initials;
   });
 }
+
 function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
 function renderBalance(){
 
