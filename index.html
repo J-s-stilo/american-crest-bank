@@ -523,7 +523,13 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 #dashAvatarSmall #dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;border-radius:50%!important;z-index:20!important;display:block!important;visibility:visible!important;opacity:1!important;background:#fff!important;}
 #dashAvatarSmall #dashAvatarInitials{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:10!important;display:grid!important;place-items:center!important;}
 .dashAvatarSmall:after{z-index:30!important;}
-</style></head><body><div class="prototype">
+</style><style id="three-part-authority">
+/* Three-part rebuild authority: homepage avatar must use the same source as the menu. */
+#dashAvatarSmall{position:relative!important;overflow:hidden!important;}
+#dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important;z-index:30!important;}
+#dashAvatarInitials{position:absolute!important;inset:0!important;place-items:center!important;}
+</style>
+</head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
 
@@ -2076,11 +2082,8 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
-try{
-  const id=me?.id||me?.userId||me?.user_id||'current';
-  const saved=localStorage.getItem('acb_balance_hidden_'+id);
-  if(saved!==null) balanceHidden=saved==='1';
-}catch(e){}
+// Every successful login starts with the real balance visible.
+balanceHidden=false;
 renderBalance();
 refreshDashboard(false);
 
@@ -2124,7 +2127,7 @@ refreshAdmin(false);
 
 },
 
-5000
+3000
 
 );
 
@@ -2132,133 +2135,61 @@ refreshAdmin(false);
 
 function renderAvatar(){
   if(!me)return;
-
-  const accountId=String(me?.id||me?.userId||me?.user_id||'current');
+  const accountId=String(me.id||me.userId||me.user_id||'current');
   let image=me.profileImage||me.profile_image||'';
-  if(!image){
-    try{ image=localStorage.getItem('acb_profile_image_'+accountId)||getStoredProfileImage(me)||''; }catch(e){}
-  }
-  if(image){
-    me.profileImage=image;
-    me.profile_image=image;
-  }
+  if(!image){try{image=localStorage.getItem('acb_profile_image_'+accountId)||'';}catch(e){}}
+  const initials=(String(me.name||'AC').trim().split(/\s+/).map(x=>x[0]||'').slice(0,2).join('').toUpperCase()||'AC');
+  if(image){me.profileImage=image;me.profile_image=image;try{localStorage.setItem('acb_profile_image_'+accountId,image);}catch(e){}}
 
-  const initials=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
-
-  // MENU: keep the already-working rendering method.
   const menuAvatar=$('menuAvatar');
   if(menuAvatar){
     menuAvatar.innerHTML='';
-    if(image){
-      const menuImg=document.createElement('img');
-      menuImg.alt='Profile';
-      menuImg.src=image;
-      menuAvatar.appendChild(menuImg);
-    }else menuAvatar.textContent=initials;
+    if(image){const img=document.createElement('img');img.alt='Profile';img.src=image;menuAvatar.appendChild(img);}
+    else menuAvatar.textContent=initials;
   }
 
-  // HOME: copy the exact source that was just given to the working menu image.
-  // This removes all separate restore/loading paths for the homepage.
-  const dashImage=$('dashAvatarImage');
-  const dashInitials=$('dashAvatarInitials');
-  if(dashImage){
-    const menuImg=menuAvatar ? menuAvatar.querySelector('img') : null;
-    const exactSource=menuImg ? (menuImg.getAttribute('src')||menuImg.currentSrc||menuImg.src||'') : image;
-    dashImage.onerror=null;
-    dashImage.onload=null;
-    dashImage.alt=''; // never show broken-image text
-    if(exactSource){
-      dashImage.removeAttribute('src');
-      dashImage.src=exactSource;
-      dashImage.style.setProperty('display','block','important');
-      dashImage.style.setProperty('visibility','visible','important');
-      dashImage.style.setProperty('opacity','1','important');
-      if(dashInitials)dashInitials.style.setProperty('display','none','important');
+  const home=$('dashAvatarImage'), letters=$('dashAvatarInitials');
+  if(home&&letters){
+    letters.textContent=initials;
+    home.alt='';
+    if(image){
+      // Use exactly the same source used by the working menu avatar.
+      home.src=image;
+      home.style.display='block';
+      home.style.visibility='visible';
+      home.style.opacity='1';
+      home.style.zIndex='30';
+      letters.style.display='none';
     }else{
-      dashImage.removeAttribute('src');
-      dashImage.style.setProperty('display','none','important');
-      if(dashInitials){
-        dashInitials.textContent=initials;
-        dashInitials.style.setProperty('display','grid','important');
-      }
+      home.removeAttribute('src');
+      home.style.display='none';
+      letters.style.display='grid';
     }
   }
 
   const legacyAvatar=$('avatar');
-  if(legacyAvatar){
-    legacyAvatar.innerHTML='';
-    if(image){
-      const legacyImg=document.createElement('img');
-      legacyImg.alt='Profile';
-      legacyImg.src=image;
-      legacyAvatar.appendChild(legacyImg);
-    }else legacyAvatar.textContent=initials;
-  }
+  if(legacyAvatar){legacyAvatar.innerHTML='';if(image){const img=document.createElement('img');img.alt='Profile';img.src=image;legacyAvatar.appendChild(img);}else legacyAvatar.textContent=initials;}
 }
 
 function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
 function renderBalance(){
-
 if(!me)return;
-
-const currency=
-
-me.primaryCurrency||
-
-me.primary_currency||
-
-'NGN';
-
-const rawBalance = me.balances?.[currency];
-const amount = rawBalance && typeof rawBalance === 'object'
-  ? Number(rawBalance.amount ?? rawBalance.balance ?? rawBalance.available ?? rawBalance.value ?? 0)
-  : Number(rawBalance ?? me.availableBalance ?? me.available_balance ?? me.balance ?? me.available ?? 0);
-
-// Keep an unmasked numeric snapshot for internal calculations. The eye control only changes what is shown.
+const currency=me.primaryCurrency||me.primary_currency||'NGN';
+const rawBalance=me.balances?.[currency];
+const amount=rawBalance&&typeof rawBalance==='object'?Number(rawBalance.amount??rawBalance.balance??rawBalance.available??rawBalance.value??0):Number(rawBalance??me.availableBalance??me.available_balance??me.balance??me.available??0);
 window.__acbTransferBalanceState=window.__acbTransferBalanceState||{};
 window.__acbTransferBalanceState[currency]=Number.isFinite(amount)?amount:0;
-
-$('balance').textContent=
-
-balanceHidden?'••••••':money(amount,currency);
-
-$('balanceCurrency').textContent=
-
-'Primary currency: '+currency;
-
-$('balanceEye').textContent=
-
-balanceHidden?'🙈':'👁️';
-
-$('balanceEye').setAttribute(
-
-'aria-label',
-
-balanceHidden?'Show balance':'Hide balance'
-
-);
-
-$('liveBanner').innerHTML=
-
-'<strong>Bank Account — Banking active.</strong> '+
-
-'Customer account data, balances, requests, notifications and support are synchronized with the server database.';
-
+$('balance').textContent=balanceHidden?'••••••':money(amount,currency);
+$('balanceCurrency').textContent='Primary currency: '+currency;
+$('balanceEye').textContent=balanceHidden?'🙈':'👁️';
+$('balanceEye').setAttribute('aria-label',balanceHidden?'Show balance':'Hide balance');
+$('liveBanner').innerHTML='<strong>Bank Account — Banking active.</strong> Customer account data, balances, requests, notifications and support are synchronized with the server database.';
 }
 
 function toggleBalance(){
-
 balanceHidden=!balanceHidden;
-
-try{
-  const id=me?.id||me?.userId||me?.user_id||'current';
-  localStorage.setItem('acb_balance_hidden_'+id,balanceHidden?'1':'0');
-}catch(e){}
-
 renderBalance();
-
 renderCurrencyBalances();
-
 }
 
 function renderCurrencyBalances(){
@@ -2389,6 +2320,7 @@ async function refreshDashboard(showToast=true){
 
 if(!me)return;
 
+renderAvatar();
 renderBalance();
 
 renderCurrencyBalances();
@@ -2438,7 +2370,7 @@ TRANSFER RECEIPT
 let lastTransferReceipt=null;
 function openReceipt(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();$('receiptModal').classList.add('show');}
 function closeReceipt(){const modal=$('receiptModal');if(modal)modal.classList.remove('show');}
-function printReceipt(){const paper=$('receiptPaper');if(!paper)return;const win=window.open('','_blank','width=700,height=850');if(!win)return toast('Please allow pop-ups to print the receipt.');win.document.write('<!doctype html><html><head><title>American Crest Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial,sans-serif;background:#eef2f7;padding:30px;color:#1e293b}.receipt{background:#fff;max-width:520px;margin:auto;border:1px solid #dbe3ee;border-radius:18px;overflow:hidden}.top{padding:22px;border-bottom:1px dashed #cbd5e1;font-weight:800;color:#071a35}.body{padding:24px}.amount{background:#f7f9fc;border-radius:14px;padding:16px;margin:18px 0}.amount strong{display:block;font-size:28px;color:#071a35}.grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e5eaf1}.item{padding:12px;border:1px solid #e5eaf1}.item small{display:block;color:#64748b;font-size:11px}.item strong{display:block;margin-top:4px;font-size:13px;word-break:break-word}.note{margin-top:14px;padding:12px;background:#f8fafc;font-size:12px}.ref{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px}@media(max-width:520px){.grid{grid-template-columns:1fr}}</style></head><body><div class="receipt">'+paper.innerHTML+'</div></body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),250);}
+function printReceipt(){const paper=$('receiptPaper');if(!paper)return;const win=window.open('','_blank','width=700,height=850');if(!win)return toast('Please allow pop-ups to print the receipt.');win.document.write('<!doctype html><html><head><title>American Crest Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial,sans-serif;background:#eef2f7;padding:30px;color:#1e293b}.receipt{background:#fff;max-width:520px;margin:auto;border:1px solid #dbe3ee;border-radius:18px;overflow:hidden}.top{padding:22px;border-bottom:1px dashed #cbd5e1;font-weight:800;color:#071a35}.body{padding:24px}.amount{background:#f7f9fc;border-radius:14px;padding:16px;margin:18px 0}.amount strong{display:block;font-size:28px;color:#071a35}.grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e5eaf1}.item{padding:12px;border:1px solid #e5eaf1}.item small{display:block;color:#64748b;font-size:11px}.item strong{display:block;margin-top:4px;font-size:13px;word-break:break-word}.note{margin-top:14px;padding:12px;background:#f8fafc;font-size:12px}.ref{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px}@media(max-width:520px){.grid{grid-template-columns:1fr}}</style></head><body><div class="receipt">'+paper.innerHTML+'</div>\n</body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),250);}
 
 /*
 
@@ -4580,6 +4512,5 @@ function hideNotificationPopup(){
   if(popup) popup.classList.remove('show');
 }
 </script>
-
 </body>
 </html>
