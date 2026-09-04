@@ -503,8 +503,14 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 
 /* FINAL AVATAR VISIBILITY FIX */
-#dashAvatarImage{display:none;}
-#dashAvatarImage[src]:not([src=""]){display:block!important;}
+#dashAvatarImage{display:none!important;}
+#dashAvatarImage.avatarLoaded{display:block!important;}
+#dashAvatarImage.avatarError{display:none!important;}
+
+/* CLEAN HOME AVATAR: same rendering behavior as the menu */
+#dashAvatarSmall{overflow:hidden!important;display:grid!important;place-items:center!important;position:relative!important;width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;max-width:46px!important;max-height:46px!important;border-radius:50%!important;}
+#dashAvatarSmall img{display:block!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;border-radius:50%!important;}
+#dashAvatarSmall span{width:100%!important;height:100%!important;display:grid!important;place-items:center!important;}
 </style></head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -2119,14 +2125,7 @@ function renderAvatar(){
   const accountId=String(me?.id||me?.userId||me?.user_id||'current');
   let image=me.profileImage||me.profile_image||'';
   if(!image){
-    try{
-      image=localStorage.getItem('acb_profile_image_'+accountId)||'';
-      // Login can return a different user ID format, so also restore by email.
-      if(!image){
-        const email=String(me?.email||'').trim().toLowerCase();
-        if(email) image=localStorage.getItem('acb_profile_image_email_'+email)||'';
-      }
-    }catch(e){}
+    try{image=localStorage.getItem('acb_profile_image_'+accountId)||'';}catch(e){}
   }
   if(image){
     me.profileImage=image;
@@ -2135,40 +2134,12 @@ function renderAvatar(){
 
   const initials=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
 
-  // Homepage avatar ONLY: update the fixed image element directly.
-  // This does not rebuild the dashboard or affect the menu avatar.
+  // HOME AVATAR: deliberately use the EXACT SAME rendering method as the working menu.
+  // This removes the separate src/onload/onerror/class logic that was conflicting.
   const dashAvatar=$('dashAvatarSmall');
-  const dashAvatarImage=$('dashAvatarImage');
-  const dashAvatarInitials=$('dashAvatarInitials');
-  if(dashAvatar && dashAvatarImage && dashAvatarInitials){
-    if(image){
-      dashAvatarInitials.textContent=initials;
-      dashAvatarInitials.style.display='grid';
-      dashAvatarImage.onload=function(){
-        this.style.display='block';
-        dashAvatarInitials.style.display='none';
-      };
-      dashAvatarImage.onerror=function(){
-        this.style.display='none';
-        dashAvatarInitials.style.display='grid';
-      };
-      dashAvatarImage.src=image;
-      if(dashAvatarImage.complete && dashAvatarImage.naturalWidth>0){
-        dashAvatarImage.style.display='block';
-        dashAvatarInitials.style.display='none';
-      }
-    }else{
-      dashAvatarImage.removeAttribute('src');
-      dashAvatarImage.style.display='none';
-      dashAvatarInitials.textContent=initials;
-      dashAvatarInitials.style.display='grid';
-    }
-  }
-
-  // Keep the existing menu/legacy profile behavior unchanged.
   const legacyAvatar=$('avatar');
   const menuAvatar=$('menuAvatar');
-  [legacyAvatar,menuAvatar].forEach(avatar=>{
+  [dashAvatar,legacyAvatar,menuAvatar].forEach(avatar=>{
     if(!avatar)return;
     avatar.innerHTML=image
       ? `<img src="${esc(image)}" alt="Profile">`
