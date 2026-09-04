@@ -1823,14 +1823,14 @@ setLoading(buttonId,false);
 
 function getStoredProfileImage(user){
   try{
-    const ids=[
-      user?.id,user?.userId,user?.user_id,
-      me?.id,me?.userId,me?.user_id
-    ].filter(v=>v!==undefined&&v!==null&&String(v)!=='');
-    for(const rawId of ids){
-      const saved=localStorage.getItem('acb_profile_image_'+String(rawId));
-      if(saved)return saved;
-    }
+    const keys=[];
+    const add=v=>{ if(v!==undefined&&v!==null&&String(v)!==''){ const k='acb_profile_image_'+String(v); if(!keys.includes(k))keys.push(k); } };
+    [user?.id,user?.userId,user?.user_id,me?.id,me?.userId,me?.user_id].forEach(add);
+    // Backward-compatible fallbacks for images saved while an API response temporarily lacked an ID.
+    add('current');
+    const email=(user?.email||me?.email||'').trim().toLowerCase();
+    if(email)add('email_'+email);
+    for(const key of keys){ const saved=localStorage.getItem(key); if(saved)return saved; }
   }catch(e){}
   return '';
 }
@@ -1845,6 +1845,8 @@ function restoreProfileImageForDashboard(){
     try{
       const ids=[me.id,me.userId,me.user_id].filter(v=>v!==undefined&&v!==null&&String(v)!=='');
       ids.forEach(id=>localStorage.setItem('acb_profile_image_'+String(id),image));
+      const email=(me.email||'').trim().toLowerCase();
+      if(email)localStorage.setItem('acb_profile_image_email_'+email,image);
     }catch(e){}
   }
   renderAvatar();
@@ -2133,14 +2135,21 @@ function renderAvatar(){
   const dashAvatarInitials=$('dashAvatarInitials');
   if(dashAvatar && dashAvatarImage && dashAvatarInitials){
     if(image){
-      dashAvatarImage.onload=null;
+      dashAvatarInitials.textContent=initials;
+      dashAvatarInitials.style.display='grid';
+      dashAvatarImage.onload=function(){
+        this.style.display='block';
+        dashAvatarInitials.style.display='none';
+      };
       dashAvatarImage.onerror=function(){
         this.style.display='none';
         dashAvatarInitials.style.display='grid';
       };
       dashAvatarImage.src=image;
-      dashAvatarImage.style.display='block';
-      dashAvatarInitials.style.display='none';
+      if(dashAvatarImage.complete && dashAvatarImage.naturalWidth>0){
+        dashAvatarImage.style.display='block';
+        dashAvatarInitials.style.display='none';
+      }
     }else{
       dashAvatarImage.removeAttribute('src');
       dashAvatarImage.style.display='none';
@@ -2666,7 +2675,11 @@ const id=String(me?.id||me?.userId||me?.user_id||'current');
 const savedImage=me?.profileImage||me?.profile_image||compressed;
 me.profileImage=savedImage;
 me.profile_image=savedImage;
-try{localStorage.setItem('acb_profile_image_'+id,savedImage);}catch(e){}
+try{
+  localStorage.setItem('acb_profile_image_'+id,savedImage);
+  const email=(me?.email||'').trim().toLowerCase();
+  if(email)localStorage.setItem('acb_profile_image_email_'+email,savedImage);
+}catch(e){}
 localStorage.setItem('acb_profile_image_updated_'+id,String(Date.now()));
 renderAvatar();
 toast('Profile picture updated. You can change it again in 7 days.');
