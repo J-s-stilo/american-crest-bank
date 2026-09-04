@@ -444,17 +444,6 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 /* ACB HOMEPAGE ENHANCEMENT — ADDITIVE ONLY */
 .homeReveal{opacity:0;transform:translateY(32px);transition:opacity .75s ease,transform .75s ease}.homeReveal.is-visible{opacity:1;transform:none}.homeLift{transition:transform .3s ease,box-shadow .3s ease}.homeLift:hover{transform:translateY(-6px);box-shadow:0 20px 45px #071a5320}.heroVisual{position:relative}.heroVisual img{transition:opacity .55s ease,transform 6s ease}.heroVisual.homeSlide img{transform:scale(1.04)}.homeSlideDots{position:absolute;left:20px;bottom:18px;display:flex;gap:7px;z-index:2}.homeSlideDots button{width:9px;height:9px;border:0;border-radius:50%;padding:0;background:#ffffff99}.homeSlideDots button.active{background:var(--gold);transform:scale(1.25)}.homeStory{background:linear-gradient(135deg,#071a35,#0d315d);color:#fff}.homeStoryGrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.homeStoryCard{padding:30px;border:1px solid #ffffff18;border-radius:22px;background:#ffffff08}.homeStoryCard h3{font-size:25px;margin-bottom:10px}.homeStoryCard p{color:#c8d7e9;line-height:1.7}.homeSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.homeStep{background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;position:relative}.homeStepNum{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eaf2ff;color:var(--blue);font-weight:900;margin-bottom:14px}.homeStep h3{color:var(--navy);font-size:17px;margin-bottom:7px}.homeStep p{color:var(--muted);font-size:13px;line-height:1.6}.homeFeatureBand{display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:stretch}.homeFeaturePanel{border-radius:22px;padding:32px;background:#fff;border:1px solid var(--border);box-shadow:0 12px 35px #071a5310}.homeFeaturePanel.darkPanel{background:linear-gradient(145deg,#0a2445,#123e70);color:#fff;border:0}.homeFeaturePanel h3{font-size:27px;color:var(--navy);margin-bottom:10px}.darkPanel h3{color:#fff}.homeFeaturePanel p{color:var(--muted);line-height:1.7}.darkPanel p{color:#c9d8e9}.homePills{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}.homePill{padding:9px 12px;border-radius:999px;background:#eef4fb;color:#31506f;font-size:12px;font-weight:800}.darkPanel .homePill{background:#ffffff12;color:#e5eef8}.homeFaq{max-width:850px;margin:auto}.homeFaqItem{border:1px solid var(--border);border-radius:14px;background:#fff;margin-bottom:10px;overflow:hidden}.homeFaqQ{width:100%;border:0;background:#fff;padding:17px 18px;text-align:left;font-weight:800;color:var(--navy);display:flex;justify-content:space-between;align-items:center}.homeFaqA{display:none;padding:0 18px 17px;color:var(--muted);font-size:13px;line-height:1.65}.homeFaqItem.open .homeFaqA{display:block}.homeFaqItem.open .homeFaqQ span{transform:rotate(45deg)}.homeFaqQ span{font-size:22px;transition:transform .2s}.homeCta{background:linear-gradient(135deg,#eef4fb,#fff);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.homeCtaBox{max-width:900px;margin:auto;text-align:center;padding:20px}.homeCtaBox h2{color:var(--navy);font-size:36px;margin-bottom:10px}.homeCtaBox p{color:var(--muted);line-height:1.6;margin-bottom:20px}.homeTrustLine{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}.homeTrustLine span{padding:8px 11px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:11px;color:#607080;font-weight:800}@media(max-width:800px){.homeStoryGrid,.homeFeatureBand{grid-template-columns:1fr}.homeSteps{grid-template-columns:1fr 1fr}}@media(max-width:560px){.homeSteps{grid-template-columns:1fr}.homeFeaturePanel{padding:24px}.homeCtaBox h2{font-size:29px}}
-
-/* RESTORED FLOATING LIVE CHAT — fixed above the Support area on the right. */
-.acbFloatingChat{position:fixed;right:22px;bottom:104px;width:62px;height:62px;border:0;border-radius:50%;background:#19b978;color:#fff;z-index:10020;display:none;place-items:center;font-size:29px;box-shadow:0 12px 30px rgba(0,0,0,.25);cursor:pointer;animation:acbChatPulse 2.2s ease-in-out infinite;}
-.acbFloatingChat.show{display:grid;}
-.acbFloatingChat:hover{transform:translateY(-2px);}
-.acbFloatingChatHint{position:fixed;right:94px;bottom:116px;z-index:10019;max-width:230px;background:#fff;color:#17314e;border-radius:14px;padding:11px 14px;font-size:12px;line-height:1.35;box-shadow:0 10px 28px rgba(0,0,0,.18);display:none;}
-.acbFloatingChatHint.show{display:block;animation:acbHintIn .35s ease both;}
-@keyframes acbChatPulse{0%,100%{box-shadow:0 0 0 0 rgba(25,185,120,.38),0 12px 30px rgba(0,0,0,.25)}50%{box-shadow:0 0 0 10px rgba(25,185,120,0),0 12px 30px rgba(0,0,0,.25)}}
-@keyframes acbHintIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:600px){.acbFloatingChat{right:22px;bottom:104px}.acbFloatingChatHint{right:92px;bottom:114px;}}
-
 </style></head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -919,10 +908,6 @@ Refresh Customer List
 </div></div>
 <div class="bottomNavNew"><button class="active" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>⌂</span><small>Home</small></button><button type="button" onclick="openTransfer()"><span>↑</span><small>Transfer</small></button><button type="button" onclick="openExchange()"><span>⇄</span><small>Exchange</small></button><button type="button" onclick="openTransactionHistory()"><span>◷</span><small>History</small></button><button type="button" onclick="toggleChat()"><span>♧</span><small>Support</small></button></div>
 
-
-<!-- Restored live chat launcher: floating above the bottom-right Support area. -->
-<button id="acbFloatingChat" class="acbFloatingChat" type="button" onclick="acbOpenFloatingChat()" aria-label="Open live chat" title="Live Chat">💬</button>
-<div id="acbFloatingChatHint" class="acbFloatingChatHint">Need assistance? Start a live chat with our customer service team.</div>
 </div><div class="modal" id="authModal"><div class="modalBox"><button class="close" onclick="closeModal()">×</button>
 
 <div class="authImage"><div>
@@ -1956,8 +1941,6 @@ renderBalance();
 refreshDashboard(false);
 
 renderAvatar();
-watchMenuProfileMirror();
-acbShowFloatingChat();
 
 const isAdmin=
 
@@ -2005,58 +1988,19 @@ refreshAdmin(false);
 
 function renderAvatar(){
   if(!me)return;
-  const accountId=String(me.id||me.userId||me.user_id||'current');
-  let image=me.profileImage||me.profile_image||'';
-  if(!image){
-    try{image=localStorage.getItem('acb_profile_image_'+accountId)||'';}catch(e){}
-  }
-  if(image){
-    me.profileImage=image;
-    me.profile_image=image;
-    try{localStorage.setItem('acb_profile_image_'+accountId,image);}catch(e){}
-  }
-  const initials=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
-  const setAvatar=(el,src)=>{
-    if(!el)return;
-    el.innerHTML='';
-    if(src){
-      const img=document.createElement('img');
-      img.alt='Profile'; img.src=src;
-      img.onerror=()=>{ if(el===document.getElementById('dashAvatarSmall')){ el.innerHTML=''; el.textContent=initials; } };
-      el.appendChild(img);
-    }else el.textContent=initials;
-  };
-  // Menu and homepage are deliberately fed from the SAME source.
-  const menuAvatar=$('menuAvatar');
+  const avatars=[];
   const dashAvatar=$('dashAvatarSmall');
   const legacyAvatar=$('avatar');
-  setAvatar(menuAvatar,image);
-  setAvatar(dashAvatar,image);
-  setAvatar(legacyAvatar,image);
-}
-
-// If the menu avatar is updated later by another existing part of the index,
-// mirror its actual image directly into the homepage profile immediately.
-function syncHomepageProfileFromMenu(){
-  const menu=$('menuAvatar'), dash=$('dashAvatarSmall');
-  if(!menu||!dash)return;
-  const img=menu.querySelector('img');
-  const src=img&&(img.currentSrc||img.src||img.getAttribute('src'));
-  if(src){
-    const current=dash.querySelector('img');
-    if(!current||current.src!==src){
-      dash.innerHTML=''; const copy=document.createElement('img'); copy.alt='Profile'; copy.src=src; dash.appendChild(copy);
+  if(dashAvatar)avatars.push(dashAvatar);
+  if(legacyAvatar)avatars.push(legacyAvatar);
+  avatars.forEach(avatar=>{
+    if(me.profileImage||me.profile_image){
+      avatar.innerHTML=`<img src="${esc(me.profileImage||me.profile_image)}" alt="Profile">`;
+    }else{
+      avatar.textContent=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
     }
-  }
+  });
 }
-function watchMenuProfileMirror(){
-  const menu=$('menuAvatar');
-  if(!menu||menu.__acbMirrorObserver)return;
-  menu.__acbMirrorObserver=new MutationObserver(()=>syncHomepageProfileFromMenu());
-  menu.__acbMirrorObserver.observe(menu,{childList:true,subtree:true,attributes:true,attributeFilter:['src']});
-  syncHomepageProfileFromMenu();
-}
-
 function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
 function renderBalance(){
 
@@ -2587,56 +2531,6 @@ return `<div class="supportMessage ${mine?'customerMessage':'bankMessage'}"><div
 }).join('');
 body.scrollTop=body.scrollHeight;
 }
-function acbShowFloatingChat(){
-  const btn=$('acbFloatingChat'), hint=$('acbFloatingChatHint');
-  if(!btn||!me)return;
-  btn.classList.add('show');
-  if(hint){
-    hint.classList.add('show');
-    clearTimeout(window.__acbChatHintTimer);
-    window.__acbChatHintTimer=setTimeout(()=>hint.classList.remove('show'),6500);
-  }
-}
-function acbOpenFloatingChat(){
-  const hint=$('acbFloatingChatHint');
-  if(hint)hint.classList.remove('show');
-
-  // Open ONLY the original Provide Support Live Chat from Index 11.
-  // The separate bank Customer Support panel is intentionally not called here.
-  loadRealCustomerLiveChat();
-
-  const clickLiveChatLauncher=()=>{
-    const selectors=[
-      '[id*="providesupport" i] button','[id*="providesupport" i] a',
-      '[class*="providesupport" i] button','[class*="providesupport" i] a',
-      '[id^="ps_"] button','[id^="ps_"] a',
-      '[class^="ps_"] button','[class^="ps_"] a',
-      'iframe[src*="providesupport.com"]'
-    ];
-    for(const selector of selectors){
-      const nodes=[...document.querySelectorAll(selector)];
-      const node=nodes.find(el=>{
-        const r=el.getBoundingClientRect();
-        const cs=getComputedStyle(el);
-        return r.width>0&&r.height>0&&cs.display!=='none'&&cs.visibility!=='hidden';
-      });
-      if(node){ try{node.click();return true;}catch(e){} }
-    }
-    return false;
-  };
-
-  if(clickLiveChatLauncher())return;
-  const observer=new MutationObserver(()=>{
-    if(clickLiveChatLauncher()){
-      observer.disconnect();
-      clearTimeout(window.__acbLiveChatOpenTimer);
-    }
-  });
-  observer.observe(document.documentElement,{childList:true,subtree:true});
-  clearTimeout(window.__acbLiveChatOpenTimer);
-  window.__acbLiveChatOpenTimer=setTimeout(()=>observer.disconnect(),7000);
-}
-
 function toggleChat(){
 
 if(!me){
@@ -2650,7 +2544,6 @@ return;
 }
 
 $('chat').classList.toggle('show');
-const __hint=$('acbFloatingChatHint'); if(__hint)$('acbFloatingChatHint').classList.remove('show');
 
 if($('chat').classList.contains('show')){
 
@@ -4462,5 +4355,3 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
 #receiptModal .acbReceiptActions button{font-size:11px!important;padding:8px!important;min-height:34px!important}
 @media(max-width:390px){.prHeader{padding-left:12px!important;padding-right:12px!important}.prSection{margin-left:15px!important;margin-right:15px!important}.prInfoBox,.prBreakdown{margin-left:14px!important;margin-right:14px!important}.prAmount{margin-left:16px!important;margin-right:16px!important}}
 </style>
-</body>
-</html>
