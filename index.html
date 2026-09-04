@@ -511,6 +511,18 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 #dashAvatarSmall{overflow:hidden!important;display:grid!important;place-items:center!important;position:relative!important;width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;max-width:46px!important;max-height:46px!important;border-radius:50%!important;}
 #dashAvatarSmall img{display:block!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;border-radius:50%!important;}
 #dashAvatarSmall span{width:100%!important;height:100%!important;display:grid!important;place-items:center!important;}
+
+/* HOME AVATAR DIRECT SOURCE FIX */
+#dashAvatarSmall{overflow:hidden!important;position:relative!important;}
+#dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important;z-index:4!important;display:none;}
+#dashAvatarImage[src]:not([src=""]){display:block!important;}
+#dashAvatarInitials{position:absolute!important;inset:0!important;z-index:2!important;display:grid;place-items:center;}
+
+/* HOME AVATAR — FINAL SINGLE OWNER RULE (must stay last) */
+#dashAvatarSmall{position:relative!important;overflow:hidden!important;width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;max-width:46px!important;max-height:46px!important;border-radius:50%!important;isolation:isolate!important;background:#fff!important;}
+#dashAvatarSmall #dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;border-radius:50%!important;z-index:20!important;display:block!important;visibility:visible!important;opacity:1!important;background:#fff!important;}
+#dashAvatarSmall #dashAvatarInitials{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:10!important;display:grid!important;place-items:center!important;}
+.dashAvatarSmall:after{z-index:30!important;}
 </style></head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -2121,11 +2133,10 @@ refreshAdmin(false);
 function renderAvatar(){
   if(!me)return;
 
-  // PROFILE IMAGE ONLY: use the server image first, then this account's saved local backup.
   const accountId=String(me?.id||me?.userId||me?.user_id||'current');
   let image=me.profileImage||me.profile_image||'';
   if(!image){
-    try{image=localStorage.getItem('acb_profile_image_'+accountId)||'';}catch(e){}
+    try{ image=localStorage.getItem('acb_profile_image_'+accountId)||getStoredProfileImage(me)||''; }catch(e){}
   }
   if(image){
     me.profileImage=image;
@@ -2134,17 +2145,55 @@ function renderAvatar(){
 
   const initials=String(me.name||'AC').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'AC';
 
-  // HOME AVATAR: deliberately use the EXACT SAME rendering method as the working menu.
-  // This removes the separate src/onload/onerror/class logic that was conflicting.
-  const dashAvatar=$('dashAvatarSmall');
-  const legacyAvatar=$('avatar');
+  // MENU: keep the already-working rendering method.
   const menuAvatar=$('menuAvatar');
-  [dashAvatar,legacyAvatar,menuAvatar].forEach(avatar=>{
-    if(!avatar)return;
-    avatar.innerHTML=image
-      ? `<img src="${esc(image)}" alt="Profile">`
-      : initials;
-  });
+  if(menuAvatar){
+    menuAvatar.innerHTML='';
+    if(image){
+      const menuImg=document.createElement('img');
+      menuImg.alt='Profile';
+      menuImg.src=image;
+      menuAvatar.appendChild(menuImg);
+    }else menuAvatar.textContent=initials;
+  }
+
+  // HOME: copy the exact source that was just given to the working menu image.
+  // This removes all separate restore/loading paths for the homepage.
+  const dashImage=$('dashAvatarImage');
+  const dashInitials=$('dashAvatarInitials');
+  if(dashImage){
+    const menuImg=menuAvatar ? menuAvatar.querySelector('img') : null;
+    const exactSource=menuImg ? (menuImg.getAttribute('src')||menuImg.currentSrc||menuImg.src||'') : image;
+    dashImage.onerror=null;
+    dashImage.onload=null;
+    dashImage.alt=''; // never show broken-image text
+    if(exactSource){
+      dashImage.removeAttribute('src');
+      dashImage.src=exactSource;
+      dashImage.style.setProperty('display','block','important');
+      dashImage.style.setProperty('visibility','visible','important');
+      dashImage.style.setProperty('opacity','1','important');
+      if(dashInitials)dashInitials.style.setProperty('display','none','important');
+    }else{
+      dashImage.removeAttribute('src');
+      dashImage.style.setProperty('display','none','important');
+      if(dashInitials){
+        dashInitials.textContent=initials;
+        dashInitials.style.setProperty('display','grid','important');
+      }
+    }
+  }
+
+  const legacyAvatar=$('avatar');
+  if(legacyAvatar){
+    legacyAvatar.innerHTML='';
+    if(image){
+      const legacyImg=document.createElement('img');
+      legacyImg.alt='Profile';
+      legacyImg.src=image;
+      legacyAvatar.appendChild(legacyImg);
+    }else legacyAvatar.textContent=initials;
+  }
 }
 
 function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
