@@ -216,7 +216,7 @@ function receiptSvg({
     <text x="130" y="1082" font-family="Arial" font-size="16" fill="#475569">Online Service transfer fee: ${escSvg(feeAmount.toFixed(2))} ${escSvg(currency)}</text>
 
     <text x="100" y="1170" font-family="Arial" font-size="15" fill="#64748b">${hasConversion ? 'Currency conversion applied using fixed online service rates.' : 'No currency conversion was required.'}</text>
-    <text x="100" y="1202" font-family="Arial" font-size="15" fill="#94a3b8">Safety / simulated transaction — virtual funds were moved.</text>
+    <text x="100" y="1202" font-family="Arial" font-size="15" fill="#94a3b8">Safety / simulated transaction — credited funds were moved.</text>
     <text x="100" y="1235" font-family="Arial" font-size="15" fill="#94a3b8">American Crest Online Service Banking • ${escSvg(BANK_EMAIL)}</text>
   </svg>`;
 }
@@ -2285,7 +2285,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
         to: recipientEmail,
         subject: `Transfer pending — ${reference}`,
         receipt,
-        html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>A transfer is pending.</b></p><p>A online service transfer has been initiated for you and is awaiting processing.</p><div style="padding:18px;background:#f4f7fb;border-radius:14px"><p><b>Amount:</b> ${amount.toLocaleString()} ${currency}</p><p><b>Reference:</b> ${reference}</p><p><b>Recipient bank:</b> ${recipientBank}</p><p><b>Status:</b> PENDING</p></div><p style="color:#64748b">This is a safety/online service banking notification. Virtual funds were transferred.</p></div>`
+        html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>A transfer is pending.</b></p><p>A online service transfer has been initiated for you and is awaiting processing.</p><div style="padding:18px;background:#f4f7fb;border-radius:14px"><p><b>Amount:</b> ${amount.toLocaleString()} ${currency}</p><p><b>Reference:</b> ${reference}</p><p><b>Recipient bank:</b> ${recipientBank}</p><p><b>Status:</b> PENDING</p></div><p style="color:#64748b">This is a safety/online service banking notification. credited funds were transferred.</p></div>`
       });
       console.log(`[ONLINE SERVICE EMAIL] transfer ${reference} result=${emailSent ? 'sent' : 'not-sent'}`);
       if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [requestId]);
@@ -4970,7 +4970,7 @@ async function updateTransferStatus(req, res) {
       exchangeRate: Number(transferMeta.exchangeRate || 1)
     });
     let emailSent = false;
-    if (request.recipient_email) emailSent = await sendOnlineServiceEmail({to:request.recipient_email,subject:`Transfer approved — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>Your simulated transfer is successful.</b></p><p>Reference: <b>${request.reference || request.id}</b></p><p>Amount: <b>${Number(request.amount).toLocaleString()} ${request.currency}</b></p><p>Recipient: <b>${request.recipient}</b></p><p>Bank: <b>${request.recipient_bank}</b></p><p>Status: <b>SUCCESSFUL</b></p><p style="color:#64748b">This is a safety/online service banking notification. Virtual funds were transferred.</p></div>`});
+    if (request.recipient_email) emailSent = await sendOnlineServiceEmail({to:request.recipient_email,subject:`Transfer approved — ${request.reference || request.id}`,receipt,html:`<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#172033"><h2>${BANK_NAME}</h2><p><b>Your simulated transfer is successful.</b></p><p>Reference: <b>${request.reference || request.id}</b></p><p>Amount: <b>${Number(request.amount).toLocaleString()} ${request.currency}</b></p><p>Recipient: <b>${request.recipient}</b></p><p>Bank: <b>${request.recipient_bank}</b></p><p>Status: <b>SUCCESSFUL</b></p><p style="color:#64748b">This is a safety/online service banking notification. credited funds were transferred.</p></div>`});
     if (emailSent) await pool.query(`UPDATE acb_requests SET email_sent_at=NOW() WHERE id=$1`, [request.id]);
     return res.json({ok:true,status:'approved',message:'Online Service transfer approved.',emailSent,user:updatedUser,customer:updatedUser,balance:updatedUser?.balances?.[request.currency] ?? 0});
   } catch(error) {
@@ -5073,7 +5073,7 @@ app.post('/api/demo/services', auth, writeLimiter, async (req,res) => {
     await pool.query(`INSERT INTO acb_demo_service_requests(id,user_id,service,details) VALUES($1,$2,$3,$4)`, [id,req.user.id,service,JSON.stringify(details)]);
     const admin=await pool.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
     if(admin.rowCount) await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),admin.rows[0].id,`Demo ${service} request received from customer ${req.user.id}.`]);
-    await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),req.user.id,`${service}: your online service request was received. Virtual payment, purchase, loan or card issuance occurs.`]);
+    await pool.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),req.user.id,`${service}: your online service request was received. credited payment, purchase, loan or card issuance occurs.`]);
     return res.status(201).json({ok:true,id,service,status:'received',message:`${service} online service request received.`});
   } catch(error) { console.error('Online Service error:',error); return res.status(500).json({ok:false,error:'Unable to submit online service request.'}); }
 });
