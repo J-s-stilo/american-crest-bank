@@ -4636,38 +4636,32 @@ function hideNotificationPopup(){
     probe.src=image;
   };
 
+  /* Keep the original dashboard entry function intact. The rebuild wraps it instead of replacing it. */
+  const originalShowDashboard=window.showDashboard;
   window.showDashboard=function(){
+    if(typeof originalShowDashboard==='function') originalShowDashboard.apply(this,arguments);
     if(!window.me)return;
-    const pub=document.getElementById('publicSite'),dash=document.getElementById('dashboard');
-    if(pub)pub.style.display='none'; if(dash)dash.style.display='block';
-    if(typeof window.loadRealCustomerLiveChat==='function')loadRealCustomerLiveChat();
-    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-    set('welcomeName',me.name||'Customer'); set('dashName',me.name||'Customer'); set('emailStat',me.email||'—'); set('statusStat',me.status||'Active');
-    const pn=document.getElementById('profileName');if(pn)pn.value=me.name||'';
 
-    /* New login rule: balance always starts visible; eye only controls current-session display. */
+    /* Balance is visible by default immediately after every successful login. */
     window.balanceHidden=false;
-    try{const id=me.id||me.userId||me.user_id||'current';localStorage.removeItem('acb_balance_hidden_'+id)}catch(e){}
+    try{
+      const id=me.id||me.userId||me.user_id||'current';
+      localStorage.removeItem('acb_balance_hidden_'+id);
+    }catch(e){}
 
     window.renderAvatar();
     if(typeof oldRenderBalance==='function')oldRenderBalance();
     if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
     if(typeof oldRenderNotifications==='function')oldRenderNotifications();
-    if(typeof window.renderTransactions==='function')renderTransactions();
-    if(typeof window.renderChat==='function')renderChat();
-    if(typeof window.syncSecondDesignHeader==='function')syncSecondDesignHeader();
 
-    const admin=document.getElementById('adminPanel'); if(admin){const yes=String(me.role||'').toLowerCase()==='admin';admin.style.display=yes?'block':'none';if(yes&&typeof window.refreshAdmin==='function')refreshAdmin(false);}
+    /* Preserve the original dashboard refresh path, but make its automatic cycle faster. */
     if(window.liveTimer)clearInterval(window.liveTimer);
     window.liveTimer=setInterval(async function(){
       if(!window.token)return;
-      const ok=await window.loadMe(); if(!ok)return;
-      window.renderAvatar();
-      /* Data is refreshed automatically; no button click is involved. */
-      if(typeof oldRenderBalance==='function')oldRenderBalance();
-      if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
-      if(typeof oldRenderNotifications==='function')oldRenderNotifications();
-      if(typeof window.renderTransactions==='function')renderTransactions();
+      const loaded=await window.loadMe();
+      if(!loaded)return;
+      if(typeof window.refreshDashboard==='function')window.refreshDashboard(false);
+      if(String(me.role||'').toLowerCase()==='admin'&&typeof window.refreshAdmin==='function')window.refreshAdmin(false);
     },3000);
   };
 
