@@ -803,7 +803,14 @@ function toggleHomeFaq(button){
 <div class="mobileDashHeader">
 <button class="dashMenuBtn" type="button" onclick="openAppMenu()" aria-label="Menu" title="Open menu">☰</button>
 <div class="dashBrand"><span class="dashBrandMark">AC</span><span><strong>American Crest</strong><small>Banking</small></span></div>
-<div class="dashHeaderRight"><button class="dashBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCountTop" class="dashBadge">0</span></button><div class="dashAvatarSmall" id="dashAvatarSmall" role="button" tabindex="0" onclick="chooseProfileImage()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseProfileImage();}" aria-label="Change profile picture" title="Change profile picture">DE</div><input id="profileImageInput" class="hiddenFile" type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" onchange="handleProfileImage(event)"></div>
+<div class="dashHeaderRight"><button class="dashBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCountTop" class="dashBadge">0</span></button><div class="dashAvatarSmall" id="dashAvatarSmall" role="button" tabindex="0"
+onclick="chooseProfileImage()"
+onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseProfileImage();}"
+aria-label="Change profile picture"
+title="Change profile picture">
+<img id="dashAvatarImage" src="" alt="Profile picture">
+<span id="dashAvatarInitials">DE</span>
+</div>       
 </div>
 <div class="dashHero"><div><div class="dashGreeting">Good evening, <span id="welcomeName">Customer</span></div><div class="dashWelcome">Welcome back to your account</div></div><button class="currencySelector" type="button" onclick="openExchange()"><span class="ukFlag">🇬🇧</span><span id="primaryCurrencyDisplay">GBP</span><span>⌄</span></button></div>
 <div id="notificationCenter" class="notificationCenter dashNotificationLayer"><div class="notificationCenterHead"><button id="notificationBell" class="notificationBell hiddenNotificationBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCount" class="notificationBadge">0</span></button><div id="notificationBoard" class="notificationBoard"><div class="notificationBoardHead"><strong>Notifications</strong><button class="notificationBoardClose" type="button" onclick="toggleNotificationBoard(false)" aria-label="Close">×</button></div><div id="notifications" class="notificationList"></div></div></div></div>
