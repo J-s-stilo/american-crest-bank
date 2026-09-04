@@ -537,16 +537,6 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .homeProfileMirror img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;border-radius:50%;} 
 .homeProfileMirror:after{content:"";position:absolute;right:0;bottom:1px;width:9px;height:9px;border-radius:50%;background:#18a558;border:2px solid #fff;z-index:5;}
 </style>
-
-<style id="shared-profile-avatar-fix">
-/* Both visible avatars use the same image source rendered by renderAvatar(). */
-#menuAvatar img,#homeProfileMirror img{
-  width:100%!important;height:100%!important;display:block!important;
-  object-fit:cover!important;border-radius:50%!important;position:absolute!important;inset:0!important;
-  opacity:1!important;visibility:visible!important;
-}
-#homeProfileMirror{background:#fff!important;position:relative!important;}
-</style>
 </head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -2167,28 +2157,52 @@ function renderAvatar(){
     try{localStorage.setItem('acb_profile_image_'+accountId,image);}catch(e){}
   }
 
-  // ONE profile-image source for every avatar. The menu and homepage are rendered
-  // from the exact same `image` value, so neither has its own storage or data path.
-  const renderSharedAvatar=(element)=>{
-    if(!element)return;
-    element.replaceChildren();
+  /* WORKING MENU AVATAR — left in its original data path. */
+  const menuAvatar=$('menuAvatar');
+  if(menuAvatar){
+    menuAvatar.innerHTML='';
     if(image){
-      const img=document.createElement('img');
-      img.alt='Profile picture';
-      img.src=image;
-      img.decoding='async';
-      img.onload=()=>{ img.style.visibility='visible'; };
-      // Do not replace a working saved image with initials during loading.
-      element.appendChild(img);
+      const menuImg=document.createElement('img');
+      menuImg.alt='Profile';
+      menuImg.src=image;
+      menuAvatar.appendChild(menuImg);
     }else{
-      element.textContent=initials;
+      menuAvatar.textContent=initials;
     }
-  };
+  }
 
-  renderSharedAvatar($('menuAvatar'));
-  renderSharedAvatar($('homeProfileMirror'));
-  renderSharedAvatar($('avatar'));
+  /* FRESH HOMEPAGE AVATAR — completely rebuilt as a mirror of the menu image. */
+  const homeAvatar=$('homeProfileMirror');
+  if(homeAvatar){
+    homeAvatar.innerHTML='';
+    const menuImg=menuAvatar?menuAvatar.querySelector('img'):null;
+    const source=(menuImg && (menuImg.currentSrc||menuImg.src||menuImg.getAttribute('src'))) || image || '';
+
+    if(source){
+      const homeImg=document.createElement('img');
+      homeImg.id='homeProfileMirrorImage';
+      homeImg.alt='';
+      homeImg.src=source;
+      homeImg.onload=()=>{ homeImg.style.display='block'; };
+      homeImg.onerror=()=>{
+        /* Keep the homepage clean if a source ever becomes invalid. */
+        homeAvatar.innerHTML='';
+        homeAvatar.textContent=initials;
+      };
+      homeAvatar.appendChild(homeImg);
+    }else{
+      homeAvatar.textContent=initials;
+    }
+  }
+
+  const legacyAvatar=$('avatar');
+  if(legacyAvatar){
+    legacyAvatar.innerHTML='';
+    if(image){const img=document.createElement('img');img.alt='Profile';img.src=image;legacyAvatar.appendChild(img);}
+    else legacyAvatar.textContent=initials;
+  }
 }
+
 function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
 function renderBalance(){
 if(!me)return;
