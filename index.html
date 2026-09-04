@@ -2439,100 +2439,6 @@ let lastTransferReceipt=null;
 function openReceipt(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();$('receiptModal').classList.add('show');}
 function closeReceipt(){const modal=$('receiptModal');if(modal)modal.classList.remove('show');}
 function printReceipt(){const paper=$('receiptPaper');if(!paper)return;const win=window.open('','_blank','width=700,height=850');if(!win)return toast('Please allow pop-ups to print the receipt.');win.document.write('<!doctype html><html><head><title>American Crest Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial,sans-serif;background:#eef2f7;padding:30px;color:#1e293b}.receipt{background:#fff;max-width:520px;margin:auto;border:1px solid #dbe3ee;border-radius:18px;overflow:hidden}.top{padding:22px;border-bottom:1px dashed #cbd5e1;font-weight:800;color:#071a35}.body{padding:24px}.amount{background:#f7f9fc;border-radius:14px;padding:16px;margin:18px 0}.amount strong{display:block;font-size:28px;color:#071a35}.grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e5eaf1}.item{padding:12px;border:1px solid #e5eaf1}.item small{display:block;color:#64748b;font-size:11px}.item strong{display:block;margin-top:4px;font-size:13px;word-break:break-word}.note{margin-top:14px;padding:12px;background:#f8fafc;font-size:12px}.ref{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px}@media(max-width:520px){.grid{grid-template-columns:1fr}}</style></head><body><div class="receipt">'+paper.innerHTML+'</div>
-<style id="acb-three-part-rebuild">
-/* AUTHORITATIVE REBUILD: homepage avatar */
-#dashAvatarSmall{position:relative!important;display:grid!important;place-items:center!important;overflow:hidden!important;isolation:isolate!important}
-#dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;border-radius:50%!important;z-index:10!important;display:none!important;visibility:hidden!important;opacity:0!important;background:transparent!important}
-#dashAvatarImage.acbAvatarReady{display:block!important;visibility:visible!important;opacity:1!important}
-#dashAvatarInitials{position:absolute!important;inset:0!important;display:grid!important;place-items:center!important;z-index:1!important}
-</style>
-<script id="acb-three-part-rebuild-script">
-/* Clean rebuild of ONLY: homepage avatar, automatic balance, automatic notifications. */
-(function(){
-  const oldRenderAvatar=window.renderAvatar;
-  const oldRenderBalance=window.renderBalance;
-  const oldRenderNotifications=window.renderNotifications;
-  const oldRefreshDashboard=window.refreshDashboard;
-
-  window.renderAvatar=function(){
-    if(!window.me)return;
-    const initials=(String(me.name||'AC').trim().split(/\s+/).map(x=>x[0]||'').slice(0,2).join('').toUpperCase()||'AC');
-    const accountId=String(me.id||me.userId||me.user_id||'current');
-    let image=me.profileImage||me.profile_image||'';
-    if(!image){try{image=localStorage.getItem('acb_profile_image_'+accountId)||''}catch(e){}}
-    if(image){me.profileImage=image;me.profile_image=image;}
-
-    /* Keep the already-working menu rendering path. */
-    ['avatar','menuAvatar'].forEach(id=>{
-      const el=document.getElementById(id); if(!el)return;
-      el.innerHTML=image?'<img alt="Profile" src="'+String(image).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">':initials;
-    });
-
-    /* New homepage board: direct source from the same profile data as menu. */
-    const home=document.getElementById('dashAvatarImage');
-    const letters=document.getElementById('dashAvatarInitials');
-    if(!home||!letters)return;
-    letters.textContent=initials;
-    home.classList.remove('acbAvatarReady');
-    home.removeAttribute('src');
-    if(!image){letters.style.display='grid';return;}
-    const probe=new Image();
-    probe.onload=function(){
-      home.src=image;
-      home.classList.add('acbAvatarReady');
-      letters.style.display='none';
-    };
-    probe.onerror=function(){
-      home.removeAttribute('src');
-      home.classList.remove('acbAvatarReady');
-      letters.style.display='grid';
-    };
-    probe.src=image;
-  };
-
-  window.showDashboard=function(){
-    if(!window.me)return;
-    const pub=document.getElementById('publicSite'),dash=document.getElementById('dashboard');
-    if(pub)pub.style.display='none'; if(dash)dash.style.display='block';
-    if(typeof window.loadRealCustomerLiveChat==='function')loadRealCustomerLiveChat();
-    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-    set('welcomeName',me.name||'Customer'); set('dashName',me.name||'Customer'); set('emailStat',me.email||'—'); set('statusStat',me.status||'Active');
-    const pn=document.getElementById('profileName');if(pn)pn.value=me.name||'';
-
-    /* New login rule: balance always starts visible; eye only controls current-session display. */
-    window.balanceHidden=false;
-    try{const id=me.id||me.userId||me.user_id||'current';localStorage.removeItem('acb_balance_hidden_'+id)}catch(e){}
-
-    window.renderAvatar();
-    if(typeof oldRenderBalance==='function')oldRenderBalance();
-    if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
-    if(typeof oldRenderNotifications==='function')oldRenderNotifications();
-    if(typeof window.renderTransactions==='function')renderTransactions();
-    if(typeof window.renderChat==='function')renderChat();
-    if(typeof window.syncSecondDesignHeader==='function')syncSecondDesignHeader();
-
-    const admin=document.getElementById('adminPanel'); if(admin){const yes=String(me.role||'').toLowerCase()==='admin';admin.style.display=yes?'block':'none';if(yes&&typeof window.refreshAdmin==='function')refreshAdmin(false);}
-    if(window.liveTimer)clearInterval(window.liveTimer);
-    window.liveTimer=setInterval(async function(){
-      if(!window.token)return;
-      const ok=await window.loadMe(); if(!ok)return;
-      window.renderAvatar();
-      /* Data is refreshed automatically; no button click is involved. */
-      if(typeof oldRenderBalance==='function')oldRenderBalance();
-      if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
-      if(typeof oldRenderNotifications==='function')oldRenderNotifications();
-      if(typeof window.renderTransactions==='function')renderTransactions();
-    },3000);
-  };
-
-  /* Eye button is display-only: it never fetches or initializes the balance. */
-  window.toggleBalance=function(){
-    window.balanceHidden=!window.balanceHidden;
-    if(typeof oldRenderBalance==='function')oldRenderBalance();
-    if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
-  };
-})();
-</script>
 </body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),250);}
 
 /*
@@ -4676,5 +4582,103 @@ function hideNotificationPopup(){
 }
 </script>
 
+
+
+<!-- Clean three-part rebuild: kept outside all existing scripts -->
+
+<style id="acb-three-part-rebuild">
+/* AUTHORITATIVE REBUILD: homepage avatar */
+#dashAvatarSmall{position:relative!important;display:grid!important;place-items:center!important;overflow:hidden!important;isolation:isolate!important}
+#dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;border-radius:50%!important;z-index:10!important;display:none!important;visibility:hidden!important;opacity:0!important;background:transparent!important}
+#dashAvatarImage.acbAvatarReady{display:block!important;visibility:visible!important;opacity:1!important}
+#dashAvatarInitials{position:absolute!important;inset:0!important;display:grid!important;place-items:center!important;z-index:1!important}
+</style>
+<script id="acb-three-part-rebuild-script">
+/* Clean rebuild of ONLY: homepage avatar, automatic balance, automatic notifications. */
+(function(){
+  const oldRenderAvatar=window.renderAvatar;
+  const oldRenderBalance=window.renderBalance;
+  const oldRenderNotifications=window.renderNotifications;
+  const oldRefreshDashboard=window.refreshDashboard;
+
+  window.renderAvatar=function(){
+    if(!window.me)return;
+    const initials=(String(me.name||'AC').trim().split(/\s+/).map(x=>x[0]||'').slice(0,2).join('').toUpperCase()||'AC');
+    const accountId=String(me.id||me.userId||me.user_id||'current');
+    let image=me.profileImage||me.profile_image||'';
+    if(!image){try{image=localStorage.getItem('acb_profile_image_'+accountId)||''}catch(e){}}
+    if(image){me.profileImage=image;me.profile_image=image;}
+
+    /* Keep the already-working menu rendering path. */
+    ['avatar','menuAvatar'].forEach(id=>{
+      const el=document.getElementById(id); if(!el)return;
+      el.innerHTML=image?'<img alt="Profile" src="'+String(image).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">':initials;
+    });
+
+    /* New homepage board: direct source from the same profile data as menu. */
+    const home=document.getElementById('dashAvatarImage');
+    const letters=document.getElementById('dashAvatarInitials');
+    if(!home||!letters)return;
+    letters.textContent=initials;
+    home.classList.remove('acbAvatarReady');
+    home.removeAttribute('src');
+    if(!image){letters.style.display='grid';return;}
+    const probe=new Image();
+    probe.onload=function(){
+      home.src=image;
+      home.classList.add('acbAvatarReady');
+      letters.style.display='none';
+    };
+    probe.onerror=function(){
+      home.removeAttribute('src');
+      home.classList.remove('acbAvatarReady');
+      letters.style.display='grid';
+    };
+    probe.src=image;
+  };
+
+  window.showDashboard=function(){
+    if(!window.me)return;
+    const pub=document.getElementById('publicSite'),dash=document.getElementById('dashboard');
+    if(pub)pub.style.display='none'; if(dash)dash.style.display='block';
+    if(typeof window.loadRealCustomerLiveChat==='function')loadRealCustomerLiveChat();
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('welcomeName',me.name||'Customer'); set('dashName',me.name||'Customer'); set('emailStat',me.email||'—'); set('statusStat',me.status||'Active');
+    const pn=document.getElementById('profileName');if(pn)pn.value=me.name||'';
+
+    /* New login rule: balance always starts visible; eye only controls current-session display. */
+    window.balanceHidden=false;
+    try{const id=me.id||me.userId||me.user_id||'current';localStorage.removeItem('acb_balance_hidden_'+id)}catch(e){}
+
+    window.renderAvatar();
+    if(typeof oldRenderBalance==='function')oldRenderBalance();
+    if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
+    if(typeof oldRenderNotifications==='function')oldRenderNotifications();
+    if(typeof window.renderTransactions==='function')renderTransactions();
+    if(typeof window.renderChat==='function')renderChat();
+    if(typeof window.syncSecondDesignHeader==='function')syncSecondDesignHeader();
+
+    const admin=document.getElementById('adminPanel'); if(admin){const yes=String(me.role||'').toLowerCase()==='admin';admin.style.display=yes?'block':'none';if(yes&&typeof window.refreshAdmin==='function')refreshAdmin(false);}
+    if(window.liveTimer)clearInterval(window.liveTimer);
+    window.liveTimer=setInterval(async function(){
+      if(!window.token)return;
+      const ok=await window.loadMe(); if(!ok)return;
+      window.renderAvatar();
+      /* Data is refreshed automatically; no button click is involved. */
+      if(typeof oldRenderBalance==='function')oldRenderBalance();
+      if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
+      if(typeof oldRenderNotifications==='function')oldRenderNotifications();
+      if(typeof window.renderTransactions==='function')renderTransactions();
+    },3000);
+  };
+
+  /* Eye button is display-only: it never fetches or initializes the balance. */
+  window.toggleBalance=function(){
+    window.balanceHidden=!window.balanceHidden;
+    if(typeof oldRenderBalance==='function')oldRenderBalance();
+    if(typeof window.renderCurrencyBalances==='function')renderCurrencyBalances();
+  };
+})();
+</script>
 </body>
 </html>
