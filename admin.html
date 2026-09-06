@@ -509,6 +509,7 @@ Refresh Customers
 <th>Email / Phone</th>
 <th>Balance</th>
 <th>Status</th>
+<th>Transfers</th>
 <th>Created</th>
 <th>Actions</th>
 </tr>
@@ -606,6 +607,47 @@ Loading...
 
 </main>
 </section>
+
+
+<div id="editCustomerModal" class="modal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>Edit Customer</h2>
+
+<button id="closeEditCustomerButton"
+        class="close"
+        type="button">
+×
+</button>
+
+</div>
+
+<p id="editCustomerName"></p>
+
+<small id="editCustomerEmail"></small>
+
+<label for="editTransferAccess">
+Customer Transfer Status
+</label>
+
+<select id="editTransferAccess">
+<option value="allowed">Allow Transfers</option>
+<option value="stopped">Stop Transfers</option>
+</select>
+
+<br><br>
+
+<button id="saveTransferAccessButton"
+        class="primary"
+        type="button">
+Save Transfer Status
+</button>
+
+</div>
+</div>
 
 
 <div id="creditModal" class="modal">
@@ -1348,7 +1390,7 @@ async function loadCustomers(){
 
       body.innerHTML = `
         <tr>
-          <td colspan="6" class="empty">
+          <td colspan="7" class="empty">
             No customer accounts yet.
           </td>
         </tr>
@@ -1427,6 +1469,14 @@ async function loadCustomers(){
 
               <td>
                 ${
+                  customer?.transfer_enabled === false
+                    ? `<span class="badge suspended">Stopped</span>`
+                    : `<span class="badge active">Allowed</span>`
+                }
+              </td>
+
+              <td>
+                ${
                   customer?.created_at
                     ? new Date(
                         customer.created_at
@@ -1450,6 +1500,23 @@ async function loadCustomers(){
                       data-customer-id="${escapeHtml(customerId)}"
                     >
                       Add Funds
+                    </button>
+                    `
+                    :
+                    ""
+                  }
+
+                  ${
+                    customerId
+                    ?
+                    `
+                    <button
+                      class="secondary"
+                      type="button"
+                      data-action="edit-customer"
+                      data-customer-id="${escapeHtml(customerId)}"
+                    >
+                      Edit Customer
                     </button>
                     `
                     :
@@ -1520,6 +1587,23 @@ async function loadCustomers(){
 
     body
       .querySelectorAll(
+        '[data-action="edit-customer"]'
+      )
+      .forEach(button=>{
+
+        button.addEventListener(
+          "click",
+          ()=>{
+            openEditCustomerById(
+              button.dataset.customerId
+            );
+          }
+        );
+
+      });
+
+    body
+      .querySelectorAll(
         '[data-action="status"]'
       )
       .forEach(button=>{
@@ -1542,7 +1626,7 @@ async function loadCustomers(){
 
     body.innerHTML = `
       <tr>
-        <td colspan="6" class="empty">
+        <td colspan="7" class="empty">
           ${escapeHtml(
             error?.message ||
             "Unable to load customers."
@@ -1550,6 +1634,132 @@ async function loadCustomers(){
         </td>
       </tr>
     `;
+  }
+}
+
+
+/* =====================================================
+   EDIT CUSTOMER / TRANSFER ACCESS
+===================================================== */
+
+function openEditCustomerById(id){
+
+  const target = String(id ?? "").trim();
+
+  if(!target){
+    alert("Invalid customer information.");
+    return;
+  }
+
+  const customer =
+    (window.__adminCustomers || []).find(item =>
+      getCustomerIdentifiers(item).some(
+        value => String(value).trim() === target
+      )
+    );
+
+  if(!customer){
+    alert("Customer information could not be found. Refresh customers and try again.");
+    return;
+  }
+
+  selectedCustomer = customer;
+
+  $("editCustomerName").textContent =
+    customer?.full_name ||
+    customer?.fullName ||
+    customer?.name ||
+    "Customer";
+
+  $("editCustomerEmail").textContent =
+    customer?.email || customer?.phone || "—";
+
+  $("editTransferAccess").value =
+    customer?.transfer_enabled === false
+      ? "stopped"
+      : "allowed";
+
+  $("editCustomerModal").classList.add("show");
+}
+
+function closeEditCustomerModal(){
+  $("editCustomerModal").classList.remove("show");
+  selectedCustomer = null;
+}
+
+async function saveCustomerTransferAccess(){
+
+  if(!selectedCustomer){
+    alert("Select a customer first.");
+    return;
+  }
+
+  const customerId = getCustomerId(selectedCustomer);
+  if(!customerId){
+    alert("Customer information is missing. Refresh customers and try again.");
+    return;
+  }
+
+  const enabled =
+    $("editTransferAccess").value === "allowed";
+
+  const customerName =
+    selectedCustomer?.full_name ||
+    selectedCustomer?.fullName ||
+    selectedCustomer?.name ||
+    "this customer";
+
+  const actionText = enabled
+    ? "allow transfers for"
+    : "stop transfers for";
+
+  if(!confirm(`Are you sure you want to ${actionText} ${customerName}?`)){
+    return;
+  }
+
+  const button = $("saveTransferAccessButton");
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  try{
+    await api(
+      "/api/admin/customers/" +
+      encodeURIComponent(customerId) +
+      "/transfer-access",
+      {
+        method:"PATCH",
+        body:JSON.stringify({
+          enabled,
+          transfer_enabled: enabled,
+          customerId,
+          customer_id: customerId,
+          userId: customerId,
+          user_id: customerId
+        })
+      }
+    );
+
+    closeEditCustomerModal();
+
+    await Promise.allSettled([
+      loadCustomers(),
+      loadDashboard()
+    ]);
+
+    alert(
+      enabled
+        ? "Transfers are now allowed for this customer."
+        : "Transfers have been stopped for this customer."
+    );
+
+  }catch(error){
+    alert(
+      error?.message ||
+      "Unable to update customer transfer access."
+    );
+  }finally{
+    button.disabled = false;
+    button.textContent = "Save Transfer Status";
   }
 }
 
@@ -2825,6 +3035,18 @@ function initializeAdmin(){
       loadNotifications
     );
 
+  $("closeEditCustomerButton")
+    .addEventListener(
+      "click",
+      closeEditCustomerModal
+    );
+
+  $("saveTransferAccessButton")
+    .addEventListener(
+      "click",
+      saveCustomerTransferAccess
+    );
+
   $("closeCreditButton")
     .addEventListener(
       "click",
@@ -2886,6 +3108,13 @@ function initializeAdmin(){
 
       if(
         event.target ===
+        $("editCustomerModal")
+      ){
+        closeEditCustomerModal();
+      }
+
+      if(
+        event.target ===
         $("creditModal")
       ){
         closeModal();
@@ -2907,6 +3136,7 @@ function initializeAdmin(){
 
       if(event.key === "Escape"){
 
+        closeEditCustomerModal();
         closeModal();
         closeReplyModal();
 
