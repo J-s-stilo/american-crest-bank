@@ -27,9 +27,9 @@ app.use(cors({
 
 }));
 
-app.use(express.json({ limit: '5mb' }));
+app.use(express.json({ limit: '2mb' }));
 
-app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 app.use(express.static(path.join(__dirname)));
 
@@ -1975,65 +1975,91 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
 });
 
-async function saveProfileImage(req, res) {
+app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
+
   try {
-    const image = String(
-      req.body?.profileImage ||
-      req.body?.profile_image ||
-      req.body?.image ||
-      req.body?.avatar ||
-      req.body?.photo ||
-      ''
-    ).trim();
 
-    if (!image) {
-      return res.status(400).json({ ok: false, error: 'Select an image first.' });
+    const image =
+
+      String(
+
+        req.body.profileImage ||
+
+        req.body.profile_image ||
+
+        ''
+
+      );
+
+    if (image.length > 700000) {
+
+      return res.status(400).json({
+
+        error: 'Profile image is too large.'
+
+      });
+
     }
 
-    if (image.length > 1200000) {
-      return res.status(400).json({ ok: false, error: 'Profile image is too large.' });
-    }
+    if (
 
-    if (!/^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=\s]+$/i.test(image)) {
-      return res.status(400).json({ ok: false, error: 'Invalid image format.' });
+      image &&
+
+      !/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(image)
+
+    ) {
+
+      return res.status(400).json({
+
+        error: 'Invalid image format.'
+
+      });
+
     }
 
     await pool.query(
-      `UPDATE acb_users SET profile_image=$1 WHERE id=$2`,
-      [image, req.user.id]
+
+      `
+
+      UPDATE acb_users
+
+      SET profile_image=$1
+
+      WHERE id=$2
+
+      `,
+
+      image, [req.user.id]
+
     );
 
-    const user = await getUser(req.user.id);
-    return res.json({ ok: true, success: true, message: 'Profile image updated successfully.', user, customer: user });
+    const user =
+
+      await getUser(req.user.id);
+
+    return res.json({
+
+      ok: true,
+
+      user,
+
+      customer: user
+
+    });
+
   } catch (error) {
-    console.error('Profile image upload error:', error);
-    return res.status(500).json({ ok: false, error: 'Unable to save profile image.' });
+
+    console.error('Profile image error:', error);
+
+    return res.status(500).json({
+
+      error: 'Unable to update profile image.'
+
+    });
+
   }
-}
 
-// Primary image upload route plus compatibility aliases used by older frontends.
-app.post('/api/profile/image', auth, writeLimiter, saveProfileImage);
-app.post('/api/profile/image/upload', auth, writeLimiter, saveProfileImage);
-app.post('/api/profile/photo', auth, writeLimiter, saveProfileImage);
-
-async function deleteProfileImage(req, res) {
-  try {
-    await pool.query(
-      `UPDATE acb_users SET profile_image='' WHERE id=$1`,
-      [req.user.id]
-    );
-
-    const user = await getUser(req.user.id);
-    return res.json({ ok: true, success: true, message: 'Profile image deleted successfully.', user, customer: user });
-  } catch (error) {
-    console.error('Profile image delete error:', error);
-    return res.status(500).json({ ok: false, error: 'Unable to delete profile image.' });
-  }
-}
-
-app.delete('/api/profile/image', auth, writeLimiter, deleteProfileImage);
-app.delete('/api/profile/photo', auth, writeLimiter, deleteProfileImage);
-app.post('/api/profile/image/delete', auth, writeLimiter, deleteProfileImage);
+});
 
 /*
 
@@ -4860,248 +4886,80 @@ async function updateTransferStatus(req, res) {
 
     }
 
-    const request =
-
-      requestResult.rows[0];
-
-    const primaryCurrency=String(request.primary_currency||'USD').toUpperCase();
-    const convertedAmount=convertDemoCurrency(Number(request.amount),request.currency,primaryCurrency);
+    const request = requestResult.rows[0];
+    const sentCurrency = String(request.currency || '').toUpperCase();
+    const sentAmount = Number(request.amount);
 
     if (request.status !== 'pending') {
-
       await client.query('ROLLBACK');
-
-      return res.status(409).json({
-
-        error: 'This transfer has already been handled.'
-
-      });
-
+      return res.status(409).json({ error:'This transfer has already been handled.' });
+    }
+    if (!Number.isFinite(sentAmount) || sentAmount <= 0 || !sentCurrency) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error:'Invalid transfer amount or currency.' });
     }
 
     if (status === 'declined') {
-
-      await client.query(
-
-        `
-
-        UPDATE acb_requests
-
-        SET status='declined',handled_at=NOW()
-
-        WHERE id=$1
-
-        `,
-
-        [request.id]
-
-      );
-
-      await client.query(
-
-        `
-
-        INSERT INTO acb_notifications
-
-          (id,user_id,message)
-
-        VALUES
-
-          ($1,$2,$3)
-
-        `,
-
-        [
-
-          uuid(),
-
-          request.user_id,
-
-          `Your ONLINE BANKING transfer request for ${Number(request.amount).toLocaleString()} ${request.currency} was declined.`
-
-        ]
-
-      );
-
+      await client.query(`UPDATE acb_requests SET status='declined',handled_at=NOW() WHERE id=$1`, [request.id]);
+      await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),request.user_id,`Your ONLINE BANKING transfer request for ${sentAmount.toLocaleString()} ${sentCurrency} was declined.`]);
       await client.query('COMMIT');
-
-      const updatedUser =
-
-        await getUser(String(request.user_id));
-
-      return res.json({
-
-        ok: true,
-
-        status: 'declined',
-
-        user: updatedUser,
-
-        customer: updatedUser
-
-      });
-
+      const updatedUser=await getUser(String(request.user_id));
+      return res.json({ok:true,status:'declined',user:updatedUser,customer:updatedUser});
     }
 
-    await client.query(
+    const recipientEmail=normalizeEmail(request.recipient_email || '');
+    if(!recipientEmail){await client.query('ROLLBACK');return res.status(400).json({error:'Recipient email is missing.'});}
+    const recipientResult=await client.query(`SELECT id,name,email,status FROM acb_users WHERE LOWER(role)='customer' AND LOWER(email)=LOWER($1) LIMIT 1 FOR UPDATE`,[recipientEmail]);
+    if(!recipientResult.rowCount){await client.query('ROLLBACK');return res.status(404).json({error:'Recipient customer account not found.'});}
 
-      `
+    const recipientUser=recipientResult.rows[0];
+    const senderUserId=String(request.user_id);
+    const recipientUserId=String(recipientUser.id);
+    if(senderUserId===recipientUserId){await client.query('ROLLBACK');return res.status(400).json({error:'You cannot transfer money to the same account.'});}
+    if(String(recipientUser.status||'').toLowerCase()!=='active'){await client.query('ROLLBACK');return res.status(400).json({error:'Recipient account is not active.'});}
 
-      INSERT INTO acb_balances
+    await client.query(`INSERT INTO acb_balances (user_id,currency,amount) VALUES ($1,$3,0),($2,$3,0) ON CONFLICT(user_id,currency) DO NOTHING`,[senderUserId,recipientUserId,sentCurrency]);
+    const balances=await client.query(`SELECT user_id,amount FROM acb_balances WHERE currency=$3 AND user_id IN ($1,$2) ORDER BY user_id FOR UPDATE`,[senderUserId,recipientUserId,sentCurrency]);
+    const senderRow=balances.rows.find(row=>String(row.user_id)===senderUserId);
+    const senderBalance=Number(senderRow?.amount||0);
+    if(senderBalance<sentAmount){await client.query('ROLLBACK');return res.status(400).json({ok:false,error:`Insufficient ${sentCurrency} balance. Available: ${senderBalance.toLocaleString()} ${sentCurrency}.`});}
 
-        (user_id,currency,amount)
+    await client.query(`UPDATE acb_balances SET amount=amount-$1 WHERE user_id=$2 AND currency=$3`,[sentAmount,senderUserId,sentCurrency]);
+    await client.query(`INSERT INTO acb_transactions (id,user_id,kind,title,amount,currency) VALUES ($1,$2,'debit',$3,$4,$5)`,[uuid(),senderUserId,`Transfer to ${recipientUser.name||request.recipient||recipientEmail}`,sentAmount,sentCurrency]);
+    await client.query(`UPDATE acb_balances SET amount=amount+$1 WHERE user_id=$2 AND currency=$3`,[sentAmount,recipientUserId,sentCurrency]);
+    await client.query(`INSERT INTO acb_transactions (id,user_id,kind,title,amount,currency) VALUES ($1,$2,'credit',$3,$4,$5)`,[uuid(),recipientUserId,`Transfer received from ${request.name||request.email||'ONLINE BANKING customer'}`,sentAmount,sentCurrency]);
 
-      VALUES
+    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3),($4,$5,$6)`,[
+      uuid(),senderUserId,`Your transfer of ${sentAmount.toLocaleString()} ${sentCurrency} to ${recipientUser.name||recipientEmail} was approved and your account was debited.`,
+      uuid(),recipientUserId,`You received ${sentAmount.toLocaleString()} ${sentCurrency} from ${request.name||request.email||'an ONLINE BANKING customer'}`
+    ]);
 
-        ($1,$2,$3)
-
-      ON CONFLICT(user_id,currency)
-
-      DO UPDATE SET
-
-        amount=
-
-          acb_balances.amount+
-
-          EXCLUDED.amount
-
-      `,
-
-      [
-
-        request.user_id,
-
-        convertedAmount!=null?primaryCurrency:request.currency,
-
-        convertedAmount!=null?convertedAmount:request.amount
-
-      ]
-
-    );
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_transactions
-
-        (
-
-          id,user_id,kind,title,
-
-          amount,currency
-
-        )
-
-      VALUES
-
-        (
-
-          $1,$2,'credit',
-
-          'Funds received from administrator',
-
-          $3,$4
-
-        )
-
-      `,
-
-      [
-
-        uuid(),
-
-        request.user_id,
-
-        convertedAmount!=null?convertedAmount:request.amount,
-
-        convertedAmount!=null?primaryCurrency:request.currency
-
-      ]
-
-    );
-
-    await client.query(
-
-      `
-
-      INSERT INTO acb_notifications
-
-        (id,user_id,message)
-
-      VALUES
-
-        ($1,$2,$3)
-
-      `,
-
-      [
-
-        uuid(),
-
-        request.user_id,
-
-        `You received ${Number(request.amount).toLocaleString()} ${request.currency}. Your ONLINE BANKING account balance has been updated.`
-
-      ]
-
-    );
-
-    await client.query(`UPDATE acb_requests SET converted_amount=$1,converted_currency=$2 WHERE id=$3`,[convertedAmount!=null?convertedAmount:null,convertedAmount!=null?primaryCurrency:request.currency,request.id]);
-
-    await client.query(
-
-      `
-
-      UPDATE acb_requests
-
-      SET status=$1,handled_at=NOW()
-
-      WHERE id=$2
-
-      AND status='pending'
-
-      `,
-
-      [status, request.id]
-
-    );
-
+    await client.query(`UPDATE acb_requests SET converted_amount=$1,converted_currency=$2,status=$3,handled_at=NOW() WHERE id=$4 AND status='pending'`,[sentAmount,sentCurrency,status,request.id]);
     await client.query('COMMIT');
 
     let successfulEmailSent=false;
-    const customerReceiptEmail=normalizeEmail(request.email || request.recipient_email || '');
-    if(customerReceiptEmail){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendBrevoEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
-    else { console.error('Successful transfer receipt email skipped: customer account email is missing.'); }
+    const customerReceiptEmail=normalizeEmail(request.email || '');
+    if(customerReceiptEmail){
+      try{
+        const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:sentAmount,originalCurrency:sentCurrency,convertedAmount:null,convertedCurrency:null});
+        await sendBrevoEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt});
+        successfulEmailSent=true;
+      }catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}
+    } else { console.error('Successful transfer receipt email skipped: customer account email is missing.'); }
 
-    const updatedUser =
-
-      await getUser(
-
-        String(request.user_id)
-
-      );
-
+    const updatedUser=await getUser(String(request.user_id));
     return res.json({
-
-      ok: true,
-
+      ok:true,
       status,
       successfulEmailSent,
-      convertedAmount: convertedAmount!=null?Number(convertedAmount):null,
-      convertedCurrency: convertedAmount!=null?primaryCurrency:request.currency,
-
-      message:
-
-        `Customer received ${Number(request.amount).toLocaleString()} ${request.currency}.`,
-
-      user: updatedUser,
-
-      customer: updatedUser,
-
-      balance:
-        updatedUser?.balances?.[convertedAmount != null ? primaryCurrency : request.currency] ?? 0
-
+      sentAmount,
+      sentCurrency,
+      convertedAmount:null,
+      convertedCurrency:null,
+      message:`Transfer completed: ${sentAmount.toLocaleString()} ${sentCurrency}.`,
+      user:updatedUser,
+      customer:updatedUser,
+      balance:updatedUser?.balances?.[sentCurrency] ?? 0
     });
 
   } catch (error) {
