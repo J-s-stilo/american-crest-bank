@@ -27,9 +27,9 @@ app.use(cors({
 
 }));
 
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '5mb' }));
 
-app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 app.use(express.static(path.join(__dirname)));
 
@@ -46,11 +46,10 @@ const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || '')
   .toLowerCase();
 
 const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '');
-const MAILJET_API_KEY = String(process.env.MAILJET_API_KEY || '').trim();
-const MAILJET_SECRET_KEY = String(process.env.MAILJET_SECRET_KEY || '').trim();
-const MAILJET_FROM_EMAIL = normalizeEmail(process.env.MAILJET_FROM_EMAIL || '');
-const MAILJET_FROM_NAME = String(process.env.MAILJET_FROM_NAME || 'ONLINE BANKING').trim();
-const MAILJET_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const BREVO_API_KEY = String(process.env.BREVO_API_KEY || '').trim();
+const BREVO_FROM_EMAIL = normalizeEmail(process.env.BREVO_FROM_EMAIL || '');
+const BREVO_FROM_NAME = String(process.env.BREVO_FROM_NAME || 'ONLINE BANKING').trim();
+const BREVO_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 if (!JWT_SECRET || !DATABASE_URL) {
 
@@ -157,42 +156,45 @@ function escapeHtml(value) {
   return String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-function sendMailjetEmail({toEmail,toName,subject,text,html}) {
+function sendBrevoEmail({toEmail,toName,subject,text,html}) {
   const recipient = normalizeEmail(toEmail);
 
-  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY) {
-    return Promise.reject(new Error('Mailjet credentials are missing. Set MAILJET_API_KEY and MAILJET_SECRET_KEY in Render Environment.'));
+  if (!BREVO_API_KEY) {
+    return Promise.reject(new Error('Brevo API key is missing. Set BREVO_API_KEY in Render Environment.'));
   }
 
-  if (!MAILJET_FROM_EMAIL || !MAILJET_EMAIL_RE.test(MAILJET_FROM_EMAIL)) {
-    return Promise.reject(new Error('Mailjet sender email is invalid or missing. Check MAILJET_FROM_EMAIL and make sure the sender is verified in Mailjet.'));
+  if (!BREVO_FROM_EMAIL || !BREVO_EMAIL_RE.test(BREVO_FROM_EMAIL)) {
+    return Promise.reject(new Error('Brevo sender email is invalid or missing. Check BREVO_FROM_EMAIL and make sure the sender is verified in Brevo.'));
   }
 
-  if (!recipient || !MAILJET_EMAIL_RE.test(recipient)) {
+  if (!recipient || !BREVO_EMAIL_RE.test(recipient)) {
     return Promise.reject(new Error('Customer email is missing or invalid. The transfer receipt cannot be sent until the customer account has a valid email address.'));
   }
 
   const payload = JSON.stringify({
-    Messages: [{
-      From: { Email: MAILJET_FROM_EMAIL, Name: MAILJET_FROM_NAME },
-      To: [{ Email: recipient, Name: String(toName || '').trim() || recipient }],
-      Subject: String(subject || 'Transfer Receipt'),
-      TextPart: String(text || ''),
-      HTMLPart: String(html || '')
-    }]
+    sender: {
+      email: BREVO_FROM_EMAIL,
+      name: BREVO_FROM_NAME
+    },
+    to: [{
+      email: recipient,
+      name: String(toName || '').trim() || recipient
+    }],
+    subject: String(subject || 'Transfer Receipt'),
+    textContent: String(text || ''),
+    htmlContent: String(html || '')
   });
-
-  const auth = Buffer.from(`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`).toString('base64');
 
   return new Promise((resolve,reject)=>{
     const r = https.request({
-      hostname: 'api.mailjet.com',
-      path: '/v3.1/send',
+      hostname: 'api.brevo.com',
+      path: '/v3/smtp/email',
       method: 'POST',
       headers: {
+        'accept': 'application/json',
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payload),
-        'Authorization': `Basic ${auth}`
+        'api-key': BREVO_API_KEY
       },
       timeout: 15000
     }, res => {
@@ -207,22 +209,22 @@ function sendMailjetEmail({toEmail,toName,subject,text,html}) {
         let detail = body.slice(0, 1000);
         try {
           const parsed = JSON.parse(body);
-          detail = parsed?.ErrorMessage || parsed?.Messages?.[0]?.Errors?.[0]?.ErrorMessage || detail;
+          detail = parsed?.message || parsed?.code || detail;
         } catch {}
 
         if (res.statusCode === 401 || res.statusCode === 403) {
-          return reject(new Error(`Mailjet authentication failed (HTTP ${res.statusCode}). Check MAILJET_API_KEY and MAILJET_SECRET_KEY; do not change the Render variable names.`));
+          return reject(new Error(`Brevo authentication failed (HTTP ${res.statusCode}). Check BREVO_API_KEY and make sure the key belongs to the new Brevo account.`));
         }
 
         if (res.statusCode === 400) {
-          return reject(new Error(`Mailjet rejected the email (HTTP 400): ${detail}`));
+          return reject(new Error(`Brevo rejected the email (HTTP 400): ${detail}`));
         }
 
-        return reject(new Error(`Mailjet returned HTTP ${res.statusCode}: ${detail}`));
+        return reject(new Error(`Brevo returned HTTP ${res.statusCode}: ${detail}`));
       });
     });
 
-    r.on('timeout', () => r.destroy(new Error('Mailjet request timed out after 15 seconds.')));
+    r.on('timeout', () => r.destroy(new Error('Brevo request timed out after 15 seconds.')));
     r.on('error', reject);
     r.write(payload);
     r.end();
@@ -1973,91 +1975,65 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
 });
 
-app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
-
+async function saveProfileImage(req, res) {
   try {
+    const image = String(
+      req.body?.profileImage ||
+      req.body?.profile_image ||
+      req.body?.image ||
+      req.body?.avatar ||
+      req.body?.photo ||
+      ''
+    ).trim();
 
-    const image =
-
-      String(
-
-        req.body.profileImage ||
-
-        req.body.profile_image ||
-
-        ''
-
-      );
-
-    if (image.length > 700000) {
-
-      return res.status(400).json({
-
-        error: 'Profile image is too large.'
-
-      });
-
+    if (!image) {
+      return res.status(400).json({ ok: false, error: 'Select an image first.' });
     }
 
-    if (
+    if (image.length > 1200000) {
+      return res.status(400).json({ ok: false, error: 'Profile image is too large.' });
+    }
 
-      image &&
-
-      !/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(image)
-
-    ) {
-
-      return res.status(400).json({
-
-        error: 'Invalid image format.'
-
-      });
-
+    if (!/^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=\s]+$/i.test(image)) {
+      return res.status(400).json({ ok: false, error: 'Invalid image format.' });
     }
 
     await pool.query(
-
-      `
-
-      UPDATE acb_users
-
-      SET profile_image=$1
-
-      WHERE id=$2
-
-      `,
-
-      image, [req.user.id]
-
+      `UPDATE acb_users SET profile_image=$1 WHERE id=$2`,
+      [image, req.user.id]
     );
 
-    const user =
-
-      await getUser(req.user.id);
-
-    return res.json({
-
-      ok: true,
-
-      user,
-
-      customer: user
-
-    });
-
+    const user = await getUser(req.user.id);
+    return res.json({ ok: true, success: true, message: 'Profile image updated successfully.', user, customer: user });
   } catch (error) {
-
-    console.error('Profile image error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to update profile image.'
-
-    });
-
+    console.error('Profile image upload error:', error);
+    return res.status(500).json({ ok: false, error: 'Unable to save profile image.' });
   }
+}
 
-});
+// Primary image upload route plus compatibility aliases used by older frontends.
+app.post('/api/profile/image', auth, writeLimiter, saveProfileImage);
+app.post('/api/profile/image/upload', auth, writeLimiter, saveProfileImage);
+app.post('/api/profile/photo', auth, writeLimiter, saveProfileImage);
+
+async function deleteProfileImage(req, res) {
+  try {
+    await pool.query(
+      `UPDATE acb_users SET profile_image='' WHERE id=$1`,
+      [req.user.id]
+    );
+
+    const user = await getUser(req.user.id);
+    return res.json({ ok: true, success: true, message: 'Profile image deleted successfully.', user, customer: user });
+  } catch (error) {
+    console.error('Profile image delete error:', error);
+    return res.status(500).json({ ok: false, error: 'Unable to delete profile image.' });
+  }
+}
+
+app.delete('/api/profile/image', auth, writeLimiter, deleteProfileImage);
+app.delete('/api/profile/photo', auth, writeLimiter, deleteProfileImage);
+app.post('/api/profile/image/delete', auth, writeLimiter, deleteProfileImage);
 
 /*
 
@@ -2224,7 +2200,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
     let pendingEmailSent=false;
     const customerEmail=normalizeEmail(customer?.email || currentUser.rows[0]?.email || '');
-    if(customerEmail){try{const receipt=makeTransferReceiptEmail({status:'pending',request:{id:requestId,recipient,note,created_at:new Date()},originalAmount:amount,originalCurrency:currency});await sendMailjetEmail({toEmail:customerEmail,toName:customer?.name || currentUser.rows[0]?.name,...receipt});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
+    if(customerEmail){try{const receipt=makeTransferReceiptEmail({status:'pending',request:{id:requestId,recipient,note,created_at:new Date()},originalAmount:amount,originalCurrency:currency});await sendBrevoEmail({toEmail:customerEmail,toName:customer?.name || currentUser.rows[0]?.name,...receipt});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
 
     return res.status(201).json({
 
@@ -5095,7 +5071,7 @@ async function updateTransferStatus(req, res) {
 
     let successfulEmailSent=false;
     const customerReceiptEmail=normalizeEmail(request.email || request.recipient_email || '');
-    if(customerReceiptEmail){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendMailjetEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
+    if(customerReceiptEmail){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendBrevoEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
     else { console.error('Successful transfer receipt email skipped: customer account email is missing.'); }
 
     const updatedUser =
