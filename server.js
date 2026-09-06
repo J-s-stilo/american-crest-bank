@@ -46,24 +46,10 @@ const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || '')
   .toLowerCase();
 
 const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '');
-const MAILJET_API_KEY = String(process.env.MAILJET_API_KEY || process.env.MAILJET_PUBLIC_KEY || '').trim();
-const MAILJET_SECRET_KEY = String(process.env.MAILJET_SECRET_KEY || process.env.MAILJET_SECRET || process.env.MAILJET_API_SECRET || '').trim();
-const MAILJET_FROM_EMAIL = String(process.env.MAILJET_FROM_EMAIL || process.env.MAILJET_SENDER_EMAIL || ADMIN_EMAIL || '').trim();
-const MAILJET_FROM_NAME = String(process.env.MAILJET_FROM_NAME || process.env.MAILJET_SENDER_NAME || 'ONLINE BANKING — DEMO').trim();
-
-function mailjetConfigStatus() {
-  const missing = [];
-  if (!MAILJET_API_KEY) missing.push('MAILJET_API_KEY');
-  if (!MAILJET_SECRET_KEY) missing.push('MAILJET_SECRET_KEY');
-  if (!MAILJET_FROM_EMAIL) missing.push('MAILJET_FROM_EMAIL');
-  return { configured: missing.length === 0, missing, fromEmail: MAILJET_FROM_EMAIL || null };
-}
-
-console.log('[Mailjet] configuration:', JSON.stringify({
-  configured: mailjetConfigStatus().configured,
-  missing: mailjetConfigStatus().missing,
-  fromEmail: mailjetConfigStatus().fromEmail
-}));
+const MAILJET_API_KEY = String(process.env.MAILJET_API_KEY || '').trim();
+const MAILJET_SECRET_KEY = String(process.env.MAILJET_SECRET_KEY || '').trim();
+const MAILJET_FROM_EMAIL = String(process.env.MAILJET_FROM_EMAIL || '').trim();
+const MAILJET_FROM_NAME = String(process.env.MAILJET_FROM_NAME || 'ONLINE BANKING — DEMO').trim();
 
 if (!JWT_SECRET || !DATABASE_URL) {
 
@@ -171,51 +157,11 @@ function escapeHtml(value) {
 }
 
 function sendMailjetEmail({toEmail,toName,subject,text,html}) {
-  const config = mailjetConfigStatus();
-  if (!config.configured) {
-    return Promise.reject(new Error(`Mailjet is not configured. Missing: ${config.missing.join(', ')}`));
-  }
-
-  const recipient = normalizeEmail(toEmail);
-  if (!recipient || !/^\S+@\S+\.\S+$/.test(recipient)) {
-    return Promise.reject(new Error('Recipient email is missing or invalid.'));
-  }
-
-  const payload = JSON.stringify({
-    Messages: [{
-      From: { Email: MAILJET_FROM_EMAIL, Name: MAILJET_FROM_NAME },
-      To: [{ Email: recipient, Name: String(toName || '').trim() || recipient }],
-      Subject: String(subject || '').trim(),
-      TextPart: String(text || ''),
-      HTMLPart: String(html || '')
-    }]
-  });
-
-  return new Promise((resolve,reject) => {
-    const request = https.request({
-      hostname:'api.mailjet.com',
-      path:'/v3.1/send',
-      method:'POST',
-      auth:`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`,
-      headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(payload)},
-      timeout:15000
-    }, response => {
-      let body='';
-      response.setEncoding('utf8');
-      response.on('data', chunk => { body += chunk; });
-      response.on('end', () => {
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-          console.log(`[Mailjet] sent to ${recipient}; HTTP ${response.statusCode}`);
-          return resolve(body);
-        }
-        console.error(`[Mailjet] send failed; HTTP ${response.statusCode}: ${body.slice(0,1000)}`);
-        reject(new Error(`Mailjet returned HTTP ${response.statusCode}: ${body.slice(0,500)}`));
-      });
-    });
-    request.on('timeout', () => request.destroy(new Error('Mailjet request timed out.')));
-    request.on('error', reject);
-    request.write(payload);
-    request.end();
+  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY || !MAILJET_FROM_EMAIL || !toEmail) return Promise.reject(new Error('Mailjet is not configured or recipient email is missing.'));
+  const payload=JSON.stringify({Messages:[{From:{Email:MAILJET_FROM_EMAIL,Name:MAILJET_FROM_NAME},To:[{Email:String(toEmail).trim(),Name:String(toName||'').trim()||String(toEmail).trim()}],Subject:subject,TextPart:text,HTMLPart:html}]});
+  return new Promise((resolve,reject)=>{
+    const r=https.request({hostname:'api.mailjet.com',path:'/v3.1/send',method:'POST',auth:`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(payload)},timeout:15000},res=>{let body='';res.on('data',c=>body+=c);res.on('end',()=>{if(res.statusCode>=200&&res.statusCode<300)return resolve(body);reject(new Error(`Mailjet returned HTTP ${res.statusCode}: ${body.slice(0,500)}`));});});
+    r.on('timeout',()=>r.destroy(new Error('Mailjet request timed out.'))); r.on('error',reject); r.write(payload); r.end();
   });
 }
 
@@ -2085,14 +2031,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
       );
 
-    const recipientEmail = normalizeEmail(
-      req.body.recipientEmail ||
-      req.body.recipient_email ||
-      req.body.email ||
-      req.body.emailAddress ||
-      req.body.email_address ||
-      ''
-    );
+    const recipientEmail = normalizeEmail(req.body.recipientEmail || '');
 
     const note =
 
@@ -2220,7 +2159,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     }
 
     let pendingEmailSent=false;
-    if(recipientEmail){try{const receipt=makeTransferReceiptEmail({status:'pending',request:{id:requestId,recipient,note,created_at:new Date()},originalAmount:amount,originalCurrency:currency});await sendMailjetEmail({toEmail:recipientEmail,toName:recipient,...receipt});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError);}}
+    if(recipientEmail){try{const receipt=makeTransferReceiptEmail({status:'pending',request:{id:requestId,recipient,note,created_at:new Date()},originalAmount:amount,originalCurrency:currency});await sendMailjetEmail({toEmail:recipientEmail,toName:recipient,...receipt});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
 
     return res.status(201).json({
 
@@ -2255,43 +2194,6 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
   }
 
-});
-
-/*
-\=========================================================
-MAILJET DIAGNOSTICS
-\=========================================================
-*/
-
-app.get('/api/admin/mailjet/status', auth, adminOnly, async (_req, res) => {
-  const status = mailjetConfigStatus();
-  return res.json({
-    ok: true,
-    mailjet: status,
-    message: status.configured
-      ? 'Mailjet variables are present. The sender address must also be verified in Mailjet.'
-      : `Missing Render environment variables: ${status.missing.join(', ')}`
-  });
-});
-
-app.post('/api/admin/mailjet/test', auth, adminOnly, writeLimiter, async (req, res) => {
-  try {
-    const toEmail = normalizeEmail(req.body.toEmail || req.body.email || '');
-    if (!/^\S+@\S+\.\S+$/.test(toEmail)) {
-      return res.status(400).json({ ok:false, error:'Provide a valid test recipient email in toEmail.' });
-    }
-    await sendMailjetEmail({
-      toEmail,
-      toName: 'Mailjet Test',
-      subject: 'Mailjet test — ONLINE BANKING DEMO',
-      text: 'This is a Mailjet connectivity test from the server.',
-      html: '<p>This is a Mailjet connectivity test from the server.</p>'
-    });
-    return res.json({ ok:true, sent:true, toEmail });
-  } catch (error) {
-    console.error('[Mailjet] test failed:', error);
-    return res.status(502).json({ ok:false, sent:false, error:error.message });
-  }
 });
 
 /*
@@ -5162,7 +5064,7 @@ async function updateTransferStatus(req, res) {
     await client.query('COMMIT');
 
     let successfulEmailSent=false;
-    if(request.recipient_email){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendMailjetEmail({toEmail:request.recipient_email,toName:request.recipient,...receipt});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError);}}
+    if(request.recipient_email){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendMailjetEmail({toEmail:request.recipient_email,toName:request.recipient,...receipt});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
 
     const updatedUser =
 
