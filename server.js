@@ -27,9 +27,9 @@ app.use(cors({
 
 }));
 
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '5mb' }));
 
-app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 app.use(express.static(path.join(__dirname)));
 
@@ -156,7 +156,7 @@ function escapeHtml(value) {
   return String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-function sendBrevoEmail({toEmail,toName,subject,text,html}) {
+function sendBrevoEmail({toEmail,toName,subject,text,html,attachments=[]}) {
   const recipient = normalizeEmail(toEmail);
 
   if (!BREVO_API_KEY) {
@@ -182,7 +182,13 @@ function sendBrevoEmail({toEmail,toName,subject,text,html}) {
     }],
     subject: String(subject || 'Transfer Receipt'),
     textContent: String(text || ''),
-    htmlContent: String(html || '')
+    htmlContent: String(html || ''),
+    ...(Array.isArray(attachments) && attachments.length ? {
+      attachment: attachments.map(item => ({
+        name: String(item.name || 'receipt.pdf'),
+        content: String(item.content || '')
+      }))
+    } : {})
   });
 
   return new Promise((resolve,reject)=>{
@@ -203,7 +209,11 @@ function sendBrevoEmail({toEmail,toName,subject,text,html}) {
       res.on('data', c => { body += c; });
       res.on('end', () => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          return resolve({ sent: true, statusCode: res.statusCode, response: body.slice(0, 1000) });
+          let parsed = {};
+          try { parsed = JSON.parse(body); } catch {}
+          const messageId = parsed?.messageId || parsed?.message_id || '';
+          console.log(`BREVO EMAIL ACCEPTED: recipient=${recipient} status=${res.statusCode}${messageId ? ` messageId=${messageId}` : ''}`);
+          return resolve({ sent: true, statusCode: res.statusCode, messageId, response: body.slice(0, 1000) });
         }
 
         let detail = body.slice(0, 1000);
@@ -231,9 +241,73 @@ function sendBrevoEmail({toEmail,toName,subject,text,html}) {
   });
 }
 
-const DEMO_FX_TO_USD={USD:1,EUR:1.087,GBP:1.282,NGN:0.000667,IDR:0.0000625,CAD:0.735,AUD:0.66,CHF:1.10,JPY:0.00675,CNY:0.139,INR:0.0120,MYR:0.223,SGD:0.745,AED:0.2723,ZAR:0.055,KES:0.0078,GHS:0.0667};
-function convertDemoCurrency(amount,from,to){from=String(from||'').toUpperCase();to=String(to||'').toUpperCase();if(from===to)return Number(amount);const a=DEMO_FX_TO_USD[from],b=DEMO_FX_TO_USD[to];return a&&b?Number(amount)*a/b:null;}
+const ONLINE_BANKING_FX_TO_USD={USD:1,EUR:1.087,GBP:1.282,NGN:0.000667,IDR:0.0000625,CAD:0.735,AUD:0.66,CHF:1.10,JPY:0.00675,CNY:0.139,INR:0.0120,MYR:0.223,SGD:0.745,AED:0.2723,ZAR:0.055,KES:0.0078,GHS:0.0667};
+function convertOnlineBankingCurrency(amount,from,to){from=String(from||'').toUpperCase();to=String(to||'').toUpperCase();if(from===to)return Number(amount);const a=ONLINE_BANKING_FX_TO_USD[from],b=ONLINE_BANKING_FX_TO_USD[to];return a&&b?Number(amount)*a/b:null;}
 function formatMoneyValue(amount,currency){return `${Number(amount||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${String(currency||'').toUpperCase()}`;}
+function pdfEscape(value) {
+  return String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)')
+    .replace(/\r?\n/g, ' ');
+}
+
+function makeTransferReceiptPdf({status,request,originalAmount,originalCurrency,convertedAmount,convertedCurrency}) {
+  const label = status === 'pending' ? 'Pending' : 'Successful';
+  const amountText = formatMoneyValue(originalAmount, originalCurrency);
+  const convertedText = convertedAmount != null ? formatMoneyValue(convertedAmount, convertedCurrency) : '';
+  const dateText = new Date(request.created_at || Date.now()).toLocaleString();
+  const lines = [
+    'ONLINE BANKING',
+    'TRANSFER RECEIPT',
+    '',
+    `Status: ${label}`,
+    `Recipient: ${request.recipient || 'Recipient'}`,
+    `Recipient Email: ${request.recipient_email || ''}`,
+    `Amount Sent: ${amountText}`,
+    convertedText ? `Converted Amount: ${convertedText}` : '',
+    `Reference: ${request.id || ''}`,
+    `Date: ${dateText}`,
+    '',
+    `Message: ${String(request.note || '').trim() || 'No note provided.'}`
+  ].filter(Boolean);
+
+  const contentParts = [
+    'BT',
+    '/F1 16 Tf',
+    '50 750 Td',
+    `(${pdfEscape(lines[0])}) Tj`,
+    '/F1 11 Tf',
+    '0 -28 Td',
+    `(${pdfEscape(lines[1])}) Tj`
+  ];
+  for (let i = 2; i < lines.length; i++) {
+    contentParts.push('0 -20 Td', `(${pdfEscape(lines[i])}) Tj`);
+  }
+  contentParts.push('ET');
+  const stream = contentParts.join('\n');
+  const objects = [];
+  objects.push('<< /Type /Catalog /Pages 2 0 R >>');
+  objects.push('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>');
+  objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+  objects.push(`<< /Length ${Buffer.byteLength(stream, 'utf8')} >>\nstream\n${stream}\nendstream`);
+
+  let pdf = '%PDF-1.4\n';
+  const offsets = [0];
+  for (let i = 0; i < objects.length; i++) {
+    offsets.push(Buffer.byteLength(pdf, 'utf8'));
+    pdf += `${i + 1} 0 obj\n${objects[i]}\nendobj\n`;
+  }
+  const xrefOffset = Buffer.byteLength(pdf, 'utf8');
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (let i = 1; i <= objects.length; i++) {
+    pdf += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+  }
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
+  return Buffer.from(pdf, 'utf8').toString('base64');
+}
+
 function makeTransferReceiptEmail({status,request,originalAmount,originalCurrency,convertedAmount,convertedCurrency}){
   const label=status==='pending'?'Pending':'Successful'; const amountText=formatMoneyValue(originalAmount,originalCurrency); const convertedText=convertedAmount!=null?formatMoneyValue(convertedAmount,convertedCurrency):''; const note=String(request.note||'').trim()||'No note provided.';
   return {subject:`${label} Transfer Receipt — ${amountText}`,text:['ONLINE BANKING','',`Transfer status: ${label}`,`Recipient: ${request.recipient||'Recipient'}`,`Amount: ${amountText}`,convertedText?`Converted amount: ${convertedText}`:'',`Reference: ${request.id}`,`Date: ${new Date(request.created_at||Date.now()).toLocaleString()}`,'',`Message from sender: ${note}`,'','This is an ONLINE BANKING notification.'].filter(Boolean).join('\n'),html:`<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;padding:28px;border:1px solid #e4e8f0;border-radius:16px"><b>ONLINE BANKING</b><h2>Transfer ${escapeHtml(label)}</h2><p><b>Status:</b> ${escapeHtml(label)}</p><p><b>Recipient:</b> ${escapeHtml(request.recipient||'Recipient')}</p><p><b>Amount:</b> ${escapeHtml(amountText)}</p>${convertedText?`<p><b>Converted amount:</b> ${escapeHtml(convertedText)}</p>`:''}<p><b>Reference:</b> ${escapeHtml(request.id)}</p><p><b>Date:</b> ${escapeHtml(new Date(request.created_at||Date.now()).toLocaleString())}</p><div style="margin-top:18px;padding:16px;background:#f8fafc;border-radius:12px"><b>Message from sender</b><div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(note)}</div></div><p style="font-size:12px;color:#667085">This is an ONLINE BANKING notification.</p></div>`};
@@ -1667,7 +1741,7 @@ app.get('/api/health', (_req, res) => {
 
     ok: true,
 
-    demo: true,
+    onlineBanking: true,
 
     service: 'ONLINE BANKING'
 
@@ -1734,7 +1808,7 @@ async function registerHandler(req, res) {
       ok:true, success:true, verificationRequired:true, verificationId,
       destination: email || phone, channel: email ? 'email' : 'phone',
       message:'Verification code generated for ONLINE BANKING. Enter the code before accessing the account.',
-      demoVerificationCode: code
+      onlineBankingVerificationCode: code
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -1813,7 +1887,7 @@ async function loginHandler(req, res) {
     const verificationId=uuid(); const code=String(crypto.randomInt(100000,1000000)); const codeHash=await bcrypt.hash(code,10); const loginIdentifier=databaseUser.email || databaseUser.phone;
     await pool.query(`DELETE FROM acb_verification_codes WHERE user_id=$1 AND purpose='login' AND verified_at IS NULL`,[databaseUser.id]);
     await pool.query(`INSERT INTO acb_verification_codes (id,user_id,purpose,identifier,code_hash,expires_at) VALUES ($1,$2,'login',$3,$4,NOW()+INTERVAL '10 minutes')`,[verificationId,databaseUser.id,loginIdentifier,codeHash]);
-    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for ONLINE BANKING. Enter the code before accessing the account.',demoVerificationCode:code});
+    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for ONLINE BANKING. Enter the code before accessing the account.',onlineBankingVerificationCode:code});
   } catch(error){ console.error('Login error:',error); return res.status(500).json({ok:false,success:false,error:'Unable to sign in.'}); }
 }
 
@@ -1943,7 +2017,7 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
       `,
 
-      name, [req.user.id]
+      [name, req.user.id]
 
     );
 
@@ -1975,91 +2049,43 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
 });
 
-app.post('/api/profile/image', auth, writeLimiter, async (req, res) => {
-
+async function saveProfileImageHandler(req, res) {
   try {
-
-    const image =
-
-      String(
-
-        req.body.profileImage ||
-
-        req.body.profile_image ||
-
-        ''
-
-      );
-
-    if (image.length > 700000) {
-
-      return res.status(400).json({
-
-        error: 'Profile image is too large.'
-
-      });
-
-    }
-
-    if (
-
-      image &&
-
-      !/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(image)
-
-    ) {
-
-      return res.status(400).json({
-
-        error: 'Invalid image format.'
-
-      });
-
-    }
-
-    await pool.query(
-
-      `
-
-      UPDATE acb_users
-
-      SET profile_image=$1
-
-      WHERE id=$2
-
-      `,
-
-      image, [req.user.id]
-
-    );
-
-    const user =
-
-      await getUser(req.user.id);
-
-    return res.json({
-
-      ok: true,
-
-      user,
-
-      customer: user
-
-    });
-
+    const image = String(req.body.profileImage || req.body.profile_image || req.body.image || req.body.avatar || req.body.photo || '').trim();
+    if (!image) return res.status(400).json({ ok:false, success:false, error:'Please select a profile image.' });
+    if (image.length > 1200000) return res.status(400).json({ ok:false, success:false, error:'Profile image is too large.' });
+    if (!/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(image)) return res.status(400).json({ ok:false, success:false, error:'Invalid image format. Use PNG, JPG, JPEG, WEBP, or GIF.' });
+    const result = await pool.query(`UPDATE acb_users SET profile_image=$1 WHERE id=$2 RETURNING id`, [image, req.user.id]);
+    if (!result.rowCount) return res.status(404).json({ ok:false, success:false, error:'Customer account not found.' });
+    const user = await getUser(req.user.id);
+    console.log(`Profile image saved successfully for user ${req.user.id}.`);
+    return res.json({ ok:true, success:true, message:'Profile image saved successfully.', user, customer:user });
   } catch (error) {
-
-    console.error('Profile image error:', error);
-
-    return res.status(500).json({
-
-      error: 'Unable to update profile image.'
-
-    });
-
+    console.error('Profile image save error:', error);
+    return res.status(500).json({ ok:false, success:false, error:'Unable to save profile image.' });
   }
+}
 
-});
+app.post('/api/profile/image', auth, writeLimiter, saveProfileImageHandler);
+app.post('/api/profile/image/upload', auth, writeLimiter, saveProfileImageHandler);
+app.post('/api/profile/photo', auth, writeLimiter, saveProfileImageHandler);
+
+async function deleteProfileImageHandler(req, res) {
+  try {
+    const result = await pool.query(`UPDATE acb_users SET profile_image='' WHERE id=$1 RETURNING id`, [req.user.id]);
+    if (!result.rowCount) return res.status(404).json({ ok:false, success:false, error:'Customer account not found.' });
+    const user = await getUser(req.user.id);
+    console.log(`Profile image deleted successfully for user ${req.user.id}.`);
+    return res.json({ ok:true, success:true, message:'Profile image deleted successfully.', user, customer:user });
+  } catch (error) {
+    console.error('Profile image delete error:', error);
+    return res.status(500).json({ ok:false, success:false, error:'Unable to delete profile image.' });
+  }
+}
+
+app.delete('/api/profile/image', auth, writeLimiter, deleteProfileImageHandler);
+app.delete('/api/profile/photo', auth, writeLimiter, deleteProfileImageHandler);
+app.post('/api/profile/image/delete', auth, writeLimiter, deleteProfileImageHandler);
 
 /*
 
@@ -2225,8 +2251,9 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     }
 
     let pendingEmailSent=false;
-    const customerEmail=normalizeEmail(customer?.email || currentUser.rows[0]?.email || '');
-    if(customerEmail){try{const receipt=makeTransferReceiptEmail({status:'pending',request:{id:requestId,recipient,note,created_at:new Date()},originalAmount:amount,originalCurrency:currency});await sendBrevoEmail({toEmail:customerEmail,toName:customer?.name || currentUser.rows[0]?.name,...receipt});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
+    const recipientEmailForReceipt=normalizeEmail(recipientEmail);
+    if(recipientEmailForReceipt){try{const receiptRequest={id:requestId,recipient,recipient_email:recipientEmailForReceipt,note,created_at:new Date()};const receipt=makeTransferReceiptEmail({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});const receiptPdf=makeTransferReceiptPdf({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});const emailResult=await sendBrevoEmail({toEmail:recipientEmailForReceipt,toName:recipient,...receipt,attachments:[{name:`ONLINE-BANKING-Transfer-Receipt-${requestId}.pdf`,content:receiptPdf}]}); pendingEmailSent=true; console.log(`Pending transfer receipt accepted for recipient ${recipientEmailForReceipt}${emailResult.messageId ? ` messageId=${emailResult.messageId}` : ''}`);}catch(emailError){console.error(`Pending transfer receipt email failed for recipient ${recipientEmailForReceipt}:`, emailError.message);}}
+    else { console.error('Pending transfer receipt email skipped: recipient email is missing.'); }
 
     return res.status(201).json({
 
@@ -2936,6 +2963,23 @@ app.patch(
   }
 
 );
+
+async function deleteNotificationHandler(req, res) {
+  try {
+    if (!validUUID(req.params.id)) return res.status(400).json({ ok:false, success:false, error:'Invalid notification ID.' });
+    const result = await pool.query(`DELETE FROM acb_notifications WHERE id=$1 AND user_id=$2 RETURNING id`, [req.params.id, req.user.id]);
+    if (!result.rowCount) return res.status(404).json({ ok:false, success:false, error:'Notification not found.' });
+    console.log(`Notification deleted successfully: ${req.params.id}`);
+    return res.json({ ok:true, success:true, message:'Notification deleted successfully.', id:req.params.id });
+  } catch (error) {
+    console.error('Delete notification error:', error);
+    return res.status(500).json({ ok:false, success:false, error:'Unable to delete notification.' });
+  }
+}
+
+app.delete('/api/notifications/:id', auth, writeLimiter, deleteNotificationHandler);
+app.delete('/api/customer/notifications/:id', auth, writeLimiter, deleteNotificationHandler);
+app.delete('/api/admin/notifications/:id', auth, adminOnly, writeLimiter, deleteNotificationHandler);
 
 /*
 
@@ -4886,80 +4930,248 @@ async function updateTransferStatus(req, res) {
 
     }
 
-    const request = requestResult.rows[0];
-    const sentCurrency = String(request.currency || '').toUpperCase();
-    const sentAmount = Number(request.amount);
+    const request =
+
+      requestResult.rows[0];
+
+    const primaryCurrency=String(request.primary_currency||'USD').toUpperCase();
+    const convertedAmount=convertOnlineBankingCurrency(Number(request.amount),request.currency,primaryCurrency);
 
     if (request.status !== 'pending') {
+
       await client.query('ROLLBACK');
-      return res.status(409).json({ error:'This transfer has already been handled.' });
-    }
-    if (!Number.isFinite(sentAmount) || sentAmount <= 0 || !sentCurrency) {
-      await client.query('ROLLBACK');
-      return res.status(400).json({ error:'Invalid transfer amount or currency.' });
+
+      return res.status(409).json({
+
+        error: 'This transfer has already been handled.'
+
+      });
+
     }
 
     if (status === 'declined') {
-      await client.query(`UPDATE acb_requests SET status='declined',handled_at=NOW() WHERE id=$1`, [request.id]);
-      await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),request.user_id,`Your ONLINE BANKING transfer request for ${sentAmount.toLocaleString()} ${sentCurrency} was declined.`]);
+
+      await client.query(
+
+        `
+
+        UPDATE acb_requests
+
+        SET status='declined',handled_at=NOW()
+
+        WHERE id=$1
+
+        `,
+
+        [request.id]
+
+      );
+
+      await client.query(
+
+        `
+
+        INSERT INTO acb_notifications
+
+          (id,user_id,message)
+
+        VALUES
+
+          ($1,$2,$3)
+
+        `,
+
+        [
+
+          uuid(),
+
+          request.user_id,
+
+          `Your ONLINE BANKING transfer request for ${Number(request.amount).toLocaleString()} ${request.currency} was declined.`
+
+        ]
+
+      );
+
       await client.query('COMMIT');
-      const updatedUser=await getUser(String(request.user_id));
-      return res.json({ok:true,status:'declined',user:updatedUser,customer:updatedUser});
+
+      const updatedUser =
+
+        await getUser(String(request.user_id));
+
+      return res.json({
+
+        ok: true,
+
+        status: 'declined',
+
+        user: updatedUser,
+
+        customer: updatedUser
+
+      });
+
     }
 
-    const recipientEmail=normalizeEmail(request.recipient_email || '');
-    if(!recipientEmail){await client.query('ROLLBACK');return res.status(400).json({error:'Recipient email is missing.'});}
-    const recipientResult=await client.query(`SELECT id,name,email,status FROM acb_users WHERE LOWER(role)='customer' AND LOWER(email)=LOWER($1) LIMIT 1 FOR UPDATE`,[recipientEmail]);
-    if(!recipientResult.rowCount){await client.query('ROLLBACK');return res.status(404).json({error:'Recipient customer account not found.'});}
+    await client.query(
 
-    const recipientUser=recipientResult.rows[0];
-    const senderUserId=String(request.user_id);
-    const recipientUserId=String(recipientUser.id);
-    if(senderUserId===recipientUserId){await client.query('ROLLBACK');return res.status(400).json({error:'You cannot transfer money to the same account.'});}
-    if(String(recipientUser.status||'').toLowerCase()!=='active'){await client.query('ROLLBACK');return res.status(400).json({error:'Recipient account is not active.'});}
+      `
 
-    await client.query(`INSERT INTO acb_balances (user_id,currency,amount) VALUES ($1,$3,0),($2,$3,0) ON CONFLICT(user_id,currency) DO NOTHING`,[senderUserId,recipientUserId,sentCurrency]);
-    const balances=await client.query(`SELECT user_id,amount FROM acb_balances WHERE currency=$3 AND user_id IN ($1,$2) ORDER BY user_id FOR UPDATE`,[senderUserId,recipientUserId,sentCurrency]);
-    const senderRow=balances.rows.find(row=>String(row.user_id)===senderUserId);
-    const senderBalance=Number(senderRow?.amount||0);
-    if(senderBalance<sentAmount){await client.query('ROLLBACK');return res.status(400).json({ok:false,error:`Insufficient ${sentCurrency} balance. Available: ${senderBalance.toLocaleString()} ${sentCurrency}.`});}
+      INSERT INTO acb_balances
 
-    await client.query(`UPDATE acb_balances SET amount=amount-$1 WHERE user_id=$2 AND currency=$3`,[sentAmount,senderUserId,sentCurrency]);
-    await client.query(`INSERT INTO acb_transactions (id,user_id,kind,title,amount,currency) VALUES ($1,$2,'debit',$3,$4,$5)`,[uuid(),senderUserId,`Transfer to ${recipientUser.name||request.recipient||recipientEmail}`,sentAmount,sentCurrency]);
-    await client.query(`UPDATE acb_balances SET amount=amount+$1 WHERE user_id=$2 AND currency=$3`,[sentAmount,recipientUserId,sentCurrency]);
-    await client.query(`INSERT INTO acb_transactions (id,user_id,kind,title,amount,currency) VALUES ($1,$2,'credit',$3,$4,$5)`,[uuid(),recipientUserId,`Transfer received from ${request.name||request.email||'ONLINE BANKING customer'}`,sentAmount,sentCurrency]);
+        (user_id,currency,amount)
 
-    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3),($4,$5,$6)`,[
-      uuid(),senderUserId,`Your transfer of ${sentAmount.toLocaleString()} ${sentCurrency} to ${recipientUser.name||recipientEmail} was approved and your account was debited.`,
-      uuid(),recipientUserId,`You received ${sentAmount.toLocaleString()} ${sentCurrency} from ${request.name||request.email||'an ONLINE BANKING customer'}`
-    ]);
+      VALUES
 
-    await client.query(`UPDATE acb_requests SET converted_amount=$1,converted_currency=$2,status=$3,handled_at=NOW() WHERE id=$4 AND status='pending'`,[sentAmount,sentCurrency,status,request.id]);
+        ($1,$2,$3)
+
+      ON CONFLICT(user_id,currency)
+
+      DO UPDATE SET
+
+        amount=
+
+          acb_balances.amount+
+
+          EXCLUDED.amount
+
+      `,
+
+      [
+
+        request.user_id,
+
+        convertedAmount!=null?primaryCurrency:request.currency,
+
+        convertedAmount!=null?convertedAmount:request.amount
+
+      ]
+
+    );
+
+    await client.query(
+
+      `
+
+      INSERT INTO acb_transactions
+
+        (
+
+          id,user_id,kind,title,
+
+          amount,currency
+
+        )
+
+      VALUES
+
+        (
+
+          $1,$2,'credit',
+
+          'Funds received from administrator',
+
+          $3,$4
+
+        )
+
+      `,
+
+      [
+
+        uuid(),
+
+        request.user_id,
+
+        convertedAmount!=null?convertedAmount:request.amount,
+
+        convertedAmount!=null?primaryCurrency:request.currency
+
+      ]
+
+    );
+
+    await client.query(
+
+      `
+
+      INSERT INTO acb_notifications
+
+        (id,user_id,message)
+
+      VALUES
+
+        ($1,$2,$3)
+
+      `,
+
+      [
+
+        uuid(),
+
+        request.user_id,
+
+        `You received ${Number(request.amount).toLocaleString()} ${request.currency}. Your ONLINE BANKING account balance has been updated.`
+
+      ]
+
+    );
+
+    await client.query(`UPDATE acb_requests SET converted_amount=$1,converted_currency=$2 WHERE id=$3`,[convertedAmount!=null?convertedAmount:null,convertedAmount!=null?primaryCurrency:request.currency,request.id]);
+
+    await client.query(
+
+      `
+
+      UPDATE acb_requests
+
+      SET status=$1,handled_at=NOW()
+
+      WHERE id=$2
+
+      AND status='pending'
+
+      `,
+
+      [status, request.id]
+
+    );
+
     await client.query('COMMIT');
 
     let successfulEmailSent=false;
-    const customerReceiptEmail=normalizeEmail(request.email || '');
-    if(customerReceiptEmail){
-      try{
-        const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:sentAmount,originalCurrency:sentCurrency,convertedAmount:null,convertedCurrency:null});
-        await sendBrevoEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt});
-        successfulEmailSent=true;
-      }catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}
-    } else { console.error('Successful transfer receipt email skipped: customer account email is missing.'); }
+    const recipientReceiptEmail=normalizeEmail(request.recipient_email || '');
+    if(recipientReceiptEmail){try{const receiptRequest={...request,recipient_email:recipientReceiptEmail};const receipt=makeTransferReceiptEmail({status:'successful',request:receiptRequest,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});const receiptPdf=makeTransferReceiptPdf({status:'successful',request:receiptRequest,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});const emailResult=await sendBrevoEmail({toEmail:recipientReceiptEmail,toName:request.recipient,...receipt,attachments:[{name:`ONLINE-BANKING-Transfer-Receipt-${request.id}.pdf`,content:receiptPdf}]}); successfulEmailSent=true; console.log(`Successful transfer receipt accepted for recipient ${recipientReceiptEmail}${emailResult.messageId ? ` messageId=${emailResult.messageId}` : ''}`);}catch(emailError){console.error(`Successful transfer receipt email failed for recipient ${recipientReceiptEmail}:`, emailError.message);}}
+    else { console.error('Successful transfer receipt email skipped: recipient email is missing.'); }
 
-    const updatedUser=await getUser(String(request.user_id));
+    const updatedUser =
+
+      await getUser(
+
+        String(request.user_id)
+
+      );
+
     return res.json({
-      ok:true,
+
+      ok: true,
+
       status,
       successfulEmailSent,
-      sentAmount,
-      sentCurrency,
-      convertedAmount:null,
-      convertedCurrency:null,
-      message:`Transfer completed: ${sentAmount.toLocaleString()} ${sentCurrency}.`,
-      user:updatedUser,
-      customer:updatedUser,
-      balance:updatedUser?.balances?.[sentCurrency] ?? 0
+      convertedAmount: convertedAmount!=null?Number(convertedAmount):null,
+      convertedCurrency: convertedAmount!=null?primaryCurrency:request.currency,
+
+      message:
+
+        `Customer received ${Number(request.amount).toLocaleString()} ${request.currency}.`,
+
+      user: updatedUser,
+
+      customer: updatedUser,
+
+      balance:
+        updatedUser?.balances?.[convertedAmount != null ? primaryCurrency : request.currency] ?? 0
+
     });
 
   } catch (error) {
