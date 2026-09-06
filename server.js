@@ -48,8 +48,9 @@ const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || '')
 const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '');
 const MAILJET_API_KEY = String(process.env.MAILJET_API_KEY || '').trim();
 const MAILJET_SECRET_KEY = String(process.env.MAILJET_SECRET_KEY || '').trim();
-const MAILJET_FROM_EMAIL = String(process.env.MAILJET_FROM_EMAIL || '').trim();
-const MAILJET_FROM_NAME = String(process.env.MAILJET_FROM_NAME || 'ONLINE BANKING — DEMO').trim();
+const MAILJET_FROM_EMAIL = normalizeEmail(process.env.MAILJET_FROM_EMAIL || '');
+const MAILJET_FROM_NAME = String(process.env.MAILJET_FROM_NAME || 'ONLINE BANKING').trim();
+const MAILJET_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 if (!JWT_SECRET || !DATABASE_URL) {
 
@@ -157,11 +158,74 @@ function escapeHtml(value) {
 }
 
 function sendMailjetEmail({toEmail,toName,subject,text,html}) {
-  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY || !MAILJET_FROM_EMAIL || !toEmail) return Promise.reject(new Error('Mailjet is not configured or recipient email is missing.'));
-  const payload=JSON.stringify({Messages:[{From:{Email:MAILJET_FROM_EMAIL,Name:MAILJET_FROM_NAME},To:[{Email:String(toEmail).trim(),Name:String(toName||'').trim()||String(toEmail).trim()}],Subject:subject,TextPart:text,HTMLPart:html}]});
+  const recipient = normalizeEmail(toEmail);
+
+  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY) {
+    return Promise.reject(new Error('Mailjet credentials are missing. Set MAILJET_API_KEY and MAILJET_SECRET_KEY in Render Environment.'));
+  }
+
+  if (!MAILJET_FROM_EMAIL || !MAILJET_EMAIL_RE.test(MAILJET_FROM_EMAIL)) {
+    return Promise.reject(new Error('Mailjet sender email is invalid or missing. Check MAILJET_FROM_EMAIL and make sure the sender is verified in Mailjet.'));
+  }
+
+  if (!recipient || !MAILJET_EMAIL_RE.test(recipient)) {
+    return Promise.reject(new Error('Customer email is missing or invalid. The transfer receipt cannot be sent until the customer account has a valid email address.'));
+  }
+
+  const payload = JSON.stringify({
+    Messages: [{
+      From: { Email: MAILJET_FROM_EMAIL, Name: MAILJET_FROM_NAME },
+      To: [{ Email: recipient, Name: String(toName || '').trim() || recipient }],
+      Subject: String(subject || 'Transfer Receipt'),
+      TextPart: String(text || ''),
+      HTMLPart: String(html || '')
+    }]
+  });
+
+  const auth = Buffer.from(`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`).toString('base64');
+
   return new Promise((resolve,reject)=>{
-    const r=https.request({hostname:'api.mailjet.com',path:'/v3.1/send',method:'POST',auth:`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(payload)},timeout:15000},res=>{let body='';res.on('data',c=>body+=c);res.on('end',()=>{if(res.statusCode>=200&&res.statusCode<300)return resolve(body);reject(new Error(`Mailjet returned HTTP ${res.statusCode}: ${body.slice(0,500)}`));});});
-    r.on('timeout',()=>r.destroy(new Error('Mailjet request timed out.'))); r.on('error',reject); r.write(payload); r.end();
+    const r = https.request({
+      hostname: 'api.mailjet.com',
+      path: '/v3.1/send',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
+        'Authorization': `Basic ${auth}`
+      },
+      timeout: 15000
+    }, res => {
+      let body = '';
+      res.setEncoding('utf8');
+      res.on('data', c => { body += c; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          return resolve({ sent: true, statusCode: res.statusCode, response: body.slice(0, 1000) });
+        }
+
+        let detail = body.slice(0, 1000);
+        try {
+          const parsed = JSON.parse(body);
+          detail = parsed?.ErrorMessage || parsed?.Messages?.[0]?.Errors?.[0]?.ErrorMessage || detail;
+        } catch {}
+
+        if (res.statusCode === 401 || res.statusCode === 403) {
+          return reject(new Error(`Mailjet authentication failed (HTTP ${res.statusCode}). Check MAILJET_API_KEY and MAILJET_SECRET_KEY; do not change the Render variable names.`));
+        }
+
+        if (res.statusCode === 400) {
+          return reject(new Error(`Mailjet rejected the email (HTTP 400): ${detail}`));
+        }
+
+        return reject(new Error(`Mailjet returned HTTP ${res.statusCode}: ${detail}`));
+      });
+    });
+
+    r.on('timeout', () => r.destroy(new Error('Mailjet request timed out after 15 seconds.')));
+    r.on('error', reject);
+    r.write(payload);
+    r.end();
   });
 }
 
@@ -170,7 +234,7 @@ function convertDemoCurrency(amount,from,to){from=String(from||'').toUpperCase()
 function formatMoneyValue(amount,currency){return `${Number(amount||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${String(currency||'').toUpperCase()}`;}
 function makeTransferReceiptEmail({status,request,originalAmount,originalCurrency,convertedAmount,convertedCurrency}){
   const label=status==='pending'?'Pending':'Successful'; const amountText=formatMoneyValue(originalAmount,originalCurrency); const convertedText=convertedAmount!=null?formatMoneyValue(convertedAmount,convertedCurrency):''; const note=String(request.note||'').trim()||'No note provided.';
-  return {subject:`${label} Transfer Receipt — ${amountText}`,text:['ONLINE BANKING — DEMO','',`Transfer status: ${label}`,`Recipient: ${request.recipient||'Recipient'}`,`Amount: ${amountText}`,convertedText?`Converted amount: ${convertedText}`:'',`Reference: ${request.id}`,`Date: ${new Date(request.created_at||Date.now()).toLocaleString()}`,'',`Message from sender: ${note}`,'','This is a fictional/demo banking notification.'].filter(Boolean).join('\n'),html:`<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;padding:28px;border:1px solid #e4e8f0;border-radius:16px"><b>ONLINE BANKING — DEMO</b><h2>Transfer ${escapeHtml(label)}</h2><p><b>Status:</b> ${escapeHtml(label)}</p><p><b>Recipient:</b> ${escapeHtml(request.recipient||'Recipient')}</p><p><b>Amount:</b> ${escapeHtml(amountText)}</p>${convertedText?`<p><b>Converted amount:</b> ${escapeHtml(convertedText)}</p>`:''}<p><b>Reference:</b> ${escapeHtml(request.id)}</p><p><b>Date:</b> ${escapeHtml(new Date(request.created_at||Date.now()).toLocaleString())}</p><div style="margin-top:18px;padding:16px;background:#f8fafc;border-radius:12px"><b>Message from sender</b><div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(note)}</div></div><p style="font-size:12px;color:#667085">This is a fictional/demo banking notification.</p></div>`};
+  return {subject:`${label} Transfer Receipt — ${amountText}`,text:['ONLINE BANKING','',`Transfer status: ${label}`,`Recipient: ${request.recipient||'Recipient'}`,`Amount: ${amountText}`,convertedText?`Converted amount: ${convertedText}`:'',`Reference: ${request.id}`,`Date: ${new Date(request.created_at||Date.now()).toLocaleString()}`,'',`Message from sender: ${note}`,'','This is an ONLINE BANKING notification.'].filter(Boolean).join('\n'),html:`<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;padding:28px;border:1px solid #e4e8f0;border-radius:16px"><b>ONLINE BANKING</b><h2>Transfer ${escapeHtml(label)}</h2><p><b>Status:</b> ${escapeHtml(label)}</p><p><b>Recipient:</b> ${escapeHtml(request.recipient||'Recipient')}</p><p><b>Amount:</b> ${escapeHtml(amountText)}</p>${convertedText?`<p><b>Converted amount:</b> ${escapeHtml(convertedText)}</p>`:''}<p><b>Reference:</b> ${escapeHtml(request.id)}</p><p><b>Date:</b> ${escapeHtml(new Date(request.created_at||Date.now()).toLocaleString())}</p><div style="margin-top:18px;padding:16px;background:#f8fafc;border-radius:12px"><b>Message from sender</b><div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(note)}</div></div><p style="font-size:12px;color:#667085">This is an ONLINE BANKING notification.</p></div>`};
 }
 
 function signToken(user) {
@@ -1603,7 +1667,7 @@ app.get('/api/health', (_req, res) => {
 
     demo: true,
 
-    service: 'American Crest Demo Banking Platform'
+    service: 'ONLINE BANKING'
 
   });
 
@@ -1667,7 +1731,7 @@ async function registerHandler(req, res) {
     return res.status(202).json({
       ok:true, success:true, verificationRequired:true, verificationId,
       destination: email || phone, channel: email ? 'email' : 'phone',
-      message:'Verification code generated for this demo. Enter the code before accessing the account.',
+      message:'Verification code generated for ONLINE BANKING. Enter the code before accessing the account.',
       demoVerificationCode: code
     });
   } catch (error) {
@@ -1695,9 +1759,9 @@ async function verifyRegistrationHandler(req, res) {
     const userId = uuid();
     await client.query(`INSERT INTO acb_users (id,name,email,phone,password_hash,role,status,primary_currency,profile_image,phone_verified) VALUES ($1,$2,$3,$4,$5,'customer','Active',$6,'',$7)`, [userId,payload.name,payload.email,payload.phone,payload.passwordHash,payload.currency,!!payload.phone]);
     await ensureBalances(userId, client);
-    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your American Crest demo account was created successfully.']);
+    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your ONLINE BANKING account was created successfully.']);
     const admin = await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
-    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),admin.rows[0].id,`New demo customer registered: ${payload.name} (${payload.email || payload.phone}).`]);
+    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),admin.rows[0].id,`New ONLINE BANKING customer registered: ${payload.name} (${payload.email || payload.phone}).`]);
     await client.query(`UPDATE acb_verification_codes SET verified_at=NOW(),user_id=$1 WHERE id=$2`, [userId,verificationId]);
     await client.query('COMMIT');
     const user = await getUser(userId);
@@ -1747,7 +1811,7 @@ async function loginHandler(req, res) {
     const verificationId=uuid(); const code=String(crypto.randomInt(100000,1000000)); const codeHash=await bcrypt.hash(code,10); const loginIdentifier=databaseUser.email || databaseUser.phone;
     await pool.query(`DELETE FROM acb_verification_codes WHERE user_id=$1 AND purpose='login' AND verified_at IS NULL`,[databaseUser.id]);
     await pool.query(`INSERT INTO acb_verification_codes (id,user_id,purpose,identifier,code_hash,expires_at) VALUES ($1,$2,'login',$3,$4,NOW()+INTERVAL '10 minutes')`,[verificationId,databaseUser.id,loginIdentifier,codeHash]);
-    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for this demo. Enter the code before accessing the account.',demoVerificationCode:code});
+    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for ONLINE BANKING. Enter the code before accessing the account.',demoVerificationCode:code});
   } catch(error){ console.error('Login error:',error); return res.status(500).json({ok:false,success:false,error:'Unable to sign in.'}); }
 }
 
@@ -2070,7 +2134,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     }
 
     if (recipientEmail && !/^\S+@\S+\.\S+$/.test(recipientEmail)) return res.status(400).json({error:'Enter a valid recipient email address.'});
-    const currentUser=await pool.query(`SELECT status,transfer_enabled FROM acb_users WHERE id=$1 LIMIT 1`,[req.user.id]);
+    const currentUser=await pool.query(`SELECT name,email,status,transfer_enabled FROM acb_users WHERE id=$1 LIMIT 1`,[req.user.id]);
     if(!currentUser.rowCount) return res.status(404).json({error:'Customer account not found.'});
     if(String(currentUser.rows[0].status||'').toLowerCase()!=='active' || currentUser.rows[0].transfer_enabled===false){
       return res.status(403).json({ok:false,transferBlocked:true,error:`Transfer unsuccessful for ${formatMoneyValue(amount,currency)}. Contact customer service now.`});
@@ -2150,7 +2214,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
           admin.rows[0].id,
 
-          `New demo funds request from ${customer.name}: ${amount} ${currency} for ${recipient}.`
+          `New ONLINE BANKING funds request from ${customer.name}: ${amount} ${currency} for ${recipient}.`
 
         ]
 
@@ -2159,7 +2223,8 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     }
 
     let pendingEmailSent=false;
-    if(recipientEmail){try{const receipt=makeTransferReceiptEmail({status:'pending',request:{id:requestId,recipient,note,created_at:new Date()},originalAmount:amount,originalCurrency:currency});await sendMailjetEmail({toEmail:recipientEmail,toName:recipient,...receipt});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
+    const customerEmail=normalizeEmail(customer?.email || currentUser.rows[0]?.email || '');
+    if(customerEmail){try{const receipt=makeTransferReceiptEmail({status:'pending',request:{id:requestId,recipient,note,created_at:new Date()},originalAmount:amount,originalCurrency:currency});await sendMailjetEmail({toEmail:customerEmail,toName:customer?.name || currentUser.rows[0]?.name,...receipt});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
 
     return res.status(201).json({
 
@@ -2738,41 +2803,6 @@ ADMIN NOTIFICATIONS
 
 */
 
-app.delete('/api/notifications/:id', auth, writeLimiter, async (req, res) => {
-  try {
-    const notificationId = String(req.params.id || '').trim();
-
-    if (!validUUID(notificationId)) {
-      return res.status(400).json({ ok:false, error:'Invalid notification ID.' });
-    }
-
-    const result = await pool.query(
-      `DELETE FROM acb_notifications
-       WHERE id=$1 AND user_id=$2
-       RETURNING id`,
-      [notificationId, req.user.id]
-    );
-
-    if (!result.rowCount) {
-      return res.status(404).json({ ok:false, error:'Notification not found.' });
-    }
-
-    const user = await getUser(req.user.id);
-    return res.json({
-      ok:true,
-      success:true,
-      deleted:true,
-      notificationId,
-      notifications:user?.notifications || [],
-      user,
-      customer:user
-    });
-  } catch (error) {
-    console.error('Delete notification error:', error);
-    return res.status(500).json({ ok:false, error:'Unable to delete notification.' });
-  }
-});
-
 app.get('/api/admin/notifications', auth, adminOnly, async (req, res) => {
 
   try {
@@ -3069,7 +3099,7 @@ async function creditCustomerAccount({
 
         description ||
 
-          'Funds credited by demo administrator',
+          'Funds credited by ONLINE BANKING administrator',
 
         amount,
 
@@ -3101,7 +3131,7 @@ async function creditCustomerAccount({
 
         userId,
 
-        `A demo credit of ${amount.toLocaleString()} ${currency} was added to your account.`
+        `An ONLINE BANKING credit of ${amount.toLocaleString()} ${currency} was added to your account.`
 
       ]
 
@@ -4911,7 +4941,7 @@ async function updateTransferStatus(req, res) {
 
           request.user_id,
 
-          `Your demo transfer request for ${Number(request.amount).toLocaleString()} ${request.currency} was declined.`
+          `Your ONLINE BANKING transfer request for ${Number(request.amount).toLocaleString()} ${request.currency} was declined.`
 
         ]
 
@@ -5035,7 +5065,7 @@ async function updateTransferStatus(req, res) {
 
         request.user_id,
 
-        `You received ${Number(request.amount).toLocaleString()} ${request.currency}. Your demo account balance has been updated.`
+        `You received ${Number(request.amount).toLocaleString()} ${request.currency}. Your ONLINE BANKING account balance has been updated.`
 
       ]
 
@@ -5064,7 +5094,9 @@ async function updateTransferStatus(req, res) {
     await client.query('COMMIT');
 
     let successfulEmailSent=false;
-    if(request.recipient_email){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendMailjetEmail({toEmail:request.recipient_email,toName:request.recipient,...receipt});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
+    const customerReceiptEmail=normalizeEmail(request.email || request.recipient_email || '');
+    if(customerReceiptEmail){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendMailjetEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
+    else { console.error('Successful transfer receipt email skipped: customer account email is missing.'); }
 
     const updatedUser =
 
@@ -5266,7 +5298,7 @@ app.post(
 
           row.user_id,
 
-          `Your demo request for ${Number(row.amount).toLocaleString()} ${row.currency} was not approved.`
+          `Your ONLINE BANKING request for ${Number(row.amount).toLocaleString()} ${row.currency} was not approved.`
 
         ]
 
@@ -5338,7 +5370,7 @@ initDb()
 
         console.log(
 
-          `American Crest demo server listening on ${PORT}`
+          `ONLINE BANKING server listening on ${PORT}`
 
         );
 
