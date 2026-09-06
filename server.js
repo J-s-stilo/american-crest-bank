@@ -157,11 +157,66 @@ function escapeHtml(value) {
 }
 
 function sendMailjetEmail({toEmail,toName,subject,text,html}) {
-  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY || !MAILJET_FROM_EMAIL || !toEmail) return Promise.reject(new Error('Mailjet is not configured or recipient email is missing.'));
-  const payload=JSON.stringify({Messages:[{From:{Email:MAILJET_FROM_EMAIL,Name:MAILJET_FROM_NAME},To:[{Email:String(toEmail).trim(),Name:String(toName||'').trim()||String(toEmail).trim()}],Subject:subject,TextPart:text,HTMLPart:html}]});
-  return new Promise((resolve,reject)=>{
-    const r=https.request({hostname:'api.mailjet.com',path:'/v3.1/send',method:'POST',auth:`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(payload)},timeout:15000},res=>{let body='';res.on('data',c=>body+=c);res.on('end',()=>{if(res.statusCode>=200&&res.statusCode<300)return resolve(body);reject(new Error(`Mailjet returned HTTP ${res.statusCode}: ${body.slice(0,500)}`));});});
-    r.on('timeout',()=>r.destroy(new Error('Mailjet request timed out.'))); r.on('error',reject); r.write(payload); r.end();
+  const recipient = String(toEmail || '').trim().toLowerCase();
+  const sender = String(MAILJET_FROM_EMAIL || '').trim().toLowerCase();
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY) {
+    return Promise.reject(new Error('Mailjet credentials are missing. Check MAILJET_API_KEY and MAILJET_SECRET_KEY in Render Environment.'));
+  }
+  if (!sender || !emailRe.test(sender)) {
+    return Promise.reject(new Error('Mailjet sender email is missing or invalid. Check MAILJET_FROM_EMAIL and verify the sender in Mailjet.'));
+  }
+  if (!recipient || !emailRe.test(recipient)) {
+    return Promise.reject(new Error('Recipient email is missing or invalid.'));
+  }
+
+  const payload = JSON.stringify({
+    Messages: [{
+      From: { Email: sender, Name: String(MAILJET_FROM_NAME || 'ONLINE BANKING').trim() },
+      To: [{ Email: recipient, Name: String(toName || '').trim() || recipient }],
+      Subject: String(subject || 'Transfer Receipt'),
+      TextPart: String(text || ''),
+      HTMLPart: String(html || '')
+    }]
+  });
+
+  const auth = Buffer.from(`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`).toString('base64');
+
+  return new Promise((resolve, reject) => {
+    const r = https.request({
+      hostname: 'api.mailjet.com',
+      path: '/v3.1/send',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
+        'Authorization': `Basic ${auth}`
+      },
+      timeout: 15000
+    }, res => {
+      let body = '';
+      res.setEncoding('utf8');
+      res.on('data', c => { body += c; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          return resolve({ sent: true, statusCode: res.statusCode, response: body.slice(0, 1000) });
+        }
+        let detail = body.slice(0, 1000);
+        try {
+          const parsed = JSON.parse(body);
+          detail = parsed?.ErrorMessage || parsed?.Messages?.[0]?.Errors?.[0]?.ErrorMessage || detail;
+        } catch (_) {}
+        if (res.statusCode === 401 || res.statusCode === 403) {
+          return reject(new Error(`Mailjet authentication failed (HTTP ${res.statusCode}). Check MAILJET_API_KEY and MAILJET_SECRET_KEY.`));
+        }
+        return reject(new Error(`Mailjet returned HTTP ${res.statusCode}: ${detail}`));
+      });
+    });
+    r.on('timeout', () => r.destroy(new Error('Mailjet request timed out after 15 seconds.')));
+    r.on('error', reject);
+    r.write(payload);
+    r.end();
   });
 }
 
@@ -2737,6 +2792,27 @@ ADMIN NOTIFICATIONS
 \=========================================================
 
 */
+
+// Customer notification delete: delete only the notification belonging to the logged-in customer.
+app.delete('/api/notifications/:id', auth, async (req, res) => {
+  try {
+    const id = String(req.params.id || '').trim();
+    if (!id || !validUUID(id)) {
+      return res.status(400).json({ ok: false, error: 'Invalid notification ID.' });
+    }
+    const result = await pool.query(
+      `DELETE FROM acb_notifications WHERE id=$1 AND user_id=$2 RETURNING id`,
+      [id, req.user.id]
+    );
+    if (!result.rowCount) {
+      return res.status(404).json({ ok: false, error: 'Notification not found.' });
+    }
+    return res.json({ ok: true, deleted: true, id });
+  } catch (error) {
+    console.error('Delete notification error:', error);
+    return res.status(500).json({ ok: false, error: 'Unable to delete notification.' });
+  }
+});
 
 app.get('/api/admin/notifications', auth, adminOnly, async (req, res) => {
 
