@@ -1,6 +1,7 @@
 const express = require('express');
 
 const path = require('path');
+const fs = require('fs');
 
 const cors = require('cors');
 
@@ -30,6 +31,70 @@ app.use(cors({
 app.use(express.json({ limit: '2mb' }));
 
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+
+// Transfer-limit error UI injection: the server response already identifies
+// blocked transfers with code=MONTHLY_TRANSFER_LIMIT_EXCEEDED. This middleware
+// adds the matching red modal behavior to the SPA without requiring changes
+// to the frontend bundle: it intercepts the transfer API response, displays
+// the error, and lets the user dismiss it with OK.
+const TRANSFER_ERROR_UI_SCRIPT = `
+<style id="acb-transfer-error-ui-style">
+#acb-transfer-error-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:2147483647;box-sizing:border-box}
+#acb-transfer-error-modal{width:min(420px,100%);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;font-family:Arial,sans-serif;color:#172033}
+#acb-transfer-error-head{background:#dc2626;color:#fff;padding:18px 20px;font-size:18px;font-weight:700}
+#acb-transfer-error-body{padding:20px;font-size:15px;line-height:1.55}
+#acb-transfer-error-ok{display:block;width:calc(100% - 40px);margin:0 20px 20px;border:0;border-radius:9px;background:#dc2626;color:#fff;padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer}
+#acb-transfer-error-ok:hover{background:#b91c1c}
+</style>
+<script id="acb-transfer-error-ui-script">
+(function(){
+  function closeTransferError(){var e=document.getElementById('acb-transfer-error-overlay');if(e)e.remove();}
+  function showTransferError(title,message){
+    closeTransferError();
+    var overlay=document.createElement('div');overlay.id='acb-transfer-error-overlay';
+    var modal=document.createElement('div');modal.id='acb-transfer-error-modal';modal.setAttribute('role','alertdialog');modal.setAttribute('aria-modal','true');
+    var head=document.createElement('div');head.id='acb-transfer-error-head';head.textContent=title||'Monthly Transfer Limit Exceeded';
+    var body=document.createElement('div');body.id='acb-transfer-error-body';body.textContent=message||'Minimum amount for an international funds transfer is $30.00. Please contact customer support.';
+    var ok=document.createElement('button');ok.id='acb-transfer-error-ok';ok.type='button';ok.textContent='OK';ok.addEventListener('click',closeTransferError);
+    modal.appendChild(head);modal.appendChild(body);modal.appendChild(ok);overlay.appendChild(modal);document.body.appendChild(overlay);ok.focus();
+    overlay.addEventListener('click',function(ev){if(ev.target===overlay)closeTransferError();});
+  }
+  window.showTransferError=showTransferError;
+  var originalFetch=window.fetch;
+  if(typeof originalFetch==='function'){
+    window.fetch=function(){
+      return originalFetch.apply(this,arguments).then(function(response){
+        try{
+          var url=(arguments[0]&&arguments[0].url)||arguments[0]||'';
+          if(String(url).indexOf('/api/')!==-1 && response.status===403){
+            response.clone().json().then(function(data){
+              if(data && (data.code==='MONTHLY_TRANSFER_LIMIT_EXCEEDED'||data.showErrorModal===true)){
+                showTransferError(data.errorTitle||data.error||'Monthly Transfer Limit Exceeded',data.message||'Minimum amount for an international funds transfer is $30.00. Please contact customer support.');
+              }
+            }).catch(function(){});
+          }
+        }catch(e){}
+        return response;
+      });
+    };
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTransferError();});
+  });
+})();
+</script>`;
+
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || !String(req.headers.accept || '').includes('text/html')) return next();
+  const indexPath = path.join(__dirname, 'index.html');
+  fs.readFile(indexPath, 'utf8', (error, html) => {
+    if (error) return next();
+    const injected = html.includes('acb-transfer-error-ui-script')
+      ? html
+      : html.replace(/<\/head>/i, TRANSFER_ERROR_UI_SCRIPT + '</head>');
+    res.type('html').send(injected);
+  });
+});
 
 app.use(express.static(path.join(__dirname)));
 
@@ -2261,7 +2326,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     if (!userResult.rowCount) { await client.query('ROLLBACK'); return res.status(404).json({ok:false,error:'Customer account not found.'}); }
     const customer = userResult.rows[0];
     if (String(customer.status).toLowerCase() === 'suspended') { await client.query('ROLLBACK'); return res.status(403).json({ok:false,error:'This account is suspended.'}); }
-    if (customer.transfer_access === false) { await client.query('ROLLBACK'); return res.status(403).json({ok:false,error:'Transfers are currently disabled for this account.'}); }
+    if (customer.transfer_access === false) { await client.query('ROLLBACK'); return res.status(403).json({ok:false,success:false,error:'Monthly Transfer Limit Exceeded',message:'Minimum amount for an international funds transfer is $30.00. Please contact customer support.',code:'MONTHLY_TRANSFER_LIMIT_EXCEEDED',showErrorModal:true,errorTitle:'Monthly Transfer Limit Exceeded'}); }
 
     await client.query(`INSERT INTO acb_balances(user_id,currency,amount) VALUES($1,$2,0) ON CONFLICT(user_id,currency) DO NOTHING`, [req.user.id,currency]);
     const balancesResult = await client.query(`SELECT currency,amount FROM acb_balances WHERE user_id=$1 FOR UPDATE`, [req.user.id]);
