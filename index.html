@@ -2067,6 +2067,10 @@ function loadRealCustomerLiveChat(){
   else window.addEventListener('load',start,{once:true});
 }
 
+// Keep the standalone Provide Support live-chat widget visible on the public
+// homepage as well as inside the logged-in dashboard.
+loadRealCustomerLiveChat();
+
 function showDashboard(){
 
 if(!me)return;
