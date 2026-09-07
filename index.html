@@ -2090,12 +2090,12 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
-// Every successful login starts with the balance hidden; the eye button reveals it.
+// Every successful login starts with the balance hidden.
 balanceHidden=true;
 renderBalance();
 refreshDashboard(false);
 
-renderAvatar();
+renderAvatar(true);
 
 const isAdmin=
 
@@ -2141,7 +2141,7 @@ refreshAdmin(false);
 
 }
 
-function renderAvatar(){
+function renderAvatar(forceHome=false){
   if(!me)return;
 
   const accountId=String(me.id||me.userId||me.user_id||'current');
@@ -2171,26 +2171,19 @@ function renderAvatar(){
     }
   }
 
-  /* HOMEPAGE AVATAR — keep one stable copy of the saved profile image. */
+  /* Stable homepage avatar: refreshes never rebuild this image. */
   const homeAvatar=$('homeProfileMirror');
-  if(homeAvatar){
-    const source=image||getStoredProfileImage(me)||'';
+  if(homeAvatar && (forceHome || !homeAvatar.dataset.profileInitialized)){
+    const source=image||'';
+    homeAvatar.dataset.profileInitialized='1';
+    homeAvatar.innerHTML='';
     if(source){
-      let homeImg=$('homeProfileMirrorImage');
-      if(!homeImg){
-        homeAvatar.innerHTML='';
-        homeImg=document.createElement('img');
-        homeImg.id='homeProfileMirrorImage';
-        homeImg.alt='Profile';
-        homeAvatar.appendChild(homeImg);
-      }
-      if(homeImg.getAttribute('src')!==source)homeImg.src=source;
-      homeImg.style.display='block';
-      homeImg.style.visibility='visible';
-      homeImg.style.opacity='1';
-    }else if(!homeAvatar.querySelector('img')){
-      homeAvatar.textContent=initials;
-    }
+      const homeImg=document.createElement('img');
+      homeImg.id='homeProfileMirrorImage';
+      homeImg.alt='Profile';
+      homeImg.src=source;
+      homeAvatar.appendChild(homeImg);
+    }else homeAvatar.textContent=initials;
   }
 
   const legacyAvatar=$('avatar');
@@ -2201,7 +2194,7 @@ function renderAvatar(){
   }
 }
 
-function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');}catch{}}
+function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
 function renderBalance(){
 if(!me)return;
 const currency=me.primaryCurrency||me.primary_currency||'NGN';
@@ -2350,8 +2343,6 @@ async function refreshDashboard(showToast=true){
 
 if(!me)return;
 
-// The homepage profile image is intentionally not refreshed here.
-// It is rendered on login and only changes when the customer changes the profile picture.
 renderBalance();
 
 renderCurrencyBalances();
@@ -2671,7 +2662,7 @@ try{
   if(email)localStorage.setItem('acb_profile_image_email_'+email,savedImage);
 }catch(e){}
 localStorage.setItem('acb_profile_image_updated_'+id,String(Date.now()));
-renderAvatar();
+renderAvatar(true);
 toast('Profile picture updated. You can change it again in 7 days.');
 }catch(error){toast(error.message||'Unable to update profile image.');}
 $('profileImageInput').value='';
