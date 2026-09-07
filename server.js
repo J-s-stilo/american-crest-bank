@@ -85,7 +85,11 @@ const TRANSFER_ERROR_UI_SCRIPT = `
 </script>`;
 
 app.use((req, res, next) => {
-  if (req.method !== 'GET' || !String(req.headers.accept || '').includes('text/html')) return next();
+  if (
+    req.path === '/admin.html' ||
+    req.method !== 'GET' ||
+    !String(req.headers.accept || '').includes('text/html')
+  ) return next();
   const indexPath = path.join(__dirname, 'index.html');
   fs.readFile(indexPath, 'utf8', (error, html) => {
     if (error) return next();
