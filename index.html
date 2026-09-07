@@ -523,6 +523,18 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 #dashAvatarSmall #dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;border-radius:50%!important;z-index:20!important;display:block!important;visibility:visible!important;opacity:1!important;background:#fff!important;}
 #dashAvatarSmall #dashAvatarInitials{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:10!important;display:grid!important;place-items:center!important;}
 .dashAvatarSmall:after{z-index:30!important;}
+
+/* Global live support launcher: kept outside both public and customer layouts. */
+.globalSupportLauncher{position:fixed;right:18px;bottom:86px;z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.globalSupportGreeting{max-width:250px;background:#fff;color:#17324d;border:1px solid #dce6f0;border-radius:14px;padding:11px 14px;font-size:13px;line-height:1.4;box-shadow:0 10px 30px #0002;display:none}
+.globalSupportGreeting.show{display:block;animation:supportGreetingPulse 1.4s ease-in-out infinite}
+.globalSupportButton{width:62px;height:62px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:29px;display:grid;place-items:center;box-shadow:0 10px 28px #0004;cursor:pointer;position:relative}
+.globalSupportButton::after{content:'';position:absolute;inset:-5px;border:2px solid #4adf9b;border-radius:50%;animation:supportRing 1.8s ease-out infinite}
+.globalSupportButton:active{transform:scale(.96)}
+@keyframes supportGreetingPulse{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-3px);opacity:.72}}
+@keyframes supportRing{0%{transform:scale(.8);opacity:.8}100%{transform:scale(1.45);opacity:0}}
+@media(max-width:700px){.globalSupportLauncher{right:16px;bottom:78px}.globalSupportGreeting{max-width:220px}.globalSupportButton{width:60px;height:60px}}
+
 </style><style id="three-part-authority">
 /* HOMEPAGE PROFILE IMAGE: one final owner, no hidden state. */
 #dashAvatarSmall{position:relative!important;overflow:hidden!important;border-radius:50%!important;}
@@ -1226,6 +1238,12 @@ Submit Banking Request
 
 </div>
 
+
+<!-- Global Live Support: outside the public site and customer dashboard so it stays visible everywhere. -->
+<div class="globalSupportLauncher" id="globalSupportLauncher" aria-live="polite">
+  <div class="globalSupportGreeting" id="globalSupportGreeting">Hello! This is Customer Service. How can we help you today?</div>
+  <button type="button" class="globalSupportButton" id="globalSupportButton" onclick="openGlobalSupport()" aria-label="Open live customer support" title="Live Customer Support">💬</button>
+</div>
 <div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
 
 <button
@@ -2697,6 +2715,19 @@ return `<div class="supportMessage ${mine?'customerMessage':'bankMessage'}"><div
 }).join('');
 body.scrollTop=body.scrollHeight;
 }
+
+// Global live support stays outside the page layouts and is available on the public homepage and after login.
+function openGlobalSupport(){
+  const greeting=$("globalSupportGreeting");
+  if(greeting) greeting.classList.remove("show");
+  toggleChat();
+}
+function showGlobalSupportGreeting(){
+  const greeting=$("globalSupportGreeting");
+  if(!greeting) return;
+  greeting.classList.add("show");
+}
+
 function toggleChat(){
 
 if(!me){
@@ -4536,3 +4567,9 @@ function hideNotificationPopup(){
 </script>
 </body>
 </html>
+
+
+// Show the support greeting once when the site opens. It is independent of dashboard refreshes.
+window.addEventListener('load',()=>{
+  setTimeout(showGlobalSupportGreeting,900);
+});
