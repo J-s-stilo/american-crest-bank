@@ -476,7 +476,7 @@ async function getUser(userId) {
 
     SELECT
 
-      id,name,email,phone,phone_verified,role,status,primary_currency,
+      id,name,email,phone,phone_verified,transfer_access,role,status,primary_currency,
 
       account_number,profile_image,created_at
 
@@ -638,6 +638,10 @@ async function getUser(userId) {
 
     phoneVerified: !!user.phone_verified,
 
+    transferAccess: user.transfer_access !== false,
+    transfer_access: user.transfer_access !== false,
+    canTransfer: user.transfer_access !== false,
+
     role: user.role,
 
     status: user.status,
@@ -764,7 +768,7 @@ async function loadAdminCustomers() {
 
     SELECT
 
-      u.id,u.name,u.email,u.phone,u.role,u.status,
+      u.id,u.name,u.email,u.phone,u.role,u.status,u.transfer_access,
 
       u.primary_currency,u.profile_image,u.created_at,
 
@@ -800,7 +804,7 @@ async function loadAdminCustomers() {
 
     GROUP BY
 
-      u.id,u.name,u.email,u.role,u.status,
+      u.id,u.name,u.email,u.role,u.status,u.transfer_access,
 
       u.primary_currency,u.profile_image,u.created_at
 
@@ -832,6 +836,10 @@ async function loadAdminCustomers() {
     role: 'customer',
 
     status: row.status,
+
+    transferAccess: row.transfer_access !== false,
+    transfer_access: row.transfer_access !== false,
+    canTransfer: row.transfer_access !== false,
 
     primary_currency: row.primary_currency,
 
@@ -1482,6 +1490,11 @@ async function initDb() {
   await pool.query(`
 
     ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS phone_verified BOOLEAN NOT NULL DEFAULT FALSE
+
+  `);
+
+  await pool.query(`
+    ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS transfer_access BOOLEAN NOT NULL DEFAULT TRUE
 
   `);
 
@@ -2244,10 +2257,11 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     if (recipientEmail && !/^\S+@\S+\.\S+$/.test(recipientEmail)) return res.status(400).json({ok:false,error:'Enter a valid recipient email.'});
 
     await client.query('BEGIN');
-    const userResult = await client.query(`SELECT id,name,email,status,primary_currency,account_number FROM acb_users WHERE id=$1 AND LOWER(role)='customer' FOR UPDATE`, [req.user.id]);
+    const userResult = await client.query(`SELECT id,name,email,status,transfer_access,primary_currency,account_number FROM acb_users WHERE id=$1 AND LOWER(role)='customer' FOR UPDATE`, [req.user.id]);
     if (!userResult.rowCount) { await client.query('ROLLBACK'); return res.status(404).json({ok:false,error:'Customer account not found.'}); }
     const customer = userResult.rows[0];
     if (String(customer.status).toLowerCase() === 'suspended') { await client.query('ROLLBACK'); return res.status(403).json({ok:false,error:'This account is suspended.'}); }
+    if (customer.transfer_access === false) { await client.query('ROLLBACK'); return res.status(403).json({ok:false,error:'Transfers are currently disabled for this account.'}); }
 
     await client.query(`INSERT INTO acb_balances(user_id,currency,amount) VALUES($1,$2,0) ON CONFLICT(user_id,currency) DO NOTHING`, [req.user.id,currency]);
     const balancesResult = await client.query(`SELECT currency,amount FROM acb_balances WHERE user_id=$1 FOR UPDATE`, [req.user.id]);
@@ -4046,6 +4060,75 @@ app.patch(
 
   }
 
+);
+
+/*
+\=========================================================
+\CUSTOMER TRANSFER ACCESS
+\=========================================================
+*/
+
+app.patch(
+  '/api/admin/customers/:id/transfer-access',
+  auth,
+  adminOnly,
+  writeLimiter,
+  async (req, res) => {
+    try {
+      const userId = await resolveCustomer(req.params.id);
+      if (!userId) {
+        return res.status(404).json({ ok:false, error:'Customer not found.' });
+      }
+
+      const raw =
+        req.body?.enabled ??
+        req.body?.allow ??
+        req.body?.allowed ??
+        req.body?.transferAccess ??
+        req.body?.transfer_access ??
+        req.body?.canTransfer ??
+        req.body?.can_transfer;
+
+      if (raw === undefined) {
+        return res.status(400).json({
+          ok:false,
+          error:'Provide enabled/transferAccess as true or false.'
+        });
+      }
+
+      const enabled =
+        raw === true ||
+        raw === 1 ||
+        String(raw).trim().toLowerCase() === 'true' ||
+        String(raw).trim() === '1' ||
+        String(raw).trim().toLowerCase() === 'enabled';
+
+      await pool.query(
+        `UPDATE acb_users
+         SET transfer_access=$1
+         WHERE id=$2 AND LOWER(role)='customer'`,
+        [enabled, userId]
+      );
+
+      const user = await getUser(userId);
+
+      return res.json({
+        ok:true,
+        success:true,
+        transferAccess: enabled,
+        transfer_access: enabled,
+        canTransfer: enabled,
+        user,
+        customer:user
+      });
+    } catch (error) {
+      console.error('Customer transfer access error:', error);
+      return res.status(500).json({
+        ok:false,
+        error:'Unable to change transfer access.'
+      });
+    }
+  }
 );
 
 /*
