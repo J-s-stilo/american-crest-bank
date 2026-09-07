@@ -311,6 +311,11 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 
 .chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;max-width:calc(100% - 40px);background:#fff;border-radius:15px;box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
+/* Original live chat launcher moved outside the homepage/dashboard layout */
+.liveChatLauncher{position:fixed;right:24px;bottom:96px;width:64px;height:64px;border:0;border-radius:50%;background:var(--blue);color:#fff;box-shadow:0 12px 30px rgba(7,26,53,.28);z-index:71;display:grid;place-items:center;font-size:30px;cursor:pointer}
+.liveChatLauncher:active{transform:scale(.96)}
+@media(max-width:600px){.liveChatLauncher{right:18px;bottom:92px;width:62px;height:62px}.chat{right:14px;bottom:164px;max-width:calc(100% - 28px)}}
+
 
 .chat.show{display:block}
 
@@ -523,19 +528,7 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 #dashAvatarSmall #dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;border-radius:50%!important;z-index:20!important;display:block!important;visibility:visible!important;opacity:1!important;background:#fff!important;}
 #dashAvatarSmall #dashAvatarInitials{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:10!important;display:grid!important;place-items:center!important;}
 .dashAvatarSmall:after{z-index:30!important;}
-
-/* Moved original live-chat launcher: outside the page layouts, using the existing chat action only. */
-.globalSupportLauncher{position:fixed;right:18px;bottom:86px;z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-.globalSupportGreeting{max-width:250px;background:#fff;color:#17324d;border:1px solid #dce6f0;border-radius:14px;padding:11px 14px;font-size:13px;line-height:1.4;box-shadow:0 10px 30px #0002;display:none}
-.globalSupportGreeting.show{display:block;animation:supportGreetingPulse 1.4s ease-in-out infinite}
-.movedLiveChatButton{width:62px;height:62px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:29px;display:grid;place-items:center;box-shadow:0 10px 28px #0004;cursor:pointer;position:relative;padding:0}
-.movedLiveChatButton span{font-size:29px;line-height:1}
-.movedLiveChatButton small{display:none}
-.movedLiveChatButton::after{content:'';position:absolute;inset:-5px;border:2px solid #4adf9b;border-radius:50%;animation:supportRing 1.8s ease-out infinite}
-.movedLiveChatButton:active{transform:scale(.96)}
-@keyframes supportGreetingPulse{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-3px);opacity:.72}}
-@keyframes supportRing{0%{transform:scale(.8);opacity:.8}100%{transform:scale(1.45);opacity:0}}
-@media(max-width:700px){.globalSupportLauncher{right:16px;bottom:78px}.globalSupportGreeting{max-width:220px}.movedLiveChatButton{width:60px;height:60px}}</style><style id="three-part-authority">
+</style><style id="three-part-authority">
 /* HOMEPAGE PROFILE IMAGE: one final owner, no hidden state. */
 #dashAvatarSmall{position:relative!important;overflow:hidden!important;border-radius:50%!important;}
 #dashAvatarSmall #dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;visibility:visible!important;opacity:1!important;object-fit:cover!important;border-radius:50%!important;z-index:30!important;}
@@ -1238,13 +1231,8 @@ Submit Banking Request
 
 </div>
 
-
-<!-- Original Live Chat moved outside the customer homepage layout; no duplicate support button is created. -->
-<div class="globalSupportLauncher" id="globalSupportLauncher" aria-live="polite">
-  <div class="globalSupportGreeting" id="globalSupportGreeting">Hello! This is Customer Service. How can we help you today?</div>
-  <button type="button" class="movedLiveChatButton" id="globalSupportButton" onclick="openMovedLiveChat()" aria-label="Open live customer support" title="Live Customer Support"><span>♧</span><small>Support</small></button>
-</div>
-<div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
+<button id="liveChatLauncher" class="liveChatLauncher" type="button" onclick="toggleChat()" aria-label="Open live chat" title="Live Chat">💬</button>
+  <div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
 
 <button
 
@@ -2108,12 +2096,12 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
-// Every successful login starts with the balance hidden.
-balanceHidden=true;
+// Every successful login starts with the real balance visible.
+balanceHidden=false;
 renderBalance();
 refreshDashboard(false);
 
-renderAvatar(true);
+renderAvatar();
 
 const isAdmin=
 
@@ -2159,7 +2147,7 @@ refreshAdmin(false);
 
 }
 
-function renderAvatar(forceHome=false){
+function renderAvatar(){
   if(!me)return;
 
   const accountId=String(me.id||me.userId||me.user_id||'current');
@@ -2189,19 +2177,28 @@ function renderAvatar(forceHome=false){
     }
   }
 
-  /* Stable homepage avatar: refreshes never rebuild this image. */
+  /* FRESH HOMEPAGE AVATAR — completely rebuilt as a mirror of the menu image. */
   const homeAvatar=$('homeProfileMirror');
-  if(homeAvatar && (forceHome || !homeAvatar.dataset.profileInitialized)){
-    const source=image||'';
-    homeAvatar.dataset.profileInitialized='1';
+  if(homeAvatar){
     homeAvatar.innerHTML='';
+    const menuImg=menuAvatar?menuAvatar.querySelector('img'):null;
+    const source=(menuImg && (menuImg.currentSrc||menuImg.src||menuImg.getAttribute('src'))) || image || '';
+
     if(source){
       const homeImg=document.createElement('img');
       homeImg.id='homeProfileMirrorImage';
-      homeImg.alt='Profile';
+      homeImg.alt='';
       homeImg.src=source;
+      homeImg.onload=()=>{ homeImg.style.display='block'; };
+      homeImg.onerror=()=>{
+        /* Keep the homepage clean if a source ever becomes invalid. */
+        homeAvatar.innerHTML='';
+        homeAvatar.textContent=initials;
+      };
       homeAvatar.appendChild(homeImg);
-    }else homeAvatar.textContent=initials;
+    }else{
+      homeAvatar.textContent=initials;
+    }
   }
 
   const legacyAvatar=$('avatar');
@@ -2361,6 +2358,7 @@ async function refreshDashboard(showToast=true){
 
 if(!me)return;
 
+renderAvatar();
 renderBalance();
 
 renderCurrencyBalances();
@@ -2680,7 +2678,7 @@ try{
   if(email)localStorage.setItem('acb_profile_image_email_'+email,savedImage);
 }catch(e){}
 localStorage.setItem('acb_profile_image_updated_'+id,String(Date.now()));
-renderAvatar(true);
+renderAvatar();
 toast('Profile picture updated. You can change it again in 7 days.');
 }catch(error){toast(error.message||'Unable to update profile image.');}
 $('profileImageInput').value='';
@@ -2715,19 +2713,6 @@ return `<div class="supportMessage ${mine?'customerMessage':'bankMessage'}"><div
 }).join('');
 body.scrollTop=body.scrollHeight;
 }
-
-// The existing live chat is only repositioned; its original toggleChat() function remains the chat owner.
-function openMovedLiveChat(){
-  const greeting=$("globalSupportGreeting");
-  if(greeting) greeting.classList.remove("show");
-  toggleChat();
-}
-function showGlobalSupportGreeting(){
-  const greeting=$("globalSupportGreeting");
-  if(!greeting) return;
-  greeting.classList.add("show");
-}
-
 function toggleChat(){
 
 if(!me){
@@ -4564,11 +4549,6 @@ function hideNotificationPopup(){
   var popup=document.getElementById('notificationPopup');
   if(popup) popup.classList.remove('show');
 }
-</script>
-<script>
-window.addEventListener('load',()=>{
-  setTimeout(showGlobalSupportGreeting,900);
-});
 </script>
 </body>
 </html>
