@@ -2090,8 +2090,8 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
-// Every successful login starts with the real balance visible.
-balanceHidden=false;
+// Every successful login starts with the balance hidden; the eye button reveals it.
+balanceHidden=true;
 renderBalance();
 refreshDashboard(false);
 
@@ -2201,7 +2201,7 @@ function renderAvatar(){
   }
 }
 
-function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
+function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');}catch{}}
 function renderBalance(){
 if(!me)return;
 const currency=me.primaryCurrency||me.primary_currency||'NGN';
@@ -2350,7 +2350,8 @@ async function refreshDashboard(showToast=true){
 
 if(!me)return;
 
-renderAvatar();
+// The homepage profile image is intentionally not refreshed here.
+// It is rendered on login and only changes when the customer changes the profile picture.
 renderBalance();
 
 renderCurrencyBalances();
