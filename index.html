@@ -311,11 +311,6 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 
 
 .chat{display:none;position:fixed;right:20px;bottom:85px;width:350px;max-width:calc(100% - 40px);background:#fff;border-radius:15px;box-shadow:0 15px 45px #0003;overflow:hidden;z-index:70}
-/* Original live chat launcher moved outside the homepage/dashboard layout */
-.liveChatLauncher{position:fixed;right:24px;bottom:96px;width:64px;height:64px;border:0;border-radius:50%;background:var(--blue);color:#fff;box-shadow:0 12px 30px rgba(7,26,53,.28);z-index:71;display:grid;place-items:center;font-size:30px;cursor:pointer}
-.liveChatLauncher:active{transform:scale(.96)}
-@media(max-width:600px){.liveChatLauncher{right:18px;bottom:92px;width:62px;height:62px}.chat{right:14px;bottom:164px;max-width:calc(100% - 28px)}}
-
 
 .chat.show{display:block}
 
@@ -1006,7 +1001,7 @@ Refresh Customer List
 </div></div>
 
 </div></div>
-<div class="bottomNavNew"><button class="active" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>⌂</span><small>Home</small></button><button type="button" onclick="openTransfer()"><span>↑</span><small>Transfer</small></button><button type="button" onclick="openExchange()"><span>⇄</span><small>Exchange</small></button><button type="button" onclick="openTransactionHistory()"><span>◷</span><small>History</small></button></div>
+<div class="bottomNavNew"><button class="active" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>⌂</span><small>Home</small></button><button type="button" onclick="openTransfer()"><span>↑</span><small>Transfer</small></button><button type="button" onclick="openExchange()"><span>⇄</span><small>Exchange</small></button><button type="button" onclick="openTransactionHistory()"><span>◷</span><small>History</small></button><button type="button" onclick="toggleChat()"><span>♧</span><small>Support</small></button></div>
 
 </div><div class="modal" id="authModal"><div class="modalBox"><button class="close" onclick="closeModal()">×</button>
 
@@ -1231,8 +1226,7 @@ Submit Banking Request
 
 </div>
 
-<button id="liveChatLauncher" class="liveChatLauncher" type="button" onclick="toggleChat()" aria-label="Open live chat" title="Live Chat">💬</button>
-  <div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
+<div class="chat" id="chat"><div class="chatHead"><strong>Customer Support</strong>
 
 <button
 
