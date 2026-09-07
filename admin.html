@@ -615,7 +615,7 @@ Loading...
 
 <div class="modal-head">
 
-<h2>Edit Customer</h2>
+<h2>Transfer Access</h2>
 
 <button id="closeEditCustomerButton"
         class="close"
@@ -796,6 +796,29 @@ function escapeHtml(value){
     .replace(/'/g,"&#039;");
 }
 
+
+
+function isTransferAllowed(customer){
+  if(!customer) return true;
+
+  const value =
+    customer?.transferAccess ??
+    customer?.transfer_access ??
+    customer?.transfer_enabled ??
+    customer?.canTransfer ??
+    customer?.can_transfer;
+
+  // Older records/backends may omit the field; default to allowed.
+  if(value === undefined || value === null || value === "") return true;
+
+  return !(
+    value === false ||
+    value === 0 ||
+    String(value).trim().toLowerCase() === "false" ||
+    String(value).trim().toLowerCase() === "stopped" ||
+    String(value).trim().toLowerCase() === "disabled"
+  );
+}
 
 function safeNumber(value){
   const n = Number(value);
@@ -1469,9 +1492,9 @@ async function loadCustomers(){
 
               <td>
                 ${
-                  customer?.transfer_enabled === false
-                    ? `<span class="badge suspended">Stopped</span>`
-                    : `<span class="badge active">Allowed</span>`
+                  isTransferAllowed(customer)
+                    ? `<span class="badge active">Allowed</span>`
+                    : `<span class="badge suspended">Stopped</span>`
                 }
               </td>
 
@@ -1675,9 +1698,9 @@ function openEditCustomerById(id){
     customer?.email || customer?.phone || "—";
 
   $("editTransferAccess").value =
-    customer?.transfer_enabled === false
-      ? "stopped"
-      : "allowed";
+    isTransferAllowed(customer)
+      ? "allowed"
+      : "stopped";
 
   $("editCustomerModal").classList.add("show");
 }
