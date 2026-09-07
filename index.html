@@ -2171,26 +2171,24 @@ function renderAvatar(){
     }
   }
 
-  /* FRESH HOMEPAGE AVATAR — completely rebuilt as a mirror of the menu image. */
+  /* HOMEPAGE AVATAR — keep one stable copy of the saved profile image. */
   const homeAvatar=$('homeProfileMirror');
   if(homeAvatar){
-    homeAvatar.innerHTML='';
-    const menuImg=menuAvatar?menuAvatar.querySelector('img'):null;
-    const source=(menuImg && (menuImg.currentSrc||menuImg.src||menuImg.getAttribute('src'))) || image || '';
-
+    const source=image||getStoredProfileImage(me)||'';
     if(source){
-      const homeImg=document.createElement('img');
-      homeImg.id='homeProfileMirrorImage';
-      homeImg.alt='';
-      homeImg.src=source;
-      homeImg.onload=()=>{ homeImg.style.display='block'; };
-      homeImg.onerror=()=>{
-        /* Keep the homepage clean if a source ever becomes invalid. */
+      let homeImg=$('homeProfileMirrorImage');
+      if(!homeImg){
         homeAvatar.innerHTML='';
-        homeAvatar.textContent=initials;
-      };
-      homeAvatar.appendChild(homeImg);
-    }else{
+        homeImg=document.createElement('img');
+        homeImg.id='homeProfileMirrorImage';
+        homeImg.alt='Profile';
+        homeAvatar.appendChild(homeImg);
+      }
+      if(homeImg.getAttribute('src')!==source)homeImg.src=source;
+      homeImg.style.display='block';
+      homeImg.style.visibility='visible';
+      homeImg.style.opacity='1';
+    }else if(!homeAvatar.querySelector('img')){
       homeAvatar.textContent=initials;
     }
   }
