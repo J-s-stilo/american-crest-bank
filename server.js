@@ -233,6 +233,7 @@ function sendResendEmail({toEmail,toName,subject,text,html,attachments=[]}) {
     ...(attachments.length ? {attachments} : {})
   });
 
+  console.log(`[EMAIL] Attempting Resend email to ${recipient} from ${RESEND_FROM_EMAIL}`);
   return new Promise((resolve,reject)=>{
     const r = https.request({
       hostname: 'api.resend.com',
@@ -252,7 +253,8 @@ function sendResendEmail({toEmail,toName,subject,text,html,attachments=[]}) {
       res.on('data', c => { body += c; });
       res.on('end', () => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          return resolve({ sent: true, statusCode: res.statusCode, response: body.slice(0, 1000) });
+          console.log(`[EMAIL] Resend accepted email to ${recipient} (HTTP ${res.statusCode})`);
+           return resolve({ sent: true, statusCode: res.statusCode, response: body.slice(0, 1000) });
         }
         let detail = body.slice(0, 1000);
         try {
@@ -260,7 +262,7 @@ function sendResendEmail({toEmail,toName,subject,text,html,attachments=[]}) {
           detail = parsed?.message || parsed?.name || detail;
         } catch {}
         if (res.statusCode === 401 || res.statusCode === 403) {
-          return reject(new Error(`Resend authentication failed (HTTP ${res.statusCode}). Check RESEND_API_KEY and your verified sending domain.`));
+          return reject(new Error(`Resend authentication failed (HTTP ${res.statusCode}): ${detail}`));
         }
         if (res.statusCode === 400) {
           return reject(new Error(`Resend rejected the email (HTTP 400): ${detail}`));
