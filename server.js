@@ -415,7 +415,7 @@ async function getUser(userId) {
 
     SELECT
 
-      id,name,email,phone,phone_verified,role,status,primary_currency,
+      id,name,email,phone,phone_verified,role,status,primary_currency,transfer_enabled,
 
       profile_image,created_at
 
@@ -574,6 +574,8 @@ async function getUser(userId) {
     role: user.role,
 
     status: user.status,
+    transfer_enabled: user.transfer_enabled !== false,
+    transferEnabled: user.transfer_enabled !== false,
 
     primary_currency: user.primary_currency,
 
@@ -679,7 +681,7 @@ async function loadAdminCustomers() {
 
     SELECT
 
-      u.id,u.name,u.email,u.phone,u.role,u.status,
+      u.id,u.name,u.email,u.phone,u.role,u.status,u.transfer_enabled,
 
       u.primary_currency,u.profile_image,u.created_at,
 
@@ -747,6 +749,8 @@ async function loadAdminCustomers() {
     role: 'customer',
 
     status: row.status,
+    transfer_enabled: row.transfer_enabled !== false,
+    transferEnabled: row.transfer_enabled !== false,
 
     primary_currency: row.primary_currency,
 
@@ -1385,6 +1389,8 @@ async function initDb() {
 
   `);
 
+  await pool.query(`ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS transfer_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
+
   await pool.query(`
 
     ALTER TABLE acb_users ADD COLUMN IF NOT EXISTS phone TEXT
@@ -1528,6 +1534,8 @@ async function initDb() {
   `);
 
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT NOT NULL DEFAULT ''`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS converted_amount NUMERIC(24,2)`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS converted_currency TEXT`);
 
   await pool.query(`
 
@@ -1705,7 +1713,7 @@ app.get('/api/health', (_req, res) => {
 
     demo: true,
 
-    service: 'American Crest Demo Banking Platform'
+    service: 'ONLINE BANKING'
 
   });
 
@@ -1769,7 +1777,7 @@ async function registerHandler(req, res) {
     return res.status(202).json({
       ok:true, success:true, verificationRequired:true, verificationId,
       destination: email || phone, channel: email ? 'email' : 'phone',
-      message:'Verification code generated for this demo. Enter the code before accessing the account.',
+      message:'Verification code generated for ONLINE BANKING. Enter the code before accessing the account.',
       demoVerificationCode: code
     });
   } catch (error) {
@@ -1797,9 +1805,9 @@ async function verifyRegistrationHandler(req, res) {
     const userId = uuid();
     await client.query(`INSERT INTO acb_users (id,name,email,phone,password_hash,role,status,primary_currency,profile_image,phone_verified) VALUES ($1,$2,$3,$4,$5,'customer','Active',$6,'',$7)`, [userId,payload.name,payload.email,payload.phone,payload.passwordHash,payload.currency,!!payload.phone]);
     await ensureBalances(userId, client);
-    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your American Crest demo account was created successfully.']);
+    await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),userId,'Your ONLINE BANKING account was created successfully.']);
     const admin = await client.query(`SELECT id FROM acb_users WHERE LOWER(role)='admin' ORDER BY created_at ASC LIMIT 1`);
-    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),admin.rows[0].id,`New demo customer registered: ${payload.name} (${payload.email || payload.phone}).`]);
+    if (admin.rowCount) await client.query(`INSERT INTO acb_notifications (id,user_id,message) VALUES ($1,$2,$3)`, [uuid(),admin.rows[0].id,`New ONLINE BANKING customer registered: ${payload.name} (${payload.email || payload.phone}).`]);
     await client.query(`UPDATE acb_verification_codes SET verified_at=NOW(),user_id=$1 WHERE id=$2`, [userId,verificationId]);
     await client.query('COMMIT');
     const user = await getUser(userId);
@@ -1849,7 +1857,7 @@ async function loginHandler(req, res) {
     const verificationId=uuid(); const code=String(crypto.randomInt(100000,1000000)); const codeHash=await bcrypt.hash(code,10); const loginIdentifier=databaseUser.email || databaseUser.phone;
     await pool.query(`DELETE FROM acb_verification_codes WHERE user_id=$1 AND purpose='login' AND verified_at IS NULL`,[databaseUser.id]);
     await pool.query(`INSERT INTO acb_verification_codes (id,user_id,purpose,identifier,code_hash,expires_at) VALUES ($1,$2,'login',$3,$4,NOW()+INTERVAL '10 minutes')`,[verificationId,databaseUser.id,loginIdentifier,codeHash]);
-    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for this demo. Enter the code before accessing the account.',demoVerificationCode:code});
+    return res.status(202).json({ok:true,success:true,verificationRequired:true,verificationId,destination:loginIdentifier,channel:databaseUser.email?'email':'phone',message:'Verification code generated for ONLINE BANKING. Enter the code before accessing the account.',demoVerificationCode:code});
   } catch(error){ console.error('Login error:',error); return res.status(500).json({ok:false,success:false,error:'Unable to sign in.'}); }
 }
 
@@ -2133,7 +2141,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
       );
 
-    const recipientEmail = normalizeEmail(req.body.recipientEmail || req.body.recipient_email || '');
+    const recipientEmail = normalizeEmail(req.body.recipientEmail || '');
 
     const note =
 
@@ -2171,7 +2179,12 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
     }
 
-    if (recipientEmail && !RESEND_EMAIL_RE.test(recipientEmail)) return res.status(400).json({error:'Enter a valid recipient email address.'});
+    if (recipientEmail && !/^\S+@\S+\.\S+$/.test(recipientEmail)) return res.status(400).json({error:'Enter a valid recipient email address.'});
+    const currentUser=await pool.query(`SELECT name,email,status,transfer_enabled FROM acb_users WHERE id=$1 LIMIT 1`,[req.user.id]);
+    if(!currentUser.rowCount) return res.status(404).json({error:'Customer account not found.'});
+    if(String(currentUser.rows[0].status||'').toLowerCase()!=='active' || currentUser.rows[0].transfer_enabled===false){
+      return res.status(403).json({ok:false,transferBlocked:true,error:`Transfer unsuccessful for ${formatMoneyValue(amount,currency)}. Contact customer service now.`});
+    }
 
     const requestId = uuid();
 
@@ -2191,7 +2204,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
       VALUES
 
-        ($1,$2,$3,$4,$5,$6,'pending')
+        ($1,$2,$3,$4,$5,$6,$7,'pending')
 
       `,
 
@@ -2247,7 +2260,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
           admin.rows[0].id,
 
-          `New demo funds request from ${customer.name}: ${amount} ${currency} for ${recipient}.`
+          `New ONLINE BANKING funds request from ${customer.name}: ${amount} ${currency} for ${recipient}.`
 
         ]
 
@@ -2256,14 +2269,15 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     }
 
     let pendingEmailSent=false;
-    const pendingRecipientEmail=normalizeEmail(recipientEmail || customer?.email || '');
-    if(pendingRecipientEmail){try{const receiptRequest={id:requestId,recipient,recipient_email:recipientEmail,note,created_at:new Date()};const receipt=makeTransferReceiptEmail({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});const receiptPdf=makeTransferReceiptPdf({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});await sendResendEmail({toEmail:pendingRecipientEmail,toName:recipient||customer?.name||'',...receipt,attachments:[{filename:`ONLINE-BANKING-${requestId}-PENDING.pdf`,content:receiptPdf.toString('base64')}]});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
+    const pendingRecipientEmail=normalizeEmail(recipientEmail || customer?.email || currentUser.rows[0]?.email || '');
+    if(pendingRecipientEmail){try{const receiptRequest={id:requestId,recipient,recipient_email:recipientEmail,note,created_at:new Date()};const receipt=makeTransferReceiptEmail({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});const receiptPdf=makeTransferReceiptPdf({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});await sendResendEmail({toEmail:pendingRecipientEmail,toName:recipient || customer?.name || currentUser.rows[0]?.name,...receipt,attachments:[{filename:`ONLINE-BANKING-${requestId}-PENDING.pdf`,content:receiptPdf.toString('base64')} ]});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
 
     return res.status(201).json({
 
       ok: true,
 
       success: true,
+      pendingEmailSent,
 
       request: {
 
@@ -2677,7 +2691,7 @@ app.get('/api/admin/state', auth, adminOnly, async (_req, res) => {
 
         SELECT
 
-          id,name,email,status,primary_currency,
+          id,name,email,status,primary_currency,transfer_enabled,
 
           profile_image,created_at
 
@@ -2697,7 +2711,7 @@ app.get('/api/admin/state', auth, adminOnly, async (_req, res) => {
 
           r.id,r.user_id,u.name,u.email,
 
-          r.currency,r.amount,r.recipient,r.note,
+          r.currency,r.amount,r.recipient,r.recipient_email,r.note,
 
           r.status,r.created_at,r.handled_at
 
@@ -2758,6 +2772,8 @@ app.get('/api/admin/state', auth, adminOnly, async (_req, res) => {
           fullName: row.name,
 
           primaryCurrency: row.primary_currency,
+          transferEnabled: row.transfer_enabled !== false,
+          transfer_enabled: row.transfer_enabled !== false,
 
           profileImage: row.profile_image || '',
 
@@ -3129,7 +3145,7 @@ async function creditCustomerAccount({
 
         description ||
 
-          'Funds credited by demo administrator',
+          'Funds credited by ONLINE BANKING administrator',
 
         amount,
 
@@ -3161,7 +3177,7 @@ async function creditCustomerAccount({
 
         userId,
 
-        `A demo credit of ${amount.toLocaleString()} ${currency} was added to your account.`
+        `An ONLINE BANKING credit of ${amount.toLocaleString()} ${currency} was added to your account.`
 
       ]
 
@@ -3936,6 +3952,22 @@ app.patch(
   }
 
 );
+
+/*
+\=========================================================
+TRANSFER ACCESS CONTROL
+\=========================================================
+*/
+app.patch('/api/admin/customers/:id/transfer-access',auth,adminOnly,writeLimiter,async(req,res)=>{
+  try{
+    const userId=await resolveCustomer(req.params.id);
+    if(!userId)return res.status(404).json({ok:false,error:'Customer not found.'});
+    const enabled=req.body.enabled===true||String(req.body.enabled).toLowerCase()==='true';
+    const result=await pool.query(`UPDATE acb_users SET transfer_enabled=$1 WHERE id=$2 AND LOWER(role)='customer' RETURNING id,status,transfer_enabled`,[enabled,userId]);
+    if(!result.rowCount)return res.status(404).json({ok:false,error:'Customer not found.'});
+    return res.json({ok:true,customerId:String(result.rows[0].id),transferEnabled:result.rows[0].transfer_enabled!==false,status:result.rows[0].status});
+  }catch(error){console.error('Transfer access error:',error);return res.status(500).json({ok:false,error:'Unable to change transfer access.'});}
+});
 
 /*
 
@@ -4729,7 +4761,7 @@ app.get('/api/admin/transfers', auth, adminOnly, async (_req, res) => {
 
           r.id,r.user_id,u.name,u.email,
 
-          r.currency,r.amount,r.recipient,
+          r.currency,r.amount,r.recipient,r.recipient_email,
 
           r.note,r.status,r.created_at,r.handled_at
 
@@ -4778,6 +4810,7 @@ app.get('/api/admin/transfers', auth, adminOnly, async (_req, res) => {
           amount: Number(row.amount),
 
           recipient: row.recipient,
+          recipientEmail: row.recipient_email || '',
 
           reference: String(row.id),
 
@@ -4867,7 +4900,7 @@ async function updateTransferStatus(req, res) {
 
         SELECT
 
-          r.*,u.name,u.email
+          r.*,u.name,u.email,u.primary_currency
 
         FROM acb_requests r
 
@@ -4900,6 +4933,9 @@ async function updateTransferStatus(req, res) {
     const request =
 
       requestResult.rows[0];
+
+    const primaryCurrency=String(request.primary_currency||'USD').toUpperCase();
+    const convertedAmount=convertDemoCurrency(Number(request.amount),request.currency,primaryCurrency);
 
     if (request.status !== 'pending') {
 
@@ -4951,7 +4987,7 @@ async function updateTransferStatus(req, res) {
 
           request.user_id,
 
-          `Your demo transfer request for ${Number(request.amount).toLocaleString()} ${request.currency} was declined.`
+          `Your ONLINE BANKING transfer request for ${Number(request.amount).toLocaleString()} ${request.currency} was declined.`
 
         ]
 
@@ -5005,9 +5041,9 @@ async function updateTransferStatus(req, res) {
 
         request.user_id,
 
-        request.currency,
+        convertedAmount!=null?primaryCurrency:request.currency,
 
-        request.amount
+        convertedAmount!=null?convertedAmount:request.amount
 
       ]
 
@@ -5047,9 +5083,9 @@ async function updateTransferStatus(req, res) {
 
         request.user_id,
 
-        request.amount,
+        convertedAmount!=null?convertedAmount:request.amount,
 
-        request.currency
+        convertedAmount!=null?primaryCurrency:request.currency
 
       ]
 
@@ -5075,11 +5111,13 @@ async function updateTransferStatus(req, res) {
 
         request.user_id,
 
-        `You received ${Number(request.amount).toLocaleString()} ${request.currency}. Your demo account balance has been updated.`
+        `You received ${Number(request.amount).toLocaleString()} ${request.currency}. Your ONLINE BANKING account balance has been updated.`
 
       ]
 
     );
+
+    await client.query(`UPDATE acb_requests SET converted_amount=$1,converted_currency=$2 WHERE id=$3`,[convertedAmount!=null?convertedAmount:null,convertedAmount!=null?primaryCurrency:request.currency,request.id]);
 
     await client.query(
 
@@ -5095,7 +5133,7 @@ async function updateTransferStatus(req, res) {
 
       `,
 
-      status, [request.id]
+      [status, request.id]
 
     );
 
@@ -5103,8 +5141,8 @@ async function updateTransferStatus(req, res) {
 
     let successfulEmailSent=false;
     const customerReceiptEmail=normalizeEmail(request.recipient_email || request.email || '');
-    if(customerReceiptEmail){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency});const receiptPdf=makeTransferReceiptPdf({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency});await sendResendEmail({toEmail:customerReceiptEmail,toName:request.name||request.recipient||'',...receipt,attachments:[{filename:`ONLINE-BANKING-${request.id}-SUCCESSFUL.pdf`,content:receiptPdf.toString('base64')}]});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
-    else {console.error('Successful transfer receipt email skipped: customer account email is missing.');}
+    if(customerReceiptEmail){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});const receiptPdf=makeTransferReceiptPdf({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendResendEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt,attachments:[{filename:`ONLINE-BANKING-${request.id}-SUCCESSFUL.pdf`,content:receiptPdf.toString('base64')} ]});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
+    else { console.error('Successful transfer receipt email skipped: customer account email is missing.'); }
 
     const updatedUser =
 
@@ -5119,6 +5157,9 @@ async function updateTransferStatus(req, res) {
       ok: true,
 
       status,
+      successfulEmailSent,
+      convertedAmount: convertedAmount!=null?Number(convertedAmount):null,
+      convertedCurrency: convertedAmount!=null?primaryCurrency:request.currency,
 
       message:
 
@@ -5129,8 +5170,7 @@ async function updateTransferStatus(req, res) {
       customer: updatedUser,
 
       balance:
-
-        updatedUser?.balances?.[request.currency] ?? 0
+        updatedUser?.balances?.[convertedAmount != null ? primaryCurrency : request.currency] ?? 0
 
     });
 
@@ -5304,7 +5344,7 @@ app.post(
 
           row.user_id,
 
-          `Your demo request for ${Number(row.amount).toLocaleString()} ${row.currency} was not approved.`
+          `Your ONLINE BANKING request for ${Number(row.amount).toLocaleString()} ${row.currency} was not approved.`
 
         ]
 
@@ -5376,7 +5416,7 @@ initDb()
 
         console.log(
 
-          `American Crest demo server listening on ${PORT}`
+          `ONLINE BANKING server listening on ${PORT}`
 
         );
 
