@@ -1139,7 +1139,7 @@ Sign In
 <div class="transferGrid2">
 <div class="field transferField"><label>Recipient name</label><input id="transferRecipient" type="text" autocomplete="off" placeholder="Full name"></div>
 <div class="field transferField"><label>Recipient email</label><input id="transferRecipientEmail" type="email" autocomplete="off" placeholder="recipient@example.com"></div>
-<div class="field transferField"><label>Recipient phone number</label><input id="transferRecipientPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+2348012345678"></div>
+<div class="field transferField"><label>Recipient phone number</label><input id="transferRecipientPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+12025550147"></div>
 <div class="field transferField"><label>Bank name</label><input id="transferBankName" type="text" autocomplete="off" placeholder="Destination bank"></div>
 <div class="field transferField"><label>Account number</label><input id="transferRecipientAccount" type="text" inputmode="numeric" placeholder="Account number"></div>
 <div class="field transferField"><label>Country</label><select id="transferCountry"><option value="United States">United States</option><option value="Nigeria">Nigeria</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Singapore">Singapore</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="South Africa">South Africa</option></select></div>
@@ -4026,7 +4026,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       return window.showError('transferError', 'Enter a valid recipient email.');
 
     if (!/^\+?[0-9]{7,15}$/.test(payload.recipientPhone))
-      return window.showError('transferError', 'Enter a valid recipient phone number, for example +2348012345678.');
+      return window.showError('transferError', 'Enter a valid recipient phone number, for example +12025550147.');
 
     if (typeof window.setLoading === 'function')
       setLoading(buttonId, true, 'Sending');
@@ -4297,7 +4297,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       if(bank.length<2)return showError('Enter the recipient bank name.');
       if(account.length<3)return showError('Enter the recipient account number.');
       if(email&&!/^\S+@\S+\.\S+$/.test(email))return showError('Enter a valid recipient email.');
-    if(!/^\+?[0-9]{7,15}$/.test(phone))return showError('Enter a valid recipient phone number, for example +2348012345678.');
+    if(!/^\+?[0-9]{7,15}$/.test(phone))return showError('Enter a valid recipient phone number, for example +12025550147.');
     }
     if(step===3){
       const amount=N($('transferAmount')?.value),target=C($('transferCurrency')?.value);
@@ -4320,6 +4320,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     const bank=($('transferBankName')?.value||'').trim();
     const account=($('transferRecipientAccount')?.value||'').trim();
     const email=($('transferRecipientEmail')?.value||'').trim();
+    const phone=($('transferRecipientPhone')?.value||'').trim();
     if(recipient.length<2||bank.length<2||account.length<3)return showError('Complete the recipient and bank details.');
     if(email&&!/^\S+@\S+\.\S+$/.test(email))return showError('Enter a valid recipient email.');
     if(typeof window.requireACBTransferPin==='function'){
