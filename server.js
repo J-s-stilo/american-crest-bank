@@ -50,6 +50,10 @@ const RESEND_API_KEY = String(process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM_EMAIL = normalizeEmail(process.env.RESEND_FROM_EMAIL || '');
 const RESEND_FROM_NAME = String(process.env.RESEND_FROM_NAME || 'ONLINE BANKING').trim();
 const RESEND_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TWILIO_ACCOUNT_SID = String(process.env.TWILIO_ACCOUNT_SID || '').trim();
+const TWILIO_AUTH_TOKEN = String(process.env.TWILIO_AUTH_TOKEN || '').trim();
+const TWILIO_FROM_NUMBER = normalizePhone(process.env.TWILIO_FROM_NUMBER || '');
+const PUBLIC_BASE_URL = String(process.env.PUBLIC_BASE_URL || '').trim().replace(/\/$/, '');
 
 if (!JWT_SECRET || !DATABASE_URL) {
 
@@ -276,6 +280,57 @@ function sendResendEmail({toEmail,toName,subject,text,html,attachments=[]}) {
     r.end();
   });
 }
+
+
+function makeTransferReceiptToken(requestId, recipientPhone) {
+  return crypto.createHmac('sha256', JWT_SECRET).update(`${String(requestId)}:${normalizePhone(recipientPhone)}`).digest('hex');
+}
+function getPublicBaseUrl(req) {
+  if (PUBLIC_BASE_URL) return PUBLIC_BASE_URL;
+  const forwardedProto = String(req?.headers?.['x-forwarded-proto'] || '').split(',')[0].trim();
+  const protocol = forwardedProto || req?.protocol || 'https';
+  const host = req?.get?.('host') || '';
+  return host ? `${protocol}://${host}` : '';
+}
+function makeSecureTransferReceiptUrl(req, requestId, recipientPhone) {
+  const base = getPublicBaseUrl(req);
+  if (!base || !validUUID(requestId) || !validPhone(recipientPhone)) return '';
+  return `${base}/api/transfer-receipts/${requestId}?phone=${encodeURIComponent(normalizePhone(recipientPhone))}&token=${makeTransferReceiptToken(requestId, recipientPhone)}`;
+}
+function sendTwilioSms({toPhone, message}) {
+  const recipient = normalizePhone(toPhone);
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_FROM_NUMBER) return Promise.resolve({sent:false,skipped:true,reason:'SMS provider is not configured.'});
+  if (!validPhone(recipient)) return Promise.reject(new Error('Recipient phone number is missing or invalid.'));
+  const body = new URLSearchParams({To:recipient,From:TWILIO_FROM_NUMBER,Body:String(message || '')}).toString();
+  const auth = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64');
+  return new Promise((resolve,reject)=>{
+    const r=https.request({hostname:'api.twilio.com',path:`/2010-04-01/Accounts/${encodeURIComponent(TWILIO_ACCOUNT_SID)}/Messages.json`,method:'POST',headers:{Authorization:`Basic ${auth}`,'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(body),'User-Agent':'ONLINE-BANKING/1.0'},timeout:15000},res=>{
+      let b=''; res.setEncoding('utf8'); res.on('data',c=>{b+=c;}); res.on('end',()=>{if(res.statusCode>=200&&res.statusCode<300){console.log(`[SMS] Twilio accepted SMS to ${recipient} (HTTP ${res.statusCode})`);return resolve({sent:true,statusCode:res.statusCode,response:b.slice(0,1000)});} reject(new Error(`Twilio returned HTTP ${res.statusCode}: ${b.slice(0,500)}`));});
+    });
+    r.on('timeout',()=>r.destroy(new Error('Twilio SMS request timed out after 15 seconds.'))); r.on('error',reject); r.write(body); r.end();
+  });
+}
+async function sendTransferSms({req,request,status,amount,currency}) {
+  const phone=normalizePhone(request.recipient_phone || request.recipientPhone || '');
+  if(!phone) return {sent:false,skipped:true,reason:'Recipient phone is missing.'};
+  if(!validPhone(phone)) return {sent:false,skipped:true,reason:'Recipient phone is invalid.'};
+  const label=status==='pending'?'PENDING':'SUCCESSFUL'; const url=makeSecureTransferReceiptUrl(req,request.id,phone); const amountText=formatMoneyValue(amount,currency);
+  const message=url ? `ONLINE BANKING: ${label} transfer notification. Amount: ${amountText}. Recipient: ${request.recipient || 'Recipient'}. Receipt: ${url}` : `ONLINE BANKING: ${label} transfer notification. Amount: ${amountText}. Recipient: ${request.recipient || 'Recipient'}. Reference: ${request.id}`;
+  return sendTwilioSms({toPhone:phone,message});
+}
+app.get('/api/transfer-receipts/:id', async (req,res)=>{
+  try{
+    const id=String(req.params.id||''), phone=normalizePhone(req.query.phone||''), token=String(req.query.token||'');
+    if(!validUUID(id)||!validPhone(phone)||!/^[a-f0-9]{64}$/i.test(token)) return res.status(400).send('Invalid receipt link.');
+    const expected=makeTransferReceiptToken(id,phone); if(!crypto.timingSafeEqual(Buffer.from(token,'hex'),Buffer.from(expected,'hex'))) return res.status(403).send('Receipt link is invalid.');
+    const result=await pool.query(`SELECT r.*,u.name AS sender_name,u.email AS sender_email FROM acb_requests r JOIN acb_users u ON u.id=r.user_id WHERE r.id=$1 LIMIT 1`,[id]);
+    if(!result.rowCount) return res.status(404).send('Transfer receipt not found.');
+    const request=result.rows[0]; if(normalizePhone(request.recipient_phone||'')!==phone) return res.status(403).send('Receipt link is not valid for this recipient.');
+    const label=String(request.status||'').toUpperCase();
+    const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ONLINE BANKING Transfer Receipt</title><style>body{font-family:Arial,sans-serif;background:#f5f7fb;margin:0;padding:24px;color:#172033}.card{max-width:560px;margin:auto;background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(0,0,0,.08)}h1{margin:0 0 4px;font-size:24px}h2{margin:0 0 20px;font-size:15px;color:#667085;font-weight:500}.row{display:flex;justify-content:space-between;gap:20px;border-top:1px solid #e7eaf0;padding:13px 0}.label{color:#667085}.value{font-weight:700;text-align:right;word-break:break-word}.note{margin-top:14px;padding:14px;background:#f6f8fc;border-radius:12px}.foot{margin-top:20px;font-size:12px;color:#667085}</style></head><body><div class="card"><h1>ONLINE BANKING</h1><h2>Transfer Receipt</h2><div class="row"><span class="label">Status</span><span class="value">${escapeHtml(label)}</span></div><div class="row"><span class="label">Recipient</span><span class="value">${escapeHtml(request.recipient||'Recipient')}</span></div><div class="row"><span class="label">Amount</span><span class="value">${escapeHtml(formatMoneyValue(request.amount,request.currency))}</span></div><div class="row"><span class="label">Reference</span><span class="value">${escapeHtml(request.id)}</span></div><div class="row"><span class="label">Date</span><span class="value">${escapeHtml(new Date(request.created_at).toLocaleString())}</span></div><div class="note"><strong>Message from sender</strong><br>${escapeHtml(request.note||'No note provided.')}</div><div class="foot">This receipt was generated by ONLINE BANKING.</div></div></body></html>`;
+    res.set('Cache-Control','no-store'); return res.type('html').send(html);
+  }catch(error){console.error('Transfer receipt page error:',error);return res.status(500).send('Unable to load transfer receipt.');}
+});
 
 const DEMO_FX_TO_USD={USD:1,EUR:1.087,GBP:1.282,NGN:0.000667,IDR:0.0000625,CAD:0.735,AUD:0.66,CHF:1.10,JPY:0.00675,CNY:0.139,INR:0.0120,MYR:0.223,SGD:0.745,AED:0.2723,ZAR:0.055,KES:0.0078,GHS:0.0667};
 function convertDemoCurrency(amount,from,to){from=String(from||'').toUpperCase();to=String(to||'').toUpperCase();if(from===to)return Number(amount);const a=DEMO_FX_TO_USD[from],b=DEMO_FX_TO_USD[to];return a&&b?Number(amount)*a/b:null;}
@@ -527,7 +582,7 @@ async function getUser(userId) {
 
         SELECT
 
-          id,currency,amount,recipient,note,status,
+          id,currency,amount,recipient,recipient_email,recipient_phone,note,status,
 
           created_at,handled_at
 
@@ -660,6 +715,10 @@ async function getUser(userId) {
       amount: Number(row.amount || 0),
 
       recipient: row.recipient,
+
+      recipientEmail: row.recipient_email || '',
+
+      recipientPhone: row.recipient_phone || '',
 
       note: row.note,
 
@@ -1536,6 +1595,7 @@ async function initDb() {
   `);
 
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT NOT NULL DEFAULT ''`);
+  await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS recipient_phone TEXT NOT NULL DEFAULT ''`);
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS converted_amount NUMERIC(24,2)`);
   await pool.query(`ALTER TABLE acb_requests ADD COLUMN IF NOT EXISTS converted_currency TEXT`);
 
@@ -1942,6 +2002,20 @@ app.get('/api/me', auth, async (req, res) => {
 });
 
 /*
+\=========================================================
+CUSTOMER NOTIFICATION DELETE
+\=========================================================
+*/
+app.delete('/api/notifications/:id', auth, writeLimiter, async (req,res)=>{
+  try{
+    if(!validUUID(req.params.id)) return res.status(400).json({ok:false,error:'Invalid notification ID.'});
+    const result=await pool.query(`DELETE FROM acb_notifications WHERE id=$1 AND user_id=$2 RETURNING id`,[req.params.id,req.user.id]);
+    if(!result.rowCount) return res.status(404).json({ok:false,error:'Notification not found.'});
+    return res.json({ok:true,success:true,deleted:true,id:String(result.rows[0].id)});
+  }catch(error){console.error('Delete customer notification error:',error);return res.status(500).json({ok:false,error:'Unable to delete notification.'});}
+});
+
+/*
 
 \=========================================================
 
@@ -2144,6 +2218,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
       );
 
     const recipientEmail = normalizeEmail(req.body.recipientEmail || '');
+    const recipientPhone = normalizePhone(req.body.recipientPhone || req.body.recipient_phone || '');
 
     const note =
 
@@ -2181,7 +2256,8 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
     }
 
-    if (recipientEmail && !/^\S+@\S+\.\S+$/.test(recipientEmail)) return res.status(400).json({error:'Enter a valid recipient email address.'});
+    if (!recipientEmail || !/^\S+@\S+\.\S+$/.test(recipientEmail)) return res.status(400).json({error:'Enter a valid recipient email address.'});
+    if (!recipientPhone || !validPhone(recipientPhone)) return res.status(400).json({error:'Enter a valid recipient phone number in international format, for example +2348012345678.'});
     const currentUser=await pool.query(`SELECT name,email,status,transfer_enabled FROM acb_users WHERE id=$1 LIMIT 1`,[req.user.id]);
     if(!currentUser.rowCount) return res.status(404).json({error:'Customer account not found.'});
     if(String(currentUser.rows[0].status||'').toLowerCase()!=='active' || currentUser.rows[0].transfer_enabled===false){
@@ -2200,19 +2276,19 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
           id,user_id,currency,amount,
 
-          recipient,recipient_email,note,status
+          recipient,recipient_email,recipient_phone,note,status
 
         )
 
       VALUES
 
-        ($1,$2,$3,$4,$5,$6,$7,'pending')
+        ($1,$2,$3,$4,$5,$6,$7,$8,'pending')
 
       `,
 
       
 
-        [requestId,req.user.id,currency,amount,recipient,recipientEmail,note]
+        [requestId,req.user.id,currency,amount,recipient,recipientEmail,recipientPhone,note]
 
     );
 
@@ -2271,8 +2347,9 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
     }
 
     let pendingEmailSent=false;
-    const pendingRecipientEmail=normalizeEmail(recipientEmail || customer?.email || currentUser.rows[0]?.email || '');
+    const pendingRecipientEmail=normalizeEmail(recipientEmail);
     if(pendingRecipientEmail){try{const receiptRequest={id:requestId,recipient,recipient_email:recipientEmail,note,created_at:new Date()};const receipt=makeTransferReceiptEmail({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});const receiptPdf=makeTransferReceiptPdf({status:'pending',request:receiptRequest,originalAmount:amount,originalCurrency:currency});await sendResendEmail({toEmail:pendingRecipientEmail,toName:recipient || customer?.name || currentUser.rows[0]?.name,...receipt,attachments:[{filename:`ONLINE-BANKING-${requestId}-PENDING.pdf`,content:receiptPdf.toString('base64')} ]});pendingEmailSent=true;}catch(emailError){console.error('Pending transfer receipt email error:',emailError.message);}}
+    let pendingSmsSent=false; try { const smsResult=await sendTransferSms({req,request:{id:requestId,recipient,recipient_email:recipientEmail,recipient_phone:recipientPhone,note,created_at:new Date()},status:'pending',amount,currency}); pendingSmsSent=!!smsResult.sent; if(smsResult.skipped) console.log(`[SMS] Pending transfer SMS skipped: ${smsResult.reason}`); } catch(smsError) { console.error('Pending transfer SMS error:',smsError.message); }
 
     return res.status(201).json({
 
@@ -2280,6 +2357,7 @@ app.post('/api/requests', auth, writeLimiter, async (req, res) => {
 
       success: true,
       pendingEmailSent,
+      pendingSmsSent,
 
       request: {
 
@@ -2713,7 +2791,7 @@ app.get('/api/admin/state', auth, adminOnly, async (_req, res) => {
 
           r.id,r.user_id,u.name,u.email,
 
-          r.currency,r.amount,r.recipient,r.recipient_email,r.note,
+          r.currency,r.amount,r.recipient,r.recipient_email,r.recipient_phone,r.note,
 
           r.status,r.created_at,r.handled_at
 
@@ -2839,48 +2917,6 @@ app.get('/api/admin/state', auth, adminOnly, async (_req, res) => {
 
   }
 
-});
-
-/* CUSTOMER NOTIFICATION DELETE — restored from the working server. */
-app.delete('/api/notifications/:id', auth, async (req, res) => {
-  try {
-    if (!validUUID(req.params.id)) {
-      return res.status(400).json({
-        ok: false,
-        error: 'Invalid notification ID.'
-      });
-    }
-
-    const result = await pool.query(
-      `
-      DELETE FROM acb_notifications
-      WHERE id=$1
-      AND user_id=$2
-      RETURNING id
-      `,
-      [req.params.id, req.user.id]
-    );
-
-    if (!result.rowCount) {
-      return res.status(404).json({
-        ok: false,
-        error: 'Notification not found.'
-      });
-    }
-
-    return res.json({
-      ok: true,
-      success: true,
-      deleted: true,
-      id: String(result.rows[0].id)
-    });
-  } catch (error) {
-    console.error('Delete customer notification error:', error);
-    return res.status(500).json({
-      ok: false,
-      error: 'Unable to delete notification.'
-    });
-  }
 });
 
 /*
@@ -4805,7 +4841,7 @@ app.get('/api/admin/transfers', auth, adminOnly, async (_req, res) => {
 
           r.id,r.user_id,u.name,u.email,
 
-          r.currency,r.amount,r.recipient,r.recipient_email,
+          r.currency,r.amount,r.recipient,r.recipient_email,r.recipient_phone,
 
           r.note,r.status,r.created_at,r.handled_at
 
@@ -4855,6 +4891,7 @@ app.get('/api/admin/transfers', auth, adminOnly, async (_req, res) => {
 
           recipient: row.recipient,
           recipientEmail: row.recipient_email || '',
+          recipientPhone: row.recipient_phone || '',
 
           reference: String(row.id),
 
@@ -5186,7 +5223,9 @@ async function updateTransferStatus(req, res) {
     let successfulEmailSent=false;
     const customerReceiptEmail=normalizeEmail(request.recipient_email || request.email || '');
     if(customerReceiptEmail){try{const receipt=makeTransferReceiptEmail({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});const receiptPdf=makeTransferReceiptPdf({status:'successful',request,originalAmount:Number(request.amount),originalCurrency:request.currency,convertedAmount:convertedAmount!=null?convertedAmount:null,convertedCurrency:convertedAmount!=null?primaryCurrency:null});await sendResendEmail({toEmail:customerReceiptEmail,toName:request.name || request.recipient,...receipt,attachments:[{filename:`ONLINE-BANKING-${request.id}-SUCCESSFUL.pdf`,content:receiptPdf.toString('base64')} ]});successfulEmailSent=true;}catch(emailError){console.error('Successful transfer receipt email error:',emailError.message);}}
-    else { console.error('Successful transfer receipt email skipped: customer account email is missing.'); }
+    else { console.error('Successful transfer receipt email skipped: recipient email is missing.'); }
+
+    let successfulSmsSent=false; try { const smsResult=await sendTransferSms({req,request,status:'successful',amount:Number(request.amount),currency:request.currency}); successfulSmsSent=!!smsResult.sent; if(smsResult.skipped) console.log(`[SMS] Successful transfer SMS skipped: ${smsResult.reason}`); } catch(smsError) { console.error('Successful transfer SMS error:',smsError.message); }
 
     const updatedUser =
 
@@ -5202,6 +5241,7 @@ async function updateTransferStatus(req, res) {
 
       status,
       successfulEmailSent,
+      successfulSmsSent,
       convertedAmount: convertedAmount!=null?Number(convertedAmount):null,
       convertedCurrency: convertedAmount!=null?primaryCurrency:request.currency,
 
