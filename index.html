@@ -1139,6 +1139,7 @@ Sign In
 <div class="transferGrid2">
 <div class="field transferField"><label>Recipient name</label><input id="transferRecipient" type="text" autocomplete="off" placeholder="Full name"></div>
 <div class="field transferField"><label>Recipient email</label><input id="transferRecipientEmail" type="email" autocomplete="off" placeholder="recipient@example.com"></div>
+<div class="field transferField"><label>Recipient phone number</label><input id="transferRecipientPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+2348012345678"></div>
 <div class="field transferField"><label>Bank name</label><input id="transferBankName" type="text" autocomplete="off" placeholder="Destination bank"></div>
 <div class="field transferField"><label>Account number</label><input id="transferRecipientAccount" type="text" inputmode="numeric" placeholder="Account number"></div>
 <div class="field transferField"><label>Country</label><select id="transferCountry"><option value="United States">United States</option><option value="Nigeria">Nigeria</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Singapore">Singapore</option><option value="Germany">Germany</option><option value="France">France</option><option value="United Arab Emirates">United Arab Emirates</option><option value="South Africa">South Africa</option></select></div>
@@ -1159,7 +1160,7 @@ Sign In
 </div>
 <div class="transferPanel hiddenTransferPanel" id="transferPanel3">
 <div class="transferReviewIcon">✓</div><h3>Review your transfer</h3><p class="transferPanelSub">Make sure everything looks right before sending.</p>
-<div class="transferReviewCard"><div class="transferReviewLine"><span>Sending to</span><strong id="transferReviewRecipient">—</strong></div><div class="transferReviewLine"><span>Bank</span><strong id="transferReviewBank">—</strong></div><div class="transferReviewLine"><span>Account</span><strong id="transferReviewAccount">—</strong></div><div class="transferReviewLine"><span>Recipient email</span><strong id="transferReviewEmail">—</strong></div><div class="transferReviewLine"><span>SWIFT / BIC</span><strong id="transferReviewSwift">—</strong></div><div class="transferReviewLine"><span>Amount</span><strong id="transferReviewAmount">—</strong></div><div class="transferReviewLine"><span>Note</span><strong id="transferReviewNote">No note</strong></div><div class="transferReviewLine total"><span>Total</span><strong id="transferReviewTotal">—</strong></div></div>
+<div class="transferReviewCard"><div class="transferReviewLine"><span>Sending to</span><strong id="transferReviewRecipient">—</strong></div><div class="transferReviewLine"><span>Bank</span><strong id="transferReviewBank">—</strong></div><div class="transferReviewLine"><span>Account</span><strong id="transferReviewAccount">—</strong></div><div class="transferReviewLine"><span>Recipient email</span><strong id="transferReviewEmail">—</strong></div><div class="transferReviewLine"><span>Recipient phone</span><strong id="transferReviewPhone">—</strong></div><div class="transferReviewLine"><span>SWIFT / BIC</span><strong id="transferReviewSwift">—</strong></div><div class="transferReviewLine"><span>Amount</span><strong id="transferReviewAmount">—</strong></div><div class="transferReviewLine"><span>Note</span><strong id="transferReviewNote">No note</strong></div><div class="transferReviewLine total"><span>Total</span><strong id="transferReviewTotal">—</strong></div></div>
 <div class="transferProcessingNote">Your request will be sent to the Bank Management Service for processing. The transaction receipt will appear after the request is recorded.</div>
 <div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(2)">← Back</button><button id="transferBtn" type="button" class="transferNextBtn transferSendBtn" onclick="transfer()">Send Money <span>→</span></button></div>
 </div>
@@ -2419,6 +2420,8 @@ if(!me){return openModal('login');}
 clearError('transferError');
 $('transferAmount').value='';
 $('transferRecipient').value='';
+$('transferRecipientEmail').value='';
+$('transferRecipientPhone').value='';
 $('transferNote').value='';
 $('transferCurrency').value=me.primaryCurrency||me.primary_currency||'NGN';
 $('transferModal').classList.add('show');
@@ -3896,7 +3899,7 @@ const originalOpenBankingService=window.openBankingService;
 window.openBankingService=function(service){const map={'Buy Data':'data','Airtime':'airtime','Pay Bills':'bills','Cards':'cards','Add Money':'accounts','Settings':'settings'};if(map[service])return openFeature(map[service]);return originalOpenBankingService?originalOpenBankingService(service):openFeature('accounts');};
 
 // Upgrade transfer state and submit handler.
-window.showTransferStep=function(step){[1,2,3].forEach(n=>{const panel=$('transferPanel'+n);if(panel)panel.classList.toggle('hiddenTransferPanel',n!==step);const dot=$('transferStepDot'+n);if(dot){dot.classList.toggle('active',n===step);dot.classList.toggle('done',n<step);}});if(step===3){const currency=$('transferCurrency').value,amount=Number($('transferAmount').value||0);$('transferReviewRecipient').textContent=$('transferRecipient').value.trim()||'—';$('transferReviewBank').textContent=$('transferBankName').value.trim()||'—';$('transferReviewAccount').textContent=$('transferRecipientAccount').value.trim()||'—';$('transferReviewEmail').textContent=$('transferRecipientEmail').value.trim()||'—';$('transferReviewSwift').textContent=$('transferSwift').value.trim()||'—';$('transferReviewAmount').textContent=amount>0?money(amount,currency):'—';$('transferReviewTotal').textContent=amount>0?money(amount,currency):'—';$('transferReviewNote').textContent=$('transferNote').value.trim()||'No note';}};
+window.showTransferStep=function(step){[1,2,3].forEach(n=>{const panel=$('transferPanel'+n);if(panel)panel.classList.toggle('hiddenTransferPanel',n!==step);const dot=$('transferStepDot'+n);if(dot){dot.classList.toggle('active',n===step);dot.classList.toggle('done',n<step);}});if(step===3){const currency=$('transferCurrency').value,amount=Number($('transferAmount').value||0);$('transferReviewRecipient').textContent=$('transferRecipient').value.trim()||'—';$('transferReviewBank').textContent=$('transferBankName').value.trim()||'—';$('transferReviewAccount').textContent=$('transferRecipientAccount').value.trim()||'—';$('transferReviewEmail').textContent=$('transferRecipientEmail').value.trim()||'—';$('transferReviewPhone').textContent=$('transferRecipientPhone').value.trim()||'—';$('transferReviewSwift').textContent=$('transferSwift').value.trim()||'—';$('transferReviewAmount').textContent=amount>0?money(amount,currency):'—';$('transferReviewTotal').textContent=amount>0?money(amount,currency):'—';$('transferReviewNote').textContent=$('transferNote').value.trim()||'No note';}};
 
 // Receipt detail upgrade.
 const oldOpenReceipt=window.openReceipt;window.openReceipt=function(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();if($('receiptBank'))$('receiptBank').textContent=receipt.bankName||'External bank';if($('receiptAccount'))$('receiptAccount').textContent=receipt.recipientAccount||'—';if($('receiptEmail'))$('receiptEmail').textContent=receipt.recipientEmail||'—';if($('receiptSwift'))$('receiptSwift').textContent=receipt.swiftBic||'—';$('receiptModal').classList.add('show');};
@@ -4001,6 +4004,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       amount: Number(acbEl('transferAmount')?.value || 0),
       recipient: (acbEl('transferRecipient')?.value || '').trim(),
       recipientEmail: (acbEl('transferRecipientEmail')?.value || '').trim(),
+      recipientPhone: (acbEl('transferRecipientPhone')?.value || '').trim(),
       recipientBank: (acbEl('transferBankName')?.value || '').trim(),
       recipientAccount: (acbEl('transferRecipientAccount')?.value || '').trim(),
       recipientCountry: acbEl('transferCountry')?.value || '',
@@ -4020,6 +4024,9 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     if (payload.recipientEmail &&
         !/^\S+@\S+\.\S+$/.test(payload.recipientEmail))
       return window.showError('transferError', 'Enter a valid recipient email.');
+
+    if (!/^\+?[0-9]{7,15}$/.test(payload.recipientPhone))
+      return window.showError('transferError', 'Enter a valid recipient phone number, for example +2348012345678.');
 
     if (typeof window.setLoading === 'function')
       setLoading(buttonId, true, 'Sending');
@@ -4051,6 +4058,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         bankName: payload.recipientBank,
         recipientAccount: payload.recipientAccount,
         recipientEmail: payload.recipientEmail,
+        recipientPhone: payload.recipientPhone,
         swiftBic: payload.swiftBic,
         recipientCountry: payload.recipientCountry,
         note: payload.note,
@@ -4284,10 +4292,12 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       const bank=($('transferBankName')?.value||'').trim();
       const account=($('transferRecipientAccount')?.value||'').trim();
       const email=($('transferRecipientEmail')?.value||'').trim();
+    const phone=($('transferRecipientPhone')?.value||'').trim();
       if(recipient.length<2)return showError('Enter the recipient name.');
       if(bank.length<2)return showError('Enter the recipient bank name.');
       if(account.length<3)return showError('Enter the recipient account number.');
       if(email&&!/^\S+@\S+\.\S+$/.test(email))return showError('Enter a valid recipient email.');
+    if(!/^\+?[0-9]{7,15}$/.test(phone))return showError('Enter a valid recipient phone number, for example +2348012345678.');
     }
     if(step===3){
       const amount=N($('transferAmount')?.value),target=C($('transferCurrency')?.value);
@@ -4324,6 +4334,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         amount:Number(q.total.toFixed(2)),
         recipient,
         recipientEmail:email,
+        recipientPhone:phone,
         recipientBank:bank,
         recipientAccount:account,
         recipientCountry:$('transferCountry')?.value||'',
@@ -4338,7 +4349,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       const status=String(r.status||data?.status||'pending').toLowerCase();
       if(typeof window.openReceipt==='function')window.openReceipt({
         id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,selectedCurrency:target,
-        recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,
+        recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,recipientPhone:phone,
         recipientCountry:payload.recipientCountry,swiftBic:payload.swiftBic,note,
         date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,
         fundingCurrency:q.source,fundingAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent
