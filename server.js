@@ -174,11 +174,10 @@ function makeTransferReceiptPdf({status,request,originalAmount,originalCurrency,
   const amountText = formatMoneyValue(originalAmount, originalCurrency);
   const convertedText = convertedAmount != null ? formatMoneyValue(convertedAmount, convertedCurrency || originalCurrency) : '—';
   const dateText = new Date(request.created_at || Date.now()).toLocaleString();
-  const customerNumber = request.customer_number || request.customerNumber || request.customer_id || request.user_id || '—';
+  const customerNumber = maskCustomerNumber(request.customer_number || request.customerNumber || '—');
   const note = String(request.note || '').trim() || 'No note provided.';
   const senderName = request.sender_name || request.name || 'Customer';
   const senderEmail = request.sender_email || request.email || '—';
-  const senderPhone = request.sender_phone || request.phone || '—';
   const recipient = request.recipient || 'Recipient';
   const recipientEmail = request.recipient_email || request.recipientEmail || '—';
   const recipientPhone = request.recipient_phone || request.recipientPhone || '—';
@@ -190,57 +189,65 @@ function makeTransferReceiptPdf({status,request,originalAmount,originalCurrency,
   const esc = pdfEscape;
   const content = [];
   const text = (value,size,x,y,bold=false) => content.push(`BT /F${bold ? 2 : 1} ${size} Tf ${x} ${y} Td (${esc(value)}) Tj ET`);
-  const line = (x1,y1,x2,y2) => content.push(`0.8 w ${x1} ${y1} m ${x2} ${y2} l S`);
-  const box = (x,y,w,h) => content.push(`0.9 w ${x} ${y} ${w} ${h} re S`);
+  const line = (x1,y1,x2,y2) => content.push(`0.7 w ${x1} ${y1} m ${x2} ${y2} l S`);
+  const box = (x,y,w,h) => content.push(`0.7 w ${x} ${y} ${w} ${h} re S`);
 
-  // Professional one-page receipt layout matching the approved preview.
-  content.push('0.08 0.12 0.24 rg 0 690 612 102 re f');
-  content.push('1 1 1 rg');
-  text('AMERICAN CREST',20,42,752,true);
-  text('ONLINE BANKING',10,42,734,false);
-  text('SECURE TRANSFER SERVICES',9,42,718,false);
-  content.push('0.12 0.36 0.78 rg 472 726 98 34 re f');
-  content.push('1 1 1 rg');
-  text(label,10,490,739,true);
+  // Clean professional layout based on the user's approved reference style.
+  content.push('1 1 1 rg 0 0 612 792 re f');
+  content.push('0.04 0.17 0.36 rg');
+  text('AMERICAN CREST',20,92,744,true);
+  text('BANK',10,194,720,true);
+  text('SAFE  |  SECURE  |  TOGETHER',8,430,746,false);
+  line(92,708,570,708);
 
-  content.push('0.08 0.12 0.24 rg');
-  text('TRANSFER RECEIPT',18,42,650,true);
-  text('Transaction confirmation',9,42,634,false);
+  // Service banner. A small sample marker remains for safe use as a simulated banking artifact.
+  content.push('0.91 0.95 0.99 rg 42 648 528 42 re f');
+  content.push('0.04 0.17 0.36 rg');
+  text('ONLINE BANKING SERVICE',13,62,672,true);
+  text('SAMPLE RECEIPT',7,62,657,false);
+  text('Transactional transfer information',8,394,666,false);
 
-  content.push('0.94 0.95 0.97 rg 42 585 528 32 re f');
-  content.push('0.08 0.12 0.24 rg');
-  text('TRANSACTION REFERENCE',8,54,605,true); text(reference,10,54,591,false);
-  text('DATE & TIME',8,340,605,true); text(dateText,10,340,591,false);
+  text('TRANSFER RECEIPT',22,42,612,true);
+  text('INTERNATIONAL TRANSFER',9,42,592,false);
+  content.push('0.88 0.96 0.92 rg 438 574 132 30 re f');
+  content.push('0.04 0.42 0.25 rg');
+  text(label,10,466,585,true);
+  line(42,558,570,558);
 
-  content.push('0.08 0.12 0.24 rg');
-  text('SENDER DETAILS',10,42,554,true); text('RECIPIENT DETAILS',10,318,554,true);
-  box(42,404,248,132); box(318,404,252,132);
-  text('Customer Number',8,54,514,false); text(customerNumber,10,54,500,true);
-  text('Name',8,54,478,false); text(senderName,10,54,464,true);
-  text('Email',8,54,442,false); text(senderEmail,9,54,428,false);
-  text('Phone',8,54,414,false); text(senderPhone,9,54,400,false);
-  text('Name',8,330,514,false); text(recipient,10,330,500,true);
-  text('Email',8,330,478,false); text(recipientEmail,9,330,464,false);
-  text('Phone',8,330,442,false); text(recipientPhone,9,330,428,false);
-  text('Bank / Account',8,330,414,false); text(`${bank} / ${account}`,8,330,400,false);
+  content.push('0.96 0.97 0.98 rg 42 510 528 36 re f');
+  content.push('0.04 0.17 0.36 rg');
+  text('REFERENCE NUMBER',7,54,532,true); text(reference,9,54,518,false);
+  text('DATE & TIME',7,270,532,true); text(dateText,9,270,518,false);
+  text('CHANNEL',7,454,532,true); text('ONLINE BANKING',9,454,518,false);
 
-  content.push('0.94 0.95 0.97 rg 42 314 528 66 re f');
-  content.push('0.08 0.12 0.24 rg');
-  text('TRANSFER SUMMARY',9,54,360,true);
-  text('AMOUNT SENT',8,54,342,false); text(amountText,14,54,326,true);
-  text('CONVERTED AMOUNT',8,270,342,false); text(convertedText,12,270,326,true);
-  text('SWIFT / BIC',8,454,342,false); text(swift,9,454,326,false);
+  content.push('0.91 0.95 0.99 rg 42 434 528 60 re f');
+  content.push('0.04 0.17 0.36 rg');
+  text('AMOUNT SENT',8,58,474,true); text(amountText,16,58,452,true);
+  text('CONVERTED AMOUNT',8,326,474,true); text(convertedText,16,326,452,true);
+  line(306,442,306,486);
 
-  content.push('0.08 0.12 0.24 rg');
-  text('PAYMENT DESCRIPTION',9,42,286,true);
-  box(42,226,528,44);
-  text(note.length > 86 ? note.slice(0,83) + '...' : note,9,54,244,false);
-  text(`Status: ${label}`,9,54,228,true);
+  text('SENDER',10,42,408,true); text('RECIPIENT',10,318,408,true);
+  box(42,260,248,138); box(318,260,252,138);
+  text('Name',8,54,376,false); text(senderName,10,54,360,true);
+  text('Email',8,54,338,false); text(senderEmail,9,54,322,false);
+  text('Customer Number',8,54,300,false); text(customerNumber,10,54,282,true);
+  text('Name',8,330,376,false); text(recipient,10,330,360,true);
+  text('Email',8,330,338,false); text(recipientEmail,9,330,322,false);
+  text('Phone',8,330,300,false); text(recipientPhone,9,330,284,false);
+  text('Bank / Account',8,330,266,false); text(`${bank} / ${account}`,8,330,250,false);
 
-  line(42,194,570,194);
-  text('Security reference',8,42,176,false); text(reference,9,140,176,true);
-  text('Channel',8,390,176,false); text('ONLINE BANKING',9,440,176,true);
-  text('This receipt was generated by ONLINE BANKING.',8,42,48,false);
+  content.push('0.91 0.95 0.99 rg 42 198 528 42 re f');
+  content.push('0.04 0.17 0.36 rg');
+  text('SWIFT / BIC',8,58,222,true); text(swift,10,58,206,true);
+  text('Payment description',8,326,222,true); text(note.length > 42 ? note.slice(0,39) + '...' : note,9,326,206,false);
+
+  line(42,178,570,178);
+  text('TRANSACTION REFERENCE',7,42,158,false); text(reference,9,42,143,true);
+  text(`STATUS: ${label}`,8,390,158,true);
+  text('AMERICAN CREST BANK',9,42,62,true);
+  text('Your Trust. Our Priority.',8,42,46,false);
+  text('SAMPLE / SIMULATION',7,452,62,true);
+  text('For testing and demonstration',7,452,48,false);
 
   const objects = [];
   objects.push('<< /Type /Catalog /Pages 2 0 R >>');
@@ -250,13 +257,12 @@ function makeTransferReceiptPdf({status,request,originalAmount,originalCurrency,
   objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
   const stream = content.join('\n');
   objects.push(`<< /Length ${Buffer.byteLength(stream, 'ascii')} >>\nstream\n${stream}\nendstream`);
-
   let pdf = '%PDF-1.4\n';
   const offsets = [0];
   objects.forEach((obj, i) => { offsets[i + 1] = Buffer.byteLength(pdf, 'ascii'); pdf += `${i + 1} 0 obj\n${obj}\nendobj\n`; });
   const xref = Buffer.byteLength(pdf, 'ascii');
   pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
-  for (let i = 1; i <= objects.length; i++) pdf += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+  for (let i = 1; i <= objects.length; i++) pdf += `${String(offsets[i]).padStart(10,'0')} 00000 n \n`;
   pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
   return Buffer.from(pdf, 'ascii');
 }
