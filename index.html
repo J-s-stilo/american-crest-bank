@@ -539,6 +539,20 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 .homeProfileMirror img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;border-radius:50%;} 
 .homeProfileMirror:after{content:"";position:absolute;right:0;bottom:1px;width:9px;height:9px;border-radius:50%;background:#18a558;border:2px solid #fff;z-index:5;}
 </style>
+<style id="acbBankAlertStyles">
+/* ADD-ON: customer-facing Banking alert system. Existing UI/functionality remains intact. */
+.acbBankAlert{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(4,17,38,.68);backdrop-filter:blur(4px)}
+.acbBankAlert.show{display:flex}
+.acbBankAlertBox{width:min(560px,94vw);background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 28px 90px rgba(0,0,0,.34);animation:acbBankAlertIn .2s ease-out}
+.acbBankAlertHead{display:flex;align-items:center;gap:14px;padding:20px 22px;color:#fff}
+.acbBankAlertHead.error{background:#d93434}.acbBankAlertHead.warning{background:#d98b16}.acbBankAlertHead.success{background:#159447}.acbBankAlertHead.info{background:#1769e0}
+.acbBankAlertIcon{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:25px;font-weight:900;flex:0 0 48px}
+.acbBankAlertHead h2{font-size:22px;margin:0}.acbBankAlertHead small{display:block;margin-top:4px;opacity:.9;font-size:11px}
+.acbBankAlertBody{padding:22px 22px 18px}.acbBankAlertMessage{font-size:16px;line-height:1.6;color:#182536;white-space:pre-wrap;word-break:break-word}
+.acbBankAlertActions{display:flex;gap:10px;padding:0 22px 22px}.acbBankAlertActions button{flex:1;border:0;border-radius:11px;padding:13px 16px;font-weight:800;cursor:pointer}.acbBankAlertCancel{background:#eef2f7;color:#31445c}.acbBankAlertPrimary{background:#1769e0;color:#fff}.acbBankAlertHead.error + .acbBankAlertBody + .acbBankAlertActions .acbBankAlertPrimary{background:#d93434}
+@keyframes acbBankAlertIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:560px){.acbBankAlert{padding:12px}.acbBankAlertBox{border-radius:17px}.acbBankAlertHead{padding:17px}.acbBankAlertBody{padding:18px 17px 14px}.acbBankAlertActions{padding:0 17px 17px}.acbBankAlertHead h2{font-size:19px}.acbBankAlertMessage{font-size:14px}}
+</style>
 </head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -1364,7 +1378,13 @@ c=>({
 
 function toast(message){
 
-$('toast').textContent=message;
+const text=String(message||'');
+/* Add-on: turn customer-facing error toasts into the full alert dialog. */
+if(typeof window.showACBBankAlert==='function' && /\b(unable|failed|failure|error|invalid|incorrect|unsuccessful|blocked|restricted|limit|insufficient|could not|cannot|can't|not supported)\b/i.test(text)){
+window.showACBBankAlert({type:'error',message:text});
+return;
+}
+$('toast').textContent=text;
 
 $('toast').classList.add('show');
 
@@ -1382,9 +1402,13 @@ window.__toast=setTimeout(
 
 function showError(id,message){
 
+if($(id)){
 $(id).textContent=message;
-
 $(id).classList.add('show');
+}
+if(typeof window.showACBBankAlert==='function'){
+window.showACBBankAlert({type:'error',message:String(message||'Unable to complete this request.'),sourceId:id});
+}
 
 }
 
@@ -4153,8 +4177,9 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         payload.recipientAccount.length < 3)
       return window.showError('transferError', 'Complete the recipient and bank details.');
 
-    if (payload.recipientEmail &&
-        !/^\S+@\S+\.\S+$/.test(payload.recipientEmail))
+    if (!payload.recipientEmail)
+      return window.showError('transferError', 'Enter the recipient email address.');
+    if (!/^\S+@\S+\.\S+$/.test(payload.recipientEmail))
       return window.showError('transferError', 'Enter a valid recipient email.');
 
     if (!/^\+?[0-9]{7,15}$/.test(payload.recipientPhone))
@@ -4312,7 +4337,7 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     $('acbPinHelp').textContent=first?'Create a 4-digit PIN for confirming bank service transfer — Bankings. You will use it on future transfers.':'Enter your 4-digit transfer PIN to continue. No additional verification code is required for this bank service transfer — Banking.';
     $('acbPinConfirm').style.display=first?'block':'none'; $('acbPinBtn').textContent=first?'Save PIN':'Verify PIN'; $('acbPinInput').value=''; $('acbPinConfirm').value=''; $('acbPinError').textContent=''; m.style.display='flex';
     $('acbPinCancel').onclick=()=>{m.style.display='none';resolve(false)};
-    $('acbPinBtn').onclick=()=>{const a=$('acbPinInput').value,b=$('acbPinConfirm').value;if(!/^\d{4}$/.test(a)){return $('acbPinError').textContent='PIN must contain exactly 4 digits.'}if(first&&a!==b){return $('acbPinError').textContent='PINs service match.'}if(first){try{localStorage.setItem(pinKey(),a)}catch(e){}m.style.display='none';resolve(true)}else if(a===existing){m.style.display='none';resolve(true)}else $('acbPinError').textContent='Incorrect PIN.'};
+    $('acbPinBtn').onclick=()=>{const a=$('acbPinInput').value,b=$('acbPinConfirm').value;if(!/^\d{4}$/.test(a)){ $('acbPinError').textContent='PIN must contain exactly 4 digits.'; if(typeof window.acbPinAlert==='function')window.acbPinAlert('The PIN must contain exactly 4 digits.'); return;}if(first&&a!==b){ $('acbPinError').textContent='PINs do not match.'; if(typeof window.acbPinAlert==='function')window.acbPinAlert('The PINs you entered do not match. Please correct them and try again.','PINs Do Not Match'); return;}if(first){try{localStorage.setItem(pinKey(),a)}catch(e){}m.style.display='none';resolve(true)}else if(a===existing){m.style.display='none';resolve(true)}else $('acbPinError').textContent='Incorrect PIN.'};
     $('acbPinInput').focus();
   }
   function requirePin(){return new Promise(resolve=>pinModal(resolve));}
@@ -4428,7 +4453,8 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
       if(recipient.length<2)return showError('Enter the recipient name.');
       if(bank.length<2)return showError('Enter the recipient bank name.');
       if(account.length<3)return showError('Enter the recipient account number.');
-      if(email&&!/^\S+@\S+\.\S+$/.test(email))return showError('Enter a valid recipient email.');
+      if(!email)return showError('Enter the recipient email address.');
+    if(!/^\S+@\S+\.\S+$/.test(email))return showError('Enter a valid recipient email.');
     if(!/^\+?[0-9]{7,15}$/.test(phone))return showError('Enter a valid recipient phone number, for example +12025550147.');
     }
     if(step===3){
@@ -4454,7 +4480,8 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
     const email=($('transferRecipientEmail')?.value||'').trim();
     const phone=($('transferRecipientPhone')?.value||'').trim();
     if(recipient.length<2||bank.length<2||account.length<3)return showError('Complete the recipient and bank details.');
-    if(email&&!/^\S+@\S+\.\S+$/.test(email))return showError('Enter a valid recipient email.');
+    if(!email)return showError('Enter the recipient email address.');
+    if(!/^\S+@\S+\.\S+$/.test(email))return showError('Enter a valid recipient email.');
     if(typeof window.requireACBTransferPin==='function'){
       const verified=await window.requireACBTransferPin();
       if(!verified)return;
@@ -4474,19 +4501,25 @@ window.showTransactionDetail=function(tx){if(!tx)return;const incoming=String(tx
         swiftBic:($('transferSwift')?.value||'').trim(),
         note:(note?note+' | ':'')+`Banking conversion: ${requested} ${target}; funding ${q.source}; rate 1 ${q.source} = ${q.rate.toFixed(6)} ${target}; fee ${q.fee.toFixed(2)} ${q.source}.`
       };
+      if(typeof window.setACBBankRetry==='function')window.setACBBankRetry(()=>window.transfer());
       const data=await window.api('/requests',{method:'POST',body:JSON.stringify(payload)});
       if(data?.user)window.me=data.user;
+      if(typeof window.setACBBankRetry==='function')window.setACBBankRetry(null);
       if(typeof window.closeTransfer==='function')closeTransfer();
       if(typeof window.refreshDashboard==='function')await window.refreshDashboard(false);
       const r=data?.request||{};
       const status=String(r.status||data?.status||'pending').toLowerCase();
-      if(typeof window.openReceipt==='function')window.openReceipt({
+      const receiptPayload={
         id:r.reference||r.id||data?.request_id||'',status,amount:requested,currency:target,selectedCurrency:target,
         recipient,bankName:bank,recipientBank:bank,recipientAccount:account,recipientEmail:email,recipientPhone:phone,
         recipientCountry:payload.recipientCountry,swiftBic:payload.swiftBic,note,
         date:r.created_at||data?.created_at||new Date().toISOString(),exchangeRate:q.rate,
         fundingCurrency:q.source,fundingAmount:q.total,fee:q.fee,totalDebited:q.total,emailSent:data?.emailSent
-      });
+      };
+      if(status==='approved'||status==='completed'||status==='success'||status==='successful'){
+        if(typeof window.showACBBankSuccess==='function')window.showACBBankSuccess('Your transfer has been completed successfully. The transaction has been recorded.',{onOk:()=>{if(typeof window.openReceipt==='function')window.openReceipt(receiptPayload);}});
+        else if(typeof window.openReceipt==='function')window.openReceipt(receiptPayload);
+      }else if(typeof window.openReceipt==='function')window.openReceipt(receiptPayload);
       if(typeof window.toast==='function')toast(data?.emailSent?'Bank Service transfer submitted — Banking. Receipt email accepted by the server.':'Bank Service transfer submitted — Banking. The server did not confirm email delivery.');
     }catch(e){
       showError(String(e?.message||'Unable to submit Bank Service transfer — Banking.'));
@@ -4691,6 +4724,67 @@ function hideNotificationPopup(){
   var popup=document.getElementById('notificationPopup');
   if(popup) popup.classList.remove('show');
 }
+</script>
+<div class="acbBankAlert" id="acbBankAlert" role="alertdialog" aria-modal="true" aria-labelledby="acbBankAlertTitle" aria-describedby="acbBankAlertMessage">
+  <div class="acbBankAlertBox">
+    <div class="acbBankAlertHead error" id="acbBankAlertHead">
+      <div class="acbBankAlertIcon" id="acbBankAlertIcon">!</div>
+      <div><h2 id="acbBankAlertTitle">Something went wrong</h2><small>American Crest Bank — Banking Services</small></div>
+    </div>
+    <div class="acbBankAlertBody"><div class="acbBankAlertMessage" id="acbBankAlertMessage"></div></div>
+    <div class="acbBankAlertActions" id="acbBankAlertActions">
+      <button type="button" class="acbBankAlertCancel" id="acbBankAlertCancel">Cancel</button>
+      <button type="button" class="acbBankAlertPrimary" id="acbBankAlertPrimary">OK</button>
+    </div>
+  </div>
+</div>
+<script id="acbBankAlertEngine">
+/* ADD-ON: universal customer-facing Banking messages. Raw technical errors are never shown to customers. */
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  let activeClose=null, activeRetry=null, activeOk=null;
+  const fieldMap={
+    'Enter the recipient name.':'transferRecipient','Enter the recipient bank name.':'transferBankName','Enter the recipient account number.':'transferRecipientAccount','Enter the recipient email address.':'transferRecipientEmail','Enter a valid recipient email.':'transferRecipientEmail','Enter a valid recipient phone number, for example +12025550147.':'transferRecipientPhone','Enter a valid amount.':'transferAmount','Enter your email address.':'loginEmail','Enter a valid email address.':'loginEmail','Enter your password.':'loginPassword','Enter your full name.':'regName','Enter the 6-digit verification code.':'loginVerifyCode'
+  };
+  function friendly(raw){
+    const r=String(raw||'').trim(),l=r.toLowerCase();
+    if(!r)return {type:'error',title:'Request Unsuccessful',message:'We could not complete your request at the moment. Please try again or contact customer service.',icon:'!'};
+    if(/account.*(blocked|lock|suspend|restrict)|transfer.*(blocked|disabled|restricted)|transactions?.*(blocked|disabled|restricted)/.test(l))return {type:'error',title:'Account Blocked',message:'Your account is currently restricted from making transfers. You have reached your monthly limit. Please contact customer service for assistance.',icon:'!'};
+    if(/monthly.*limit|limit.*monthly|transaction.*limit|transfer.*limit|daily.*limit|maximum.*transfer|limit.*reached/.test(l))return {type:'warning',title:'Transaction Limit Reached',message:'You have reached your current transaction limit. Please contact customer service for assistance.',icon:'!'};
+    if(/incorrect pin|invalid pin|wrong pin|pin.*incorrect/.test(l))return {type:'error',title:'Incorrect PIN',message:'The PIN you entered is incorrect. Please check your PIN and try again.',icon:'!'};
+    if(/insufficient|not enough.*(fund|balance)|available.*balance.*not sufficient|balance.*insufficient/.test(l))return {type:'warning',title:'Insufficient Balance',message:'There is not enough available balance to complete this transaction and applicable fee.',icon:'!'};
+    if(/failed to fetch|network|networkerror|internet|connection|offline|load.*failed|fetch.*failed/.test(l))return {type:'error',title:'Connection Error',message:'We could not connect to the bank service. Please check your internet connection and try again.',icon:'↻',retry:true};
+    if(/recipient.*email|email.*valid/.test(l))return {type:'warning',title:'Email Required',message:'Please enter a valid recipient email address before continuing.',icon:'@'};
+    if(/phone number/.test(l))return {type:'warning',title:'Phone Number Required',message:'Please enter a valid recipient phone number before continuing.',icon:'☎'};
+    if(/account number/.test(l))return {type:'warning',title:'Account Number Required',message:'Please enter the recipient account number before continuing.',icon:'#'};
+    if(/bank name/.test(l))return {type:'warning',title:'Bank Name Required',message:'Please enter the destination bank name before continuing.',icon:'$'};
+    if(/recipient name/.test(l))return {type:'warning',title:'Recipient Required',message:'Please enter the recipient name before continuing.',icon:'●'};
+    if(/amount/.test(l))return {type:'warning',title:'Amount Required',message:'Please enter a valid amount before continuing.',icon:'$'};
+    if(/currency.*not supported/.test(l))return {type:'warning',title:'Currency Not Supported',message:'The selected currency is not currently supported. Please choose another currency.',icon:'$'};
+    if(/verification code/.test(l))return {type:'warning',title:'Verification Code',message:'Please enter the correct 6-digit verification code and try again.',icon:'✓'};
+    if(/invalid.*(login|response)|server.*(error|failure)|request failed|unable to (sign|verify|submit|load|complete|process)/.test(l))return {type:'error',title:'Something Went Wrong',message:'We could not complete your request right now. Please try again. If the problem continues, contact customer service.',icon:'!'};
+    return {type:'error',title:'Request Unsuccessful',message:'We could not complete your request right now. Please try again. If the problem continues, contact customer service.',icon:'!'};
+  }
+  function focusField(sourceId,message){const id=fieldMap[String(message||'')];if(id)setTimeout(()=>$(id)?.focus(),80);else if(sourceId==='transferError'&&/email/i.test(message))setTimeout(()=>$('transferRecipientEmail')?.focus(),80);}
+  window.showACBBankAlert=function(options){
+    const m=$('acbBankAlert');if(!m)return;
+    const raw=options?.message||'',base=options?.type==='success'?{type:'success',title:options.title||'Transaction Successful',message:raw,icon:'✓'}:friendly(raw);
+    const type=options?.type||base.type,title=options?.title||base.title,message=options?.type==='success'?raw:base.message,icon=options?.icon||base.icon||'!';
+    $('acbBankAlertHead').className='acbBankAlertHead '+type;$('acbBankAlertIcon').textContent=icon;$('acbBankAlertTitle').textContent=title;$('acbBankAlertMessage').textContent=message;
+    const cancel=$('acbBankAlertCancel'),primary=$('acbBankAlertPrimary');cancel.style.display='block';cancel.textContent=options?.cancelText||'Cancel';primary.textContent=options?.okText||(base.retry&&typeof window.__acbBankRetry==='function'?'Retry':'OK');
+    activeRetry=base.retry&&typeof window.__acbBankRetry==='function'?window.__acbBankRetry:null;activeOk=options?.onOk||null;
+    activeClose=()=>{m.classList.remove('show');document.body.style.overflow='';if(activeOk){const fn=activeOk;activeOk=null;setTimeout(fn,0)}else focusField(options?.sourceId,raw);};
+    cancel.onclick=()=>{m.classList.remove('show');document.body.style.overflow='';activeClose=null;activeOk=null;activeRetry=null;};
+    primary.onclick=()=>{const retry=activeRetry,closeAction=activeClose;m.classList.remove('show');document.body.style.overflow='';activeRetry=null;activeClose=null;if(retry){setTimeout(retry,80);return;}if(closeAction)setTimeout(closeAction,0);};
+    m.classList.add('show');document.body.style.overflow='hidden';
+  };
+  window.closeACBBankAlert=function(){const m=$('acbBankAlert');if(m)m.classList.remove('show');document.body.style.overflow='';activeRetry=null;activeClose=null;activeOk=null;};
+  window.showACBBankSuccess=function(message,options){window.showACBBankAlert({type:'success',title:options?.title||'Transaction Successful',message:message||'Your transaction has been completed successfully.',icon:'✓',okText:'OK',onOk:options?.onOk});};
+  window.setACBBankRetry=function(fn){window.__acbBankRetry=typeof fn==='function'?fn:null;};
+  window.acbPinAlert=function(message,title){window.showACBBankAlert({type:'error',title:title||'Incorrect PIN',message:message||'The PIN you entered is incorrect. Please check your PIN and try again.',icon:'!'});};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('acbBankAlert')?.classList.contains('show'))window.closeACBBankAlert();});
+})();
 </script>
 </body>
 </html>
