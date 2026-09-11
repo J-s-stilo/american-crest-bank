@@ -277,9 +277,10 @@ function sendResendEmail({toEmail,toName,subject,text,html,attachments=[]}) {
   const payload = JSON.stringify({
     from: `${RESEND_FROM_NAME} <${RESEND_FROM_EMAIL}>`,
     to: [recipient],
-    subject: String(subject || 'Transfer Receipt'),
-    text: String(text || ''),
-    html: String(html || ''),
+    reply_to: [RESEND_FROM_EMAIL],
+    subject: String(subject || 'Transfer Notification'),
+    text: String(text || '').trim(),
+    html: String(html || '').trim(),
     ...(attachments.length ? {attachments} : {})
   });
 
@@ -383,7 +384,7 @@ function convertDemoCurrency(amount,from,to){from=String(from||'').toUpperCase()
 function formatMoneyValue(amount,currency){return `${Number(amount||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} ${String(currency||'').toUpperCase()}`;}
 function makeTransferReceiptEmail({status,request,originalAmount,originalCurrency,convertedAmount,convertedCurrency}){
   const label=status==='pending'?'Pending':'Successful'; const amountText=formatMoneyValue(originalAmount,originalCurrency); const note=String(request.note||'').trim()||'No note provided.';
-  return {subject:`${label} Transfer Receipt — ${amountText}`,text:['ONLINE BANKING','',`Transfer status: ${label}`,`Recipient: ${request.recipient||'Recipient'}`,`Amount: ${amountText}`,`Reference: ${request.id}`,`Date: ${new Date(request.created_at||Date.now()).toLocaleString()}`,'',`Message from sender: ${note}`,'','This is an ONLINE BANKING notification.'].filter(Boolean).join('\n'),html:`<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;padding:28px;border:1px solid #e4e8f0;border-radius:16px"><b>ONLINE BANKING</b><h2>Transfer ${escapeHtml(label)}</h2><p><b>Status:</b> ${escapeHtml(label)}</p><p><b>Recipient:</b> ${escapeHtml(request.recipient||'Recipient')}</p><p><b>Amount:</b> ${escapeHtml(amountText)}</p><p><b>Reference:</b> ${escapeHtml(request.id)}</p><p><b>Date:</b> ${escapeHtml(new Date(request.created_at||Date.now()).toLocaleString())}</p><div style="margin-top:18px;padding:16px;background:#f8fafc;border-radius:12px"><b>Message from sender</b><div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(note)}</div></div><p style="font-size:12px;color:#667085">This is an ONLINE BANKING notification.</p></div>`};
+  return {subject:`Transfer ${label} — ${amountText}`,text:['ONLINE BANKING','Transfer notification','',`Status: ${label}`,`Recipient: ${request.recipient||'Recipient'}`,`Amount: ${amountText}`,`Reference: ${request.id}`,`Date: ${new Date(request.created_at||Date.now()).toLocaleString()}`,'',`Message from sender: ${note}`,'','This is a transactional ONLINE BANKING notification.'].filter(Boolean).join('\n'),html:`<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;padding:28px;border:1px solid #e4e8f0;border-radius:16px"><b>ONLINE BANKING</b><h2>Transfer ${escapeHtml(label)}</h2><p><b>Status:</b> ${escapeHtml(label)}</p><p><b>Recipient:</b> ${escapeHtml(request.recipient||'Recipient')}</p><p><b>Amount:</b> ${escapeHtml(amountText)}</p><p><b>Reference:</b> ${escapeHtml(request.id)}</p><p><b>Date:</b> ${escapeHtml(new Date(request.created_at||Date.now()).toLocaleString())}</p><div style="margin-top:18px;padding:16px;background:#f8fafc;border-radius:12px"><b>Message from sender</b><div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(note)}</div></div><p style="font-size:12px;color:#667085">This is an ONLINE BANKING notification.</p></div>`};
 }
 
 function signToken(user) {
