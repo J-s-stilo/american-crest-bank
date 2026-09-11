@@ -880,54 +880,9 @@ notifications and service interfaces are available inside the dashboard.
     const dots=document.createElement('div');dots.className='homeSlideDots';
     slides.forEach((src,i)=>{const b=document.createElement('button');b.type='button';b.className=i===0?'active':'';b.setAttribute('aria-label','Show homepage image '+(i+1));b.onclick=()=>showSlide(i);dots.appendChild(b);});
     hero.appendChild(dots);
-    let index=0,timer,slideBusy=false;
-    /* STABILITY FIX: preload the next image before replacing the visible image.
-       The old code hid the current image first, so a slow/failed external image
-       could leave the homepage blank. */
-    const slideCache=new Map();
-    function preloadSlide(src){
-      if(slideCache.has(src))return slideCache.get(src);
-      const loader=new Image();
-      const promise=new Promise(resolve=>{
-        let settled=false;
-        const done=ok=>{if(settled)return;settled=true;resolve(ok);};
-        loader.onload=()=>done(true);
-        loader.onerror=()=>done(false);
-        loader.src=src;
-      });
-      slideCache.set(src,promise);
-      return promise;
-    }
-    slides.forEach(preloadSlide);
-    function showSlide(i){
-      if(slideBusy)return;
-      const nextIndex=((i%slides.length)+slides.length)%slides.length;
-      const nextSrc=slides[nextIndex];
-      slideBusy=true;
-      preloadSlide(nextSrc).then(ok=>{
-        if(!ok){
-          /* Keep the currently visible image if the next remote image fails. */
-          slideBusy=false;
-          return;
-        }
-        index=nextIndex;
-        image.style.opacity='0';
-        requestAnimationFrame(()=>{
-          image.onload=()=>{
-            image.style.opacity='1';
-            hero.classList.add('homeSlide');
-            slideBusy=false;
-          };
-          image.onerror=()=>{
-            image.style.opacity='1';
-            slideBusy=false;
-          };
-          image.src=nextSrc;
-        });
-        dots.querySelectorAll('button').forEach((b,n)=>b.classList.toggle('active',n===index));
-      }).catch(()=>{slideBusy=false;});
-    }
-    function start(){clearInterval(timer);timer=setInterval(()=>showSlide((index+1)%slides.length),5200);}
+    let index=0,timer;
+    function showSlide(i){index=i;image.style.opacity='0';setTimeout(()=>{image.src=slides[index];image.style.opacity='1';hero.classList.toggle('homeSlide',true);},220);dots.querySelectorAll('button').forEach((b,n)=>b.classList.toggle('active',n===index));}
+    function start(){timer=setInterval(()=>showSlide((index+1)%slides.length),5200);}
     hero.addEventListener('mouseenter',()=>clearInterval(timer));hero.addEventListener('mouseleave',start);start();
   }
 })();
@@ -945,7 +900,7 @@ function toggleHomeFaq(button){
 </div>
 <div class="dashHero"><div><div class="dashGreeting">Good evening, <span id="welcomeName">Customer</span></div><div class="dashWelcome">Welcome back to your account</div></div><button class="currencySelector" type="button" onclick="openExchange()"><span class="ukFlag">🇬🇧</span><span id="primaryCurrencyDisplay">GBP</span><span>⌄</span></button></div>
 <div id="notificationCenter" class="notificationCenter dashNotificationLayer"><div class="notificationCenterHead"><button id="notificationBell" class="notificationBell hiddenNotificationBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCount" class="notificationBadge">0</span></button><div id="notificationBoard" class="notificationBoard"><div class="notificationBoardHead"><strong>Notifications</strong><button class="notificationBoardClose" type="button" onclick="toggleNotificationBoard(false)" aria-label="Close">×</button></div><div id="notifications" class="notificationList"></div></div></div></div>
-<div class="balanceHeroCard"><div class="balanceLeft"><div class="balanceLabel">Available Balance <button id="balanceEye" class="balanceEyeNew" type="button" onclick="toggleBalance()" aria-label="Hide balance">👁️</button></div><div id="balance" class="balanceAmountNew">£0.00</div><div id="balanceCurrency" class="balanceAccountNew">Primary currency: GBP</div><div class="accountNumberNew" id="accountNumberDisplay">Account Number: —</div></div><div class="accountLevelNew"><span>Account Level</span><strong>Personal</strong></div></div>
+<div class="balanceHeroCard"><div class="balanceLeft"><div class="balanceLabel">Available Balance <button id="balanceEye" class="balanceEyeNew" type="button" onclick="toggleBalance()" aria-label="Show balance">🙈</button></div><div id="balance" class="balanceAmountNew">••••••</div><div id="balanceCurrency" class="balanceAccountNew">Primary currency: GBP</div><div class="accountNumberNew" id="accountNumberDisplay">Account Number: —</div></div><div class="accountLevelNew"><span>Account Level</span><strong>Personal</strong></div></div>
 <div class="mainActionCard"><button class="homeAction addMoney" type="button" onclick="openBankingService('Add Money')"><span>↓</span><strong>Add Money</strong></button><button class="homeAction sendMoney" type="button" onclick="openTransfer()"><span>↑</span><strong>Send Money</strong></button><button class="homeAction exchangeMoney" type="button" onclick="openExchange()"><span>⇄</span><strong>Exchange</strong></button><button class="homeAction buyData" type="button" onclick="openBankingService('Buy Data')"><span>▥</span><strong>Buy Data</strong></button><button class="homeAction moreAction" type="button" onclick="openAppMenu()"><span>•••</span><strong>More</strong></button></div>
 <section class="quickActionsCard"><div class="sectionTitleRow"><h2>Quick Actions</h2><button type="button" onclick="openAppMenu()">View All</button></div><div class="quickActionGrid"><button type="button" onclick="openBankingService('Airtime')"><span class="qaIcon qaBlue">▯</span><span>Airtime<br>Top-up</span></button><button type="button" onclick="openBankingService('Pay Bills')"><span class="qaIcon qaOrange">▤</span><span>Pay Bills</span></button><button type="button" onclick="openTransactionHistory()"><span class="qaIcon qaGreen">↶</span><span>Transactions</span></button><button type="button" onclick="openFeature('settings')"><span class="qaIcon qaPurple">⚙</span><span>Settings</span></button></div></section>
 <section class="referCard"><div><h2>Refer &amp; Earn</h2><p>Invite friends and earn<br>exciting rewards</p><button type="button" onclick="openFeature('referral')">Refer Now</button></div><div class="giftGraphic">🎁<span>🪙</span><span>🪙</span></div></section>
@@ -2140,8 +2095,8 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
-// Every successful login starts with the real balance visible.
-balanceHidden=false;
+// Every successful login starts with the balance hidden.
+balanceHidden=true;
 renderBalance();
 refreshDashboard(false);
 
@@ -2221,26 +2176,48 @@ function renderAvatar(){
     }
   }
 
-  /* FRESH HOMEPAGE AVATAR — completely rebuilt as a mirror of the menu image. */
+  /* STABLE HOMEPAGE AVATAR — keep the current image visible until a
+     replacement has successfully loaded. This is isolated to the dashboard
+     homepage profile image and does not alter the menu/avatar system. */
   const homeAvatar=$('homeProfileMirror');
   if(homeAvatar){
-    homeAvatar.innerHTML='';
     const menuImg=menuAvatar?menuAvatar.querySelector('img'):null;
     const source=(menuImg && (menuImg.currentSrc||menuImg.src||menuImg.getAttribute('src'))) || image || '';
+    const currentHomeImg=homeAvatar.querySelector('#homeProfileMirrorImage');
 
     if(source){
-      const homeImg=document.createElement('img');
-      homeImg.id='homeProfileMirrorImage';
-      homeImg.alt='';
-      homeImg.src=source;
-      homeImg.onload=()=>{ homeImg.style.display='block'; };
-      homeImg.onerror=()=>{
-        /* Keep the homepage clean if a source ever becomes invalid. */
-        homeAvatar.innerHTML='';
-        homeAvatar.textContent=initials;
-      };
-      homeAvatar.appendChild(homeImg);
-    }else{
+      const currentSrc=currentHomeImg ? (currentHomeImg.currentSrc||currentHomeImg.src||'') : '';
+      const normalizedSource=String(source);
+      const normalizedCurrent=String(currentSrc);
+
+      if(currentHomeImg && normalizedCurrent===normalizedSource && currentHomeImg.complete && currentHomeImg.naturalWidth>0){
+        currentHomeImg.style.display='block';
+      }else{
+        const preloader=new Image();
+        preloader.alt='';
+        preloader.onload=()=>{
+          const oldImg=homeAvatar.querySelector('#homeProfileMirrorImage');
+          const nextImg=document.createElement('img');
+          nextImg.id='homeProfileMirrorImage';
+          nextImg.alt='';
+          nextImg.src=normalizedSource;
+          nextImg.style.display='block';
+          homeAvatar.innerHTML='';
+          homeAvatar.appendChild(nextImg);
+        };
+        preloader.onerror=()=>{
+          /* Never blank a working image because a replacement failed. */
+          if(currentHomeImg && currentHomeImg.complete && currentHomeImg.naturalWidth>0){
+            currentHomeImg.style.display='block';
+          }else{
+            homeAvatar.innerHTML='';
+            homeAvatar.textContent=initials;
+          }
+        };
+        preloader.src=normalizedSource;
+      }
+    }else if(!currentHomeImg){
+      homeAvatar.innerHTML='';
       homeAvatar.textContent=initials;
     }
   }
@@ -2254,99 +2231,130 @@ function renderAvatar(){
 }
 
 function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
-function getDashboardBalance(user, currency){
-  const cur = String(currency || 'USD').toUpperCase();
-  const candidates = [];
+function resolveMainBalance(user,currency){
+  if(!user)return null;
+  const wanted=String(currency||'USD').toUpperCase();
+  const values=[];
 
-  const add = (v) => {
-    if (v === null || v === undefined || v === '') return;
-    if (typeof v === 'object' && !Array.isArray(v)) {
-      ['available','availableBalance','available_balance','current','currentBalance',
-       'current_balance','amount','balance','value'].forEach(k => add(v[k]));
-      return;
+  function numeric(v){
+    if(v===null||v===undefined||v==='')return null;
+    const n=Number(v);
+    return Number.isFinite(n)?n:null;
+  }
+
+  function extract(entry){
+    if(entry===null||entry===undefined)return null;
+    if(typeof entry==='number'||typeof entry==='string'){
+      return numeric(entry);
     }
-    const n = Number(v);
-    if (Number.isFinite(n)) candidates.push(n);
-  };
+    if(typeof entry==='object'){
+      for(const key of ['amount','availableBalance','available_balance','currentBalance','current_balance','available','balance','value']){
+        const n=numeric(entry[key]);
+        if(n!==null)return n;
+      }
+    }
+    return null;
+  }
 
-  // Prefer currency-specific balance when the server supplies one.
-  const balances = user && user.balances;
-  if (balances && typeof balances === 'object') {
-    if (balances[cur] !== undefined) add(balances[cur]);
-    if (balances[cur.toLowerCase()] !== undefined) add(balances[cur.toLowerCase()]);
-    if (Array.isArray(balances)) {
-      balances.forEach(b => {
-        if (!b || typeof b !== 'object') return;
-        const code = String(b.currency || b.code || b.asset || '').toUpperCase();
-        if (!code || code === cur) add(b);
-      });
+  const balances=user.balances;
+  if(Array.isArray(balances)){
+    for(const item of balances){
+      const code=String(item?.currency||item?.code||item?.asset||'').toUpperCase();
+      if(code===wanted || !code){
+        const n=extract(item);
+        if(n!==null)values.push(n);
+      }
+    }
+  }else if(balances&&typeof balances==='object'){
+    const keys=Object.keys(balances);
+    const exact=keys.find(k=>String(k).toUpperCase()===wanted);
+    if(exact!==undefined){
+      const n=extract(balances[exact]);
+      if(n!==null)values.push(n);
+    }
+    if(!values.length){
+      for(const key of keys){
+        const item=balances[key];
+        const code=String(item?.currency||item?.code||item?.asset||key||'').toUpperCase();
+        if(code===wanted || !code){
+          const n=extract(item);
+          if(n!==null){values.push(n);break;}
+        }
+      }
     }
   }
 
-  // Existing account structures used by the index.
-  const accounts = user && user.accounts;
-  if (Array.isArray(accounts)) {
-    accounts.forEach(a => {
-      if (!a || typeof a !== 'object') return;
-      const code = String(a.currency || a.code || a.asset || '').toUpperCase();
-      if (!code || code === cur) add(a);
-    });
-  } else if (accounts && typeof accounts === 'object') {
-    if (accounts[cur] !== undefined) add(accounts[cur]);
-    if (accounts[cur.toLowerCase()] !== undefined) add(accounts[cur.toLowerCase()]);
+  const accounts=user.accounts;
+  if(!values.length && Array.isArray(accounts)){
+    for(const account of accounts){
+      const code=String(account?.currency||account?.code||account?.asset||'').toUpperCase();
+      if(code===wanted || !code){
+        const n=extract(account);
+        if(n!==null){values.push(n);break;}
+      }
+    }
+  }else if(!values.length && accounts&&typeof accounts==='object'){
+    const exact=Object.keys(accounts).find(k=>String(k).toUpperCase()===wanted);
+    if(exact!==undefined){
+      const n=extract(accounts[exact]);
+      if(n!==null)values.push(n);
+    }
   }
 
-  // Direct fields, only used if the more specific structures above don't
-  // provide a usable value.
-  ['availableBalance','available_balance','currentBalance','current_balance',
-   'balance','available'].forEach(k => add(user && user[k]));
+  if(!values.length){
+    for(const key of ['availableBalance','available_balance','currentBalance','current_balance','balance','available']){
+      const n=extract(user[key]);
+      if(n!==null){values.push(n);break;}
+    }
+  }
 
-  // Do not turn a genuine zero into a false positive; zero is valid.
-  return candidates.length ? candidates[0] : 0;
+  if(!values.length){
+    const cached=window.__acbTransferBalanceState||{};
+    const n=numeric(cached[wanted]??cached[currency]);
+    if(n!==null)values.push(n);
+  }
+
+  return values.length ? values[0] : null;
 }
 
 function renderBalance(){
-if(!me)return;
-const currency=String(me.primaryCurrency||me.primary_currency||'NGN').trim().toUpperCase();
-/* BALANCE FIX: use the customer's existing account/balance structures before
-   falling back to legacy balance fields. This is display-only; no server data
-   or existing transfer logic is changed. */
-let amount;
-const readAmount=value=>{
-  if(value&&typeof value==='object')value=value.amount??value.balance??value.available??value.value;
-  if(typeof value==='string')value=value.replace(/[^0-9.\-]/g,'');
-  const n=Number(value);
-  return Number.isFinite(n)?n:null;
-};
-const candidates=[];
-const addCandidate=(value,source)=>{const n=readAmount(value);if(n!==null)candidates.push({value:n,source});};
-const balances=me.balances;
-if(Array.isArray(balances))balances.forEach(x=>{if(String(x?.currency||x?.code||'').toUpperCase()===currency)addCandidate(x,'balances');});
-else if(balances&&typeof balances==='object'&&Object.prototype.hasOwnProperty.call(balances,currency))addCandidate(balances[currency],'balances');
-const accounts=me.accounts;
-if(Array.isArray(accounts))accounts.forEach(x=>{if(String(x?.currency||x?.code||'').toUpperCase()===currency)addCandidate(x,'accounts');});
-else if(accounts&&typeof accounts==='object'&&Object.prototype.hasOwnProperty.call(accounts,currency))addCandidate(accounts[currency],'accounts');
-addCandidate(me.availableBalance,'availableBalance');
-addCandidate(me.available_balance,'available_balance');
-addCandidate(me.balance,'balance');
-addCandidate(me.available,'available');
-/* Prefer the first real primary-currency value. If the primary-currency entry
-   is zero but another server balance field contains a real amount, use it so
-   login does not incorrectly present £0.00/$0.00 when funds exist. */
-amount=(candidates.find(x=>x.value>0)||candidates[0])?.value??0;
-window.__acbTransferBalanceState=window.__acbTransferBalanceState||{};
-window.__acbTransferBalanceState[currency]=Number.isFinite(amount)?amount:0;
-$('balance').textContent=balanceHidden?'••••••':money(amount,currency);
-$('balanceCurrency').textContent='Primary currency: '+currency;
-$('balanceEye').textContent=balanceHidden?'🙈':'👁️';
-$('balanceEye').setAttribute('aria-label',balanceHidden?'Show balance':'Hide balance');
-$('liveBanner').innerHTML='<strong>Bank Account — Banking active.</strong> Customer account data, balances, requests, notifications and support are synchronized with the server database.';
+  if(!me)return;
+  const currency=String(me.primaryCurrency||me.primary_currency||'USD').toUpperCase();
+  const amount=resolveMainBalance(me,currency);
+  window.__acbTransferBalanceState=window.__acbTransferBalanceState||{};
+
+  if(amount!==null){
+    window.__acbTransferBalanceState[currency]=amount;
+  }
+
+  const shownAmount=amount===null ? '—' : money(amount,currency);
+  $('balance').textContent=balanceHidden?'••••••':shownAmount;
+  $('balanceCurrency').textContent='Primary currency: '+currency;
+  $('balanceEye').textContent=balanceHidden?'🙈':'👁️';
+  $('balanceEye').setAttribute('aria-label',balanceHidden?'Show balance':'Hide balance');
+  $('liveBanner').innerHTML='<strong>Bank Account — Banking active.</strong> Customer account data, balances, requests, notifications and support are synchronized with the server database.';
 }
 
-function toggleBalance(){
-balanceHidden=!balanceHidden;
-renderBalance();
-renderCurrencyBalances();
+async function toggleBalance(){
+  if(!me)return;
+
+  if(balanceHidden){
+    /* Refresh the customer record first, then reveal the current balance. */
+    try{
+      if(token && typeof loadMe==='function'){
+        await loadMe();
+      }
+    }catch(e){}
+
+    balanceHidden=false;
+    renderBalance();
+    renderCurrencyBalances();
+    return;
+  }
+
+  balanceHidden=true;
+  renderBalance();
+  renderCurrencyBalances();
 }
 
 function renderCurrencyBalances(){
