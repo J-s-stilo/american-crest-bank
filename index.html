@@ -1381,8 +1381,13 @@ function toast(message){
 const text=String(message||'');
 /* Add-on: turn customer-facing error toasts into the full alert dialog. */
 if(typeof window.showACBBankAlert==='function' && /\b(unable|failed|failure|error|invalid|incorrect|unsuccessful|blocked|restricted|limit|insufficient|could not|cannot|can't|not supported)\b/i.test(text)){
-window.showACBBankAlert({type:'error',message:text});
-return;
+  /* A successful login should show only the welcome message. Ignore any
+     generic dashboard-init error toast fired during the first few seconds. */
+  if(window.__acbLoginWelcomeActiveUntil && Date.now()<window.__acbLoginWelcomeActiveUntil){
+    return;
+  }
+  window.showACBBankAlert({type:'error',message:text});
+  return;
 }
 $('toast').textContent=text;
 
@@ -1915,6 +1920,11 @@ function completeLogin(data){
 if(!data||!data.token||!data.user){
 throw new Error('The server returned an invalid login response.');
 }
+
+/* Successful login: during dashboard initialization, do not let a stray
+   generic request/error notification replace the welcome message. */
+window.__acbLoginWelcomeActiveUntil=Date.now()+3000;
+setTimeout(()=>{window.__acbLoginWelcomeActiveUntil=0;},3200);
 
 token=String(data.token);
 me={...(me||{}),...(data.user||{})};
@@ -4812,6 +4822,13 @@ function hideNotificationPopup(){
   window.showACBBankAlert=function(options){
     const m=$('acbBankAlert');if(!m)return;
     const raw=options?.message||'',base=options?.type==='success'?{type:'success',title:options.title||'Transaction Successful',message:raw,icon:'✓'}:friendly(raw);
+    /* Never show the generic Request Unsuccessful/Something Went Wrong popup
+       during the immediate post-login dashboard initialization. The login
+       success path below is responsible for the green Welcome Back alert. */
+    if(options?.type!=='success' && window.__acbLoginWelcomeActiveUntil && Date.now()<window.__acbLoginWelcomeActiveUntil &&
+       (base.title==='Request Unsuccessful'||base.title==='Something Went Wrong')){
+      return;
+    }
     const type=options?.type||base.type,title=options?.title||base.title,message=options?.type==='success'?raw:base.message,icon=options?.icon||base.icon||'!';
     $('acbBankAlertHead').className='acbBankAlertHead '+type;$('acbBankAlertIcon').textContent=icon;$('acbBankAlertTitle').textContent=title;$('acbBankAlertMessage').textContent=message;
     const cancel=$('acbBankAlertCancel'),primary=$('acbBankAlertPrimary');cancel.style.display='block';cancel.textContent=options?.cancelText||'Cancel';primary.textContent=options?.okText||(base.retry&&typeof window.__acbBankRetry==='function'?'Retry':'OK');
