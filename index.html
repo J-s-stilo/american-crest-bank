@@ -2563,7 +2563,205 @@ TRANSFER RECEIPT
 let lastTransferReceipt=null;
 function openReceipt(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();$('receiptModal').classList.add('show');}
 function closeReceipt(){const modal=$('receiptModal');if(modal)modal.classList.remove('show');}
-function printReceipt(){const paper=$('receiptPaper');if(!paper)return;const win=window.open('','_blank','width=700,height=850');if(!win)return toast('Please allow pop-ups to print the receipt.');win.document.write('<!doctype html><html><head><title>American Crest Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial,sans-serif;background:#eef2f7;padding:30px;color:#1e293b}.receipt{background:#fff;max-width:520px;margin:auto;border:1px solid #dbe3ee;border-radius:18px;overflow:hidden}.top{padding:22px;border-bottom:1px dashed #cbd5e1;font-weight:800;color:#071a35}.body{padding:24px}.amount{background:#f7f9fc;border-radius:14px;padding:16px;margin:18px 0}.amount strong{display:block;font-size:28px;color:#071a35}.grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e5eaf1}.item{padding:12px;border:1px solid #e5eaf1}.item small{display:block;color:#64748b;font-size:11px}.item strong{display:block;margin-top:4px;font-size:13px;word-break:break-word}.note{margin-top:14px;padding:12px;background:#f8fafc;font-size:12px}.ref{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px}@media(max-width:520px){.grid{grid-template-columns:1fr}}</style></head><body><div class="receipt">'+paper.innerHTML+'</div>\n</body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),250);}
+function printReceipt(){const paper=$('receiptPaper');if(!paper)return;const win=window.open('','_blank','width=700,height=850');if(!win)return toast('Please allow pop-ups to print the receipt.');win.document.write('<!doctype html><html><head><title>American Crest Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial,sans-serif;background:#eef2f7;padding:30px;color:#1e293b}.receipt{background:#fff;max-width:520px;margin:auto;border:1px solid #dbe3ee;border-radius:18px;overflow:hidden}.top{padding:22px;border-bottom:1px dashed #cbd5e1;font-weight:800;color:#071a35}.body{padding:24px}.amount{background:#f7f9fc;border-radius:14px;padding:16px;margin:18px 0}.amount strong{display:block;font-size:28px;color:#071a35}.grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e5eaf1}.item{padding:12px;border:1px solid #e5eaf1}.item small{display:block;color:#64748b;font-size:11px}.item strong{display:block;margin-top:4px;font-size:13px;word-break:break-word}.note{margin-top:14px;padding:12px;background:#f8fafc;font-size:12px}.ref{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px}@media(max-width:520px){.grid{grid-template-columns:1fr}}</style></head><body><div class="receipt">'+paper.innerHTML+'</div>\n
+<style id="acb-friendly-alerts-v2">
+#acbFriendlyAlert{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.42);z-index:2147483000;padding:20px;box-sizing:border-box}
+#acbFriendlyAlert.show{display:flex}
+#acbFriendlyAlert .acb-alert-card{width:min(430px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.22);text-align:center;font-family:inherit}
+#acbFriendlyAlert .acb-alert-icon{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px;font-weight:900}
+#acbFriendlyAlert.success .acb-alert-icon,#acbFriendlyAlert.processing .acb-alert-icon{background:#dcfce7;color:#15803d}
+#acbFriendlyAlert.error .acb-alert-icon{background:#fee2e2;color:#b91c1c}
+#acbFriendlyAlert .acb-alert-title{font-size:21px;font-weight:800;margin:0 0 8px}
+#acbFriendlyAlert .acb-alert-message{font-size:14px;line-height:1.55;color:#475569;margin:0 0 18px;white-space:pre-line}
+#acbFriendlyAlert .acb-alert-actions{display:flex;gap:10px;justify-content:center}
+#acbFriendlyAlert button{border:0;border-radius:11px;padding:11px 18px;font-weight:800;cursor:pointer}
+#acbFriendlyAlert .acb-primary{background:#1769e0;color:#fff}
+#acbFriendlyAlert .acb-secondary{background:#eef2f7;color:#334155}
+</style>
+<div id="acbFriendlyAlert" aria-live="assertive" role="dialog" aria-modal="true">
+  <div class="acb-alert-card">
+    <div class="acb-alert-icon" id="acbAlertIcon">✓</div>
+    <h3 class="acb-alert-title" id="acbAlertTitle">Notice</h3>
+    <p class="acb-alert-message" id="acbAlertMessage"></p>
+    <div class="acb-alert-actions" id="acbAlertActions">
+      <button class="acb-primary" id="acbAlertOk">OK</button>
+    </div>
+  </div>
+</div>
+<script id="acb-friendly-alerts-v2-script">
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  let lastWelcomeAt=0;
+
+  window.acbFriendlyAlert=function(opts){
+    opts=opts||{};
+    const type=opts.type==='error'?'error':(opts.type==='processing'?'processing':'success');
+    const box=$('acbFriendlyAlert');
+    if(!box)return;
+    box.className=type+' show';
+    $('acbAlertIcon').textContent=type==='error'?'!':(type==='processing'?'…':'✓');
+    $('acbAlertTitle').textContent=opts.title||'Notice';
+    $('acbAlertMessage').textContent=opts.message||'';
+    const actions=$('acbAlertActions');
+    actions.innerHTML='';
+    const buttons=Array.isArray(opts.buttons)&&opts.buttons.length?opts.buttons:[{text:'OK',primary:true}];
+    buttons.forEach(b=>{
+      const btn=document.createElement('button');
+      btn.textContent=b.text||'OK';
+      btn.className=b.primary===false?'acb-secondary':'acb-primary';
+      btn.onclick=function(){
+        box.classList.remove('show');
+        if(typeof b.onClick==='function')b.onClick();
+      };
+      actions.appendChild(btn);
+    });
+    const first=actions.querySelector('button');
+    if(first)first.focus();
+  };
+
+  window.acbCloseFriendlyAlert=function(){
+    const box=$('acbFriendlyAlert');
+    if(box)box.classList.remove('show');
+  };
+
+  window.acbShowWelcome=function(name){
+    const now=Date.now();
+    if(now-lastWelcomeAt<2500)return;
+    lastWelcomeAt=now;
+    const clean=String(name||'').trim();
+    window.acbFriendlyAlert({
+      type:'success',
+      title:'Welcome back',
+      message:clean?'Welcome back, '+clean+'.':'Welcome back.',
+      buttons:[{text:'OK',primary:true}]
+    });
+  };
+
+  // Additive hooks for existing global toast/error functions.
+  const oldToast=window.toast;
+  window.toast=function(message){
+    const text=String(message||'');
+    const lower=text.toLowerCase();
+    if(/success|successful|completed|credited|approved/.test(lower)){
+      window.acbFriendlyAlert({type:'success',title:'Transaction Successful',message:text});
+      return;
+    }
+    if(/processing|pending|awaiting/.test(lower)){
+      window.acbFriendlyAlert({type:'processing',title:'Transfer Processing',message:text});
+      return;
+    }
+    if(typeof oldToast==='function')return oldToast.apply(this,arguments);
+  };
+
+  // Convert existing form error calls to the same front-facing error display.
+  const oldShowError=window.showError;
+  window.showError=function(id,message){
+    const text=String(message||'');
+    let title='Action Required';
+    const lower=text.toLowerCase();
+    if(/pin/.test(lower))title=/incorrect|wrong/.test(lower)?'Incorrect PIN':'PIN Required';
+    else if(/password/.test(lower))title=/incorrect|wrong/.test(lower)?'Password Incorrect':'Password Required';
+    else if(/email/.test(lower))title='Email Required';
+    else if(/phone/.test(lower))title='Phone Number Required';
+    else if(/account/.test(lower))title='Account Details Required';
+    else if(/network|fetch|connect/.test(lower))title='Connection Error';
+    window.acbFriendlyAlert({type:'error',title:title,message:text,buttons:[{text:'OK',primary:true}]});
+    if(typeof oldShowError==='function')return oldShowError.apply(this,arguments);
+  };
+
+  // Turn raw fetch/network failures into a customer-facing connection message.
+  window.addEventListener('unhandledrejection',function(e){
+    const msg=String(e&&e.reason&&e.reason.message||'');
+    if(/failed to fetch|networkerror|network request failed|load failed/i.test(msg)){
+      e.preventDefault();
+      window.acbFriendlyAlert({
+        type:'error',
+        title:'Connection Error',
+        message:'We could not connect to Bank Service. Please check your internet connection and try again.',
+        buttons:[{text:'Retry',primary:true},{text:'Cancel',primary:false}]
+      });
+    }
+  });
+
+  // Escape closes only the customer-facing notice.
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape')window.acbCloseFriendlyAlert();
+  });
+})();
+</script>
+
+
+<script id="acb-transfer-outcome-v2">
+(function(){
+  'use strict';
+  function hook(){
+    if(typeof window.transfer!=='function' || window.transfer.__acbV2)return;
+    const original=window.transfer;
+    async function wrapped(){
+      try{
+        const result=await original.apply(this,arguments);
+        const receipt=window.lastTransferReceipt||{};
+        const status=String(receipt.status||'').toLowerCase();
+        const recipient=receipt.recipient||receipt.recipientBank||'the recipient bank';
+        if(status==='approved'||status==='completed'||status==='success'){
+          window.acbFriendlyAlert({
+            type:'success',
+            title:'Transfer Successful',
+            message:'Your transfer was successful and sent to '+recipient+'.',
+            buttons:[{text:'OK',primary:true}]
+          });
+        }else if(status==='pending'||status==='processing'||status===''){
+          window.acbFriendlyAlert({
+            type:'processing',
+            title:'Transfer Processing',
+            message:'Your transfer is processing. Please wait for Bank Management Service to approve the transfer.',
+            buttons:[{text:'OK',primary:true}]
+          });
+        }
+        return result;
+      }catch(e){
+        throw e;
+      }
+    }
+    wrapped.__acbV2=true;
+    window.transfer=wrapped;
+  }
+  setTimeout(hook,0);
+  setTimeout(hook,700);
+})();
+</script>
+
+
+<script id="acb-welcome-v2">
+(function(){
+  'use strict';
+  function nameOf(){
+    const m=window.me||{};
+    return m.name||m.fullName||m.full_name||m.displayName||m.display_name||'';
+  }
+  function hook(){
+    const candidates=['loadMe','login','doLogin','handleLogin','refreshDashboard'];
+    candidates.forEach(name=>{
+      const fn=window[name];
+      if(typeof fn!=='function'||fn.__acbWelcomeV2)return;
+      const wrapped=async function(){
+        const result=await fn.apply(this,arguments);
+        setTimeout(function(){
+          if(window.token&&window.me)window.acbShowWelcome(nameOf());
+        },120);
+        return result;
+      };
+      wrapped.__acbWelcomeV2=true;
+      window[name]=wrapped;
+    });
+  }
+  setTimeout(hook,300);
+  setTimeout(hook,1200);
+})();
+</script>
+
+</body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),250);}
 
 /*
 
