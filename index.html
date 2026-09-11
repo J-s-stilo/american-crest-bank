@@ -2254,6 +2254,57 @@ function renderAvatar(){
 }
 
 function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||'—');renderAvatar();}catch{}}
+function getDashboardBalance(user, currency){
+  const cur = String(currency || 'USD').toUpperCase();
+  const candidates = [];
+
+  const add = (v) => {
+    if (v === null || v === undefined || v === '') return;
+    if (typeof v === 'object' && !Array.isArray(v)) {
+      ['available','availableBalance','available_balance','current','currentBalance',
+       'current_balance','amount','balance','value'].forEach(k => add(v[k]));
+      return;
+    }
+    const n = Number(v);
+    if (Number.isFinite(n)) candidates.push(n);
+  };
+
+  // Prefer currency-specific balance when the server supplies one.
+  const balances = user && user.balances;
+  if (balances && typeof balances === 'object') {
+    if (balances[cur] !== undefined) add(balances[cur]);
+    if (balances[cur.toLowerCase()] !== undefined) add(balances[cur.toLowerCase()]);
+    if (Array.isArray(balances)) {
+      balances.forEach(b => {
+        if (!b || typeof b !== 'object') return;
+        const code = String(b.currency || b.code || b.asset || '').toUpperCase();
+        if (!code || code === cur) add(b);
+      });
+    }
+  }
+
+  // Existing account structures used by the index.
+  const accounts = user && user.accounts;
+  if (Array.isArray(accounts)) {
+    accounts.forEach(a => {
+      if (!a || typeof a !== 'object') return;
+      const code = String(a.currency || a.code || a.asset || '').toUpperCase();
+      if (!code || code === cur) add(a);
+    });
+  } else if (accounts && typeof accounts === 'object') {
+    if (accounts[cur] !== undefined) add(accounts[cur]);
+    if (accounts[cur.toLowerCase()] !== undefined) add(accounts[cur.toLowerCase()]);
+  }
+
+  // Direct fields, only used if the more specific structures above don't
+  // provide a usable value.
+  ['availableBalance','available_balance','currentBalance','current_balance',
+   'balance','available'].forEach(k => add(user && user[k]));
+
+  // Do not turn a genuine zero into a false positive; zero is valid.
+  return candidates.length ? candidates[0] : 0;
+}
+
 function renderBalance(){
 if(!me)return;
 const currency=String(me.primaryCurrency||me.primary_currency||'NGN').trim().toUpperCase();
