@@ -553,10 +553,12 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 @keyframes acbBankAlertIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
 @media(max-width:560px){.acbBankAlert{padding:12px}.acbBankAlertBox{border-radius:17px}.acbBankAlertHead{padding:17px}.acbBankAlertBody{padding:18px 17px 14px}.acbBankAlertActions{padding:0 17px 17px}.acbBankAlertHead h2{font-size:19px}.acbBankAlertMessage{font-size:14px}}
 </style>
-<style id="acb-home-profile-image-rebuild">
-#homeProfileMirror{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-#homeProfileMirror img#homeProfileMirrorImage{display:block;width:100%;height:100%;object-fit:cover;opacity:1!important;visibility:visible!important}
-#homeProfileMirror.hasProfileImage{background:transparent}
+<style id="home-profile-image-login-fix">
+#homeProfileMirror img{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
 </style>
 </head><body><div class="prototype">
 
@@ -1945,6 +1947,18 @@ pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
 showDashboard();
+// HOMEPAGE IMAGE ONLY: initialize after the dashboard is actually visible.
+// This deliberately does not touch transfer or other dashboard functions.
+requestAnimationFrame(function(){
+  try{
+    if(typeof restoreProfileImageForDashboard==='function'){
+      restoreProfileImageForDashboard();
+    }else if(typeof renderAvatar==='function'){
+      renderAvatar();
+    }
+  }catch(e){}
+});
+
 
 // Run once more after the dashboard DOM is visible so the HOME avatar cannot
 // be left on initials while the menu avatar restores correctly.
@@ -2208,14 +2222,15 @@ refreshAdmin(false);
 
 function renderAvatar(){
   if(!me)return;
+
   const accountId=String(me.id||me.userId||me.user_id||'current');
-  let image=me.profileImage||me.profile_image||'';
+  let image=me.profileImage||me.profile_image||me.avatar||me.avatarUrl||me.avatar_url||me.photo||me.image||'';
 
   if(!image){
     try{
       image=localStorage.getItem('acb_profile_image_'+accountId)||'';
       if(!image){
-        const email=String(me.email||'').trim().toLowerCase();
+        const email=(me.email||'').trim().toLowerCase();
         if(email) image=localStorage.getItem('acb_profile_image_email_'+email)||'';
       }
       if(!image) image=localStorage.getItem('acb_profile_image_current')||'';
@@ -2225,32 +2240,69 @@ function renderAvatar(){
   const initials=(String(me.name||'AC').trim().split(/\s+/)
     .map(x=>x[0]||'').slice(0,2).join('').toUpperCase()||'AC');
 
-  const homeAvatar=$('homeProfileMirror');
-  if(!homeAvatar)return;
-
-  homeAvatar.innerHTML='';
-
   if(image){
-    const img=document.createElement('img');
-    img.id='homeProfileMirrorImage';
-    img.alt='Profile';
-    img.loading='eager';
-    img.decoding='async';
-    img.setAttribute('fetchpriority','high');
-    img.src=String(image);
-    img.onload=function(){
-      img.style.display='block';
-      homeAvatar.classList.add('hasProfileImage');
-    };
-    img.onerror=function(){
-      homeAvatar.classList.remove('hasProfileImage');
+    me.profileImage=image;
+    me.profile_image=image;
+    try{localStorage.setItem('acb_profile_image_'+accountId,image);}catch(e){}
+  }
+
+  // Keep the existing menu avatar behavior.
+  const menuAvatar=$('menuAvatar');
+  if(menuAvatar){
+    if(image){
+      let menuImg=menuAvatar.querySelector('img');
+      if(!menuImg){
+        menuImg=document.createElement('img');
+        menuImg.alt='Profile';
+        menuAvatar.innerHTML='';
+        menuAvatar.appendChild(menuImg);
+      }
+      if(menuImg.src!==String(image)) menuImg.src=String(image);
+    }else if(!menuAvatar.querySelector('img')){
+      menuAvatar.textContent=initials;
+    }
+  }
+
+  // Homepage profile picture: render the already-known image directly.
+  // No fade, polling, replacement animation, or dependency on the menu image.
+  const homeAvatar=$('homeProfileMirror');
+  if(homeAvatar){
+    if(image){
+      let homeImg=homeAvatar.querySelector('#homeProfileMirrorImage');
+      if(!homeImg){
+        homeAvatar.innerHTML='';
+        homeImg=document.createElement('img');
+        homeImg.id='homeProfileMirrorImage';
+        homeImg.alt='Profile';
+        homeImg.loading='eager';
+        homeImg.decoding='sync';
+        homeImg.setAttribute('fetchpriority','high');
+        homeAvatar.appendChild(homeImg);
+      }
+      if(homeImg.getAttribute('src')!==String(image)){
+        homeImg.src=String(image);
+      }
+      homeImg.style.display='block';
+    }else if(!homeAvatar.querySelector('#homeProfileMirrorImage')){
+      homeAvatar.innerHTML='';
       homeAvatar.textContent=initials;
-    };
-    homeAvatar.appendChild(img);
-    homeAvatar.classList.add('hasProfileImage');
-  }else{
-    homeAvatar.textContent=initials;
-    homeAvatar.classList.remove('hasProfileImage');
+    }
+  }
+
+  const legacyAvatar=$('avatar');
+  if(legacyAvatar){
+    if(image){
+      let img=legacyAvatar.querySelector('img');
+      if(!img){
+        legacyAvatar.innerHTML='';
+        img=document.createElement('img');
+        img.alt='Profile';
+        legacyAvatar.appendChild(img);
+      }
+      if(img.src!==String(image))img.src=String(image);
+    }else if(!legacyAvatar.querySelector('img')){
+      legacyAvatar.textContent=initials;
+    }
   }
 }
 
