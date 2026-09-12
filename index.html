@@ -553,6 +553,13 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 @keyframes acbBankAlertIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
 @media(max-width:560px){.acbBankAlert{padding:12px}.acbBankAlertBox{border-radius:17px}.acbBankAlertHead{padding:17px}.acbBankAlertBody{padding:18px 17px 14px}.acbBankAlertActions{padding:0 17px 17px}.acbBankAlertHead h2{font-size:19px}.acbBankAlertMessage{font-size:14px}}
 </style>
+<style id="home-profile-image-login-fix">
+#homeProfileMirror img{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+</style>
 </head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -1916,7 +1923,7 @@ function restoreProfileImageForDashboard(){
   renderAvatar();
 }
 
-async function completeLogin(data){
+function completeLogin(data){
 if(!data||!data.token||!data.user){
 throw new Error('The server returned an invalid login response.');
 }
@@ -1929,17 +1936,6 @@ setTimeout(()=>{window.__acbLoginWelcomeActiveUntil=0;},3200);
 token=String(data.token);
 me={...(me||{}),...(data.user||{})};
 
-// Get the same fresh customer data that later refreshes were providing.
-// This happens at login so the homepage profile image is ready before the
-// dashboard/welcome alert is shown. Transfer is no longer involved.
-try{
-  await loadMe();
-}catch(e){}
-
-if(!me){
-  throw new Error('Unable to load your account information.');
-}
-
 // Restore the profile picture before the dashboard is shown.
 // The login response may omit profileImage even when the menu/server data has it.
 const loginStoredProfileImage=getStoredProfileImage(me);
@@ -1951,6 +1947,18 @@ pendingLoginVerification=null;
 $('loginVerifyModal').classList.remove('show');
 closeModal();
 showDashboard();
+// HOMEPAGE IMAGE ONLY: initialize after the dashboard is actually visible.
+// This deliberately does not touch transfer or other dashboard functions.
+requestAnimationFrame(function(){
+  try{
+    if(typeof restoreProfileImageForDashboard==='function'){
+      restoreProfileImageForDashboard();
+    }else if(typeof renderAvatar==='function'){
+      renderAvatar();
+    }
+  }catch(e){}
+});
+
 
 // Run once more after the dashboard DOM is visible so the HOME avatar cannot
 // be left on initials while the menu avatar restores correctly.
