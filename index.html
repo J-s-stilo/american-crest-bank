@@ -1089,14 +1089,10 @@ Create Account
 </div><div class="field">
 
 <label>Primary Currency</label><select id="regCurrency">
-
-<option value="NGN">NGN — Nigerian Naira</option>
-
 <option value="USD">USD — US Dollar</option>
-
 <option value="EUR">EUR — Euro</option>
-
 <option value="GBP">GBP — British Pound</option>
+<option value="NGN">NGN — Nigerian Naira</option>
 
 <option value="IDR">IDR — Indonesian Rupiah</option>
 
@@ -1305,13 +1301,13 @@ let pendingChatImage=null;
 
 const CURRENCY_INFO={
 
-NGN:{symbol:'₦',decimals:2},
-
 USD:{symbol:'$',decimals:2},
 
 EUR:{symbol:'€',decimals:2},
 
 GBP:{symbol:'£',decimals:2},
+
+NGN:{symbol:'₦',decimals:2},
 
 IDR:{symbol:'Rp',decimals:0},
 
@@ -2833,11 +2829,15 @@ function profileImageCooldownRemaining(){
   return saved>0?Math.max(0,PROFILE_IMAGE_COOLDOWN_MS-(Date.now()-saved)):0;
 }
 function formatProfileCooldown(ms){
-  const totalHours=Math.ceil(ms/3600000);
-  const days=Math.floor(totalHours/24);
-  const hours=totalHours%24;
-  if(days>0)return days+' day'+(days===1?'':'s')+(hours?' and '+hours+' hour'+(hours===1?'':'s'):'');
-  return hours+' hour'+(hours===1?'':'s');
+  const totalMinutes=Math.max(1,Math.ceil(ms/60000));
+  const days=Math.floor(totalMinutes/1440);
+  const hours=Math.floor((totalMinutes%1440)/60);
+  const minutes=totalMinutes%60;
+  const parts=[];
+  if(days)parts.push(days+' day'+(days===1?'':'s'));
+  if(hours)parts.push(hours+' hour'+(hours===1?'':'s'));
+  if(minutes)parts.push(minutes+' minute'+(minutes===1?'':'s'));
+  return parts.join(' and ');
 }
 function chooseProfileImage(){
   const remaining=profileImageCooldownRemaining();
