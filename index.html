@@ -933,7 +933,7 @@ function toggleHomeFaq(button){
 <div class="balanceHeroCard"><div class="balanceLeft"><div class="balanceLabel">Available Balance <button id="balanceEye" class="balanceEyeNew" type="button" onclick="toggleBalance()" aria-label="Show balance"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.8"></circle></svg></button></div><div id="balance" class="balanceAmountNew">••••••</div><div id="balanceCurrency" class="balanceAccountNew">Primary currency: GBP</div><div class="accountNumberNew" id="accountNumberDisplay">Account Number: —</div></div><div class="accountLevelNew"><span>Account Level</span><strong>Personal</strong></div></div>
 <div class="mainActionCard"><button class="homeAction addMoney" type="button" onclick="openBankingService('Add Money')"><span>↓</span><strong>Add Money</strong></button><button class="homeAction sendMoney" type="button" onclick="openTransfer()"><span>↑</span><strong>Send Money</strong></button><button class="homeAction exchangeMoney" type="button" onclick="openExchange()"><span>⇄</span><strong>Exchange</strong></button><button class="homeAction buyData" type="button" onclick="openBankingService('Buy Data')"><span>▥</span><strong>Buy Data</strong></button><button class="homeAction moreAction" type="button" onclick="openAppMenu()"><span>•••</span><strong>More</strong></button></div>
 <section class="quickActionsCard"><div class="sectionTitleRow"><h2>Quick Actions</h2><button type="button" onclick="openAppMenu()">View All</button></div><div class="quickActionGrid"><button type="button" onclick="openBankingService('Airtime')"><span class="qaIcon qaBlue">▯</span><span>Airtime<br>Top-up</span></button><button type="button" onclick="openBankingService('Pay Bills')"><span class="qaIcon qaOrange">▤</span><span>Pay Bills</span></button><button type="button" onclick="openTransactionHistory()"><span class="qaIcon qaGreen">↶</span><span>Transactions</span></button><button type="button" onclick="openFeature('settings')"><span class="qaIcon qaPurple">⚙</span><span>Settings</span></button></div></section>
-<section class="referCard"><div><h2>Refer &amp; Earn</h2><p>Invite friends and earn<br>exciting rewards</p><button type="button" onclick="openFeature('referral')">Refer Now</button></div><div class="giftGraphic">🎁<span>🪙</span><span>🪙</span></div></section>
+<section class="referCard"><div><h2>Refer &amp; Earn</h2><p>Invite friends and earn<br>exciting rewards</p><button type="button" onclick="openFeature('referral')">Refer Now</button><div id="acbBonusBalanceMini" style="margin-top:12px;padding:10px 12px;border:1px solid #ffffff33;border-radius:11px;background:#ffffff10"><small style="display:block;color:#dbe7f5;font-size:10px">Bonus Balance</small><strong id="bonusBalanceDisplay" style="display:block;color:#fff;font-size:15px;margin-top:3px">$0.000</strong></div></div><div class="giftGraphic">🎁<span>🪙</span><span>🪙</span></div></section>
 <section class="liveMarketCard" id="liveMarketCard">
   <div class="liveMarketHead"><div><div class="liveMarketTitle"><span class="liveDot"></span>Live Markets</div><span class="marketUpdated" id="marketUpdated">Demo market feed</span></div><button class="marketRefresh" type="button" onclick="refreshLiveMarkets()">↻ Refresh</button></div>
   <div class="marketGrid">
@@ -2001,7 +2001,18 @@ if(typeof window.showACBBankAlert==='function'){
       ? 'Welcome back, '+customerName+'. You have 99% bonuses.'
       : 'Welcome back. You have 99% bonuses.',
     icon:'✓',
-    okText:'OK'
+    okText:'OK',
+    onOk:()=>{
+      try{
+        if(typeof playNotificationDing==='function') playNotificationDing();
+        const bells=[document.getElementById('notificationBell'),document.querySelector('.dashBell')].filter(Boolean);
+        bells.forEach(b=>{b.classList.add('hasUnread');setTimeout(()=>b.classList.remove('hasUnread'),2600);});
+        const existing=Array.isArray(me.notifications)?me.notifications:[];
+        const welcomeNotice={id:'welcome-'+Date.now(),message:'Welcome back, '+(customerName||'Customer')+'. Your 99% welcome bonus information is available in Bonus Balance.',date:new Date().toISOString(),is_read:false};
+        me.notifications=[welcomeNotice,...existing];
+        if(typeof renderNotifications==='function') renderNotifications();
+      }catch(e){}
+    }
   });
 }
 
@@ -2181,6 +2192,14 @@ function setLiveActivity(text,timeLabel){
   if(tm) tm.textContent=timeLabel||'Now';
 }
 
+function renderBonusBalanceDisplay(){
+  const el=document.getElementById('bonusBalanceDisplay');
+  if(!el||!me)return;
+  const raw=me.bonusBalance ?? me.bonus_balance ?? me.referralBonus ?? me.referral_bonus;
+  const value=Number(raw);
+  el.textContent=Number.isFinite(value)?('$'+value.toFixed(3)):'$0.000';
+}
+
 function showDashboard(){
 
 if(!me)return;
@@ -2196,6 +2215,7 @@ $('dashboard').style.display='block';
 loadRealCustomerLiveChat();
 
 $('welcomeName').textContent=me.name||'Customer';
+renderBonusBalanceDisplay();
 
 $('dashName').textContent=me.name||'Customer';
 
