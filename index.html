@@ -525,6 +525,13 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 #dashAvatarSmall #dashAvatarImage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;border-radius:50%!important;z-index:20!important;display:block!important;visibility:visible!important;opacity:1!important;background:#fff!important;}
 #dashAvatarSmall #dashAvatarInitials{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:10!important;display:grid!important;place-items:center!important;}
 .dashAvatarSmall:after{z-index:30!important;}
+
+
+/* ADD-ON: compact logged-in dashboard market/activity area. Existing handlers/layout remain intact. */
+.liveMarketCard{margin:0 24px 14px;background:linear-gradient(135deg,#071a35,#123e86);color:#fff;border-radius:17px;padding:16px 16px 13px;box-shadow:0 8px 22px #071a5318}
+.liveMarketHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.liveMarketTitle{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:900}.liveDot{width:8px;height:8px;border-radius:50%;background:#21c67a;box-shadow:0 0 0 4px #21c67a22}.marketRefresh{border:0;background:#ffffff14;color:#fff;border-radius:10px;padding:7px 9px;font-weight:800;font-size:12px}.marketRefresh:active{transform:scale(.97)}.marketUpdated{font-size:10px;color:#bcd0e8;margin-left:2px}.marketGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.marketItem{min-width:0;background:#ffffff0d;border:1px solid #ffffff14;border-radius:11px;padding:10px}.marketItem small{display:block;color:#bcd0e8;font-size:9px;font-weight:800}.marketItem strong{display:block;font-size:13px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.marketItem em{display:block;font-style:normal;font-size:10px;font-weight:900;margin-top:4px}.marketUp{color:#35d18a}.marketDown{color:#ff8a8a}.liveActivityCard{margin:0 24px 16px;background:#effcf6;border:1px solid #bcefd8;border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:10px;min-height:48px}.liveActivityIcon{width:30px;height:30px;border-radius:50%;background:#d7f8e8;color:#159447;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.liveActivityText{min-width:0;flex:1}.liveActivityText strong{display:block;font-size:12px;color:#087443}.liveActivityText span{display:block;font-size:11px;color:#526b61;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.liveActivityTime{font-size:10px;color:#718096;white-space:nowrap}.compactServices{margin:0 24px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.compactService{background:#fff;border:1px solid #e3eaf2;border-radius:14px;padding:13px;box-shadow:0 7px 18px #071a530c;display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px;min-height:82px}.compactServiceIcon{width:40px;height:40px;border-radius:11px;background:#eef5ff;display:grid;place-items:center;font-size:21px}.compactService h3{font-size:14px;margin:0;color:#071a35}.compactService p{font-size:10px;color:#718096;margin:3px 0 0}.compactService .serviceLive{display:inline-block;margin:5px 0 0;padding:3px 7px;border-radius:20px;background:#e9f8ef;color:#159447;font-size:9px;font-weight:800}.compactService button{border:0;background:#f2f6fb;color:#1769e0;border-radius:9px;padding:7px 8px;font-weight:900;font-size:10px}.dashBell{width:40px;height:40px;border-radius:12px;background:#17365f!important;display:grid;place-items:center;color:#fff!important;font-size:20px!important}.dashBadge{right:-3px;top:-3px;border:2px solid #071a35}.dashBell.hasNew{background:#1769e0!important;box-shadow:0 0 0 4px #1769e022}.legacyServiceGridPreserved{display:none!important}
+@media(max-width:600px){.marketGrid{grid-template-columns:repeat(2,1fr)}.liveMarketCard,.liveActivityCard,.compactServices{margin-left:14px;margin-right:14px}.compactServices{gap:8px}.compactService{padding:11px;grid-template-columns:34px 1fr auto;min-height:76px}.compactServiceIcon{width:34px;height:34px;font-size:18px}.compactService h3{font-size:13px}.compactService p{font-size:9px}.compactService .serviceLive{font-size:8px;padding:2px 6px}}
+
 </style><style id="three-part-authority">
 /* HOMEPAGE PROFILE IMAGE: one final owner, no hidden state. */
 #dashAvatarSmall{position:relative!important;overflow:hidden!important;border-radius:50%!important;}
@@ -919,7 +926,7 @@ function toggleHomeFaq(button){
 <div class="mobileDashHeader">
 <button class="dashMenuBtn" type="button" onclick="openAppMenu()" aria-label="Menu" title="Open menu">☰</button>
 <div class="dashBrand"><span class="dashBrandMark">AC</span><span><strong>American Crest</strong><small>Banking</small></span></div>
-<div class="dashHeaderRight"><button class="dashBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCountTop" class="dashBadge">0</span></button><div class="homeProfileMirror" id="homeProfileMirror" role="button" tabindex="0" onclick="chooseProfileImage()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseProfileImage();}" aria-label="Change profile picture" title="Change profile picture"></div><input id="profileImageInput" class="hiddenFile" type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" onchange="handleProfileImage(event)"></div>
+<div class="dashHeaderRight"><button class="dashBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><span id="notificationCountTop" class="dashBadge">0</span></button><div class="homeProfileMirror" id="homeProfileMirror" role="button" tabindex="0" onclick="chooseProfileImage()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseProfileImage();}" aria-label="Change profile picture" title="Change profile picture"></div><input id="profileImageInput" class="hiddenFile" type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" onchange="handleProfileImage(event)"></div>
 </div>
 <div class="dashHero"><div><div class="dashGreeting">Good evening, <span id="welcomeName">Customer</span></div><div class="dashWelcome">Welcome back to your account</div></div><button class="currencySelector" type="button" onclick="openExchange()"><span class="ukFlag">🇬🇧</span><span id="primaryCurrencyDisplay">GBP</span><span>⌄</span></button></div>
 <div id="notificationCenter" class="notificationCenter dashNotificationLayer"><div class="notificationCenterHead"><button id="notificationBell" class="notificationBell hiddenNotificationBell" type="button" onclick="toggleNotificationBoard()" aria-label="Notifications">🔔<span id="notificationCount" class="notificationBadge">0</span></button><div id="notificationBoard" class="notificationBoard"><div class="notificationBoardHead"><strong>Notifications</strong><button class="notificationBoardClose" type="button" onclick="toggleNotificationBoard(false)" aria-label="Close">×</button></div><div id="notifications" class="notificationList"></div></div></div></div>
@@ -927,9 +934,25 @@ function toggleHomeFaq(button){
 <div class="mainActionCard"><button class="homeAction addMoney" type="button" onclick="openBankingService('Add Money')"><span>↓</span><strong>Add Money</strong></button><button class="homeAction sendMoney" type="button" onclick="openTransfer()"><span>↑</span><strong>Send Money</strong></button><button class="homeAction exchangeMoney" type="button" onclick="openExchange()"><span>⇄</span><strong>Exchange</strong></button><button class="homeAction buyData" type="button" onclick="openBankingService('Buy Data')"><span>▥</span><strong>Buy Data</strong></button><button class="homeAction moreAction" type="button" onclick="openAppMenu()"><span>•••</span><strong>More</strong></button></div>
 <section class="quickActionsCard"><div class="sectionTitleRow"><h2>Quick Actions</h2><button type="button" onclick="openAppMenu()">View All</button></div><div class="quickActionGrid"><button type="button" onclick="openBankingService('Airtime')"><span class="qaIcon qaBlue">▯</span><span>Airtime<br>Top-up</span></button><button type="button" onclick="openBankingService('Pay Bills')"><span class="qaIcon qaOrange">▤</span><span>Pay Bills</span></button><button type="button" onclick="openTransactionHistory()"><span class="qaIcon qaGreen">↶</span><span>Transactions</span></button><button type="button" onclick="openFeature('settings')"><span class="qaIcon qaPurple">⚙</span><span>Settings</span></button></div></section>
 <section class="referCard"><div><h2>Refer &amp; Earn</h2><p>Invite friends and earn<br>exciting rewards</p><button type="button" onclick="openFeature('referral')">Refer Now</button></div><div class="giftGraphic">🎁<span>🪙</span><span>🪙</span></div></section>
+<section class="liveMarketCard" id="liveMarketCard">
+  <div class="liveMarketHead"><div><div class="liveMarketTitle"><span class="liveDot"></span>Live Markets</div><span class="marketUpdated" id="marketUpdated">Demo market feed</span></div><button class="marketRefresh" type="button" onclick="refreshLiveMarkets()">↻ Refresh</button></div>
+  <div class="marketGrid">
+    <div class="marketItem"><small>BTC / USD</small><strong>$64,438</strong><em class="marketUp">↑ +2.17%</em></div>
+    <div class="marketItem"><small>EUR / USD</small><strong>1.0874</strong><em class="marketUp">↑ +0.36%</em></div>
+    <div class="marketItem"><small>GBP / USD</small><strong>1.2732</strong><em class="marketDown">↓ -0.22%</em></div>
+    <div class="marketItem"><small>USD / NGN</small><strong>1,615.80</strong><em class="marketUp">↑ +0.48%</em></div>
+  </div>
+</section>
+<section class="liveActivityCard" id="liveActivityCard"><div class="liveActivityIcon">↻</div><div class="liveActivityText"><strong>Live Activity</strong><span id="liveActivityText">Your account activity will appear here.</span></div><span class="liveActivityTime" id="liveActivityTime">Now</span></section>
+<section class="compactServices" id="compactServices">
+  <div class="compactService"><div class="compactServiceIcon">📱</div><div><h3>Buy Data</h3><p>Data Service</p><span class="serviceLive">Available</span></div><button type="button" onclick="openBankingService('Buy Data')">Open</button></div>
+  <div class="compactService"><div class="compactServiceIcon">☎️</div><div><h3>Airtime</h3><p>Airtime Service</p><span class="serviceLive">Available</span></div><button type="button" onclick="openBankingService('Airtime')">Open</button></div>
+  <div class="compactService"><div class="compactServiceIcon">💡</div><div><h3>Pay Bills</h3><p>Bill Payment</p><span class="serviceLive">Available</span></div><button type="button" onclick="openBankingService('Pay Bills')">Open</button></div>
+  <div class="compactService"><div class="compactServiceIcon">💳</div><div><h3>Cards</h3><p>Card Service</p><span class="serviceLive">Available</span></div><button type="button" onclick="openBankingService('Cards')">Open</button></div>
+</section>
 <section class="recentCard"><div class="sectionTitleRow"><h2>Recent Transactions</h2><button type="button" onclick="openTransactionHistory()">View All</button></div><div id="transactions" class="recentTransactions"></div><span id="historyCount" class="historyCountHidden"></span></section>
 <div class="hiddenLegacyStats"><span id="statusStat">Active</span><span id="txCount">0</span><span id="emailStat">—</span><div id="currencyBalances"></div><div id="liveBanner"></div></div>
-<section class="servicesGrid" id="dashboardServices"><div class="service"><div class="serviceIcon">📱</div><h3>Buy Data</h3><p>Data Service — Banking bundle interface.</p><button class="btn outline" onclick="openBankingService('Buy Data')">Open</button><div class="serviceLive">Data Service</div></div><div class="service"><div class="serviceIcon">☎️</div><h3>Airtime</h3><p>Mobile Service — Banking airtime interface.</p><button class="btn outline" onclick="openBankingService('Airtime')">Open</button><div class="serviceLive">Airtime Service</div></div><div class="service"><div class="serviceIcon">💡</div><h3>Pay Bills</h3><p>Utility Payment Service — Banking payment interface.</p><button class="btn outline" onclick="openBankingService('Pay Bills')">Open</button><div class="serviceLive">Bill Payment Service</div></div><div class="service"><div class="serviceIcon">💳</div><h3>Cards</h3><p>Bank Card Service — Banking service interface.</p><button class="btn outline" onclick="openBankingService('Cards')">Open</button><div class="serviceLive">Card Service</div></div></section>
+<section class="servicesGrid legacyServiceGridPreserved" id="dashboardServices" aria-hidden="true"><div class="service"><div class="serviceIcon">📱</div><h3>Buy Data</h3><p>Data Service — Banking bundle interface.</p><button class="btn outline" onclick="openBankingService('Buy Data')">Open</button><div class="serviceLive">Data Service</div></div><div class="service"><div class="serviceIcon">☎️</div><h3>Airtime</h3><p>Mobile Service — Banking airtime interface.</p><button class="btn outline" onclick="openBankingService('Airtime')">Open</button><div class="serviceLive">Airtime Service</div></div><div class="service"><div class="serviceIcon">💡</div><h3>Pay Bills</h3><p>Utility Payment Service — Banking payment interface.</p><button class="btn outline" onclick="openBankingService('Pay Bills')">Open</button><div class="serviceLive">Bill Payment Service</div></div><div class="service"><div class="serviceIcon">💳</div><h3>Cards</h3><p>Bank Card Service — Banking service interface.</p><button class="btn outline" onclick="openBankingService('Cards')">Open</button><div class="serviceLive">Card Service</div></div></section>
 <div class="legacyHidden"><div class="profilePanel"><div class="profileCard"><h3>My Profile</h3><label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
 
 Display Name
@@ -2142,6 +2165,22 @@ function loadRealCustomerLiveChat(){
 // homepage as well as inside the logged-in dashboard.
 loadRealCustomerLiveChat();
 
+
+// ADD-ON: compact live market/activity display. Server-backed activity can replace
+// the placeholder text later without changing the existing transaction handlers.
+function refreshLiveMarkets(){
+  const stamp=document.getElementById('marketUpdated');
+  if(stamp) stamp.textContent='Updated just now';
+  const card=document.getElementById('liveMarketCard');
+  if(card){ card.animate([{opacity:.72},{opacity:1}],{duration:220,easing:'ease-out'}); }
+}
+function setLiveActivity(text,timeLabel){
+  const t=document.getElementById('liveActivityText');
+  const tm=document.getElementById('liveActivityTime');
+  if(t&&text) t.textContent=text;
+  if(tm) tm.textContent=timeLabel||'Now';
+}
+
 function showDashboard(){
 
 if(!me)return;
@@ -2165,6 +2204,8 @@ $('emailStat').textContent=me.email||'—';
 $('profileName').value=me.name||'';
 
 $('statusStat').textContent=me.status||'Active';
+refreshLiveMarkets();
+setLiveActivity('No new account activity','Now');
 // Every successful login starts with the balance hidden.
 balanceHidden=true;
 renderBalance();
