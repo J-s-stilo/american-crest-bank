@@ -2569,7 +2569,38 @@ function toggleNotificationBoard(force){const board=$('notificationBoard');if(!b
 
 function updateNotificationIndicator(list){const items=Array.isArray(list)?list:[];const unread=items.filter(n=>!n.read_at&&!n.is_read).length;const counts=[$('notificationCount'),$('notificationCountTop')].filter(Boolean);const bells=[$('notificationBell'),document.querySelector('.dashBell')].filter(Boolean);counts.forEach(count=>{count.textContent=unread>9?'9+':String(unread);count.classList.toggle('show',unread>0);});bells.forEach(bell=>bell.classList.toggle('hasUnread',unread>0));}
 
-function renderNotifications(){if(!me)return;const list=Array.isArray(me.notifications)?me.notifications:[];updateNotificationIndicator(list);const target=$('notifications');if(!target)return;target.innerHTML=list.length?list.slice(0,100).map((notification,index)=>{const unread=!notification.read_at&&!notification.is_read;return `<div class="notificationItem ${unread?'unread':''}"><strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:4px">Account Notification</strong><div class="notificationItemMessage">${esc(notification.message)}</div><div class="notificationItemDate">${esc(formatNotificationDate(notification.date||notification.created_at))}</div><div class="notificationActions"><button type="button" class="outline notificationDeleteBtn" data-id="${esc(notification.id||'')}">Delete</button></div></div>`}).join(''):'<div class="notificationEmpty">No saved notifications.</div>';setupNotificationActions();const currentIds=new Set();list.forEach((notification,index)=>{const id=notificationKey(notification,index);currentIds.add(id);if(notificationInitialized&&!knownNotificationIds.has(id))playNotificationDing();});knownNotificationIds=currentIds;notificationInitialized=true;}
+function renderNotifications(){
+  if(!me)return;
+  const list=Array.isArray(me.notifications)?me.notifications:[];
+  updateNotificationIndicator(list);
+  const target=$('notifications');
+  if(target){
+    target.innerHTML=list.length?list.slice(0,100).map((notification,index)=>{const unread=!notification.read_at&&!notification.is_read;return `<div class="notificationItem ${unread?'unread':''}"><strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:4px">Account Notification</strong><div class="notificationItemMessage">${esc(notification.message)}</div><div class="notificationItemDate">${esc(formatNotificationDate(notification.date||notification.created_at))}</div><div class="notificationActions"><button type="button" class="outline notificationDeleteBtn" data-id="${esc(notification.id||'')}">Delete</button></div></div>`}).join(''):'<div class="notificationEmpty">No saved notifications.</div>';
+    setupNotificationActions();
+  }
+
+  // Add-on: mirror the newest server-backed notification into Live Activity.
+  // This does not create fake activity; it only reflects data already returned by the API.
+  const latest=list[0];
+  if(latest){
+    setLiveActivity(String(latest.message||'New account notification'),formatNotificationDate(latest.date||latest.created_at||'')||'Now');
+  }else{
+    const txs=Array.isArray(me.transactions)?me.transactions:[];
+    const latestTx=txs[0];
+    if(latestTx){
+      const kind=String(latestTx.kind||'').toLowerCase()==='credit'?'Credit':'Debit';
+      const amount=latestTx.amount!=null?money(latestTx.amount,latestTx.currency):'';
+      setLiveActivity(`${kind}${amount?' · '+amount:''} · ${String(latestTx.title||'Transaction')}`,formatNotificationDate(latestTx.date||latestTx.created_at||'')||'Now');
+    }else{
+      setLiveActivity('No new account activity','Now');
+    }
+  }
+
+  const currentIds=new Set();
+  list.forEach((notification,index)=>{const id=notificationKey(notification,index);currentIds.add(id);if(notificationInitialized&&!knownNotificationIds.has(id))playNotificationDing();});
+  knownNotificationIds=currentIds;
+  notificationInitialized=true;
+}
 
 function setupNotificationActions(){
 const list=$('notifications');
