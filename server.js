@@ -2110,7 +2110,7 @@ app.put('/api/profile', auth, writeLimiter, async (req, res) => {
 
       `,
 
-      name, [req.user.id]
+      [name, req.user.id]
 
     );
 
