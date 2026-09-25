@@ -2163,27 +2163,7 @@ DASHBOARD
 
 */
 
-function loadRealCustomerLiveChat(){
-  if(window.__acbProvideSupportLoaded||window.__acbProvideSupportLoading)return;
-  window.__acbProvideSupportLoading=true;
-  function start(){
-    if(window.__acbProvideSupportLoaded)return;
-    function n(name){
-      var e=document.createElement('script');
-      e.src='https://image.providesupport.com/'+name;
-      document.body.appendChild(e);
-    }
-    n('js/0mg1rfn365kk30ovvzkpps7hpz/safe-standard-sync.js?ps_h=e5Sq&ps_t='+Date.now());
-    n('sjs/static.js');
-    window.__acbProvideSupportLoaded=true;
-  }
-  if(document.readyState==='complete')start();
-  else window.addEventListener('load',start,{once:true});
-}
 
-// Keep the standalone Provide Support live-chat widget visible on the public
-// homepage as well as inside the logged-in dashboard.
-loadRealCustomerLiveChat();
 
 
 // ADD-ON: compact live market/activity display. Server-backed activity can replace
@@ -2221,7 +2201,6 @@ $('publicSite').style.display='none';
 
 $('dashboard').style.display='block';
 
-loadRealCustomerLiveChat();
 
 $('welcomeName').textContent=me.name||'Customer';
 renderBonusBalanceDisplay();
@@ -4967,5 +4946,19 @@ function hideNotificationPopup(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('acbBankAlert')?.classList.contains('show'))window.closeACBBankAlert();});
 })();
 </script>
+
+<!-- Tawk.to Live Chat -->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6ab695d339d7c63445d4e181/default';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!-- End Tawk.to Live Chat -->
 </body>
 </html>
