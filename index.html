@@ -945,6 +945,11 @@ function toggleHomeFaq(button){
 </section>
 <section class="liveActivityCard" id="liveActivityCard"><div class="liveActivityIcon">↻</div><div class="liveActivityText"><strong>Live Activity</strong><span id="liveActivityText">Your account activity will appear here.</span></div><span class="liveActivityTime" id="liveActivityTime">Now</span></section>
 <section class="compactServices" id="compactServices">
+  <div class="compactService"><div class="compactServiceIcon">💡</div><div><h3>Pay Bills</h3><p>Bill Payment</p><span class="serviceLive">Available</span></div><button type="button" onclick="openBankingService('Pay Bills')">Open</button></div>
+  <div class="compactService"><div class="compactServiceIcon">💳</div><div><h3>Cards</h3><p>Card Service</p><span class="serviceLive">Available</span></div><button type="button" onclick="openBankingService('Cards')">Open</button></div>
+</section>
+<section class="recentCard"><div class="sectionTitleRow"><h2>Recent Transactions</h2><button type="button" onclick="openTransactionHistory()">View All</button></div><div id="transactions" class="recentTransactions"></div><span id="historyCount" class="historyCountHidden"></span></section>
+<div class="hiddenLegacyStats"><span id="statusStat">Active</span><span id="txCount">0</span><span id="emailStat">—</span><div id="currencyBalances"></div><div id="liveBanner"></div></div>
 <section class="servicesGrid legacyServiceGridPreserved" id="dashboardServices" aria-hidden="true"><div class="service"><div class="serviceIcon">💡</div><h3>Pay Bills</h3><p>Utility Payment Service — Banking payment interface.</p><button class="btn outline" onclick="openBankingService('Pay Bills')">Open</button><div class="serviceLive">Bill Payment Service</div></div><div class="service"><div class="serviceIcon">💳</div><h3>Cards</h3><p>Bank Card Service — Banking service interface.</p><button class="btn outline" onclick="openBankingService('Cards')">Open</button><div class="serviceLive">Card Service</div></div></section>
 <div class="legacyHidden"><div class="profilePanel"><div class="profileCard"><h3>My Profile</h3><label style="display:block;font-size:12px;font-weight:bold;margin-bottom:6px">
 
@@ -979,7 +984,7 @@ Nothing is stored as customer data in browser localStorage.
 
 <div class="empty">Loading requests...</div>
 
-</div></div><div class="adminBox"><h3>Credit Customer</h3><select id="adminCurrency">
+</div></div><div class="adminBox"><h3>Credit Customer</h3><p style="font-size:12px;color:#718096;line-height:1.5;margin-bottom:10px">Choose the exact date the amount was debited and the date it became successful. These dates are sent with the admin credit record.</p><select id="adminCurrency">
 
 <option value="NGN">NGN — Nigerian Naira</option>
 
@@ -1015,7 +1020,12 @@ Nothing is stored as customer data in browser localStorage.
 
 <option value="GHS">GHS — Ghanaian Cedi</option>
 
-</select><input id="adminAmount" type="number" min="0.01" step="0.01" placeholder="Amount"><button id="adminCreditBtn" class="btn primary" onclick="adminCredit()">
+</select><input id="adminAmount" type="number" min="0.01" step="0.01" placeholder="Amount">
+<label style="display:block;font-size:12px;font-weight:700;color:#526174;margin:2px 0 6px">Amount debited date</label>
+<input id="adminDebitDate" type="date" title="Date the money was debited from the sending account">
+<label style="display:block;font-size:12px;font-weight:700;color:#526174;margin:2px 0 6px">Successful date</label>
+<input id="adminSuccessDate" type="date" title="Date the money was marked successful / credited">
+<button id="adminCreditBtn" class="btn primary" onclick="adminCredit()">
 
 Credit Customer
 
@@ -1200,7 +1210,7 @@ Sign In
 <div class="transferNav"><button type="button" class="transferBackBtn" onclick="nextTransferStep(2)">← Back</button><button id="transferBtn" type="button" class="transferNextBtn transferSendBtn" onclick="transfer()">Send Money <span>→</span></button></div>
 </div>
 <div class="transferFooter"><span>🔒 Your bank service transfer — Banking is protected</span><button type="button" onclick="closeTransfer()">Cancel</button></div>
-</div></div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Banking</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting Bank Management Service review.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>SENDER ACCOUNT NUMBER</small><strong id="receiptSenderAccount">—</strong></div><div class="receiptItem"><small>BANK</small><strong id="receiptBank">—</strong></div><div class="receiptItem"><small>ACCOUNT</small><strong id="receiptAccount">—</strong></div><div class="receiptItem"><small>RECIPIENT EMAIL</small><strong id="receiptEmail">—</strong></div><div class="receiptItem"><small>SWIFT / BIC</small><strong id="receiptSwift">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
+</div></div><div class="modal" id="receiptModal"><div class="modalBox" style="display:block;max-width:560px;padding:18px;background:#eef2f7"><button class="close" onclick="closeReceipt()">×</button><div class="receiptPaper" id="receiptPaper"><div class="receiptTop"><div class="receiptBrand">AMERICAN CREST BANK<small>Digital Banking Banking</small></div><div class="receiptStatus" id="receiptStatus">PROCESSING</div></div><div class="receiptBody"><div class="receiptTitle"><div class="check">✓</div><h3>Transfer Request Received</h3><p>Your request has been recorded and is awaiting Bank Management Service review.</p></div><div class="receiptAmount"><small>TRANSFER AMOUNT</small><strong id="receiptAmount">—</strong></div><div class="receiptGrid"><div class="receiptItem"><small>RECIPIENT</small><strong id="receiptRecipient">—</strong></div><div class="receiptItem"><small>BANK</small><strong id="receiptBank">—</strong></div><div class="receiptItem"><small>ACCOUNT</small><strong id="receiptAccount">—</strong></div><div class="receiptItem"><small>RECIPIENT EMAIL</small><strong id="receiptEmail">—</strong></div><div class="receiptItem"><small>SWIFT / BIC</small><strong id="receiptSwift">—</strong></div><div class="receiptItem"><small>CURRENCY</small><strong id="receiptCurrency">—</strong></div><div class="receiptItem"><small>DATE &amp; TIME</small><strong id="receiptDate">—</strong></div><div class="receiptItem"><small>STATUS</small><strong id="receiptStatusText">Processing</strong></div></div><div class="receiptNote" id="receiptNote">No note added.</div><div class="receiptRef">Reference: <span id="receiptReference">—</span></div></div><div class="receiptActions"><button type="button" class="btn outline" onclick="printReceipt()">Print / Save</button><button type="button" class="btn primary" onclick="closeReceipt()">Done</button></div></div></div></div><div class="modal" id="loginVerifyModal"><div class="modalBox" style="display:block;max-width:470px;padding:30px"><button class="close" onclick="cancelLoginVerification()">×</button>
 <h2>Verify Sign In</h2>
 <p>Enter the 6-digit Banking verification code to continue.</p>
 <div class="error" id="loginVerifyError"></div>
@@ -2342,7 +2352,29 @@ function renderAvatar(){
   }
 }
 
-function syncSecondDesignHeader(){try{const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;const n=document.getElementById('accountNumberDisplay');if(n)n.textContent='Account Number: '+(me?.accountNumber||me?.account_number||me?.customerNumber||me?.customer_number||'—');renderAvatar();}catch{}}
+function getExistingAccountNumber(user){
+  const u=user||{};
+  const direct=[
+    u.accountNumber,u.account_number,u.accountNo,u.account_no,
+    u.bankAccountNumber,u.bank_account_number,u.customerAccountNumber,u.customer_account_number
+  ].find(v=>v!==undefined&&v!==null&&String(v).trim()!=='');
+  if(direct)return String(direct);
+  const accounts=Array.isArray(u.accounts)?u.accounts:[];
+  const primary=String(u.primaryCurrency||u.primary_currency||'').toUpperCase();
+  const account=accounts.find(a=>String(a?.currency||'').toUpperCase()===primary)||accounts[0];
+  if(account){
+    const nested=[account.accountNumber,account.account_number,account.accountNo,account.account_no,account.number].find(v=>v!==undefined&&v!==null&&String(v).trim()!=='');
+    if(nested)return String(nested);
+  }
+  return '';
+}
+function syncSecondDesignHeader(){try{
+  const c=(me&&(me.primaryCurrency||me.primary_currency))||'GBP';
+  const display=document.getElementById('primaryCurrencyDisplay');if(display)display.textContent=c;
+  const n=document.getElementById('accountNumberDisplay');
+  if(n){const accountNumber=getExistingAccountNumber(me);n.textContent='Account Number: '+(accountNumber||'—');}
+  renderAvatar();
+}catch{}}
 function resolveMainBalance(user,currency){
   if(!user)return null;
   const wanted=String(currency||'USD').toUpperCase();
@@ -2628,6 +2660,7 @@ async function refreshDashboard(showToast=true){
 
 if(!me)return;
 
+syncSecondDesignHeader();
 renderAvatar();
 renderBalance();
 
@@ -2676,7 +2709,7 @@ TRANSFER RECEIPT
 
 */
 let lastTransferReceipt=null;
-function openReceipt(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||receipt.transferStatus||'pending').toLowerCase();const successful=status==='approved'||status==='successful'||status==='sent';$('receiptStatus').textContent=successful?'TRANSFER SENT':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=successful?'Transfer sent successfully':status==='rejected'?'Rejected':'Processing';if($('receiptPaper')){$('receiptPaper').classList.toggle('receiptSuccessful',successful);}if(successful){const t=document.querySelector('#receiptPaper .receiptTitle h3');const p=document.querySelector('#receiptPaper .receiptTitle p');if(t)t.textContent='Transfer sent successfully';if(p)p.textContent='Your transfer has been sent successfully.';}$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';if($('receiptSenderAccount'))$('receiptSenderAccount').textContent=receipt.senderAccountNumber||receipt.accountNumber||receipt.account_number||me?.accountNumber||me?.account_number||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();$('receiptModal').classList.add('show');}
+function openReceipt(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();$('receiptModal').classList.add('show');}
 function closeReceipt(){const modal=$('receiptModal');if(modal)modal.classList.remove('show');}
 function printReceipt(){const paper=$('receiptPaper');if(!paper)return;const win=window.open('','_blank','width=700,height=850');if(!win)return toast('Please allow pop-ups to print the receipt.');win.document.write('<!doctype html><html><head><title>American Crest Transfer Receipt</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Arial,sans-serif;background:#eef2f7;padding:30px;color:#1e293b}.receipt{background:#fff;max-width:520px;margin:auto;border:1px solid #dbe3ee;border-radius:18px;overflow:hidden}.top{padding:22px;border-bottom:1px dashed #cbd5e1;font-weight:800;color:#071a35}.body{padding:24px}.amount{background:#f7f9fc;border-radius:14px;padding:16px;margin:18px 0}.amount strong{display:block;font-size:28px;color:#071a35}.grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e5eaf1}.item{padding:12px;border:1px solid #e5eaf1}.item small{display:block;color:#64748b;font-size:11px}.item strong{display:block;margin-top:4px;font-size:13px;word-break:break-word}.note{margin-top:14px;padding:12px;background:#f8fafc;font-size:12px}.ref{text-align:center;color:#94a3b8;font-size:11px;margin-top:16px}@media(max-width:520px){.grid{grid-template-columns:1fr}}</style></head><body><div class="receipt">'+paper.innerHTML+'</div>\n</body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),250);}
 
@@ -3664,10 +3697,24 @@ if($(buttonId).disabled)return;
 const currency=$('adminCurrency').value;
 
 const amount=Number($('adminAmount').value);
+const debitDate=$('adminDebitDate')?.value||'';
+const successDate=$('adminSuccessDate')?.value||'';
 
 if(!amount||amount<=0){
 
 return toast('Enter a valid amount.');
+
+}
+
+if(!debitDate||!successDate){
+
+return toast('Select both the debit date and successful date.');
+
+}
+
+if(successDate<debitDate){
+
+return toast('Successful date cannot be earlier than the debit date.');
 
 }
 
@@ -3695,7 +3742,11 @@ identifier:selectedCustomerId,
 
 currency:currency,
 
-amount:amount
+amount:amount,
+debitDate:debitDate,
+successDate:successDate,
+debit_date:debitDate,
+successful_date:successDate
 
 })
 
@@ -4171,16 +4222,16 @@ async function saveFeatureProfile(){const name=$('featureProfileName')?.value.tr
 
 // Make the existing service cards open the richer feature screens.
 const originalOpenBankingService=window.openBankingService;
-window.openBankingService=function(service){const map={'Buy Data':'data','Airtime':'airtime','Pay Bills':'bills','Cards':'cards','Add Money':'accounts','Settings':'settings'};if(map[service])return openFeature(map[service]);return originalOpenBankingService?originalOpenBankingService(service):openFeature('accounts');};
+window.openBankingService=function(service){const map={'Pay Bills':'bills','Cards':'cards','Add Money':'accounts','Settings':'settings'};if(map[service])return openFeature(map[service]);return originalOpenBankingService?originalOpenBankingService(service):openFeature('accounts');};
 
 // Upgrade transfer state and submit handler.
 window.showTransferStep=function(step){[1,2,3].forEach(n=>{const panel=$('transferPanel'+n);if(panel)panel.classList.toggle('hiddenTransferPanel',n!==step);const dot=$('transferStepDot'+n);if(dot){dot.classList.toggle('active',n===step);dot.classList.toggle('done',n<step);}});if(step===3){const currency=$('transferCurrency').value,amount=Number($('transferAmount').value||0);$('transferReviewRecipient').textContent=$('transferRecipient').value.trim()||'—';$('transferReviewBank').textContent=$('transferBankName').value.trim()||'—';$('transferReviewAccount').textContent=$('transferRecipientAccount').value.trim()||'—';$('transferReviewEmail').textContent=$('transferRecipientEmail').value.trim()||'—';$('transferReviewPhone').textContent=$('transferRecipientPhone').value.trim()||'—';$('transferReviewSwift').textContent=$('transferSwift').value.trim()||'—';$('transferReviewAmount').textContent=amount>0?money(amount,currency):'—';$('transferReviewTotal').textContent=amount>0?money(amount,currency):'—';$('transferReviewNote').textContent=$('transferNote').value.trim()||'No note';}};
 
 // Receipt detail upgrade.
-const oldOpenReceipt=window.openReceipt;window.openReceipt=function(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||receipt.transferStatus||'pending').toLowerCase();const successful=status==='approved'||status==='successful'||status==='sent';$('receiptStatus').textContent=successful?'TRANSFER SENT':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=successful?'Transfer sent successfully':status==='rejected'?'Rejected':'Processing';if($('receiptPaper')){$('receiptPaper').classList.toggle('receiptSuccessful',successful);}if(successful){const t=document.querySelector('#receiptPaper .receiptTitle h3');const p=document.querySelector('#receiptPaper .receiptTitle p');if(t)t.textContent='Transfer sent successfully';if(p)p.textContent='Your transfer has been sent successfully.';}$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';if($('receiptSenderAccount'))$('receiptSenderAccount').textContent=receipt.senderAccountNumber||receipt.accountNumber||receipt.account_number||me?.accountNumber||me?.account_number||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();if($('receiptBank'))$('receiptBank').textContent=receipt.bankName||'External bank';if($('receiptAccount'))$('receiptAccount').textContent=receipt.recipientAccount||'—';if($('receiptEmail'))$('receiptEmail').textContent=receipt.recipientEmail||'—';if($('receiptSwift'))$('receiptSwift').textContent=receipt.swiftBic||'—';$('receiptModal').classList.add('show');};
+const oldOpenReceipt=window.openReceipt;window.openReceipt=function(receipt){if(!receipt)return;lastTransferReceipt=receipt;const status=String(receipt.status||'pending').toLowerCase();$('receiptStatus').textContent=status==='approved'?'SUCCESSFUL':status==='rejected'?'REJECTED':'PROCESSING';$('receiptStatusText').textContent=status==='approved'?'Successful':status==='rejected'?'Rejected':'Processing';$('receiptAmount').textContent=money(receipt.amount,receipt.currency);$('receiptRecipient').textContent=receipt.recipient||'—';$('receiptCurrency').textContent=receipt.currency||'—';$('receiptDate').textContent=formatNotificationDate(receipt.date||new Date().toISOString());$('receiptNote').textContent=receipt.note?('Note: '+receipt.note):'No note added.';$('receiptReference').textContent=receipt.id||'Banking-'+Date.now();if($('receiptBank'))$('receiptBank').textContent=receipt.bankName||'External bank';if($('receiptAccount'))$('receiptAccount').textContent=receipt.recipientAccount||'—';if($('receiptEmail'))$('receiptEmail').textContent=receipt.recipientEmail||'—';if($('receiptSwift'))$('receiptSwift').textContent=receipt.swiftBic||'—';$('receiptModal').classList.add('show');};
 
 // Make dashboard account number explicit whenever data refreshes.
-const oldShowDashboard=window.showDashboard;window.showDashboard=function(){if(oldShowDashboard)oldShowDashboard();if(me){$('accountNumberDisplay').textContent='Account Number: '+(me.accountNumber||me.account_number||me.customerNumber||me.customer_number||'—');$('menuName').textContent=me.name||'Customer';$('menuEmail').textContent=me.email||me.phone||'Bank Account — Banking';}};
+const oldShowDashboard=window.showDashboard;window.showDashboard=function(){if(oldShowDashboard)oldShowDashboard();if(me){$('accountNumberDisplay').textContent='Account Number: '+(getExistingAccountNumber(me)||'—');$('menuName').textContent=me.name||'Customer';$('menuEmail').textContent=me.email||me.phone||'Bank Account — Banking';}};
 
 /* Better detailed transaction history with status and reference. */
 window.renderTransactionHistory=function(){
