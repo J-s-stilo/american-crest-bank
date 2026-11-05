@@ -507,6 +507,7 @@ Refresh Customers
 <tr>
 <th>Customer</th>
 <th>Email / Phone</th>
+<th>Account Number</th>
 <th>Balance</th>
 <th>Status</th>
 <th>Transfers</th>
@@ -650,6 +651,54 @@ Save Transfer Status
 </div>
 
 
+<div id="accountModal" class="modal">
+<div class="modal-box" style="max-width:760px">
+<div class="modal-head">
+<h2>Manage Customer Account</h2>
+<button id="closeAccountButton" class="close" type="button">×</button>
+</div>
+
+<p id="accountCustomerName"><strong>Customer</strong></p>
+<small id="accountCustomerEmail">—</small>
+
+<label for="accountNumberInput">Account Number</label>
+<input id="accountNumberInput" type="text" inputmode="numeric" maxlength="34" placeholder="Enter account number">
+<button id="saveAccountNumberButton" class="primary" type="button" style="margin-top:10px">Save Account Number</button>
+
+<hr style="border:0;border-top:1px solid #edf0f4;margin:22px 0">
+
+<h3 style="margin:0 0 8px">Create Transaction</h3>
+<label for="transactionKind">Transaction Type</label>
+<select id="transactionKind">
+<option value="credit">Credit</option>
+<option value="debit">Debit</option>
+</select>
+
+<label for="transactionCurrency">Currency</label>
+<select id="transactionCurrency">
+<option value="NGN">NGN</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="IDR">IDR</option><option value="CAD">CAD</option><option value="AUD">AUD</option><option value="CHF">CHF</option><option value="JPY">JPY</option><option value="CNY">CNY</option><option value="INR">INR</option><option value="MYR">MYR</option><option value="SGD">SGD</option><option value="AED">AED</option><option value="ZAR">ZAR</option><option value="KES">KES</option><option value="GHS">GHS</option>
+</select>
+
+<label for="transactionAmount">Amount</label>
+<input id="transactionAmount" type="number" min="0" step="0.01" placeholder="Enter amount">
+
+<label for="transactionDescription">Description / Project</label>
+<input id="transactionDescription" type="text" maxlength="180" placeholder="e.g. Project settlement">
+
+<label for="transactionDate">Transaction Date</label>
+<input id="transactionDate" type="date">
+
+<label for="transactionReference">Reference</label>
+<input id="transactionReference" type="text" maxlength="80" placeholder="Optional reference">
+
+<button id="saveTransactionButton" class="success" type="button" style="margin-top:14px">Save Transaction</button>
+
+<hr style="border:0;border-top:1px solid #edf0f4;margin:22px 0">
+<h3 style="margin:0 0 8px">Transaction History</h3>
+<div id="accountTransactionHistory" class="card" style="box-shadow:none;padding:0">Loading...</div>
+</div>
+</div>
+
 <div id="creditModal" class="modal">
 
 <div class="modal-box">
@@ -691,28 +740,6 @@ Currency
 <option value="KES">KES</option>
 <option value="GHS">GHS</option>
 </select>
-
-<label for="creditServiceName">
-Bank Service / Transaction Name
-</label>
-
-<input id="creditServiceName"
-       type="text"
-       placeholder="Enter bank service name">
-
-<label for="creditDebitDate">
-Debit Date
-</label>
-
-<input id="creditDebitDate"
-       type="date">
-
-<label for="creditSuccessDate">
-Successful / Sent Date
-</label>
-
-<input id="creditSuccessDate"
-       type="date">
 
 <label for="creditAmount">
 Amount
@@ -798,6 +825,7 @@ let token =
 
 let selectedCustomer = null;
 let selectedTicket = null;
+let selectedAccountCustomer = null;
 
 
 /* =====================================================
@@ -1406,7 +1434,7 @@ async function loadCustomers(){
 
   body.innerHTML = `
     <tr>
-      <td colspan="6" class="empty">
+      <td colspan="7" class="empty">
         Loading customers...
       </td>
     </tr>
@@ -1501,6 +1529,10 @@ async function loadCustomers(){
               </td>
 
               <td>
+                <strong>${escapeHtml(customer?.account_number || customer?.accountNumber || "Not set")}</strong>
+              </td>
+
+              <td>
                 ${formatAccounts(
                   customer?.accounts
                 )}
@@ -1541,10 +1573,27 @@ async function loadCustomers(){
                     <button
                       class="primary"
                       type="button"
+                      data-action="manage-account"
+                      data-customer-id="${escapeHtml(customerId)}"
+                    >
+                      Manage Account
+                    </button>
+                    `
+                    :
+                    ""
+                  }
+
+                  ${
+                    customerId
+                    ?
+                    `
+                    <button
+                      class="success"
+                      type="button"
                       data-action="credit"
                       data-customer-id="${escapeHtml(customerId)}"
                     >
-                      Add Funds
+                      Quick Credit
                     </button>
                     `
                     :
@@ -1610,6 +1659,14 @@ async function loadCustomers(){
       Event delegation keeps UUIDs intact and avoids
       putting UUIDs directly into inline JavaScript.
     */
+
+    body
+      .querySelectorAll(
+        '[data-action="manage-account"]'
+      )
+      .forEach(button=>{
+        button.addEventListener("click",()=>openManageAccountById(button.dataset.customerId));
+      });
 
     body
       .querySelectorAll(
@@ -1810,6 +1867,69 @@ async function saveCustomerTransferAccess(){
 
 
 /* =====================================================
+   MANAGE CUSTOMER ACCOUNT
+===================================================== */
+function openManageAccountById(id){
+  const target=String(id??"").trim();
+  const customer=(window.__adminCustomers||[]).find(item=>getCustomerIdentifiers(item).some(value=>String(value).trim()===target));
+  if(!customer){alert("Customer information could not be found. Refresh customers and try again.");return;}
+  selectedAccountCustomer=customer;
+  const name=customer?.full_name||customer?.fullName||customer?.name||"Customer";
+  $("accountCustomerName").textContent=name;
+  $("accountCustomerEmail").textContent=customer?.email||customer?.phone||"—";
+  $("accountNumberInput").value=customer?.account_number||customer?.accountNumber||"";
+  const primary=String(customer?.primary_currency||customer?.primaryCurrency||"NGN").toUpperCase();
+  if($("transactionCurrency").querySelector(`option[value="${CSS.escape(primary)}"]`)) $("transactionCurrency").value=primary;
+  $("transactionKind").value="credit";
+  $("transactionAmount").value="";
+  $("transactionDescription").value="";
+  $("transactionReference").value="";
+  $("transactionDate").value=new Date().toISOString().slice(0,10);
+  $("accountModal").classList.add("show");
+  loadAccountTransactions(customer);
+}
+function closeAccountModal(){ $("accountModal").classList.remove("show"); selectedAccountCustomer=null; }
+async function saveAccountNumber(){
+  if(!selectedAccountCustomer)return;
+  const id=getCustomerId(selectedAccountCustomer), value=$("accountNumberInput").value.trim();
+  if(!id){alert("Customer information is missing.");return;}
+  if(!value){alert("Enter an account number first.");return;}
+  const button=$("saveAccountNumberButton"); button.disabled=true; button.textContent="Saving...";
+  try{
+    const result=await api(`/api/admin/customers/${encodeURIComponent(id)}/account-number`,{method:"PATCH",body:JSON.stringify({accountNumber:value,account_number:value})});
+    selectedAccountCustomer.account_number=value; selectedAccountCustomer.accountNumber=value;
+    alert(result?.message||"Account number saved permanently.");
+    await loadCustomers();
+  }catch(error){alert(error?.message||"Unable to save account number.");}
+  finally{button.disabled=false;button.textContent="Save Account Number";}
+}
+async function loadAccountTransactions(customer){
+  const box=$("accountTransactionHistory"); box.innerHTML="Loading...";
+  const id=getCustomerId(customer); if(!id){box.textContent="No customer selected.";return;}
+  try{
+    const result=await api(`/api/admin/customers/${encodeURIComponent(id)}/transactions`);
+    const list=Array.isArray(result?.transactions)?result.transactions:[];
+    if(!list.length){box.innerHTML='<div class="empty">No transactions yet.</div>';return;}
+    box.innerHTML=list.map(tx=>{const credit=String(tx.kind||'').toLowerCase()==='credit'; const demo=tx?.metadata?.demo===true; return `<div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #edf0f4"><div><strong>${escapeHtml(tx.title||'Transaction')}</strong><br><small>${escapeHtml(tx.date||'')} · ${escapeHtml(tx.reference||'—')} ${demo?'· DEMO/SAMPLE':''}</small></div><strong style="white-space:nowrap">${credit?'+':'-'} ${escapeHtml(String(tx.currency||''))} ${safeNumber(tx.amount).toLocaleString(undefined,{minimumFractionDigits:2})}</strong></div>`;}).join('');
+  }catch(error){box.innerHTML=`<div class="empty">${escapeHtml(error?.message||"Unable to load transaction history.")}</div>`;}
+}
+async function saveAdminTransaction(){
+  if(!selectedAccountCustomer)return;
+  const id=getCustomerId(selectedAccountCustomer); const kind=$("transactionKind").value; const currency=$("transactionCurrency").value; const amount=Number($("transactionAmount").value); const title=$("transactionDescription").value.trim(); const date=$("transactionDate").value; const reference=$("transactionReference").value.trim();
+  if(!id){alert("Customer information is missing.");return;} if(!Number.isFinite(amount)||amount<=0){alert("Enter a valid amount.");return;} if(!title){alert("Enter a description or project name.");return;} if(!date){alert("Select a transaction date.");return;}
+  const customerName=selectedAccountCustomer?.full_name||selectedAccountCustomer?.name||"this customer";
+  if(!confirm(`${kind==='credit'?'Credit':'Debit'} ${currency} ${amount.toLocaleString()} for ${customerName}?`))return;
+  const button=$("saveTransactionButton");button.disabled=true;button.textContent="Saving...";
+  try{
+    const result=await api(`/api/admin/customers/${encodeURIComponent(id)}/transaction`,{method:"POST",body:JSON.stringify({kind,currency,amount,title,description:title,date,reference})});
+    alert(result?.message||"Transaction saved successfully.");
+    await Promise.allSettled([loadCustomers(),loadDashboard(),loadAccountTransactions(selectedAccountCustomer)]);
+    $("transactionAmount").value="";$("transactionDescription").value="";$("transactionReference").value="";
+  }catch(error){alert(error?.message||"Unable to save transaction.");}
+  finally{button.disabled=false;button.textContent="Save Transaction";}
+}
+
+/* =====================================================
    OPEN CREDIT
 ===================================================== */
 
@@ -1877,14 +1997,8 @@ function openCredit(customer){
 
   $("creditAmount").value = "";
 
-  $("creditServiceName").value = "Bank Service";
-
-  const today = new Date().toISOString().slice(0,10);
-  $("creditDebitDate").value = today;
-  $("creditSuccessDate").value = today;
-
   $("creditNote").value =
-    "Bank Service";
+    "Online Service account funding";
 
   const primaryCurrency =
     customer?.primary_currency ||
@@ -1908,21 +2022,6 @@ function openCredit(customer){
   $("creditModal")
     .classList
     .add("show");
-}
-
-
-function getCustomerAccountNumber(customer){
-  const direct = [
-    customer?.accountNumber, customer?.account_number,
-    customer?.accountNo, customer?.account_no,
-    customer?.bankAccountNumber, customer?.bank_account_number,
-    customer?.customerAccountNumber, customer?.customer_account_number
-  ].find(v => v !== undefined && v !== null && String(v).trim());
-  if(direct) return String(direct).trim();
-  const accounts = Array.isArray(customer?.accounts) ? customer.accounts : [];
-  const primaryCurrency = String(customer?.primary_currency || customer?.primaryCurrency || '').toUpperCase();
-  const account = accounts.find(a => String(a?.currency || '').toUpperCase() === primaryCurrency) || accounts[0];
-  return String(account?.accountNumber || account?.account_number || account?.accountNo || account?.account_no || account?.number || '').trim();
 }
 
 
@@ -2024,38 +2123,10 @@ async function creditCustomer(){
       $("creditAmount").value
     );
 
-  const serviceName =
-    $("creditServiceName")
-      .value
-      .trim();
-
-  const debitDate =
-    $("creditDebitDate")
-      .value;
-
-  const successDate =
-    $("creditSuccessDate")
-      .value;
-
   const description =
     $("creditNote")
       .value
       .trim();
-
-  if(!serviceName){
-    alert("Enter the Bank Service / Transaction Name.");
-    return;
-  }
-
-  if(!debitDate || !successDate){
-    alert("Select both the debit date and successful/sent date.");
-    return;
-  }
-
-  if(successDate < debitDate){
-    alert("The successful/sent date cannot be earlier than the debit date.");
-    return;
-  }
 
   if(
     !Number.isFinite(amount) ||
@@ -2124,26 +2195,7 @@ async function creditCustomer(){
             currency,
             description:
               description ||
-              serviceName,
-            serviceName,
-            service_name: serviceName,
-            transactionName: serviceName,
-            transaction_name: serviceName,
-            debitDate,
-            debit_date: debitDate,
-            successfulDate: successDate,
-            successful_date: successDate,
-            successDate,
-            success_date: successDate,
-            sentDate: successDate,
-            sent_date: successDate,
-            status: "successful",
-            transferStatus: "successful",
-            transfer_status: "successful",
-            recipientAccount: getCustomerAccountNumber(selectedCustomer),
-            recipient_account: getCustomerAccountNumber(selectedCustomer),
-            accountNumber: getCustomerAccountNumber(selectedCustomer),
-            account_number: getCustomerAccountNumber(selectedCustomer)
+              "Online Service account funding"
           })
         }
       );
@@ -2302,7 +2354,7 @@ async function loadTransfers(){
           const status =
             String(
               t?.status ||
-              "successful"
+              "pending"
             ).toLowerCase();
 
           let badge =
@@ -3165,6 +3217,10 @@ function initializeAdmin(){
       "click",
       closeModal
     );
+
+  $("closeAccountButton").addEventListener("click",closeAccountModal);
+  $("saveAccountNumberButton").addEventListener("click",saveAccountNumber);
+  $("saveTransactionButton").addEventListener("click",saveAdminTransaction);
 
   $("creditButton")
     .addEventListener(
