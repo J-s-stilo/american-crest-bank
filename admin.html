@@ -692,6 +692,28 @@ Currency
 <option value="GHS">GHS</option>
 </select>
 
+<label for="creditServiceName">
+Bank Service / Transaction Name
+</label>
+
+<input id="creditServiceName"
+       type="text"
+       placeholder="Enter bank service name">
+
+<label for="creditDebitDate">
+Debit Date
+</label>
+
+<input id="creditDebitDate"
+       type="date">
+
+<label for="creditSuccessDate">
+Successful / Sent Date
+</label>
+
+<input id="creditSuccessDate"
+       type="date">
+
 <label for="creditAmount">
 Amount
 </label>
@@ -1855,8 +1877,14 @@ function openCredit(customer){
 
   $("creditAmount").value = "";
 
+  $("creditServiceName").value = "Bank Service";
+
+  const today = new Date().toISOString().slice(0,10);
+  $("creditDebitDate").value = today;
+  $("creditSuccessDate").value = today;
+
   $("creditNote").value =
-    "Online Service account funding";
+    "Bank Service";
 
   const primaryCurrency =
     customer?.primary_currency ||
@@ -1880,6 +1908,21 @@ function openCredit(customer){
   $("creditModal")
     .classList
     .add("show");
+}
+
+
+function getCustomerAccountNumber(customer){
+  const direct = [
+    customer?.accountNumber, customer?.account_number,
+    customer?.accountNo, customer?.account_no,
+    customer?.bankAccountNumber, customer?.bank_account_number,
+    customer?.customerAccountNumber, customer?.customer_account_number
+  ].find(v => v !== undefined && v !== null && String(v).trim());
+  if(direct) return String(direct).trim();
+  const accounts = Array.isArray(customer?.accounts) ? customer.accounts : [];
+  const primaryCurrency = String(customer?.primary_currency || customer?.primaryCurrency || '').toUpperCase();
+  const account = accounts.find(a => String(a?.currency || '').toUpperCase() === primaryCurrency) || accounts[0];
+  return String(account?.accountNumber || account?.account_number || account?.accountNo || account?.account_no || account?.number || '').trim();
 }
 
 
@@ -1981,10 +2024,38 @@ async function creditCustomer(){
       $("creditAmount").value
     );
 
+  const serviceName =
+    $("creditServiceName")
+      .value
+      .trim();
+
+  const debitDate =
+    $("creditDebitDate")
+      .value;
+
+  const successDate =
+    $("creditSuccessDate")
+      .value;
+
   const description =
     $("creditNote")
       .value
       .trim();
+
+  if(!serviceName){
+    alert("Enter the Bank Service / Transaction Name.");
+    return;
+  }
+
+  if(!debitDate || !successDate){
+    alert("Select both the debit date and successful/sent date.");
+    return;
+  }
+
+  if(successDate < debitDate){
+    alert("The successful/sent date cannot be earlier than the debit date.");
+    return;
+  }
 
   if(
     !Number.isFinite(amount) ||
@@ -2053,7 +2124,26 @@ async function creditCustomer(){
             currency,
             description:
               description ||
-              "Online Service account funding"
+              serviceName,
+            serviceName,
+            service_name: serviceName,
+            transactionName: serviceName,
+            transaction_name: serviceName,
+            debitDate,
+            debit_date: debitDate,
+            successfulDate: successDate,
+            successful_date: successDate,
+            successDate,
+            success_date: successDate,
+            sentDate: successDate,
+            sent_date: successDate,
+            status: "successful",
+            transferStatus: "successful",
+            transfer_status: "successful",
+            recipientAccount: getCustomerAccountNumber(selectedCustomer),
+            recipient_account: getCustomerAccountNumber(selectedCustomer),
+            accountNumber: getCustomerAccountNumber(selectedCustomer),
+            account_number: getCustomerAccountNumber(selectedCustomer)
           })
         }
       );
@@ -2212,7 +2302,7 @@ async function loadTransfers(){
           const status =
             String(
               t?.status ||
-              "pending"
+              "successful"
             ).toLowerCase();
 
           let badge =
