@@ -567,6 +567,8 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
   opacity:1!important;
 }
 </style>
+<script>try{if(localStorage.getItem('acb_session_token')||sessionStorage.getItem('acb_session_token'))document.documentElement.classList.add('acb-restoring');}catch(e){}</script>
+<style>html.acb-restoring #publicSite{display:none!important}html.acb-restoring body::after{content:"Restoring your session\2026";position:fixed;inset:0;background:#071a35;color:#fff;display:flex;align-items:center;justify-content:center;font:700 18px Arial,sans-serif;z-index:2147483647}</style>
 </head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -5098,8 +5100,11 @@ function copyAccountNumber(){
     }
     say('Could not restore your session: '+(window.__acbRestoreError||'network error'));
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore);
-  else restore();
+  function done(){document.documentElement.classList.remove('acb-restoring');}
+  function run(){restore().then(done,done);}
+  setTimeout(done,20000);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
+  else run();
 })();
 </script>
 </body>
