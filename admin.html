@@ -1910,7 +1910,7 @@ async function loadAccountTransactions(customer){
     const result=await api(`/api/admin/customers/${encodeURIComponent(id)}/transactions`);
     const list=Array.isArray(result?.transactions)?result.transactions:[];
     if(!list.length){box.innerHTML='<div class="empty">No transactions yet.</div>';return;}
-    box.innerHTML=list.map(tx=>{const credit=String(tx.kind||'').toLowerCase()==='credit'; const demo=tx?.metadata?.demo===true; return `<div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #edf0f4"><div><strong>${escapeHtml(tx.title||'Transaction')}</strong><br><small>${escapeHtml(tx.date||'')} · ${escapeHtml(tx.reference||'—')} ${demo?'· DEMO/SAMPLE':''}</small></div><strong style="white-space:nowrap">${credit?'+':'-'} ${escapeHtml(String(tx.currency||''))} ${safeNumber(tx.amount).toLocaleString(undefined,{minimumFractionDigits:2})}</strong></div>`;}).join('');
+    box.innerHTML=list.map(tx=>{const credit=String(tx.kind||'').toLowerCase()==='credit'; return `<div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #edf0f4"><div><strong>${escapeHtml(tx.title||'Transaction')}</strong><br><small>${escapeHtml(tx.date||'')} · ${escapeHtml(tx.reference||'—')}</small></div><strong style="white-space:nowrap">${credit?'+':'-'} ${escapeHtml(String(tx.currency||''))} ${safeNumber(tx.amount).toLocaleString(undefined,{minimumFractionDigits:2})}</strong></div>`;}).join('');
   }catch(error){box.innerHTML=`<div class="empty">${escapeHtml(error?.message||"Unable to load transaction history.")}</div>`;}
 }
 async function saveAdminTransaction(){
