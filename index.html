@@ -5039,51 +5039,73 @@ function copyAccountNumber(){
 }
 </script>
 <script>
-/* STAY LOGGED IN AFTER REFRESH
-   Saves the login token in the browser and restores the session on page load.
-   The user is only logged out when they press Sign out. */
+/* STAY LOGGED IN AFTER REFRESH (v2)
+   Saves the login token and restores the session on page load.
+   Only the Sign out button removes it. */
 (function(){
   'use strict';
   var KEY='acb_session_token';
-  function save(){try{if(token)localStorage.setItem(KEY,String(token));}catch(e){}}
-  function clear(){try{localStorage.removeItem(KEY);}catch(e){}}
+  function say(m){try{if(typeof toast==='function')toast(m);}catch(e){}}
+  function store(v){
+    var ok=false;
+    try{localStorage.setItem(KEY,v);ok=localStorage.getItem(KEY)===v||ok;}catch(e){}
+    try{sessionStorage.setItem(KEY,v);ok=sessionStorage.getItem(KEY)===v||ok;}catch(e){}
+    return ok;
+  }
+  function load(){
+    var v='';
+    try{v=localStorage.getItem(KEY)||'';}catch(e){}
+    if(!v){try{v=sessionStorage.getItem(KEY)||'';}catch(e){}}
+    return v;
+  }
+  function clear(){
+    try{localStorage.removeItem(KEY);}catch(e){}
+    try{sessionStorage.removeItem(KEY);}catch(e){}
+  }
 
-  // 1) Save the token whenever the dashboard opens (login or register).
+  // Save the token every time the dashboard opens (login / register).
   var oldShow=window.showDashboard;
   window.showDashboard=function(){
     var r=oldShow?oldShow.apply(this,arguments):undefined;
-    save();
+    try{if(token&&!store(String(token)))say('Your browser is blocking storage, so refresh will log you out.');}catch(e){}
     return r;
   };
 
-  // 2) Only a real sign out removes the saved token.
+  // Only a real sign out removes the saved token.
   var oldLogout=window.logout;
   window.logout=function(){
     clear();
     return oldLogout?oldLogout.apply(this,arguments):undefined;
   };
 
-  // 3) On page load, restore the saved session.
+  async function tryRestore(saved){
+    var r=await fetch(API+'/me',{headers:{'Content-Type':'application/json',Authorization:'Bearer '+saved}});
+    var d={};try{d=await r.json();}catch(e){}
+    if(r.status===401||r.status===403)return {expired:true};
+    if(!r.ok||!d.user)return {error:(d&&(d.error||d.message))||('HTTP '+r.status)};
+    token=saved;
+    me={...(me||{}),...d.user};
+    try{await loadMe();}catch(e){}
+    if(!token)token=saved;
+    if(!me)me=d.user;
+    showDashboard();
+    try{if(typeof restoreProfileImageForDashboard==='function')restoreProfileImageForDashboard();}catch(e){}
+    return {ok:true};
+  }
+
   async function restore(){
-    var saved='';
-    try{saved=localStorage.getItem(KEY)||'';}catch(e){}
+    var saved=load();
     if(!saved)return;
-    try{
-      token=saved;
-      var ok=await loadMe();
-      if(ok&&me){
-        showDashboard();
-        if(typeof restoreProfileImageForDashboard==='function'){
-          try{restoreProfileImageForDashboard();}catch(e){}
-        }
-      }else{
-        // loadMe clears the in-memory token on any failure; keep the saved
-        // one unless the server clearly rejected it.
-        token='';
-        var r=await fetch(API+'/me',{headers:{Authorization:'Bearer '+saved}}).catch(function(){return null;});
-        if(r&&(r.status===401||r.status===403))clear();
-      }
-    }catch(e){}
+    for(var i=0;i<3;i++){
+      try{
+        var res=await tryRestore(saved);
+        if(res.ok)return;
+        if(res.expired){clear();say('Your session expired. Please log in again.');return;}
+        window.__acbRestoreError=res.error;
+      }catch(e){window.__acbRestoreError=String(e&&e.message||e);}
+      await new Promise(function(r){setTimeout(r,1500);});
+    }
+    say('Could not restore your session: '+(window.__acbRestoreError||'network error'));
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore);
   else restore();
