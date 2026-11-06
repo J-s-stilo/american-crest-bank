@@ -569,6 +569,25 @@ footer{background:#041327;color:#9fb0c5;padding:40px 5%}
 </style>
 <script>try{if(localStorage.getItem('acb_session_token')||sessionStorage.getItem('acb_session_token'))document.documentElement.classList.add('acb-restoring');}catch(e){}</script>
 <style>html.acb-restoring #publicSite{display:none!important}html.acb-restoring::before{content:"";position:fixed;inset:0;background:#071a35;z-index:2147483646}html.acb-restoring body::after{content:"";position:fixed;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border:4px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:acbspin .7s linear infinite;z-index:2147483647}@keyframes acbspin{to{transform:rotate(360deg)}}</style>
+<style id="acbNotifDesign">
+.notificationBoard{position:fixed!important;top:78px!important;left:12px!important;right:12px!important;width:auto!important;max-width:430px;margin:0 auto!important;border:0!important;border-radius:20px!important;box-shadow:0 24px 60px rgba(7,26,53,.38)!important;overflow:hidden!important;z-index:2000!important;flex-direction:column}
+.notificationBoard.show{display:flex!important;max-height:68vh}
+.notificationBoardHead{padding:14px 16px!important;background:linear-gradient(135deg,#0b2a5e,#123e86)!important}
+.notificationBoardHead strong{font-size:16px!important;letter-spacing:.2px}
+.notificationBoardClose{width:30px;height:30px;border-radius:50%!important;background:rgba(255,255,255,.16)!important;font-size:18px!important;display:grid;place-items:center}
+.notificationList{flex:1 1 auto;min-height:0;max-height:none!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:8px 10px 12px!important;background:#f4f7fb}
+.notificationItem.nItem{display:flex!important;gap:11px;align-items:flex-start;padding:11px 12px!important;margin:0 0 8px!important;border-radius:14px!important;background:#fff!important;border:1px solid #e6edf7!important;box-shadow:0 2px 8px rgba(7,26,53,.05)}
+.notificationItem.nItem.unread{border-left:4px solid #1769e0!important;background:#f3f8ff!important}
+.nIcon{flex:0 0 34px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:900}
+.nIcon.in{background:#e6f7ee;color:#159447}.nIcon.out{background:#eaf2ff;color:#1769e0}.nIcon.info{background:#eef1f6;color:#52627a}
+.nBody{flex:1;min-width:0}
+.nTitle{font-size:12px;font-weight:800;color:#0b2a5e;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.nMsg{font-size:13px!important;line-height:1.4!important;color:#33445c!important}
+.nMeta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.nMeta .notificationItemDate{font-size:11px!important;color:#7a8aa3!important;margin:0!important}
+.nDel{border:0!important;background:#f1f4f9!important;color:#c0392b!important;font-size:11px!important;font-weight:800;padding:4px 10px!important;border-radius:999px!important;min-height:0!important;width:auto!important;cursor:pointer}
+.notificationEmpty{padding:22px 10px;text-align:center;color:#7a8aa3;font-size:13px}
+</style>
 </head><body><div class="prototype">
 
 AMERICAN CREST BANK — SAFETY / BANKING SERVICES — Banking APPLICATION
@@ -2617,7 +2636,7 @@ function renderNotifications(){
   updateNotificationIndicator(list);
   const target=$('notifications');
   if(target){
-    target.innerHTML=list.length?list.slice(0,100).map((notification,index)=>{const unread=!notification.read_at&&!notification.is_read;return `<div class="notificationItem ${unread?'unread':''}"><strong style="display:block;color:var(--navy);font-size:14px;margin-bottom:4px">Account Notification</strong><div class="notificationItemMessage">${esc(notification.message)}</div><div class="notificationItemDate">${esc(formatNotificationDate(notification.date||notification.created_at))}</div><div class="notificationActions"><button type="button" class="outline notificationDeleteBtn" data-id="${esc(notification.id||'')}">Delete</button></div></div>`}).join(''):'<div class="notificationEmpty">No saved notifications.</div>';
+    target.innerHTML=list.length?list.slice(0,100).map((notification,index)=>{const unread=!notification.read_at&&!notification.is_read;const msg=String(notification.message||'');const kind=/credit|added|received|deposit/i.test(msg)?'in':/debit|transfer|sent|withdraw/i.test(msg)?'out':'info';const title=kind==='in'?'Money received':kind==='out'?'Money sent':'Account update';const icon=kind==='in'?'↓':kind==='out'?'↑':'i';return `<div class="notificationItem nItem ${unread?'unread':''}"><div class="nIcon ${kind}">${icon}</div><div class="nBody"><div class="nTitle">${title}</div><div class="nMsg notificationItemMessage">${esc(notification.message)}</div><div class="nMeta"><span class="notificationItemDate">${esc(formatNotificationDate(notification.date||notification.created_at))}</span><button type="button" class="notificationDeleteBtn nDel" data-id="${esc(notification.id||'')}">Delete</button></div></div></div>`}).join(''):'<div class="notificationEmpty">No saved notifications.</div>';
     setupNotificationActions();
   }
 
@@ -5105,6 +5124,14 @@ function copyAccountNumber(){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
   else run();
 })();
+</script>
+<script>
+document.addEventListener('click',function(e){
+  var b=document.getElementById('notificationBoard');
+  if(!b||!b.classList.contains('show'))return;
+  if(b.contains(e.target)||e.target.closest('.dashBell,#notificationBell,.notificationDeleteBtn'))return;
+  if(typeof toggleNotificationBoard==='function')toggleNotificationBoard(false);
+});
 </script>
 </body>
 </html>
