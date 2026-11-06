@@ -5038,5 +5038,56 @@ function copyAccountNumber(){
   }else{fallback();}
 }
 </script>
+<script>
+/* STAY LOGGED IN AFTER REFRESH
+   Saves the login token in the browser and restores the session on page load.
+   The user is only logged out when they press Sign out. */
+(function(){
+  'use strict';
+  var KEY='acb_session_token';
+  function save(){try{if(token)localStorage.setItem(KEY,String(token));}catch(e){}}
+  function clear(){try{localStorage.removeItem(KEY);}catch(e){}}
+
+  // 1) Save the token whenever the dashboard opens (login or register).
+  var oldShow=window.showDashboard;
+  window.showDashboard=function(){
+    var r=oldShow?oldShow.apply(this,arguments):undefined;
+    save();
+    return r;
+  };
+
+  // 2) Only a real sign out removes the saved token.
+  var oldLogout=window.logout;
+  window.logout=function(){
+    clear();
+    return oldLogout?oldLogout.apply(this,arguments):undefined;
+  };
+
+  // 3) On page load, restore the saved session.
+  async function restore(){
+    var saved='';
+    try{saved=localStorage.getItem(KEY)||'';}catch(e){}
+    if(!saved)return;
+    try{
+      token=saved;
+      var ok=await loadMe();
+      if(ok&&me){
+        showDashboard();
+        if(typeof restoreProfileImageForDashboard==='function'){
+          try{restoreProfileImageForDashboard();}catch(e){}
+        }
+      }else{
+        // loadMe clears the in-memory token on any failure; keep the saved
+        // one unless the server clearly rejected it.
+        token='';
+        var r=await fetch(API+'/me',{headers:{Authorization:'Bearer '+saved}}).catch(function(){return null;});
+        if(r&&(r.status===401||r.status===403))clear();
+      }
+    }catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore);
+  else restore();
+})();
+</script>
 </body>
 </html>
