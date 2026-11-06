@@ -4045,7 +4045,7 @@ app.post('/api/admin/customers/:id/transaction',auth,adminOnly,writeLimiter,asyn
     await client.query(`UPDATE acb_balances SET amount=amount+$1 WHERE user_id=$2 AND currency=$3`,[delta,userId,currency]);
     const txId=uuid();
     await client.query(`INSERT INTO acb_transactions(id,user_id,kind,title,amount,currency,created_at,reference,status,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8,'completed',$9)`,[txId,userId,kind,title,amount,currency,createdAt,reference,JSON.stringify({admin:true})]);
-    await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),userId,`A ${kind} transaction of ${amount.toLocaleString()} ${currency} was recorded on your demo account.`]);
+    await client.query(`INSERT INTO acb_notifications(id,user_id,message) VALUES($1,$2,$3)`,[uuid(),userId,`A ${kind} transaction of ${amount.toLocaleString()} ${currency} was recorded on your Bank account.`]);
     await client.query('COMMIT');
     const updated=await getUser(userId);
     return res.json({ok:true,success:true,message:`${kind==='credit'?'Credit':'Debit'} transaction saved successfully.`,transactionId:txId,user:updated,customer:updated});
