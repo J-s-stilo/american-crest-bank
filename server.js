@@ -1704,7 +1704,6 @@ async function initDb() {
   for (const row of existingUsers.rows) {
     await ensureBalances(row.id);
     const roleResult=await pool.query(`SELECT role FROM acb_users WHERE id=$1`,[row.id]);
-    if(String(roleResult.rows[0]?.role||'').toLowerCase()==='customer') await ensureDemoTransactions(row.id);
   }
 
   if (ADMIN_EMAIL && ADMIN_PASSWORD) {
