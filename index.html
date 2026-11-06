@@ -4181,19 +4181,11 @@ No customer/admin information is stored in localStorage.
 
 */
 
-window.addEventListener(
-
-'load',
-
-()=>{
-
-$('publicSite').style.display='block';
-
-$('dashboard').style.display='none';
-
-}
-
-);
+window.addEventListener('load',()=>{
+  if(token&&me){$('publicSite').style.display='none';$('dashboard').style.display='block';return;}
+  $('publicSite').style.display='block';
+  $('dashboard').style.display='none';
+});
 
 
 /* ===== FUNCTIONAL UPGRADE JAVASCRIPT ===== */
